@@ -1,29 +1,25 @@
 #summary Requirements Discussions
 = Introduction =
-
 These are requirements discussions between the CS682 Development Team and the Client (Professor White) for the Tree-Building Survey project.
 
-
+-------------------------
 Question:
 
-<p>
-Brian
-
+Brian<br/>
 Seems to me that in "correct" solution each internal node has exactly<br/>
 two descendants - never three or more, and there's no need to bother<br/>
-with nodes with only one descendant (unless you have fossils in the <br/>
-tree).<br/>
+with nodes with only one descendant (unless you have fossils in the tree).<br/>
 (These are interesting trees from a cs perspective too.)<br/>
 But you might want to consider a tree in which everything descended<br/>
 from one ur-organism as correct too, in a way.<br/>
+Ethan<br/>
 
-Ethan
-</p>
---Ethan Bolker 11:21, 30 September 2009 (UTC)
+*Ethan Bolker 11:21, 30 September 2009 (UTC)*
 
+Answer:
+
+actually, it is fine to have as many descendants from an internal node as you like<br/>
+B<br/>
+
+*Brian White 15:32, 30 September 2009 (UTC)*
 -------------------------
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
