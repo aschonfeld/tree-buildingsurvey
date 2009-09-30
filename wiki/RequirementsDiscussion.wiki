@@ -3,7 +3,7 @@
 These are requirements discussions between the CS682 Development Team and the Client (Professor White) for the Tree-Building Survey project.
 
 -------------------------
-Question:
+_Question:_
 
 Brian<br/>
 Seems to me that in "correct" solution each internal node has exactly<br/>
@@ -16,7 +16,7 @@ Ethan<br/>
 
 *Ethan Bolker 11:21, 30 September 2009 (UTC)*
 
-Answer:
+_Answer:_
 
 actually, it is fine to have as many descendants from an internal node as you like<br/>
 B<br/>
