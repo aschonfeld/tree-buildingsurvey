@@ -1,0 +1,18 @@
+<project name="Phylogeny Survey" default="jarfile">
+	
+    <target name="compile" description="Compiles the code">
+    	    <javac srcdir="src/" destdir="bin/"/>
+    </target>
+
+	<target name="jarfile" depends="compile" description="makes jar file">
+	    <jar destfile="bin/phylogenySurvey.jar">
+	        <manifest>
+	        	    <attribute name="Main-Class" value="phylogenySurvey.SurveyApplet"/>
+	        </manifest>
+	    	    <fileset dir="bin/"/>
+	    		<fileset dir="lib/"/>
+	    </jar>
+        <move file="bin/phylogenySurvey.jar" todir="."/>
+    </target>
+	
+</project>
