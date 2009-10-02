@@ -1,0 +1,11 @@
+==Resources==
+
+If there's anything you find useful in understanding this code, throw it up here. Remember, it's likely that at least one person on the team is less informed than you about anything we're dealing with. If you had to look it up, so will they. 
+
+=Subversion=
+Subversion quick reference: http://www.cs.put.poznan.pl/csobaniec/Papers/svn-refcard.pdf
+
+Subversion book: http://svnbook.red-bean.com/
+
+=JDOM=
+JDOM API: http://www.jdom.org/docs/apidocs/index.html
