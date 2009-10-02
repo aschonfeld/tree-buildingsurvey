@@ -1,0 +1,28 @@
+#summary Project Status Summary for 10/01
+
+= Introduction =
+*Please correct errors and fill in deficiencies*
+
+= Details =
+Group met during class session. Some discussion of how to proceed, no firm events scheduled. 
+
+Events/milestones to be scheduled (some of many)
+
+  * Meet with client to discuss project requirements, prioritize features, discuss details of UI options
+  * Meet with previous code writer to discuss details of code handoff (ie, we've got questions about the architecture we've inherited)
+
+
+Decisions to be made
+
+  * Refactor or rewrite? (current leaning of the group is strongly towards refactor)
+
+Administrative necessities (add or delete as you see fit)
+  * Schedule
+  * Group coding conventions
+
+Undertakings:
+
+  * Jon will generate Javadoc for the current code this weekend
+  * Glenn will review code with an eye to refactoring
+  * Andrew is working on getting code up and running on a second server, with "up and running" to be specified
+  * All will test the current release (Prof. White's server) on their available browsers, report results. 
