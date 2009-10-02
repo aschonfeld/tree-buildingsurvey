@@ -9,3 +9,21 @@ Subversion book: http://svnbook.red-bean.com/
 
 =JDOM=
 JDOM API: http://www.jdom.org/docs/apidocs/index.html
+
+=Model - View - Controller=
+
+Professor White's code starts with the assumption that every object of biological interest _is_ a graphics object. That's a serious design error. 
+
+In this application there should be classes that represent the underlying biological _model_: perhaps just Species. Some of the instances are actual organisms - they are provided at startup. Others are the intermediate nodes the user creates. The biology models the user's ideas about evolution by allowing for links between species - maybe directed, maybe not. These objects know nothing about how they look on the screen. 
+
+The classes specifying the graphics are separate. 
+
+The connection can be managed using the Observer-Observable design pattern. The graphics objects are registered as Observers of the model objects. When the user makes a change to the model (by adding or modifying a link or a node) the model notifies the listeners (the Observers), who redraw the screen. (Changes in position don't change the model, but they do change the appearance.)
+
+See http://www.cs.clemson.edu/~malloy/courses/patterns/observer.html,
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/Observable.html,
+http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller.
+
+Plan to do this refactoring - put it on the schedule. But don't start it until the existing code is bug free.
+
+But do it then, _before_ starting to develop the alternative GUIs that the project calls for.
