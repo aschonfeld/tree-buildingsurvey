@@ -1,3 +1,5 @@
+#summary Necessary information and tools
+
 ==Resources==
 
 If there's anything you find useful in understanding this code, throw it up here. Remember, it's likely that at least one person on the team is less informed than you about anything we're dealing with. If you had to look it up, so will they. 
