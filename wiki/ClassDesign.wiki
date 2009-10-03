@@ -1,0 +1,20 @@
+#summary Refactoring/Adding Classes To Professor White's Code
+
+= Introduction =
+
+This is a place discuss the class structure of the project code
+
+= News =
+
+----
+*Initial Version of GUI Code - UML Diagram *
+
+I have uploaded a pdf file containing the UML class diagram of the GUI code as supplied by Professor White
+
+I used the Java To UML editor plugin for Eclipse, a UML editor (Topcased), and PrimoPDF
+
+The filename is:
+
+"UML Class Diagram Of Initial GUI Code (as supplied by Professor White).pdf"
+
+----
