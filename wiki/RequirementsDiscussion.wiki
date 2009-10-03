@@ -23,3 +23,6 @@ B<br/>
 
 *Brian White 15:32, 30 September 2009 (UTC)*
 -------------------------
+
+Question: In trying the code on various browsers (see issues) I saw no "submit" or "save" button under any of the browsers. Should there be?<br>
+-jpk
