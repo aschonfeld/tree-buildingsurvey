@@ -80,6 +80,10 @@ public class SurveyUI {
  private JButton scoreButton;
 
 
+/**
+ * Sets up the SurveyUI. Called by SurveyApplet. "masterContainer" is
+ * SurveyApplet's ContentPane.
+ */
  public SurveyUI(Container masterContainer) {
   surveyData = new SurveyData();
   this.masterContainer = masterContainer;
@@ -90,6 +94,45 @@ public class SurveyUI {
   scoringOn = false;
  }
 
+/**
+ * This method sets up the UI (this is obvious, I know). Lots of dog
+ * work here: making button, putting them in a ButtonPanel, putting the
+ * ButtonPanel into the container, setting up listeners, and so forth.
+ * Sets up a 'work panel', drawing area for the tree itself. 
+ * The buttons created are as follows:<ul>
+ * <li> Link: creates a new Link if two SLOs are selected. See
+ * Link.java, constructor for code. Repaints the work panel. Saves
+ * state. (see SurveyData.saveToStateHistory() for code) 
+ * <li> Unlink: Deletes link between two selected objects. Does not
+ * check to see that two objects are selected. See
+ * surveyData.deleteLink() for code. Saves state (see SurveyData for
+ * code)
+ * <li> Label: elicits a String from the user, creates a TextLabel using
+ * that String. See TextLabel's constructor for code. Saves state, see
+ * SurveyData for code. 
+ * <li> Delete: Removes an item from the tree. If the object in
+ * selectionA is a Node, the method calls
+ * SurveyData.delete((Node)selectionA), explicitly casting the object as a
+ * Node in the process (??), and saves state to history. If the object
+ * in selectionOnly is not null, the method calls
+ * delete((TextLabel)SelectionOnly), again with an explicit cast.
+ * Question: Is there something (probably in MoveLabelHandler?) to
+ * ensure that both of these are not true at the same time? Otherwise,
+ * you would see two things deleted with each press, a Node and a
+ * TextLabel. 
+ * <li> Split: Gets a new NodeWithLocation by calling surveyData.split()
+ * on the two selected objects. The work of visibly unselecting the
+ * objects that have been split is handled here, is this a good place
+ * for it? 
+ * <li> Print: Attempts to print the work panel. 
+ * <li> Undo: Calls SurveyData.undo() to restore the previous saved
+ * state from the history list.
+ * <li> Score: Only shows if the user has set this up to score
+ * (if scoringOn is true). Calls up an instance of Scorer and runs its
+ * score() method, displaying the result to a JPanel created for the
+ * occasion.  
+ * <ul>
+ */
  public void setupUI(boolean scoringEnabled, String password) {
 
   if (scoringEnabled && password.equals(PASSWORD)) {
@@ -255,6 +298,10 @@ public class SurveyUI {
   }
  }
 
+/**
+ * Reads the list of organisms and creates an OrganismLabel for each
+ * organism on the list. 
+ */
  public void loadOrganisms() {
   URL listFileURL = this.getClass().getResource("/images/list.txt");
   String line = "";
@@ -286,13 +333,22 @@ public class SurveyUI {
   workPanel.repaint();
  }
 
+
+/**
+ * assigns a new instance of SurveyData in place of the old one,
+ * presumably to free up the old one for garbage collection. 
+ */
  public void reset() {
   surveyData = new SurveyData();
  }
 
+/**
+ * Returns the current SurveyData object
+ */
  public SurveyData getSurveyData() {
   return surveyData;
  }
+
 
  private class MoveLabelHandler implements MouseMotionListener, MouseListener {
 
