@@ -4,7 +4,7 @@
 
 This is a place discuss the class structure of the project code
 
-= News =
+= Updates =
 
 ----
 *Initial Version of GUI Code - UML Diagram *
@@ -18,3 +18,16 @@ The filename is:
 "UML Class Diagram Of Initial GUI Code (as supplied by Professor White).pdf"
 
 ----
+
+*How to generate a UML File From a Java Project In Eclipse*
+
+  # Place "org.topcased.java.reverse_0.2.0.jar " in your "eclipse/plugins/" directory (where "eclipse" is the base directory of your eclipse install).
+  # Start Eclipse
+  # Go to File > New > Project and select the "Java Project From Exising Ant Buildfile" wizard
+  # Click "Browse" and select "Phylogeny Survey/build.xml" (from wherever you put Prof. White's code)
+  # In the package view in the left window: right click "Phylogeny Survey", and select "UML From Java" from the menu (towards the bottom)
+  # Click the "Finish" button in the window that pops up (the default name is "model.uml")
+
+There should now be a file "model.uml" in the directory "workspace/Phylogeny Survey/" (where "workspace" is wherever your eclipse workspace directory is).
+
+You should now be able to open "model.uml" for viewing in a UML editor
