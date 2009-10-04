@@ -22,23 +22,54 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+/**
+ * This class comprises the methods which create and manage the data
+ * objects of the survey.
+ */
 public class SurveyData {
 	
 	private ArrayList<SelectableObject> items;
 	private ArrayList<Link> links;
 	
 	private ArrayList<String> historyList;
-		
+	
+/**
+ * Instantiate the basic data structures involved in managing the data.
+ * These are: an arraylist "items" of SelectableObjects - TextLabels,
+ * Nodes, and OrganismLabels), an Arraylist of Link objects, and an
+ * arraylist of Strings, the historyList. The strings in this last are
+ * in fact states of the data; the history list (if I read this
+ * correctly) is a list of complete dumps of the data set, maintained
+ * for purposes of undo()ing commands. (see saveToHistoryList(),
+ * getState(), and undo() for this - I may be wrong) 
+ * ("I may be wrong" should be understood throughout this document, so
+ * the explicit statement might be read as "I suspect that I am wrong,
+ * but I haven't found how yet".)
+ */
 	public SurveyData() {
 		items = new ArrayList<SelectableObject>();
 		links = new ArrayList<Link>();
 		historyList = new ArrayList<String>();
 	}
-				
+	
+
+/**
+ * Adds a SelectableObject (SO henceforth) to the items list. Note that
+ * all variants of add() involve the normal Java sense of adding a
+ * reference, and not the sort of XML export that we've seen in the data
+ * objects' save() methods. 
+ */	
 	public void add(SelectableObject n) {
 		items.add(n);
 	}
 	
+
+/**
+ * Deletes a Node object from the links Arraylist. The actual procedure
+ * is to create a new ArrayList of Links, and then scan through the
+ * original list, adding back only links which do not contain the Node
+ * being deleted. 
+ */
 	public void delete(Node n) {
 		//remake node list without any links
 		//  that include this node
@@ -54,18 +85,40 @@ public class SurveyData {
 		items.remove(n);
 	}
 	
+/**
+ * Adds a TextLabel object to the items list.(Using ArrayList.add(), no
+ * local code). Is this method necessary?
+ * Shouldn't TextLabel add via the previous add(SelectableObject)
+ * method? Is this here so TextLabels will be added as TextLabels and
+ * not as the more generic SO? (ie, to make delete(TextLabel) fly? Why
+ * not delete(SelectableObject)?
+ */
 	public void add(TextLabel tl) {
 		items.add(tl);
 	}
 	
+/**
+ * Remove the indicated TextLabel from the items list
+ * Notice that there is no state dump with any of the delete() or add()
+ * methods - does this mean that these are not subject to undo()?
+ */
 	public void delete(TextLabel tl) {
 		items.remove(tl);
 	}
 	
+/**
+ * Add a Link to the list of links.
+ * (Using ArrayList.add(), no local code)
+ */
 	public void add(Link l) {
 		links.add(l);
 	}
 	
+
+/**
+ * Unlinks two objects, leaving the objects themselves in place.
+ * Is the warning message a bit brusque?
+ */
 	public void deleteLink(SelectableLinkableObject a, SelectableLinkableObject b) {
 		Iterator<Link> it = links.iterator();
 		while (it.hasNext()) {
@@ -84,6 +137,18 @@ public class SurveyData {
 
 	}
 	
+/**
+ * Creates a node between two linked objects. Scans the links list until it 
+ * finds one linking both SLO arguments to the function, and removes
+ * that link. It then makes two new SelectLinkableObjects (SLOs), and assigns 
+ * values found in that link to the new SLOs (won't these be the same as
+ * SLOs a and b, provided in the method call?). It then creates a Node
+ * at a point midway between the two SLOs, and creates links from a to
+ * Node and from Node to b. <br>
+ * Refactoring note: For readability, this might be renamed to avoid
+ * confusion between splitting a link into segments and deleting the
+ * link entirely.
+ */ 
 	public NodeWithLocation split(SelectableLinkableObject a, SelectableLinkableObject b) {
 		Iterator<Link> it = links.iterator();
 		while(it.hasNext()) {
@@ -107,10 +172,20 @@ public class SurveyData {
 		return null;
 	}
 	
+/**
+ * Returns the ArrayList "items"
+ */ 
 	public ArrayList<SelectableObject> getItems() {
 		return items;
 	}
 	
+/**
+ * Creates and returns a list of just those members of ArrayList "items"
+ * which are OrganismLabels. This is accomplished by scanning the list
+ * "items" and placing any item which is an instanceof OrganismLabel on
+ * a new ArrayList, which is returned. Objects are explicitly recast as
+ * OrganismLabels on adding.  
+ */
 	public ArrayList<OrganismLabel> getOrganismLabels() {
 		ArrayList<OrganismLabel> orgs = new ArrayList<OrganismLabel>();
 		Iterator<SelectableObject> it = items.iterator();
@@ -123,10 +198,20 @@ public class SurveyData {
 		return orgs;
 	}
 	
+/**
+ * Returns the list of Links.
+ */
 	public ArrayList<Link> getLinks() {
 		return links;
 	}
 	
+/**
+ * Creates an XML object called State and saves to it the contents of
+ * every item on the items list and every link on the links list - this
+ * object is returned as a String. 
+ * By "contents" if every item and link, I mean the return value of that
+ * item or link's save() method.
+ */
 	public String getState() {
 		Element root = new Element("State");
 
@@ -149,10 +234,27 @@ public class SurveyData {
 		return out.outputString(new Document(root));
 	}
 	
+/**
+ * Adds the String returned by getState() to the ArrayList
+ * "historyList". This seems an impecunious means of implementing
+ * undo(). 
+ */
 	public void saveStateToHistoryList() {
 		historyList.add(getState());
 	}
 	
+
+/**
+ * Reverts to previous state as saved on historyList. This is
+ * accomplished by returning the string value stored in historyList's
+ * penultimate element. Does not reset the size of historyList, so only
+ * one level of revert is possible, although historyList continues to
+ * grow. <br>
+ * This could be useful, as it saves a good trail of the student's
+ * actions, not at the cinematic level, but as a series of discrete
+ * actions taken. If this is not going to be utilized, the same effect
+ * could be achieved by maintaining only two states - "now" and "now
+ * minus 1". 
 	public String undo() {
 		if (historyList.size() < 2) {
 			return null;
@@ -162,6 +264,9 @@ public class SurveyData {
 		return state;
 	}
 			
+/**
+ * Find an item on the items list given a jdom Element.
+ */
 	public SelectableLinkableObject findItemByName(Element e) {
 		String name = e.getName();
 		if (name.equals("OrganismLabel")) {
