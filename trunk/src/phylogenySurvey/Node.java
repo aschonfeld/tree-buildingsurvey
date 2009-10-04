@@ -18,7 +18,8 @@ public class Node extends SelectableLinkableObject {
  * Used for assigning serial numbers to Nodes. 
  * Possible conflicts:
  * <ul>
- * <li> Nodes can be created with arbitrary values 
+ * <li> Nodes can be created with arbitrary values. Is the possibility
+ * of overwrite a problem?
  * <li> Always starts at zero. Does this ever open previously saved data
  *   and add new Nodes?
  * </ul>
@@ -35,6 +36,9 @@ public class Node extends SelectableLinkableObject {
 
 /**
  * Constructs Node with assigned image, next id number in sequence
+ * Refactoring note: In the existing code, Nodes are always constructed with 
+ * the same icon, and it seems logical to suppose that will remain the
+ * case. Should the class definition take this into account? 
  */
 
  public Node(ImageIcon image) {
@@ -59,7 +63,7 @@ public class Node extends SelectableLinkableObject {
  /**
   * Returns center of this node, calculated as (X+5, Y+5) from current
   * location.
-  * Are all nodes 10X10 in size?
+  * Are all nodes 10X10 in size? - Yes, node.gif is a 10X10 square.
   */
  public Point getCenter() {
   return new Point(getLocation().x + 5,
