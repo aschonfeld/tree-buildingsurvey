@@ -10,18 +10,18 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 
 == Details ==
 
-||Date||Short name||Responsibility||Track||
-||Done||set up google code page||Andrew||main||
-||Done||post BW's code||Jon||main||
-||10/8/09??||Current version up and running somewhere||Andrew||main||
-||10/8/09||[Schedule Preliminary schedule]||team consensus||main||
-||??????||Client meeting: features for February||team||[Features features]||
-||10/14/09||1 story from each team member||team||[Features features]||
-||10/21/09||2 more stories from each team member||team||[Features features]||
-||??????||develop [build build system]||????||main||
-||10/8/09||Vision Statement||Andrew||main||
-||??????||[Refactor Refactor Code]||team||[Refactor refactor]||
-||1/30/10||Functioning program with four UIs||team||main||
+||Date||Short name||Responsibility||Track||Done?||
+||Done||set up google code page||Andrew||main||Done||
+||Done||post BW's code||Jon||main||Done||
+||10/8/09??||Current version up and running somewhere||Andrew||main||||
+||10/8/09||[Schedule Preliminary schedule]||team consensus||main||||
+||??????||Client meeting: features for February||team||[Features features]||||
+||10/14/09||1 story from each team member||team||[Features features]||||
+||10/21/09||2 more stories from each team member||team||[Features features]||||
+||??????||develop [build build system]||????||main||||
+||10/8/09||Vision Statement||Andrew||main||||
+||??????||[Refactor Refactor Code]||team||[Refactor refactor]||||
+||1/30/10||Functioning program with four UIs||team||main||||
 
 == Discussion ==
 
