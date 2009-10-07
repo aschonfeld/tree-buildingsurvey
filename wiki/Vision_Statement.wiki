@@ -1,4 +1,0 @@
-#summary Vision Statement
-= Vision Statement =
-*
-  Our group's vision is to become a leader in software development.  Being a leader means gaining client satisfaction by providing on-time delivery of innovative, up-to-date, under budget, working software applications.
