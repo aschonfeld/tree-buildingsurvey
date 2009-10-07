@@ -1,5 +1,3 @@
-#summary Comments and questions from the professor
-
 = Comments and questions from the professor = 
 
 ----
@@ -15,4 +13,10 @@ Ask, and it shall be given unto you. [Schedule Schedule page] Don't try it with 
 import pony
 }}}
 should do the trick.)
+----
+
+=== October 7 ===
+
+Thanks for the schedule page. I suggest another column for "Done" rather than overwriting the due date when the item is done. Keeping the original due date helps when you look back to see if you were meeting the schedule you set - particularly if you put the actual completion date in the "Done" column.
+
 ----
