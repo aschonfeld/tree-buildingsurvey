@@ -10,9 +10,9 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 
 == Details ==
 
-||Date||Short name||Responsibility||Track||Done?||
-||Done||set up google code page||Andrew||main||Done||
-||Done||post BW's code||Jon||main||Done||
+||Due Date||Short name||Responsibility||Track||Date Completed||
+||Done||set up google code page||Andrew||main||9/30||
+||Done||post BW's code||Jon||main||9/30||
 ||10/8/09??||Current version up and running somewhere||Andrew||main||||
 ||10/8/09||[Schedule Preliminary schedule]||team consensus||main||||
 ||??????||Client meeting: features for February||team||[Features features]||||
