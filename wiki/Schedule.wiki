@@ -2,9 +2,9 @@
 
 = Introduction =
 
-This is a first draft of the schedule. Team members, please modify the format in any way that you think useful. Also, dates are guesses in some instances, or ???? if I don't have enough data to usefully guess. 
-"Done" indicates job done. Well done. 
-"Track" is my notion for identifying dependencies. We know that there are two parallel tracks already: projecting and prioritizing features to be developed ("features") and refactoring the current code ("refactor"). This is probably not the right way to do this, I would like some better suggestions. 
+This is a first draft of the schedule. Team members, please modify the format in any way that you think useful. Also, dates are guesses in some instances, or ???? if I don't have enough data to usefully guess. <br>
+"Done" indicates job done. Well done. <br>
+"Track" is my notion for identifying dependencies. We know that there are two parallel tracks already: projecting and prioritizing features to be developed ("features") and refactoring the current code ("refactor"). This is probably not the right way to do this, I would like some better suggestions. <br>
 "Preliminary schedule" will be approved when we have all signed off on this schedule page, and each of the ???? items has at least one finite, boolean subtask with a definite near-term (<2 weeks) completion date. I suggest that the short stories may qualify as a subtask for "client meeting". 
 
 = Details =
