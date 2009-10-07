@@ -19,7 +19,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/14/09||1 story from each team member||team||[Features features]||||
 ||10/21/09||2 more stories from each team member||team||[Features features]||||
 ||??????||develop [build build system]||????||main||||
-||10/8/09||Vision Statement||Andrew||main||||
+||10/8/09||[VisionStatement Vision Statement]||Andrew||main||||
 ||??????||[Refactor Refactor Code]||team||[Refactor refactor]||||
 ||1/30/10||Functioning program with four UIs||team||main||||
 
