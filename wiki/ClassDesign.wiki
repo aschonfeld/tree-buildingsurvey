@@ -1,13 +1,11 @@
-#summary Refactoring/Adding Classes To Professor White's Code
+#summary This is a place to discuss the use of UML in the project
 
 = Introduction =
 
-This is a place discuss the class structure of the project code
-
-= Updates =
+This is a place to discuss the use of UML in the project
 
 ----
-*Initial Version of GUI Code - UML Diagram *
+==Initial Version of GUI Code - UML Diagram==
 
 I have uploaded a pdf file containing the UML class diagram of the GUI code as supplied by Professor White
 
@@ -19,11 +17,13 @@ The filename is:
 
 ----
 
-*How to generate a UML File From a Java Project In Eclipse*
+==How to Generate a UML File From a Java Project in Eclipse==
 
-  # Place "org.topcased.java.reverse_0.2.0.jar " in your "eclipse/plugins/" directory (where "eclipse" is the base directory of your eclipse install).
+  # Download *Eclipse Modeling Tools (includes incubating components) (371 MB)*  from eclipse.org/downloads (scroll down a little). _Note: This is a full version of Eclipse that includes modeling tools_
+  # Extract the files into a directory of your choosing. _Note: Since this is a full version of Eclipse you can install it in a different directory than that of your current Eclipse install_
+  # Place a copy of "org.topcased.java.reverse_0.2.0.jar " into your "eclipse/plugins/" directory (where "eclipse" is the base directory of where you installed Eclipse with modeling tools). _Note: There is no installation, just place the .jar file in the "plugins" directory as indicated_
   # Start Eclipse
-  # Go to File > New > Project and select the "Java Project From Exising Ant Buildfile" wizard
+  # Go to File > New > Project and select the "Java Project From Existing Ant Buildfile" wizard
   # Click "Browse" and select "Phylogeny Survey/build.xml" (from wherever you put Prof. White's code)
   # In the package view in the left window: right click "Phylogeny Survey", and select "UML From Java" from the menu (towards the bottom)
   # Click the "Finish" button in the window that pops up (the default name is "model.uml")
