@@ -1,0 +1,26 @@
+#summary Discussion of Refactoring
+
+= Introduction =
+This page is for discussion of the refactoring of the original code, proposing subtasks, identifying issues. What else? I don't know, I'm new. If there's something I should read on the subject, post a link here, maybe, or under Resources if that makes more sense. 
+
+
+= Details =
+
+The code will need to be massively reworked in order to accomplish the goal of offering several distinct user interfaces, as the current engine is tightly bound to the current user interface. 
+
+I imagine that the rough schematic will be something like this when we're done:
+
+The Applet will call the Engine and one of several UIs, passing data from the UI to the Engine and from the Engine to the UI. The Engine will drive a separate UI for reporting/analyzing data of this group and of the universe of test respondents (the Reporter). The Engine - or the Reporter - will also pass a machine-readable list of students who have completed the TBS exercise, so the teacher may give appropriate credit. 
+Or something like this. This is a little story, wrong in at least two important details, but I believe it's much closer to how the final product will work than the current code. 
+
+=Applet=
+The Applet will ultimately be a simple driver. Whether it is responsible for coordinating communication between the UI of choice and the Engine is a matter of fiddling practicality, here I'm only concerned with larger questions of Architecture.
+
+=Engine=
+The Engine will do the actual work. What this means must be specified. 
+
+=Reporter=
+The Reporter will handle the data, meaning not bits but statistics. How many people think bats are closely related to mosquitos and Alberto Gonzalez? That's a question for the Reporter. 
+
+=Manager=
+Perhaps there will be a need for a manager, whereby the program owner can add new classes of beastie, for example. Perhaps this and the Reporter are one thing.
