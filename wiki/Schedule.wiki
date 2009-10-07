@@ -3,22 +3,22 @@
 = Introduction =
 
 This is a first draft of the schedule. Team members, please modify the format in any way that you think useful. Also, dates are guesses in some instances, or ???? if I don't have enough data to usefully guess. 
-XXXX indicates job done. Well done. 
+"Done" indicates job done. Well done. 
 "Track" is my notion for identifying dependencies. We know that there are two parallel tracks already: projecting and prioritizing features to be developed ("features") and refactoring the current code ("refactor"). This is probably not the right way to do this, I would like some better suggestions. 
 "Preliminary schedule" will be approved when we have all signed off on this schedule page, and each of the ???? items has at least one finite, boolean subtask with a definite near-term (<2 weeks) completion date. I suggest that the short stories may qualify as a subtask for "client meeting". 
 
 = Details =
 
 ||Date||Short name||Responsibility||Track||
-||XXXXXX||set up google code page||Andrew||main||
-||XXXXXX||post BW's code||Jon||main||
-||10/8/09||preliminary schedule||team consensus||main||
-||??????||Client meeting: features for February||team||[Features]features||
-||10/14/09||1 story from each team member||team||[Features]features||
-||10/21/09||2 more stories from each team member||team||[Features]features||
-||??????||develop build system||????||main||
+||Done||set up google code page||Andrew||main||
+||Done||post BW's code||Jon||main||
+||10/8/09||[Schedule Preliminary schedule]||team consensus||main||
+||??????||Client meeting: features for February||team||[Features features]||
+||10/14/09||1 story from each team member||team||[Features features]||
+||10/21/09||2 more stories from each team member||team||[Features features]||
+||??????||develop [build build system]||????||main||
 ||10/8/09||Vision Statement||Andrew||main||
-||??????||Refactor Code||team||[Refactor]refactor||
+||??????||[Refactor Refactor Code]||team||[Refactor refactor]||
 ||1/30/10||Functioning program with four UIs||team||main||
 
 = Discussion =
