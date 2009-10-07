@@ -1,3 +1,4 @@
+
 = Comments and questions from the professor = 
 
 ----
@@ -8,11 +9,7 @@ The wiki needs a schedule page, so that all the things you said at your first me
 
 Reply from team:
 
-Ask, and it shall be given unto you. [Schedule Schedule page] Don't try it with a pony, though, wise guy. (For that, try python. I think 
-{{{
-import pony
-}}}
-should do the trick.)
+Ask, and it shall be given unto you. [Schedule Schedule page]
 ----
 
 === October 7 ===
