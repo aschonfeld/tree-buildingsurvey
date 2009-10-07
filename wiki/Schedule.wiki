@@ -13,12 +13,12 @@ XXXX indicates job done. Well done.
 ||XXXXXX||set up google code page||Andrew||main||
 ||XXXXXX||post BW's code||Jon||main||
 ||10/8/09||preliminary schedule||team consensus||main||
-||??????||Client meeting: features for February||team||features||
-||10/14/09||1 story from each team member||team||features||
-||10/21/09||2 more stories from each team member||team||features||
+||??????||Client meeting: features for February||team||[Features]features||
+||10/14/09||1 story from each team member||team||[Features]features||
+||10/21/09||2 more stories from each team member||team||[Features]features||
 ||??????||develop build system||????||main||
 ||10/8/09||Vision Statement||Andrew||main||
-||??????||Refactor Code||team||refactor||
+||??????||Refactor Code||team||[Refactor]refactor||
 ||1/30/10||Functioning program with four UIs||team||main||
 
 = Discussion =
