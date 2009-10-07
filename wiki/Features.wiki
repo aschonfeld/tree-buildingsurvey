@@ -1,0 +1,13 @@
+#summary For discussion of items on the Features track
+
+= Introduction =
+
+Tentative page, ignore if not needed. 
+
+If we need a place for discussion of work and progress on the features track, this would be it. I'm not sure we do, but since I've made one for refactoring, I thought I'd put this one up. 
+
+
+= Details =
+
+
+Have you noticed I always leave the headings at the googlepages defaults? Bad habit. 
