@@ -15,7 +15,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||Done||post BW's code||Jon||main||9/30||
 ||10/8/09??||Current version up and running somewhere||Andrew||main||||
 ||10/8/09||[Schedule Preliminary schedule]||team consensus||main||||
-||??????||Client meeting: features for February||team||[Features features]||||
+||??????||schedule client meeting: discuss and prioritize features||team||[Features features]||||
 ||10/14/09||1 story from each team member||team||[Features features]||||
 ||10/21/09||2 more stories from each team member||team||[Features features]||||
 ||??????||develop [build build system]||????||main||||
