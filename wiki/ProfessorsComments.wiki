@@ -1,5 +1,17 @@
-
 = Comments and questions from the professor = 
+
+----
+
+=== October 8 ===
+
+Your (draft) vision statement is all about you and not at all about what you're trying to build. That's the important part. After you've declared it, you can add a sentence about what good engineers you intend to be.
+
+
+----
+
+=== October 7 ===
+
+Thanks for the schedule page. I suggest another column for "Done" rather than overwriting the due date when the item is done. Keeping the original due date helps when you look back to see if you were meeting the schedule you set - particularly if you put the actual completion date in the "Done" column.
 
 ----
 
@@ -10,10 +22,3 @@ The wiki needs a schedule page, so that all the things you said at your first me
 Reply from team:
 
 Ask, and it shall be given unto you. [Schedule Schedule page]
-----
-
-=== October 7 ===
-
-Thanks for the schedule page. I suggest another column for "Done" rather than overwriting the due date when the item is done. Keeping the original due date helps when you look back to see if you were meeting the schedule you set - particularly if you put the actual completion date in the "Done" column.
-
-----
