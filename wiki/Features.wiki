@@ -16,4 +16,4 @@ For ease of discussion, their central characters should have distinctive names, 
 
 =List of Stories=
 
- *[The_Story_of_Mike the story of Mike]
+ * [The_Story_of_Mike the story of Mike]
