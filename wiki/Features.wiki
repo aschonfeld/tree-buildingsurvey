@@ -11,12 +11,9 @@ For example, we might use this space to discuss how we prioritize the features d
 
 = User Stories =
 User stories provide a means for describing our vision of how the software we are developing is to be used. They provide a language for discussing proposed features and a basis for more detailed and formalized characterization of those features. 
-For ease of discussion, their central characters should have distinctive names, as that's how we're likely to refer to them. <br>
+For ease of discussion, their central characters should have distinctive names, as that's how we're likely to refer to them. 
+
 
 =List of Stories=
-<ul>
-<li>[The_Story_of_Mike the story of Mike]
-</ul>
 
-
-
+ *[The_Story_of_Mike the story of Mike]
