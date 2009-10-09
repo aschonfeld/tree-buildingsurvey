@@ -3,4 +3,9 @@
 = Vision Statement =
 
 *
-  Our group's vision is to become a leader in software development.  Being a leader means gaining client satisfaction by providing on-time delivery of innovative, up-to-date, under budget, working software applications.
+  Our group's vision is to become a leader in software development.  Being a leader means gaining client satisfaction by providing on-time delivery of innovative, up-to-date, under budget, working software applications.*
+<br>
+*The TBS group envisions a world in which research in biology education is facilitated by appropriate software tools for eliciting students' intuitions on biological classifications.*
+
+= Discussion = 
+Prof. Bolker's objections seem to stem from the fact that this doesn't actually relate to the product. Since this group exists precisely and solely to work on this project, that seems a valid objection. "Your vision statement should describe your vision for the deliverable." Well and good, my attempt is above. Please amend. -jpk
