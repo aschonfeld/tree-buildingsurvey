@@ -4,6 +4,14 @@
 
 ----
 
+=== October 10 ===
+
+This might be useful, at least for a first test. No good for exercising Java, though.
+
+http://browsershots.org
+
+----
+
 === October 8 ===
 
 Your (draft) vision statement is all about you and not at all about what you're trying to build. Moreover, it's all completely generic boilerplate. Sounds like Dilbert.
