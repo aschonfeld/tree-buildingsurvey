@@ -1,30 +1,31 @@
---you can run this script after logging into mysql command-line by running this command
+--  you can run this script after logging into mysql command-line by running this command
 
---source [location of file]\phylogenySurvey.sql
+--  source [location of file]\phylogenySurvey.sql
 
--- e.g. "c:\cs682\phylogenySurvey.sql"
+--  e.g. "c:\cs682\phylogenySurvey.sql"
 
 
---create trees database
+-- create trees database
 create database trees;
 
---create grade database
+-- create grade database
 create database grades;
 use grades;
 
---create assignments table
+-- create assignments table
 create table assignments (number int(11) not null primary key default 0,
 name varchar(30) null);
 
---insert row for "Diversity of Life Survey (15)" project[this will be used by TreeSurvey.pl]
+-- insert row for "Diversity of Life Survey (15)" project[this will be used by TreeSurvey.pl]
 insert into assignments (name) values ("Diversity of Life Survey (15)");
 
---create instructors table
+-- create instructors table
 create table instructors (name varchar(30) not null primary key default '',
 password varchar(30) null,
 class_list varchar(50) null);
 
---create students table
+-- create students table
+use trees;
 create table students (name varchar(30) not null primary key default '',
 section varchar(20) null,
 TA varchar(20) null,
@@ -72,7 +73,19 @@ alter table students add grade39 varchar(10) null after grade38;
 alter table students add grade40 varchar(10) null after grade39;
 alter table students add grade41 varchar(10) null after grade40;
 
---insert student test data
+-- now start creation of trees database
+use trees;
+
+-- create student_data table
+create table student_data (name varchar(50) null,
+date datetime null,
+tree mediumblob null,
+Q1 blob null,
+Q2 blob null,
+Q3 varchar(50) not null default '0,0,0,0,0,0,0,0,0,0,0,0,0');
+
+
+-- insert student test data
 insert into student_data values ('Lincoln,Barbara Elizabeth',null,'','','','');
 insert into student_data values ('Steinberg,David J',null,'','','','');
 insert into student_data values ('Ramos,Saimom Andre',null,'','','','');
@@ -80,11 +93,11 @@ insert into student_data values ('Petersen,Elizabeth Nancy',null,'','','','');
 insert into student_data values ('Ceccarini,Amber Teren',null,'','','','');
 insert into student_data values ('Farhangmehr,Taraneh',null,'','','','');
 insert into student_data values ('Perry,Lea June',null,'','','','');
-insert into student_data values ('Munir,Kiara J'Nai',null,'','','','');
-insert into student_data values ('Aragon-Mejia,Monica A',null,'','','','');
+insert into student_data values ('Munir,Kiara JNai',null,'','','','');
+insert into student_data values ('AragonMejia,Monica A',null,'','','','');
 insert into student_data values ('Naseer,Nida',null,'','','','');
 insert into student_data values ('Olejnik,Adam E.',null,'','','','');
-insert into student_data values ('O'Brien,Anya Elizabeth',null,'','','','');
+insert into student_data values ('OBrien,Anya Elizabeth',null,'','','','');
 insert into student_data values ('Hunter,Jennifer A',null,'','','','');
 insert into student_data values ('Julian,Amy S',null,'','','','');
 insert into student_data values ('Bash,Mollie',null,'','','','');
@@ -238,18 +251,7 @@ insert into student_data values ('Medina-Rivera,Katy L',null,'','','','');
 insert into student_data values ('Defendre,Marie C',null,'','','','');
 insert into student_data values ('Gittins Stone,Daniel Ian',null,'','','','');
 
---now start creation of trees database
-use trees;
-
---create student_data table
-create table student_data (name varchar(50) null,
-date datetime null,
-tree mediumblob null,
-Q1 blob null,
-Q2 blob null,
-Q3 varchar(50) not null default '0,0,0,0,0,0,0,0,0,0,0,0,0');
-
---insert student test data
+-- insert student test data
 insert into students(name,section,password) values ('Lincoln,Barbara Elizabeth','A','pass');
 insert into students(name,section,password) values ('Steinberg,David J','A','pass');
 insert into students(name,section,password) values ('Ramos,Saimom Andre','A','pass');
@@ -257,11 +259,11 @@ insert into students(name,section,password) values ('Petersen,Elizabeth Nancy','
 insert into students(name,section,password) values ('Ceccarini,Amber Teren','A','pass');
 insert into students(name,section,password) values ('Farhangmehr,Taraneh','A','pass');
 insert into students(name,section,password) values ('Perry,Lea June','A','pass');
-insert into students(name,section,password) values ('Munir,Kiara J'Nai','A','pass');
-insert into students(name,section,password) values ('Aragon-Mejia,Monica A','A','pass');
+insert into students(name,section,password) values ('Munir,Kiara JNai','A','pass');
+insert into students(name,section,password) values ('AragonMejia,Monica A','A','pass');
 insert into students(name,section,password) values ('Naseer,Nida','A','pass');
 insert into students(name,section,password) values ('Olejnik,Adam E.','A','pass');
-insert into students(name,section,password) values ('O'Brien,Anya Elizabeth','A','pass');
+insert into students(name,section,password) values ('OBrien,Anya Elizabeth','A','pass');
 insert into students(name,section,password) values ('Hunter,Jennifer A','A','pass');
 insert into students(name,section,password) values ('Julian,Amy S','A','pass');
 insert into students(name,section,password) values ('Bash,Mollie','A','pass');
@@ -416,7 +418,7 @@ insert into students(name,section,password) values ('Defendre,Marie C','A','pass
 insert into students(name,section,password) values ('Gittins Stone,Daniel Ian','A','pass');
 
 
---create user, treesurvey
+-- create user, treesurvey
 use mysql;
 insert into user (Host,User,Password) VALUES ('localhost','treesurvey',PASSWORD('tr335urvey'));
 grant all privileges on grades.* to treesurvey@localhost;
