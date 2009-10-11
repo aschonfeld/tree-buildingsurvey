@@ -28,6 +28,13 @@ To determine the effect of user interface on student response, vary the ease wit
 ===Notes and observations===
   * For "current interface" above, it is possible that we will modify other aspects of the UI. The important thing is that the final product be capable of presenting two UIs which differ from each other only in the means of creating a node. -jk
 
+==Variable: editing of objects(nodes, links)==
+
+Currently user interface characteristic which could be affecting student response is the ease with which it takes in editing nodes. The current implementation has no ability to edit nodes or links made by the user.  The only option is to delete the object and start again from scratch.  A possible option to increase the ease of editing would be to add clickability to nodes & connections.
+
+===Notes and observations===
+  * One option for nodes would be to have a menu of options be displayed when the user double clicks it.  
+  * The option would be that, going along with directional links option, the user could double click a link to reverse the direction.
 
 ==2X2 testing==
 If the purpose of varying the UI that the student sees is to determine the conditions which elicit the best performance on the Phylogeny Survey - without prompting the correct answers - then it seems reasonable to prepare a model whereby students may be assigned one of four conditions, as indicated by the 2X2 matrix below. 
