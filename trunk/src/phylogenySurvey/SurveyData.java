@@ -255,6 +255,7 @@ public class SurveyData {
  * actions taken. If this is not going to be utilized, the same effect
  * could be achieved by maintaining only two states - "now" and "now
  * minus 1". 
+ */
 	public String undo() {
 		if (historyList.size() < 2) {
 			return null;
