@@ -8,4 +8,5 @@
 *The TBS group envisions a world in which research in biology education is facilitated by appropriate software tools for eliciting students' intuitions on biological classifications.*
 
 = Discussion = 
-Prof. Bolker's objections seem to stem from the fact that this doesn't actually relate to the product. Since this group exists precisely and solely to work on this project, that seems a valid objection. "Your vision statement should describe your vision for the deliverable." Well and good, my attempt is above. Please amend. -jpk
+  * Prof. Bolker's objections seem to stem from the fact that this doesn't actually relate to the product. Since this group exists precisely and solely to work on this project, that seems a valid objection. "Your vision statement should describe your vision for the deliverable." Well and good, my attempt is above. Please amend. -jpk
+  * Seems fine to me. Apparently my understanding of the vision statements of Coca-Cola, General Motors and McDonald's was pretty far off.  Thanks for taking the reins on it. -as
