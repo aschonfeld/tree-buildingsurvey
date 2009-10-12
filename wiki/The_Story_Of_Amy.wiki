@@ -1,4 +1,4 @@
-#summary Amy the freshman Biology 101 student uses TBS
+#summary Amy the Freshman Biology 101 Student Uses TBS
 
 = The Story Of Amy =
 
