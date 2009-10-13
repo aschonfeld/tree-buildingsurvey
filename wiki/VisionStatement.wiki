@@ -14,4 +14,5 @@
 = Discussion = 
   * Prof. Bolker's objections seem to stem from the fact that this doesn't actually relate to the product. Since this group exists precisely and solely to work on this project, that seems a valid objection. "Your vision statement should describe your vision for the deliverable." Well and good, my attempt is above. Please amend. -jpk
   * Seems fine to me. Apparently my understanding of the vision statements of Coca-Cola, General Motors and McDonald's was pretty far off.  Thanks for taking the reins on it. -as
-   * I still don't like it. Why must it use the passive voice ("is facilitated by")? Evolution is a controversial subject in society and a central one in biology. I think the vision statement should acknowledge that (at least implicitly). The current version never even uses the word. I hope Prof White doesn't say what you have is fine.
+
+   * I still don't like it. Why must it use the passive voice ("is facilitated by")? Evolution is a controversial subject in society and a central one in biology. I think the vision statement should acknowledge that (at least implicitly). The current version never even uses the word. I hope Prof White doesn't say what you have is fine. -eb
