@@ -4,7 +4,8 @@
 
 
    The TBS group envisions a world in which research in biology education is facilitated by appropriate software tools for eliciting students' intuitions on biological classifications.
-
+ 
+Revision, if desired: add to above "..., an area of importance in both practical teaching of biology and in broader understanding of the popular conception of the evolutionary relationships between diverse organisms."
 
 =Previous proposal:=
 
@@ -16,3 +17,5 @@
   * Seems fine to me. Apparently my understanding of the vision statements of Coca-Cola, General Motors and McDonald's was pretty far off.  Thanks for taking the reins on it. -as
 
    * I still don't like it. Why must it use the passive voice ("is facilitated by")? Evolution is a controversial subject in society and a central one in biology. I think the vision statement should acknowledge that (at least implicitly). The current version never even uses the word. I hope Prof White doesn't say what you have is fine. -eb
+ 
+  * The passive voice is an appropriate construction for the context, as it puts the attention on "research in biology education" - the real concern for example, of a potential funder, or indeed of the client - over the software, which is mostly interesting to us. However, it can be restated in the active -  "a world in which appropriate software tools facilitate research in biology education" - without damage to the sense. As for evolution, the addition suggested above might meet your concerns. 
