@@ -2,6 +2,14 @@
 
 = Comments and questions from the professor = 
 
+=== October 13 ===
+
+Items on the schedule should be listed in chronological order - it's hard to read the current version.
+
+There's very little on the schedule beyond the items for a few days ago. Refactoring architecture is due in two days. Will it be done?
+
+The vision statement is marked as done (pending client approval) but I don't think it's done at all!
+
 ----
 
 === October 10 ===
