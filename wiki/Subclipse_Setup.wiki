@@ -15,4 +15,4 @@
     # Right-click inside the 'SVN Repositories' tab
     # New > Rpository Location
     # Put the url that you can find on the google [http://code.google.com/p/tree-buildingsurvey/source/checkout code page] inside the 'Url' input box
-    # 
+    # Enter the auto-generated password from the google code site
