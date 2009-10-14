@@ -1,5 +1,9 @@
 #summary This is the technology stack for the current version of the code
 
+= [http://tortoisesvn.net/downloads SVN Tortoise Client] =
+
+= [http://subclipse.tigris.org/update_1.6.x/ Subclipse Eclipse Plug-in] =
+
 = [https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewProductDetail-Start?ProductRef=jre-6u16-oth-JPR@CDS-CDS_Developer Java 1.6] =
    [http://java.sun.com/javase/6/webnotes/install/jre/install-windows.html Installation Notes]
 
