@@ -1,0 +1,17 @@
+#summary Steps taken in order to setup Subclipse Eclipse Plug-in.
+
+= Setup =
+
+    # Open Eclipse
+    # Help > Software Updates
+    # Select the 'Available Software' Tab
+    # Click 'Add Site'
+    # Paste 'http://subclipse.tigris.org/update_1.6.x/' into Location
+    # Select the features available for installation
+    # Accept the license agreement and click install
+    # Restart Eclipse
+    # Window > Open Perspective > Other
+    # Select SVN Repository Exploring
+    # Right-click inside the 'SVN Repositories' tab
+    # New > Rpository Location
+    # Put the url that you can find on the google [ code page] inside the 'Url' input box
