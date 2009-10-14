@@ -1,4 +1,4 @@
-#This is the technology stack for the current version of the code
+#summary This is the technology stack for the current version of the code
 
 = [https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewProductDetail-Start?ProductRef=jre-6u16-oth-JPR@CDS-CDS_Developer Java 1.6] =
    [http://java.sun.com/javase/6/webnotes/install/jre/install-windows.html Installation Notes]
@@ -11,4 +11,3 @@
 = [http://www.activestate.com/activeperl/ ActivePerl 5.10.1] =
 
 = [http://tomcat.apache.org/download-60.cgi Tomcat 6.0.20] =
-
