@@ -1,7 +1,7 @@
-Wiki Pages:
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
   * [Features Project Features]
+    * [The_Story_of_Randy The Story Of Randy]
   * [RequirementsDiscussion Requirements Discussion]
   * [Resources Resources]
   * [Status Status]
