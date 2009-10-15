@@ -1,16 +1,3 @@
-<wiki:toc max_depth="1">
-  * [Schedule Project Schedule]
-  * [VisionStatement Vision Statement]
-  * [Features Project Features]
-    * [The_Story_of_Mike The Story Of Mike]
-    * [The_Story_of_Randy The Story Of Randy]
-    * [The_Story_of_Amy The Story Of Amy]
-  * [RequirementsDiscussion Requirements Discussion]
-  * [Resources Resources]
-  * [Status Status]
-  * [UI_Options UI Options]
-  * [Refactor Code Refactoring]
-  * [ProfessorsComments Professor Bolker's Comments]
-  * [Technology_Stack TBS Technology Stack]
-  * [Subclipse_Setup Subclipse Setup]
-</wiki:toc>
+{| style="margin-right:1em;" align="left"
+ | __TOC__
+ |}
