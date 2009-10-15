@@ -23,7 +23,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
 ||10/15/09||[VisionStatement Vision statement approved by client]||team||main||||
 ||10/15/09||architecture of refactored code||Glenn||[Refactor refactor]||||
-||10/18/09||develop [build build system]||10/18/09||main||||
+||10/18/09||develop build system||10/18/09||main||||
 ||10/20/09||2 more stories from each team member||team||[Features features]||||
 ||11/05/09||[Refactor Refactor Code]||team||[Refactor refactor]||||
 ||11/12/09||Venture Capital presentation||team||main||||
