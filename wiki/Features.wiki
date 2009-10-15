@@ -19,3 +19,4 @@ For ease of discussion, their central characters should have distinctive names, 
  * [The_Story_of_Mike The Story of Mike]
  * [The_Story_of_Randy The Story of Randy]
  * [The_Story_of_Amy The Story of Amy]
+ * [StoryOfEdwin The Story of Edwin]
