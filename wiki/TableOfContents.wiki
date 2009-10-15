@@ -15,4 +15,4 @@
   * Setup Information
     * [Subclipse_Setup Subclipse Setup]
     * [ApacheEclipseSetup Apache Eclipse Setup]
-    * [EclipsePerlCGIDeploymentSetup Eclipse Perl CGI Deployment]
+    * [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment]
