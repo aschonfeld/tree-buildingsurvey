@@ -1,4 +1,3 @@
-#labels Featured
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
   * [Features Project Features]
