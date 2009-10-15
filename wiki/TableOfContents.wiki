@@ -18,3 +18,4 @@
     * [ApacheEclipseSetup Apache Eclipse Setup]
     * [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment]
     * [PerlMySQLDBI Connect Perl To Your MySQL Server]
+    * [CommandLinePerl Running Perl From The Command Line In Eclipse]
