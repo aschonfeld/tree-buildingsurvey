@@ -20,7 +20,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/11/09||Setup local version of the Professor White's code||Andrew||main||10/11/09||
 ||10/13/09||1 story from each team member||team||[Features features]||10/13/09||
 ||10/13/09||All members of team have local builds||team||build||Not Completed||
-||10/15/09||UI stories prepared for team approval||Jon||UI||10/13/09||
+||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
 ||10/15/09||[VisionStatement Vision statement approved by client]||team||main||||
 ||10/15/09||architecture of refactored code||Glenn||[Refactor refactor]||||
 ||10/18/09||develop [build build system]||10/18/09||main||||
