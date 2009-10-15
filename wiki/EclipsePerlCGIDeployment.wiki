@@ -32,7 +32,7 @@
    </servlet-mapping>
    }}}
   # Save `web.xml`
-  # Go to `WebContent\META-INF' and create a new file `context.xml`
+  # Go to `WebContent\META-INF` and create a new file `context.xml`
   # Add the following:
   {{{
   <Context privileged="true">
