@@ -39,4 +39,7 @@
   </Context>
   }}}
   # Create the folder `WebContent\WEB-INF\cgi` and place a copy of `TreeSurvey.pl` inside that folder
+  # Right click the server that we created earlier in our [ApacheEclipseSetup Apache Setup] and add this project to it
+  # You should be able to view the script at the url `http://localhost:9080/[Project Name]/cgi-bin/TreeSurvey.pl`
+
   
