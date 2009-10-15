@@ -1,3 +1,4 @@
+#labels Featured
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
   * [Features Project Features]
@@ -11,4 +12,5 @@
   * [Refactor Code Refactoring]
   * [ProfessorsComments Professor Bolker's Comments]
   * [Technology_Stack TBS Technology Stack]
-  * [Subclipse_Setup Subclipse Setup]
+  * Setup Information
+    * [Subclipse_Setup Subclipse Setup]
