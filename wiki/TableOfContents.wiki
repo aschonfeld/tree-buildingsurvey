@@ -14,3 +14,5 @@
   * [Technology_Stack TBS Technology Stack]
   * Setup Information
     * [Subclipse_Setup Subclipse Setup]
+    * [ApacheEclipseSetup Apache Eclipse Setup]
+    * [EclipsePerlCGIDeploymentSetup Eclipse Perl CGI Deployment]
