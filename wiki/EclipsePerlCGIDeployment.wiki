@@ -3,5 +3,40 @@
 = Setup =
 
   # Open Eclipse
-  # 
-  # 
+  # File > New > Project
+  # Web > Dynamic Web Project
+  # Create a name for the project and click "Finish"
+  # Open WebContent\WEB-INF\web.xml inside the project just created
+  # Add the following:
+  
+  <servlet>
+       <servlet-name>cgi</servlet-name>
+       <servlet-class>org.apache.catalina.servlets.CGIServlet</servlet-class>
+       <init-param>
+         <param-name>debug</param-name>
+         <param-value>6</param-value>
+       </init-param>
+       <init-param>
+         <param-name>cgiPathPrefix</param-name>
+         <param-value>WEB-INF/cgi</param-value>
+       </init-param>
+        <init-param>
+          <param-name>passShellEnvironment</param-name>
+          <param-value>true</param-value>
+        </init-param>
+       <load-on-startup>5</load-on-startup>
+   </servlet>
+   <servlet-mapping>
+       <servlet-name>cgi</servlet-name>
+       <url-pattern>/cgi-bin/*</url-pattern>
+   </servlet-mapping>
+  
+  # Save web.xml
+  # Go to WebContent\META-INF and create a new file "context.xml"
+  # Add the following:
+
+  <Context privileged="true">
+  </Context>
+
+  # Create the folder WebContent\WEB-INF\cgi and place a copy of TreeSurvey.pl inside that folder
+  
