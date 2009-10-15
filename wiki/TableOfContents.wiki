@@ -5,7 +5,7 @@
     * [The_Story_of_Mike The Story Of Mike]
     * [The_Story_of_Randy The Story Of Randy]
     * [The_Story_of_Amy The Story Of Amy]
-    * [StoryofEdwin The Story of Edwin]
+    * [StoryOfEdwin The Story of Edwin]
   * [RequirementsDiscussion Requirements Discussion]
   * [Resources Resources]
   * [Status Status]
