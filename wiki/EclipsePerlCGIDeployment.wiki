@@ -6,7 +6,7 @@
   # File > New > Project
   # Web > Dynamic Web Project
   # Create a name for the project and click "Finish"
-  # Open WebContent\WEB-INF\web.xml inside the project just created
+  # Open "WebContent\WEB-INF\web.xml" inside the project just created
   # Add the following:
   {{{
   <servlet>
@@ -32,11 +32,11 @@
    </servlet-mapping>
    }}}
   # Save web.xml
-  # Go to WebContent\META-INF and create a new file "context.xml"
+  # Go to "WebContent\META-INF" and create a new file "context.xml"
   # Add the following:
   {{{
   <Context privileged="true">
   </Context>
   }}}
-  # Create the folder WebContent\WEB-INF\cgi and place a copy of TreeSurvey.pl inside that folder
+  # Create the folder "WebContent\WEB-INF\cgi" and place a copy of "TreeSurvey.pl" inside that folder
   
