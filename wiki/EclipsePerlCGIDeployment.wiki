@@ -1,0 +1,7 @@
+#summary Setting Up Your Local Deployment Of Professor White's Perl Script
+
+= Setup =
+
+  # Open Eclipse
+  # 
+  # 
