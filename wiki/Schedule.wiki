@@ -21,9 +21,10 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/13/09||1 story from each team member||team||[Features features]||10/13/09||
 ||10/13/09||All members of team have local builds||team||build||Not Completed||
 ||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
-||10/15/09||[VisionStatement Vision statement approved by client]||team||main||||
-||10/15/09||architecture of refactored code||Glenn||[Refactor refactor]||||
-||10/18/09||develop build system||10/18/09||main||||
+||10/15/09||[VisionStatement Vision statement approved by client]||team||main||10/15/09||
+||10/15/09||architecture of refactored code||Glenn||[Refactor refactor]||10/15/09||
+||10/18/09||develop build system||Andrew?||main||||
+||10/20/09||A selection of logos to choose from||Jon||marketing||||
 ||10/20/09||2 more stories from each team member||team||[Features features]||||
 ||11/05/09||[Refactor Refactor Code]||team||[Refactor refactor]||||
 ||11/12/09||Venture Capital presentation||team||main||||
@@ -32,10 +33,9 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 
 == Discussion ==
 
+10/15
+I assume that Professor White's vision statement is acceptable to all of us - accepted by acclamation, without dissent. 
+Andrew, if you agree that you're the lead on "develop build system", please erase the question mark. If not, we need to address that item. 
 
-Discussion of the mechanics of scheduling - if you want to elucidate or justify your changes, here's a place for that. Or if you want to comment without changing, also fine, although concrete changes are preferable. 
-Also, thoughts on the overall path can happen here. <br>
-Discussion of particular items should happen on dedicated pages. 
-<br>
 
 10/08 - I'm checking off two of the items for today as done. We have finite schedule items under "client meeting" (develop user stories) and "build" (local builds by Tuesday), and a terminal date for the refactor track (11/05). As for the vision statement, we have one. It's probably not one that will be signed off on, so it still needs work, but it's there. Next step is to make it approvable by next Thursday. <br>
