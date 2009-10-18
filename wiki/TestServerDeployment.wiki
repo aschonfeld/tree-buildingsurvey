@@ -8,16 +8,18 @@
   # Download [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html pscp] to `C:\`
   # Open up the command-line and goto `C:\`
   # To send your .pl file to the server, use the following: {{{pscp [location of perl script]\TreeSruvey.pl root@cluster.bio.whe.umb.edu:/var/www/cgi-bin/Test/}}}
-  # Enter the password, tr335erver
+  # Enter the password.
   # Do the same for the .jar file: `pscp [location of .jar]\phylogenySurvey.jar root@cluster.bio.whe.umb.edu:/var/www/html/Test/`
   # Download [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html putty]
   # Go to server, cluster.bio.whe.umb.edu
-  # use (User:root, Password:tr335erver)
+  # use (User:root, Password:********)
   # Type the following commands: `cd /var/www/cgi-bin/Test/
 chmod +x TreeSurvey.pl
 cd /var/www/html/Test/
 chown nobody:nobody phylogenySurvey.jar
 chmod +x phylogenySurvey.jar`
+
+(password available from Jon or Andrew)
 
   Now You should be able to access your updated code from the following link http://cluster.bio.whe.umb.edu/cgi-bin/Test/TreeSurvey.pl
 
