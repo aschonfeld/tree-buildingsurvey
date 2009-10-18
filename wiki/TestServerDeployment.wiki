@@ -1,30 +1,23 @@
 #summary Steps for Deploying Code to Test Server
 
   Before doing anything make sure that the follwing lines of code have been updated in the perl script that you will be deploying or else errors will occur.
-  # 
-  {{{$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TreeSurvey.pl"}}}
-  # 
-  {{{print "<applet code=\"phylogenySurvey.SurveyApplet.class\" \n";}}}
-  {{{print "archive=\"http://cluster.bio.whe.umb.edu/Test/phylogenySurvey.jar\" \n";}}}
-  {{{print "width=1020 height=1020 name=\"TreeApplet\">\n";}}}
+  # {{{$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TreeSurvey.pl"}}}
+  # {{{print "archive=\"http://cluster.bio.whe.umb.edu/Test/phylogenySurvey.jar\" \n";}}}
 
 = Steps =
   # Download [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html pscp] to `C:\`
   # Open up the command-line and goto `C:\`
-  # To send your .pl file to the server, use the following:
-  {{{pscp [location of perl script]\TreeSruvey.pl root@cluster.bio.whe.umb.edu:/var/www/cgi-bin/Test/}}}
+  # To send your .pl file to the server, use the following: {{{pscp [location of perl script]\TreeSruvey.pl root@cluster.bio.whe.umb.edu:/var/www/cgi-bin/Test/}}}
   # Enter the password, tr335erver
-  # Do the same for the .jar file'
-  {{{pscp [location of .jar]\phylogenySurvey.jar root@cluster.bio.whe.umb.edu:/var/www/html/Test/}}}
+  # Do the same for the .jar file: `pscp [location of .jar]\phylogenySurvey.jar root@cluster.bio.whe.umb.edu:/var/www/html/Test/`
   # Download [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html putty]
   # Go to server, cluster.bio.whe.umb.edu
   # use (User:root, Password:tr335erver)
-  # Type the following commands
-  {{{cd /var/www/cgi-bin/Test/}}}
-  {{{chmod +x TreeSurvey.pl}}}
-  {{{cd /var/www/html/Test/}}}
-  {{{chown nobody:nobody phylogenySurvey.jar}}}
-  {{{chmod +x phylogenySurvey.jar}}}
+  # Type the following commands: `cd /var/www/cgi-bin/Test/
+chmod +x TreeSurvey.pl
+cd /var/www/html/Test/
+chown nobody:nobody phylogenySurvey.jar
+chmod +x phylogenySurvey.jar`
 
   Now You should be able to access your updated code from the following link http://cluster.bio.whe.umb.edu/cgi-bin/Test/TreeSurvey.pl
 
