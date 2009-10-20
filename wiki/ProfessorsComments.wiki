@@ -2,6 +2,16 @@
 
 = Comments and questions from the professor = 
 
+=== October 20 ===
+
+The schedule shows the build system as complete. But I can't find out on this wiki how to get the latest version of the code from svn and build it and test it. (I do see the instructions for the technology stack, but not how those pieces go together.)
+
+You're misusing the downloads page. It should offer the latest version(s) of the working application, for people to download and install - code, documentation, installation instructions. The things there now are part of your internal development processes and belong elsewhere on the wiki.
+
+I have some quite detailed schedule specifications I'll suggest this afternoon in class.
+
+
+----
 === October 13 ===
 
 Items on the schedule should be listed in chronological order - it's hard to read the current version.
