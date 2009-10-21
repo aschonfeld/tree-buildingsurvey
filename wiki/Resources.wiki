@@ -11,7 +11,7 @@ Subversion book: http://svnbook.red-bean.com/
 
 More on subversion: To connect to the new branch as a separate project in Eclipse, this worked for me:
 
- # Create a new workspace. This may be optional, but the only way I was able to make Eclipse cerate the new project as a separate project was to do it in a new workspace.
+ # Create a new workspace. This may be optional, but the only way I was able to make Eclipse create the new project as a separate project was to do it in a new workspace.
  # Select "Import" under file menu
  # Select SVN/Checkout Projects From SVN as import source
  # Create a new repository location: 'https://tree-buildingsurvey.googlecode.com/svn/branches/rewrite'
