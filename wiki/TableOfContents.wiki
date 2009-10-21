@@ -2,6 +2,7 @@
   * [VisionStatement Vision Statement]
   * [Applets Test Applets]
   * [ArchitectureFirstDraft First Draft of Code Architecture]
+  * [ToyGUI Toy GUI: discussion and testing]
   * [Features Project Features]
     * [The_Story_of_Mike The Story Of Mike]
     * [The_Story_of_Randy The Story Of Randy]
