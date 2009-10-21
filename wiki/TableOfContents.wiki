@@ -1,5 +1,6 @@
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
+  * [Applets Test Applets]
   * [ArchitectureFirstDraft First Draft of Code Architecture]
   * [Features Project Features]
     * [The_Story_of_Mike The Story Of Mike]
