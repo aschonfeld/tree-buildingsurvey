@@ -9,6 +9,17 @@ Subversion quick reference: http://www.cs.put.poznan.pl/csobaniec/Papers/svn-ref
 
 Subversion book: http://svnbook.red-bean.com/
 
+More on subversion: To connect to the new branch as a separate project in Eclipse, this worked for me:
+
+ # Create a new workspace. This may be optional, but the only way I was able to make Eclipse cerate the new project as a separate project was to do it in a new workspace.
+ # Select "Import" under file menu
+ # Select SVN/Checkout Projects From SVN as import source
+ # Create a new repository location: 'https://tree-buildingsurvey.googlecode.com/svn/branches/rewrite'
+ # Select it for checkout. It'll offer to use a new project setup wizard, you can try that if you want - I just did a bare project create, it seemed to work.
+ # That should get you what's there, which is nothing at the moment, just some junk to test this all on. Let me know if there's any trouble. 
+ # Be aware that this is probably not the best procedure under normal branching conditions, but this ain't them, so we'll do it this way for now. 
+
+
 =JDOM=
 JDOM API: http://www.jdom.org/docs/apidocs/index.html
 
