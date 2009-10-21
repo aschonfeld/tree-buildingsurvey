@@ -1,3 +1,7 @@
+//Thing.java: with View.java, a demo of Observable/Observer relation. 
+//NOT part of tbs package!
+
+
 import java.util.Observable;
 import java.awt.*;
 
