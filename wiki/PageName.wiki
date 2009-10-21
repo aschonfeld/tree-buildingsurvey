@@ -1,2 +1,0 @@
-<h1/>
-<applet code="phylogenySurvey.SurveyApplet.class" archive="http://cluster.bio.whe.umb.edu/Test/phylogenySurvey.jar" width=1020 height=1020 name="TreeApplet"/>
