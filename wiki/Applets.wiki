@@ -1,2 +1,4 @@
 Here are links to different versions of Applets:
   * [http://cluster.bio.whe.umb.edu/applet.html Version 1.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
+
+  * [http://cluster.bio.whe.umb.edu/test_applet.html Test Applet] <br> Testing a simpler applet, to make sure that works. 
