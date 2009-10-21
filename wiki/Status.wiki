@@ -4,6 +4,8 @@
 Informal intra-group channel. Observations, questions, agenda items, own-horn-tootings, and such belong here. Open channel. Sign your comments. 
 Most recent postings to the top. 
 
+10/21: Posted two classes to the "rewrite" branch, "Thing.java" and "View.java". I wrote these to see if I could make the Observer/Observable relation do something. This is the simplest possible exercise of this pair I can imagine: View creates a "Thing" object with a location, then tells it to change its 'location'. This tells View's update to report Thing's current location. These files can eventually be discarded or archived, posted for info only. 
+
 10/20: Rebooting the project. Decision made to discard previous code and rebuild the functionality, approximating as closely as possible the behavior of the version supplied by Professor White. This decision based on the radical nature of the changes required to implement the desired behavior, which would amount to a near-total rewrite. Initial step will be to construct a 4-panel GUI capable of reflecting simple data in four different forms. Successive steps must still be scheduled; detailing this is the next critical event. 
 
 
