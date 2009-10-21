@@ -1,4 +1,4 @@
 Here are links to different versions of Applets:
   * [http://cluster.bio.whe.umb.edu/applet.html Version 1.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
 
-  * [http://cluster.bio.whe.umb.edu/test_applet.html Test Applet] <br> Testing a simpler applet, to make sure that works. 
+  * [http://cluster.bio.whe.umb.edu/test_applet.html Test Applet] <br> Testing a simpler applet, to make sure that works. <br> (after testing) It seems to - the intermittent failure of some graphic elements to appear is reproduced on another server, so it's an error in my applet, not in the server. So we can assume that the failure of the White applet to load is due to a fault in the server configuration, but in the code itself. This is good. 
