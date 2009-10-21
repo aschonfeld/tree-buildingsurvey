@@ -2,6 +2,12 @@
 
 = Comments and questions from the professor = 
 
+=== October 21 ===
+
+I'm glad to see test applets loaded. I seem to find several, in several places. They need to be better documented. I have some suggestions. First, put all the links to applets on just one page. Second, post them in reverse chronological order (newest first). Finally, make sure that each applet is self documenting, so that when someone is looking at s/he  can know the version number and the date (that can be a simple text field in the applet, or the title of the containing web page). Then when a bug is reported the report can (and should!) say which version the bug was detected in. That will save time when versions are superseded since some old bugs can be marked as moot when they fixed themselves.
+
+----
+
 === October 20 ===
 
 The schedule shows the build system as complete. But I can't find out on this wiki how to get the latest version of the code from svn and build it and test it. (I do see the instructions for the technology stack, but not how those pieces go together.)
