@@ -1,0 +1,18 @@
+<project name="TreeBuildingSurvey" default="jarfile">
+	
+    <target name="compile" description="Compiles the code">
+    	    <javac srcdir="src/" destdir="bin/"/>
+    </target>
+
+	<target name="jarfile" depends="compile" description="makes jar file">
+	    <jar destfile="bin/TBSRun.jar">
+	        <manifest>
+	        	    <attribute name="Main-Class" value="TBS.TBSApplet"/>
+	        </manifest>
+	    	    <fileset dir="bin/"/>
+	    	    <fileset dir="lib/"/>
+	    </jar>
+        <move file="bin/TBSRun.jar" todir="."/>
+    </target>
+	
+</project>
