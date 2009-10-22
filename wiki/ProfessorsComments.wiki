@@ -2,6 +2,16 @@
 
 = Comments and questions from the professor = 
 
+=== October 22 ===
+
+The Applets page is better now. It still needs work. The link there to version 0.1 is to a zip file. There should also be a link to a site where the applet is served, so I can test it without downloading and installing it.
+
+The comments there about what is broken should be entered as bugs on the Issues page. If you don't want to do that you should fix the problems before you check in the code and post the version for testing.
+
+The schedule still needs work - as it does for the other teams too. In class today I will suggest a new model for schedule maintenance.
+
+----
+
 === October 21 ===
 
 I'm glad to see test applets loaded. I seem to find several, in several places. They need to be better documented. I have some suggestions. First, put all the links to applets on just one page. Second, post them in reverse chronological order (newest first). Finally, make sure that each applet is self documenting, so that when someone is looking at s/he  can know the version number and the date (that can be a simple text field in the applet, or the title of the containing web page). Then when a bug is reported the report can (and should!) say which version the bug was detected in. That will save time when versions are superseded since some old bugs can be marked as moot when they fixed themselves.
