@@ -1,6 +1,7 @@
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
   * [Applets Test Applets]
+    * [http://cluster.whe.bio.umb.edu/applet.html Version 1.0]
   * [ArchitectureFirstDraft First Draft of Code Architecture]
   * [ToyGUI Toy GUI: discussion and testing]
   * [Features Project Features]
