@@ -1,9 +1,14 @@
 package TBS;
 
+import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
+import java.awt.geom.*;
+import java.awt.font.*;
+import java.net.*;
 import java.util.*;
 import java.lang.*;
 import java.io.*;
@@ -19,13 +24,13 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	public void mouseDragged(MouseEvent e){
 		int xPos = e.getX();
 	    int yPos = e.getY();
-	    //System.out.println("mouseDragged " + xPos + " " + yPos);
+	    System.out.println("mouseDragged " + xPos + " " + yPos);
 	}
 	
 	public void mouseMoved(MouseEvent e){
 		int xPos = e.getX();
 	    int yPos = e.getY();
-	    //System.out.println("mouseMoved " + xPos + " " + yPos);
+	    System.out.println("mouseMoved " + xPos + " " + yPos);
 	}
 	
 	public void actionPerformed(ActionEvent e) {

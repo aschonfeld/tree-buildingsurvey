@@ -1,5 +1,6 @@
 package TBS;
 
+import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
@@ -7,20 +8,26 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.awt.geom.*;
 import java.awt.font.*;
+import java.net.*;
 import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public class TBSView extends JPanel {
+public class TBSView extends JComponent {
 	
 	private TreeMap<String, BufferedImage> organismNameToImage;
+	private TBSController controller;
 	
-	public TBSView(TreeMap organismNameToImageArgument) { // , ImageObserver imageObserverArgument) {
-		organismNameToImage = organismNameToImageArgument;
-		// imageObserver = imageObserverArgument;
+	public TBSView(TreeMap<String, BufferedImage> oNTM) {
+		organismNameToImage = oNTM;
+		controller = new TBSController();
+        addMouseListener(controller);
+        addMouseMotionListener(controller);
 	}
 	
-	public void render(Graphics g, ImageObserver imageObserver) {
+	protected void paintComponent(Graphics g) {
+		//organismNameToImage = new TreeMap();
+		ImageObserver imageObserver = null;
 		Graphics2D g2 = (Graphics2D) g;
 		int currentX = 0;
 		int currentY = 0;
@@ -61,10 +68,7 @@ public class TBSView extends JPanel {
                   bounds.getHeight());
    		g2.draw(bounds);
 	}
-
 	
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		render(g, null);
-    }
+
 }
+
