@@ -29,6 +29,8 @@ public class TBSView extends JComponent {
 		//organismNameToImage = new TreeMap();
 		ImageObserver imageObserver = null;
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.black);
+		g2.fillRect(0, 0, getWidth(), getHeight());
 		int currentX = 0;
 		int currentY = 0;
 		String organismName = "";

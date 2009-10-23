@@ -44,7 +44,7 @@ public class TBSApplet extends JApplet {
                 parseLine = line.split(",");
                 organismName = parseLine[0];
                 organismImageFilename = parseLine[1];
-                System.out.println(organismName + " " + organismImageFilename);
+                // System.out.println(organismName + " " + organismImageFilename);
                 organismImageFullPath = ("images/" + organismImageFilename);
 				URL imageURL=new URL(getCodeBase(), organismImageFullPath);     
 				URLConnection imageconn=(URLConnection) imageURL.openConnection();    

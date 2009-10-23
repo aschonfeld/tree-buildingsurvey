@@ -24,17 +24,17 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	public void mouseDragged(MouseEvent e){
 		int xPos = e.getX();
 	    int yPos = e.getY();
-	    System.out.println("mouseDragged " + xPos + " " + yPos);
+	    //System.out.println("mouseDragged " + xPos + " " + yPos);
 	}
 	
 	public void mouseMoved(MouseEvent e){
 		int xPos = e.getX();
 	    int yPos = e.getY();
-	    System.out.println("mouseMoved " + xPos + " " + yPos);
+	    //System.out.println("mouseMoved " + xPos + " " + yPos);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-        System.out.println(e.getActionCommand()); 
+        //System.out.println(e.getActionCommand()); 
     }
 	
 }
