@@ -1,5 +1,5 @@
 Here are links to different versions of Applets:
 
-    * [http://tree-buildingsurvey.googlecode.com/files/MVC_Applet_v0.1.zip Version 0.1 of Rewritten Applet]<br>Unzip the files from "MVC_Applet_v0.1.zip"<br>The README file gives instructions to run it<br>The source code is available under "branches/rewrite/" in the SVN<br>
+    * [http://www.cs.umb.edu/~gthelen/applet.html Version 0.1 of Rewritten Applet]<br>Works Remotely Now.<br>
 
   * [http://cluster.bio.whe.umb.edu/applet.html Version 0.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
