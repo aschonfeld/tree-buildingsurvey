@@ -36,13 +36,13 @@ Currently user interface characteristic which could be affecting student respons
   * One option for nodes would be to have a menu of options be displayed when the user double clicks it.  
   * The option would be that, going along with directional links option, the user could double click a link to reverse the direction.
 
-==Variable: presence or absence of text field in nodes
+==Variable: presence or absence of text field in nodes==
   The current interface solicits a text label on creating a Node. Does this affect the students' judgement about the task, and therefore about the correct answers?
 
 ===Conditions:===
   * Two conditions, identical except in the form of the Node object; one condition, as in the present arrangement, solicits a label when creating a node, the other woud simply show a solid object which has a parent and two descendants. 
 
---Discussion==
+==Discussion==
   When the program asks the student for a text label in a node, it's implicitly asking for an answer that the student is probably not prepared to give, if they have the correct answer. Furthermore, it's not clear what the question is, and the question can't be stated (is this true?) without prejudicing the experiment. It can be said that the text label gives the student a chance to justify their choice, but it's possible that by asking the justification, the survey steers the student towards answers they know how to justify (ie, presence of wings) rather than ones they suspect but haven't the language for (ie, presence of nipples). -jk
 
 
