@@ -1,5 +1,5 @@
 Here are links to different versions of Applets:
 
-    * [http://www.cs.umb.edu/~gthelen/applet.html Version 0.1 of Rewritten Applet]<br>Works Remotely Now.<br>
+    * [http://www.cs.umb.edu/~kiparsky/Applet01.html Version 0.1 of Rewritten Applet]<br>Works remotely on MacOSX as well as Windows.<br>
 
   * [http://cluster.bio.whe.umb.edu/applet.html Version 0.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
