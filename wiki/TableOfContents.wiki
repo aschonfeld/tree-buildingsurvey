@@ -6,7 +6,6 @@
     * [http://www.cs.umb.edu/~skones1/applet01.html Version 0.1]
     * [http://www.cs.umb.edu/~skones1/applet00.html Version 0.0]
   * [ArchitectureFirstDraft First Draft of Code Architecture]
-  * [ToyGUI Toy GUI: discussion and testing]
   * [Features Project Features]
     * [The_Story_of_Mike The Story Of Mike]
     * [The_Story_of_Randy The Story Of Randy]
