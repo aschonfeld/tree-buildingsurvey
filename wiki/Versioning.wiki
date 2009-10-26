@@ -10,5 +10,5 @@
   * *0.6*: Empty nodes can be labeled
   * *0.7*: Connections can be created. Deleting a node deletes connections to/from node
   * *0.8*: Connections selectable, can be deleted
-  * *0.9*: Trees can be saved to database and loaded from database
-  * *1.0*: Menu allows users to select options for UI display and mouse behavior
+  * *0.9*: Menu allows users to select options for UI display and mouse behavior
+  * *1.0*: Trees can be saved to database and loaded from database
