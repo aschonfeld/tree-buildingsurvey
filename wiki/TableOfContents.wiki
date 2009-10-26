@@ -14,7 +14,6 @@
   * [Resources Resources]
   * [Status Status]
   * [UI_Options UI Options]
-  * [Refactor Code Refactoring]
   * [ProfessorsComments Professor Bolker's Comments]
   * [Technology_Stack TBS Technology Stack]
   * Setup Information
