@@ -2,4 +2,4 @@ Here are links to different versions of Applets:
 
     * [http://www.cs.umb.edu/~kiparsky/Applet01.html Version 0.1 of Rewritten Applet]<br>Works remotely on MacOSX as well as Windows.<br>
 
-  * [http://cluster.bio.whe.umb.edu/applet.html Version 0.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
+  * [http://www.cs.umb.edu/~skones1/applet00.html Version 0.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
