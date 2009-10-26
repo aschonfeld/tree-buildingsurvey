@@ -1,6 +1,6 @@
   * [Schedule Project Schedule]
   * [VisionStatement Vision Statement]
-  * [Versioning Applet Versions]
+  * [Versioning Applet Version Info]
   * [Applets Test Applets]
     * [http://www.cs.umb.edu/~skones1/applet01.html Version 0.1]
     * [http://www.cs.umb.edu/~skones1/applet00.html Version 0.0]
