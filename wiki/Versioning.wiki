@@ -2,13 +2,13 @@
 
 = Applet Versions =
 
-0.1 Display Organism Images and Text
-0.2 Draggable Organisms
-0.3 Distinguish between available organisms (on the left) and organisms nodes (on the right)
-0.4 Empty nodes can be created
-0.5 Nodes can be deleted
-0.6 Empty nodes can be labeled
-0.7 Connections can be created. Deleting a node deletes connections to/from node
-0.8 Connections selectable, can be deleted
-0.9 Trees can be saved to database and loaded from database
-1.0 Menu allows users to select options for UI display and mouse behavior
+  * *0.1*: Display Organism Images and Text
+  * *0.2*: Draggable Organisms
+  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right)
+  * *0.4*: Empty nodes can be created
+  * *0.5*: Nodes can be deleted
+  * *0.6*: Empty nodes can be labeled
+  * *0.7*: Connections can be created. Deleting a node deletes connections to/from node
+  * *0.8*: Connections selectable, can be deleted
+  * *0.9*: Trees can be saved to database and loaded from database
+  * *1.0*: Menu allows users to select options for UI display and mouse behavior
