@@ -26,7 +26,9 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/18/09||develop build system||Andrew||main||10/17/09||
 ||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
-||10/22/09||Applet Version 0.1||Glenn||main||10/25/09||
+||10/25/09||Applet Version 0.1||Glenn||Versioning||10/25/09||
+||10/25/09||Applet Version 0.2||Glenn||main||||
+||10/25/09||Applet Version 0.3||Glenn||main||||
 ||11/12/09||Venture Capital presentation||team||main||||
 ||1/30/10||Functioning program with multiple UIs||team||main||||
 ||??????||schedule client meeting: discuss and prioritize features||team||[Features features]||||
