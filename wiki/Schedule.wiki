@@ -22,16 +22,13 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/13/09||All members of team have local builds||team||build||Not Completed||
 ||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
 ||10/15/09||[VisionStatement Vision statement approved by client]||team||main||10/15/09||
-||10/15/09||architecture of refactored code||Glenn||[Refactor refactor]||10/15/09||
+||10/15/09||architecture of redesigned code||Glenn||[main]||10/15/09||
 ||10/18/09||develop build system||Andrew||main||10/17/09||
 ||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
-||10/20/09||Decide if more short stories are needed||team||[Features features]||||
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
-||10/22/09||Simple 4-panel GUI model||Glenn||Refactor||||
-||10/22/09||Test steps for GUI model||Jon||Refactor||||
-||11/05/09||[Refactor Refactor Code]||team||[Refactor refactor]||||
+||10/22/09||Applet Version 0.1||Glenn||main||10/25/09||
 ||11/12/09||Venture Capital presentation||team||main||||
-||1/30/10||Functioning program with four UIs||team||main||||
+||1/30/10||Functioning program with multiple UIs||team||main||||
 ||??????||schedule client meeting: discuss and prioritize features||team||[Features features]||||
 
 == Discussion ==
