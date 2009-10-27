@@ -6,7 +6,7 @@
 
 I like the documentation on the page hosting applet version 0.0. Version 0.1 doesn't have any when I visit it from the applet wiki page, but does when I visit it from the wiki table of contents. You should establish a consistent methodology (with a template) for releasing versions. Hosting seems to be from Andrew's home page at umb, which is OK as long as all the versions end up there. Or you can use the UMB cs account at fatcow.
 
-The applet versioning page is a good start. Features need to be expanded, of course. In particular, I should be able to see when there will be a choice of user interfaces, and when connection to the database will be reestablished.
+The applet versioning page is a good start. Features need to be expanded, of course. In particular, I think that the choice of user interfaces and when connection to the database should happen sooner.
 
 I can see the code in svn (good!) but I can't see how to recreate some particular version.
 That may be because I don't know how to look.
