@@ -4,7 +4,7 @@
 
 Dates in *bold* are firm, and scheduled, with features locked and tasks assigned. Plain text dates and features are proposed, but have not been specified suffiently to be firm. Features may float.
 
-  * *0.1*: Display Organism Images and Text  (Done)
+  * *0.1*: Display Organism Images and Text  (*Done*)
    * Read flat file and .GIF images from server side
    * No Model and Controller implementation
 
@@ -20,4 +20,3 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
   * *0.8*: Connections selectable, can be deleted (11/16)
   * *0.9*: Menu allows users to select options for UI display and mouse behavior (11/22)
   * *1.0*: Trees can be saved to database and loaded from database (11/25)
-
