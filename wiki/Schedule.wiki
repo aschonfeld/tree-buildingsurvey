@@ -26,16 +26,16 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/18/09||develop build system||Andrew||main||10/17/09||
 ||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
-||10/26/09||Applet Version 0.1||Glenn||[Versioning Versions]||10/26/09||
-||10/29/09||Applet Version 0.2||Glenn||[Versioning Versions]||||
-||11/01/09||Applet Version 0.3||Glenn||[Versioning Versions]||||
-||11/04/09||Applet Version 0.4||Glenn||[Versioning Versions]||||
-||11/07/09||Applet Version 0.5||Glenn||[Versioning Versions]||||
-||11/10/09||Applet Version 0.6||Glenn||[Versioning Versions]||||
-||11/13/09||Applet Version 0.7||Glenn||[Versioning Versions]||||
-||11/16/09||Applet Version 0.8||Glenn||[Versioning Versions]||||
-||11/19/09||Applet Version 0.9||Glenn||[Versioning Versions]||||
-||11/22/09||Applet Version 1.0||Glenn||[Versioning Versions]||||
+||10/26/09||Applet Version 0.1||team||[Versioning Versions]||10/26/09||
+||10/29/09||Applet Version 0.2||team||[Versioning Versions]||||
+||11/01/09||Applet Version 0.3||team||[Versioning Versions]||||
+||11/04/09||Applet Version 0.4||team||[Versioning Versions]||||
+||11/07/09||Applet Version 0.5||team||[Versioning Versions]||||
+||11/10/09||Applet Version 0.6||team||[Versioning Versions]||||
+||11/13/09||Applet Version 0.7||team||[Versioning Versions]||||
+||11/16/09||Applet Version 0.8||team||[Versioning Versions]||||
+||11/19/09||Applet Version 0.9||team||[Versioning Versions]||||
+||11/22/09||Applet Version 1.0||team||[Versioning Versions]||||
 ||11/25/09||Venture Capital presentation||team||main||||
 ||1/30/10||Functioning program with multiple UIs||team||main||||
 ||??????||schedule client meeting: discuss and prioritize features||team||[Features features]||||
