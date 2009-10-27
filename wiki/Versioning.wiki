@@ -2,13 +2,22 @@
 
 = Applet Versions (proposed due date) =
 
+Dates in *bold* are firm, and scheduled, with features locked and tasks assigned. Plain text dates and features are proposed, but have not been specified suffiently to be firm. Features may float.
+
   * *0.1*: Display Organism Images and Text  (Done)
+   * Read flat file and .GIF images from server side
+   * No Model and Controller implementation
+
   * *0.2*: Draggable Organisms (10/29)
-  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right) (11/01)
+   * To be determined: structure of Model/Controller interaction to allow this
+  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right) (11/01)   
+   * Is this distinction necessary? Can we simply create organism nodes on the left?
   * *0.4*: Empty nodes can be created (11/04)
+   * If I recall correctly, the means of creating new nodes was one of the possible points of variation we were to offer. If we're preserving this notion, we'll have to keep it in mind at this point here, since it'll probably affect the way this is implemented. 
   * *0.5*: Nodes can be deleted (11/07)
   * *0.6*: Empty nodes can be labeled (11/10)
-  * *0.7*: Connections can be created. Deleting a node deletes connections to/from node
-  * *0.8*: Connections selectable, can be deleted
-  * *0.9*: Menu allows users to select options for UI display and mouse behavior
-  * *1.0*: Trees can be saved to database and loaded from database
+  * *0.7*: Connections can be created. Deleting a node deletes connections to/from node (11/13)
+  * *0.8*: Connections selectable, can be deleted (11/16)
+  * *0.9*: Menu allows users to select options for UI display and mouse behavior (11/22)
+  * *1.0*: Trees can be saved to database and loaded from database (11/25)
+
