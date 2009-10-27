@@ -28,12 +28,6 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
 ||10/26/09||Applet Version 0.1||Glenn||[Versioning Versions]||10/26/09||
 ||11/12/09||Venture Capital presentation||team||main||||
-||11/13/09||Applet Version 0.7||team||[Versioning Versions]||||
-||11/16/09||Applet Version 0.8||team||[Versioning Versions]||||
-||11/19/09||Applet Version 0.9||team||[Versioning Versions]||||
-||11/22/09||Applet Version 0.9||team||[Versioning Versions]||||
-||11/25/09||Applet Connects With Database||team||Database||||
-||11/25/09||Applet Version 1.0||team||[Versioning Versions]||||
 ||1/30/10||Functioning program with multiple UIs||team||main||||
 ||??????||schedule client meeting: discuss and prioritize features||team||[Features features]||||
 
