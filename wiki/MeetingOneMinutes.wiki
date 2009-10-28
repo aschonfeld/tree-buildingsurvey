@@ -2,10 +2,8 @@
 = Meting 1 - 10/27/2009 =
 
 Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
-
 News:
   Andrew restored Professor White's server earlier today after crashing it back on Friday, October 23, 2009.
-
 Discussion:
   The main topic of discussion was the Version 0.2 deliverable for Friday, October 30, 2009.  We began this discussion by going over the current code architecture that was in place.  There is four main components to the code:
   * Applet - Sets up applet object
@@ -24,7 +22,7 @@ Discussion:
   * We will leave the unused list in order of how the images are pulled (usually alphabetical) and would revisit coding a control to make sure the images are alphabetically ordered
 
   Next, changes to the controller code to accomodate dragging were discussed:
-  * `mouseClicked()`, `mousedDragged()`, `mouseReleased()` methods will need to be updated to record the x,y coordinates of the mouse and apply them to the correct organism node in the Model TreeMap object.
+  * `mouseClicked()`, `mousedDragged()`, `mouseReleased()` methods will need to be updated to record the x,y coordinates of the mouse and apply them to the correct organism node in the Model's `TreeMap` object.
   * updating the `collidesWith(Node n)` method in the Model class to actually calculate whether the position the user has dragged an organism is already occupied by another organism
   * when a user does drag an organism to a position already occupied the organism will default back to its last position (this will eventually be replaced with an algorithm to determine the closest usable position to where the user wants the organism to go)
 
