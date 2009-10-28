@@ -11,8 +11,16 @@ The applet versioning page is a good start. Features need to be expanded, of cou
 I can see the code in svn (good!) but I can't see how to recreate some particular version.
 That may be because I don't know how to look.
 
-Schedule needs to show when you hope/plan to meet with Prof White to determine what the new GUIs will look like.
 
+-----
+I've posted the number of the final revision under 0.01 near the link to the applet, and placed the source files (tarred) under downloads. By version two commit, I hope to have figured out how to mark this better within svn, whether that be by branch or subtler means. -jpk
+-----
+
+
+Schedule needs to show when you hope/plan to meet with Prof White to determine what the new GUIs will look like.
+-----
+Amen with a side of hallelujah to that. -jk
+-----
 ----
 
 === October 22 ===
