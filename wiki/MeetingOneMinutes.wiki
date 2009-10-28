@@ -35,10 +35,10 @@ Discussion:
   * Controller - Andrew
   * Button Panel - Jon
 
-We ended the meeting by agreeing that for future meetings we would like to possibly have the coding assignments completed two versions in the future as to eliminate the need for emergency meetings.
-
-*Future Meetings:* Thursday(10/29) (Class) & possibly Saturday(10/31) or Sunday(11/1) afternoon.
-
 Here is a visual representation of how some of the features were assigned for Friday's versioning of the applet:
 
 http://upload.wikimedia.org/wikipedia/commons/e/e1/Meeting1.gif
+
+We ended the meeting by agreeing that for future meetings we would like to possibly have the coding assignments completed two versions in the future as to eliminate the need for emergency meetings.
+
+*Future Meetings:* Thursday(10/29) (Class) & possibly Saturday(10/31) or Sunday(11/1) afternoon.
