@@ -11,15 +11,15 @@ Discussion:
   * Applet - Sets up applet object
   * View - Controls the rendering of the images in the applet
   * Model - Houses the information needed to construct the components used by all the other clases (ModelElements)
-    * Node - This object will eventually house the nodes created by the user
-    * OrganismNode - This is an extension of the Node object but with images & labels
+    * `Node` - This object will eventually house the nodes created by the user
+    * `OrganismNode` - This is an extension of the Node object but with images & labels
   * Controller - This class handles the actions (button clicks) and mouse controls
 
   The main feature of the version would be that the organisms would be dragable(The user can drag and drop).
   Before we could start discussing the dragability of the organisms we needed to organize how these organisms would be represented in the Model.  Here are some of the changes that will need to take place:
-  * There will be a TreeMap containing ModelElements(Nodes, OrganismNodes) that will be the main storage of the information being displayed
-  * OrganismNodes will have a boolean property describing whether it is _used_ or _unused_
-  * OrganismNodes will store it orignal positioning in the unused list and used position after the user has dragged it somewhere
+  * There will be a `TreeMap` containing `ModelElements`(`Nodes`, `OrganismNodes`) that will be the main storage of the information being displayed
+  * `OrganismNodes` will have a boolean property describing whether it is _used_ or _unused_
+  * `OrganismNodes` will store it orignal positioning in the unused list and used position after the user has dragged it somewhere
   * Default organism positions will be created during loading of images from list.txt(possibly database table later on)
   * We will leave the unused list in order of how the images are pulled (usually alphabetical) and would revisit coding a control to make sure the images are alphabetically ordered
 
@@ -36,6 +36,7 @@ Discussion:
   * Button Panel - Jon
 
 Here is a visual representation of how some of the features were assigned for Friday's versioning of the applet:
+
 http://commons.wikimedia.org/wiki/File:Meeting1.gif
 
 We ended the meeting by agreeing that for future meetings we would like to possibly have the coding assignments completed two versions in the future as to eliminate the need for emergency meetings.
