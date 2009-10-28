@@ -39,3 +39,11 @@ http://upload.wikimedia.org/wikipedia/commons/e/e1/Meeting1.gif
 
   We ended the meeting by agreeing that for future meetings we would like to possibly have the coding assignments completed two versions in the future as to eliminate the need for emergency meetings.
 *Future Meetings:* Thursday(10/29) (Class) & possibly Saturday(10/31) or Sunday(11/1) afternoon.
+
+
+Well done, Andrew, I think you've caught it quite well.
+Some further thoughts - l'esprit d'escalier - that struck me after leaving:
+- The eventual means of loading the organisms will depend on how complicated the set of test organisms will be. If client wants an extended set of organisms and the option to define different sets for different purposes (ie, do different samples of organisms affect performance) or wants to store complex data about the organisms, then db might be appropriate. If they remain as a constanst set of 20, then a flat file will do nicely. 
+(Come to think about it, even if the set increases, a flat file and a set of load lists would do the job nicely, in true unix style, and would in fact be the easiest interface, much easier than some maintenance panel)
+- Andrew, you might give any thought to polling the treemap and asking the model elements whether they've been clicked in? Easy enough to put an "isWithin()" method in the model, then you could just run down the list until you get a true or run out of list. Just a thought that whacked me about the head, as they will. It would save the bother of keeping up a lookup table, and as we know lazy is often a good thing.  
+Well enough, off to work. 
