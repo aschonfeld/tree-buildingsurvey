@@ -1,4 +1,4 @@
-package TBS;
+//TBSView.java version 0.01
 
 import javax.imageio.*;
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package TBS;
+//TBSController v0.01
 
 import javax.imageio.*;
 import javax.swing.*;
