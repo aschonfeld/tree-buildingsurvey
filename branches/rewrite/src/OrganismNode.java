@@ -1,4 +1,4 @@
-package TBS;
+//package TBS;
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -36,6 +36,7 @@ public class OrganismNode implements ModelElement {
 			upperY = 0;
 			width = w;
 			height = h;
+			inTree = false;
 		}
 				
 		public boolean isInTree() {return inTree;}
@@ -73,5 +74,15 @@ public class OrganismNode implements ModelElement {
 		public boolean collidesWith(ModelElement m) {return false;}
 		
 		public boolean isOrganismNode() {return true;}
-
+		
+		public void addToTree(int leftXArg, int upperYArg) {
+			leftX = leftXArg;
+			upperY = upperYArg;
+			inTree = true;
+		}
+		
+		public void removeFromTree() {
+			inTree = false;
+		}
+		
 }
