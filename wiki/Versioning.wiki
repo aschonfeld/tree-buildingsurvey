@@ -8,8 +8,8 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
    * Read flat file and .GIF images from server side
    * No Model and Controller implementation
 
-  * *0.2*: Draggable Organisms (10/29)
-   * To be determined: structure of Model/Controller interaction to allow this
+  * *0.2*: Draggable Organism, Button Panel, Empty Nodes creatable (*10/29*)
+   * See [MeetingOneMinutes meeting minutes] for detail of model-view-controller division of labor. This version will probably not handle interaction of model elements in the view correctly, thus we can only say that "Draggable Organism", singular, will be fully implemented. 
   * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right) (11/01)   
    * Is this distinction necessary? Can we simply create organism nodes on the left?
   * *0.4*: Empty nodes can be created (11/04)
