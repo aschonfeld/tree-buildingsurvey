@@ -1,4 +1,4 @@
-//TBSModel v0.01
+//TBSModel v0.02
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -13,30 +13,36 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
-public class TBSModel {
+public class TBSModel 
+{
 	
-	public interface ModelElement {
+	public abstract class ModelElement 
+	{
 		
-		 public boolean collidesWith(Node n);
-	}
-	
-	public interface Node extends ModelElement {
-		
-		public int getLeftX();
-		public int getUpperY();
-		public int getLength();
-		public int getWidth();
-	}
-	
-	public class OrganismNode implements Node {
-		
-		OrganismNode(int leftX, int upperY, Image img) {}
-		
-		public boolean collidesWith(Node n) {return false;};
+		public boolean collidesWith(Node n);
 		public int getLeftX() {return 0;}
 		public int getUpperY() {return 0;}
 		public int getLength() {return 0;}
 		public int getWidth() {return 0;}
+	}
+	
+	//represents connector node:freely created and deleted by student
+	public class EmptyNode extends ModelElement 
+	{	
+		public EmptyNode(int leftX, int upperY)
+		{
+		}	
+	}
+	
+	//represents organism node: fixed quantity, cannot be created or
+	//deleted
+	public class OrganismNode extends ModelElement 
+	{
+		
+	 	public OrganismNode(int leftX, int upperY, Image img) 
+		{
+		}
+		
 	}
 	
 }
