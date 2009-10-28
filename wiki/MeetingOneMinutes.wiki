@@ -2,6 +2,7 @@
 = Meting 1 - 10/27/2009 =
 
 Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
+
 News:
   Andrew restored Professor White's server earlier today after crashing it back on Friday, October 23, 2009.
 Discussion:
