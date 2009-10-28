@@ -1,5 +1,7 @@
 Here are links to different versions of Applets:
 
-    * [http://www.cs.umb.edu/~kiparsky/Applet01.html Version 0.1 of Rewritten Applet]<br>Works remotely on MacOSX as well as Windows.<br>
+    * [http://www.cs.umb.edu/~kiparsky/Applet01.html Version 0.1 of Rewritten Applet]<br>Works remotely on MacOSX as well as Windows.<br> Final revision under version 0.01 is 267: revert there to see that code, or download source files from Downloads page. <br>
+
+
 
   * [http://www.cs.umb.edu/~skones1/applet00.html Version 0.0]<br/>Professor White's original Applet with a slight tweak to make the organisms appear.
