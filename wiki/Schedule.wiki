@@ -27,7 +27,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
 ||10/26/09||Applet Version 0.1||team||[Versioning Versions]||10/26/09||
-||10/29/09||Applet Version 0.2||team||[Versioning Versions]||||
+||10/29/09||Applet Version 0.2||team||[Versioning Versions]||10/29/09||
 ||11/01/09||Applet Version 0.3||team||[Versioning Versions]||||
 ||11/04/09||Applet Version 0.4||team||[Versioning Versions]||||
 ||11/07/09||Applet Version 0.5||team||[Versioning Versions]||||
