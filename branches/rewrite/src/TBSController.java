@@ -39,7 +39,6 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	public void mousePressed(MouseEvent e){
 		int x = e.getX();
 		int y = e.getY();
-		ModelElement me;
 		selectedIndices = new ArrayList<Integer>();
 		for(Integer Int: mouseIsOver(x, y)) {
 			selectedIndices.add(Int);
