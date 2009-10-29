@@ -7,10 +7,9 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
   * *0.1*: Display Organism Images and Text  (*Done*)
    * Read flat file and .GIF images from server side
    * No Model and Controller implementation
-
-  * *0.2*: Draggable Organism, Button Panel, Empty Nodes creatable (*10/29*)
-   * See [MeetingOneMinutes meeting minutes] for detail of model-view-controller division of labor. This version will probably not handle interaction of model elements in the view correctly, thus we can only say that "Draggable Organism", singular, will be fully implemented. 
-  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right) (11/01)   
+  * *0.2*: Draggable Organisms (*Done*)
+   * See [MeetingOneMinutes meeting minutes] for detail of model-view-controller division of labor. This version allows the users to stack organisms on top of each other and drag multiple organisms at once.  The alphabetically later organism will be rendered on top.  We plan to add collision detection by Version 1.0.
+  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right), add button panel (11/01)   
    * Is this distinction necessary? Can we simply create organism nodes on the left?
   * *0.4*: Empty nodes can be created (11/04)
    * If I recall correctly, the means of creating new nodes was one of the possible points of variation we were to offer. If we're preserving this notion, we'll have to keep it in mind at this point here, since it'll probably affect the way this is implemented. 
