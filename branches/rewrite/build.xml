@@ -7,7 +7,7 @@
 	<target name="jarfile" depends="compile" description="makes jar file">
 	    <jar destfile="bin/TBSRun.jar">
 	        <manifest>
-	        	    <attribute name="Main-Class" value="TBS.TBSApplet"/>
+	        	    <attribute name="Main-Class" value="TBSApplet"/>
 	        </manifest>
 	    	    <fileset dir="bin/"/>
 	    	    <fileset dir="lib/"/>
