@@ -8,14 +8,18 @@ import java.awt.event.MouseMotionListener;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
-public class TBSController implements MouseListener, MouseMotionListener, ActionListener {
+public class TBSController 
+		implements MouseListener, MouseMotionListener, ActionListener 
+	{
 	
-	private String selectedElement;
-    private Boolean draggingElement;
-    private TBSModel tbsModel;
-    private int pressedX, pressedY, draggedX, draggedY;
-    
-    public TBSController(TBSModel tbsModel){
+		private String selectedElement;
+		private Boolean draggingElement;
+		private TBSModel tbsModel;
+		private int pressedX, pressedY, draggedX, draggedY;
+   
+		private Node node;
+ 
+    	public TBSController(TBSModel tbsModel){
     	this.tbsModel = tbsModel;
     	draggingElement = false;
     }
@@ -28,16 +32,12 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	public void mousePressed(MouseEvent e){
 		pressedX = e.getX();
 		pressedY = e.getY();
-		ModelElement me;
 		for(Entry<String, ModelElement> entry : tbsModel.getElements().entrySet()){
-			me = entry.getValue();
-			if(me.isOrganismNode()){
-				if ( (me.getLeftX() < pressedX && pressedX < (me.getLeftX()+me.getWidth())) &&
-						(me.getUpperY() < pressedY && pressedY < (me.getUpperY() + me.getLength())) ) {
-
-					selectedElement = entry.getKey();
-					draggingElement = true;
-				}
+			node = (Node)entry.getValue();
+			if(node.contains(pressedX,pressedY))
+			{
+				selectedElement = entry.getKey();
+				draggingElement = true;
 			}
 		}
 	}
