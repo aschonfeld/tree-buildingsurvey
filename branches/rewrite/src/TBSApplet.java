@@ -16,11 +16,20 @@ import java.io.*;
 
 public class TBSApplet extends JApplet {
 	
+	private TBSModel tbsModel;
+	private TBSView tbsView;
+	private TBSController tbsController;
+	
 	public void init() {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                add(new TBSView(loadOrganismsFromDirectory("images")));
+            	tbsModel = new TBSModel();
+	            tbsView = new TBSView(tbsModel, loadOrganismsFromDirectory("images"));
+                add(tbsView);
+                tbsController = new TBSController(tbsModel, tbsView);
+                tbsView.addMouseListener(tbsController);
+                tbsView.addMouseMotionListener(tbsController);
             }
         });
     }
