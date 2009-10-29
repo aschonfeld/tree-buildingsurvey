@@ -13,8 +13,12 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 	
-public interface ModelElement {
+public class ModelElement {
 		
-	public abstract boolean collidesWith(ModelElement e);
-	public abstract boolean isOrganismNode();
+	public boolean collidesWith(ModelElement e){return false;}
+	public boolean isOrganismNode(){return this instanceof TBSModel.OrganismNode;}
+	public int getLeftX(){return 0;}
+	public int getUpperY(){return 0;}
+	public int getLength(){return 0;}
+	public int getWidth(){return 0;}
 }

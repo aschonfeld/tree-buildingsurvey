@@ -37,7 +37,8 @@ public class TBSView extends JComponent {
 	private int fontSize = 16;
 	
 	public TBSView(TreeMap<String, BufferedImage> oNTI) {
-		controller = new TBSController();
+		//TODO: We will have to add setup of TBSModel to this class
+		controller = new TBSController(new TBSModel());
         addMouseListener(controller);
         addMouseMotionListener(controller);
         organismNameToImage = oNTI;

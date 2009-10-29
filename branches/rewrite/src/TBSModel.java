@@ -15,16 +15,7 @@ import java.io.*;
 
 public class TBSModel 
 {
-	
-	public abstract class ModelElement 
-	{
-		
-		public abstract boolean collidesWith(Node n);
-		public abstract int getLeftX();
-		public abstract int getUpperY();
-		public abstract int getLength();
-		public abstract int getWidth();
-	}
+	private TreeMap<String, ModelElement> elements;
 	
 	//represents connector node:freely created and deleted by student
 	public abstract class EmptyNode extends ModelElement 
@@ -50,6 +41,14 @@ public class TBSModel
 		public int getUpperY() {return 0;}
 		public int getLength() {return 0;}
 		public int getWidth() {return 0;}		
+	}
+
+	public TreeMap<String, ModelElement> getElements() {
+		return elements;
+	}
+
+	public void setElements(TreeMap<String, ModelElement> elements) {
+		this.elements = elements;
 	}
 	
 }

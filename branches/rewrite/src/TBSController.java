@@ -1,36 +1,73 @@
 //TBSController v0.01
 
-import javax.imageio.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.net.*;
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 public class TBSController implements MouseListener, MouseMotionListener, ActionListener {
 	
-    public void mouseReleased(MouseEvent e) {}
+	private String selectedElement;
+    private Boolean draggingElement;
+    private TBSModel tbsModel;
+    private int pressedX, pressedY, draggedX, draggedY;
+    
+    public TBSController(TBSModel tbsModel){
+    	this.tbsModel = tbsModel;
+    	draggingElement = false;
+    }
+    
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
-	public void mousePressed(MouseEvent e){}
 	public void mouseClicked(MouseEvent e){}
+	public void mouseMoved(MouseEvent e){}
 	
-	public void mouseDragged(MouseEvent e){
-		int xPos = e.getX();
-	    int yPos = e.getY();
-	    //System.out.println("mouseDragged " + xPos + " " + yPos);
+	public void mousePressed(MouseEvent e){
+		pressedX = e.getX();
+		pressedY = e.getY();
+		ModelElement me;
+		for(Entry<String, ModelElement> entry : tbsModel.getElements().entrySet()){
+			me = entry.getValue();
+			if(me.isOrganismNode()){
+				if ( (me.getLeftX() < pressedX && pressedX < (me.getLeftX()+me.getWidth())) &&
+						(me.getUpperY() < pressedY && pressedY < (me.getUpperY() + me.getLength())) ) {
+
+					selectedElement = entry.getKey();
+					draggingElement = true;
+				}
+			}
+		}
 	}
 	
-	public void mouseMoved(MouseEvent e){
-		int xPos = e.getX();
-	    int yPos = e.getY();
-	    //System.out.println("mouseMoved " + xPos + " " + yPos);
+	public void mouseDragged(MouseEvent e){
+		if ( draggingElement ) {
+			// get the latest mouse position
+			draggedX = e.getX();
+			draggedY = e.getY();
+			
+			// displace the box by the distance the mouse moved since the last event
+			//TBSModel.getElements().get(selectedElement).setLeftX(draggedX - pressedX);
+			//TBSModel.getElements().get(selectedElement).setLeftX(draggedY - pressedY);
+			
+			// update our data
+			pressedX = draggedX;
+			pressedY = draggedY;
+			
+			//Don't know how this will be called, it may be called from the TBSView
+			//since this class is instantiated there
+			//TBSView.refreshGraphics();
+			e.consume();
+		}
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		draggingElement = false;
+		//TODO: Update logic for if an element has been dragged to an
+		//area that already this is already occupied		
+		e.consume();
 	}
 	
 	public void actionPerformed(ActionEvent e) {
