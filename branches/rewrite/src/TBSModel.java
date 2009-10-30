@@ -15,11 +15,39 @@ import java.io.*;
 
 public class TBSModel 
 {
+	private TBSView view;
+	private TBSController controller;
 	private ArrayList<ModelElement> modelElements;
 	
-	public TBSModel() {
+	// Contains the length and width of all organism nodes
+	private int organismNodeWidth = 0;
+	private int organismNodeHeight = 0;
+	
+	// minimum number of pixels around the right and left of an organism's name
+	private int paddingWidth = 5;
+	
+	// Space between bottom and top of images
+	private int ySpacing = 1;
+	
+	// Font Properties
+	private String fontName = "default"; // Use default font
+	private int fontStyle = Font.PLAIN;
+	private int fontSize = 16;
+	
+	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new ArrayList<ModelElement>();
+		createModelElements(g, organismNameToImage);
+		view = new TBSView(this, organismNodeWidth, organismNodeHeight, paddingWidth, ySpacing, fontName, fontStyle, fontSize);
+		controller = new TBSController(this, view);
 	}
+	
+	public TBSView getView() {
+		return view;
+	}
+	
+	public TBSController getController() {
+		return controller;
+	}	
 	
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
@@ -41,185 +69,71 @@ public class TBSModel
 		modelElements.set(i, me);
 	}
 	
-	public interface ModelElement {
-		
-		public boolean collidesWith(ModelElement e);
-		public boolean isOverMe(int x, int y);
-	}
-
-	public interface Node extends ModelElement 
-	{	
-		public int getLeftX();
-		public int getUpperY();
-		public int getWidth();
-		public int getHeight();
-		public void move(int deltaX, int deltaY);
-		public void moveTo(int x, int y);
-		public boolean isInTree();
-		public void addToTree();
-	}
-	
-	//represents connector node:freely created and deleted by student
-	public static class EmptyNode implements Node 
-	{	
-		int leftX;
-		int upperY;
-		int width;
-		int height;
-		
-		EmptyNode(int x, int y) {
-			leftX = x;
-			upperY = y;
-			width = 5;
-			height = 5;
+	// called the first time this component is drawn by paintComponent
+	protected void createModelElements(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
+		Graphics2D g2 = (Graphics2D) g;
+		TreeMap<String, Rectangle2D> organismNameToStringBounds;
+		organismNameToStringBounds = new TreeMap<String, Rectangle2D>();
+		ImageObserver imageObserver = null;
+		BufferedImage img = null;
+		Rectangle2D rect = null;
+		int currentX = 0;
+		int currentY = 0;
+		int intRectWidth = 0;
+		int intRectHeight = 0;
+		int maxNameWidth = 0; // widest name string in pixels
+		int maxNameHeight = 0; // tallest name string in pixels
+		int maxImageWidth = 0; // widest image in pixels
+		int maxImageHeight = 0; // tallest image in pixels
+		String organismName = "";
+		Set<String> organismNames = organismNameToImage.keySet();
+		Iterator<String> itr = organismNames.iterator();
+		ModelElement on = null;
+		while(itr.hasNext()) {
+			organismName = itr.next();
+			img = organismNameToImage.get(organismName);
+			if (img.getWidth() > maxImageWidth) maxImageWidth = img.getWidth();
+			if (img.getHeight() > maxImageHeight) maxImageHeight = img.getHeight();
+			rect = getStringBounds(g2, organismName);
+			intRectWidth = (int) rect.getWidth();
+			intRectHeight = (int) rect.getHeight();
+			if (intRectWidth > maxNameWidth) maxNameWidth = intRectWidth;
+			if (intRectHeight > maxNameHeight) maxNameHeight = intRectWidth;
+			organismNameToStringBounds.put(organismName, rect);
 		}
-		
-		public void addToTree() {
-			return;
+		itr = organismNames.iterator();
+		organismNodeWidth = maxNameWidth + (2 * paddingWidth) + maxImageWidth;
+		if(maxImageHeight > maxNameHeight) {
+			organismNodeHeight = maxImageHeight;
+		} else {
+			organismNodeHeight = maxNameHeight;
 		}
-		
-		public boolean isInTree() {return true;}
-		
-		
-		public boolean isOverMe (int x, int y) {
-			if((x > leftX) && (x < (leftX + width))) {
-				if((y > upperY) && (y < (upperY + height))) {
-					return true;
-				}
-			}
-			return false;
+		currentX = 0;
+		currentY = ySpacing;
+		Rectangle2D currentRect = null;
+		BufferedImage currentImage = null;
+		while(itr.hasNext()) {
+			organismName = itr.next();
+			img = organismNameToImage.get(organismName);
+			rect = organismNameToStringBounds.get(organismName);
+			addElement(new OrganismNode(img, organismName, rect, currentX, currentY, organismNodeWidth, organismNodeHeight));
+			currentY += organismNodeHeight + ySpacing;
 		}
-		
-		public int getLeftX() {
-			return leftX;
-		}
-		
-		public int getUpperY() {
-			return upperY;
-		}
-		
-		public int getWidth() {
-			return width;
-		}
-		
-		public int getHeight() {
-			return height;
-		}
-		
-		public void move(int deltaX, int deltaY) {
-			leftX += deltaX;
-			upperY += deltaY;
-		}		
-		
-		public void moveTo(int x, int y) {
-			leftX = x;
-			upperY = y;
-		}
-		
-		public boolean collidesWith(ModelElement e) {return false;};
-				
 	}
 	
-	public static class OrganismNode implements Node
-	{
-		private boolean inTree;
-		private BufferedImage img;
-		private String name;
-		private Rectangle2D stringBounds;
-		private int defaultLeftX;
-		private int leftX;
-		private int defaultUpperY;
-		private int upperY;
-		private int width;
-		private int height;
-		
-		public OrganismNode(BufferedImage i, String n, Rectangle2D sb, int x, int y, int w, int h) {
-			img = i;
-			name = n;
-			stringBounds = sb;
-			defaultLeftX = x;
-			leftX = 0;
-			defaultUpperY = y;
-			upperY = 0;
-			width = w;
-			height = h;
-			inTree = false;
-		}
-				
-		public boolean isInTree() {return inTree;}
-		
-		public void addToTree() {
-			inTree = true;
-		}
-		
-		public boolean isOverMe (int x, int y) {
-			int activeX;
-			int activeY;
-			if(inTree) {
-				activeX = leftX;
-				activeY = upperY;
-			} else {
-				activeX = defaultLeftX;
-				activeY = defaultUpperY;				
-			}
-			int rightX = activeX + width;
-			int lowerY = activeY + height;
-			//System.out.println(leftX + " " + x + " " + rightX + " " + upperY + " " + y + " " + lowerY);
-			if((x > activeX) && (x < rightX)) {
-				if((y > activeY) && (y < lowerY)) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		public int getLeftX() {
-			if (inTree) {
-				return leftX;
-			} else {
-				return defaultLeftX;
-			}
-		}
-		
-		public int getUpperY() {
-			if (inTree) {
-				return upperY;
-			} else {
-				return defaultUpperY;
-			}
-		}
-		
-		public int getWidth() {
-			return width;
-		}
-		
-		public int getHeight() {
-			return height;
-		}
-		
-		public BufferedImage getImage() {return img;}
-		
-		public String getName() {return name;}
-		
-		public Rectangle2D getStringBounds() {return stringBounds;}
-		
-		public boolean collidesWith(ModelElement m) {return false;}
-		
-		public void move(int deltaX, int deltaY) {
-			leftX += deltaX;
-			upperY += deltaY;
-		}		
-		
-		public void moveTo(int x, int y) {
-			leftX = x;
-			upperY = y;
-		}
-		
-		public void removeFromTree() {
-			inTree = false;
-		}
-		
+	// calculate the area occupied by a string
+	public Rectangle2D getStringBounds(Graphics2D g2, String name) {
+		// ReneringHints tell
+		RenderingHints rh = new RenderingHints(
+		RenderingHints.KEY_TEXT_ANTIALIASING,
+		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHints(rh);
+   		Font f = new Font(fontName, fontStyle, fontSize);
+   		g2.setFont(f);
+   		FontRenderContext frc = g2.getFontRenderContext();
+   		TextLayout layout = new TextLayout(name, f, frc);
+   		return layout.getBounds();
 	}
+	
 	
 }
-

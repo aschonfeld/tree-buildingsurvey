@@ -15,8 +15,8 @@ import java.io.*;
 
 public class TBSController implements MouseListener, MouseMotionListener, ActionListener {
 	
-	private TBSModel tbsModel;
-	private TBSView tbsView;
+	private TBSModel model;
+	private TBSView view;
 	
 	private ArrayList<Integer> selectedIndices;
     private boolean mousePressed;
@@ -25,8 +25,8 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     private int previousX, previousY;
     
     public TBSController(TBSModel m, TBSView v){
-    	tbsModel = m;
-    	tbsView = v;
+    	model = m;
+    	view = v;
     	mousePressed = false;
     	mouseDragged = false;
     }
@@ -58,22 +58,21 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 			for(Integer Int: selectedIndices) {
 				int i = Int.intValue();
 				//System.out.println(i);
-				TBSModel.ModelElement me = tbsModel.getElement(i);
-				if(me instanceof TBSModel.Node) {
+				ModelElement me = model.getElement(i);
+				if(me instanceof Node) {
 					// Move Node
-					TBSModel.Node tbsNode = (TBSModel.Node) me;
-					if(tbsNode.isInTree()) {
-						tbsNode.move(deltaX, deltaY);
-					} else {
-						tbsNode.addToTree();
-						tbsNode.moveTo(x, y);
+					Node node = (Node) me;
+					if(node instanceof OrganismNode) {
+						OrganismNode on = (OrganismNode) node;
+						on.addToTree();
+						node.moveTo(x, y);
 					}
 					// Refresh Node
-					tbsModel.setElement(i, tbsNode);
+					model.setElement(i, node);
 				}
 			}
 		}
-		tbsView.refreshGraphics();
+		view.refreshGraphics();
 		// update our data
 		previousX = x;
 		previousY = y;
@@ -96,10 +95,10 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     
     private ArrayList<Integer> mouseIsOver(int x, int y) {
 	    ArrayList<Integer> activeIndices= new ArrayList<Integer>();
-	    int numElements = tbsModel.numElements();
+	    int numElements = model.numElements();
 	    for (int i = 0; i < numElements; i++) {
-		    TBSModel.ModelElement var = tbsModel.getElement(i);
-		    if(var.isOverMe(x, y)) {
+		    ModelElement var = model.getElement(i);
+		    if(var.contains(x, y)) {
 		    	activeIndices.add(i);
 		    }
 		}
