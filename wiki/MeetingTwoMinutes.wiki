@@ -1,13 +1,9 @@
-#summary One-sentence summary of this page.
+#summary Meeting 2 - 10/29/2009
+= Meting 2 - 10/29/2009 =
 
-= Introduction =
+Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
 
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+News:
+  Version 0.2 of applet, including the dragability functionality, was completed last night.
+Discussion:
+  We began our meeting by discussing the current progress of our group with Professor Bolker.
