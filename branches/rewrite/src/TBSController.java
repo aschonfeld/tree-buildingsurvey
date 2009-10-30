@@ -62,10 +62,10 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 				if(me instanceof Node) {
 					// Move Node
 					Node node = (Node) me;
+					node.moveTo(x,y);
 					if(node instanceof OrganismNode) {
 						OrganismNode on = (OrganismNode) node;
 						on.addToTree();
-						node.moveTo(x, y);
 					}
 					// Refresh Node
 					model.setElement(i, node);
