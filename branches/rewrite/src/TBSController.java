@@ -63,10 +63,26 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 					// Move Node
 					Node node = (Node) me;
 					node.moveTo(x,y);
-					if(node instanceof OrganismNode) {
-						OrganismNode on = (OrganismNode) node;
-						on.addToTree();
-					}
+
+						//Auto-add/delete: 
+					if (x < TBSView.LINE_OF_DEATH)
+						node.removeFromTree();
+					if (x > TBSView.LINE_OF_DEATH && !node.isInTree() )
+						node.addToTree(); 
+							//is it more efficient to check isInTree in this
+							//case or not to check? It shouldn't affect
+							//performance, but it's an interesting question.
+	
+
+
+			//		if(node instanceof OrganismNode) {
+			//			OrganismNode on = (OrganismNode) node;
+			//			on.addToTree();
+			//		}
+			// Glenn - this conflicts with auto-add/delete, and I think it
+			// can be safely deleted. If you agree, please delete. If not,
+			// call me and we can figure it out. 
+
 					// Refresh Node
 					model.setElement(i, node);
 				}

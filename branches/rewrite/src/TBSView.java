@@ -16,6 +16,11 @@ import java.io.*;
 public class TBSView extends JComponent {
 
 	private TBSModel model;
+
+			//boundary between active and inactive elements. Name can be
+			//changed. 
+	public static int LINE_OF_DEATH = 120;
+
 	
 	// Contains the length and width of all organism nodes
 	private int organismNodeWidth;

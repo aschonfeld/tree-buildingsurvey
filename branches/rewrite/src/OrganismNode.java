@@ -19,7 +19,9 @@ public class OrganismNode extends Node
 	private int defaultLeftX;
 	private int defaultUpperY;
 		
-	public OrganismNode(BufferedImage i, String n, Rectangle2D sb, int x, int y, int w, int h) {
+	public OrganismNode(BufferedImage i, String n, Rectangle2D sb, 
+					int x, int y, int w, int h) 
+	{
 		img = i;
 		name = n;
 		stringBounds = sb;
@@ -34,14 +36,19 @@ public class OrganismNode extends Node
 				
 	public boolean isInTree() {return inTree;}
 		
-	public void addToTree() {
+	public void addToTree() 
+	{
 		inTree = true;
+		
+		System.out.println("Added to tree: inTree = " +inTree);
 	}
 	
 	public void removeFromTree() {
 		inTree = false;
 		leftX = defaultLeftX;
 		upperY = defaultUpperY;
+
+		System.out.println("Removed from tree: inTree = " +inTree);
 	}
 		
 	public BufferedImage getImage() {return img;}

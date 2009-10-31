@@ -14,11 +14,16 @@ import java.io.*;
 	
 public abstract class Node extends ModelElement 
 {	
+	//Warning - "protected" means public, as these will all be part of
+	//the same package. Is this what you want? If so, should declare
+	//public, for clarity. -jpk
+
 	protected String name;
 	protected int leftX;
 	protected int upperY;
 	protected int width;
 	protected int height;
+	protected boolean inTree;
 	
 	public int getLeftX() {return leftX;}
 	public int getUpperY() {return upperY;}
@@ -45,4 +50,12 @@ public abstract class Node extends ModelElement
 		upperY = y;
 	}	
 	
+	public abstract void removeFromTree();
+
+	public abstract void addToTree();
+		
+	public boolean isInTree()
+	{ 
+		return inTree;
+	}
 }
