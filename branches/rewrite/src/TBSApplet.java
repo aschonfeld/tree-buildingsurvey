@@ -19,13 +19,13 @@ public class TBSApplet extends JApplet {
 	private TBSModel model;
 	private TBSView view;
 	private TBSController controller;
-	private ButtonPanel bp;
+	ButtonPanel bp;
 
 	public void init() {
+			bp = new ButtonPanel();
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-					bp = new ButtonPanel();
 					add(bp);					
             	model = new TBSModel(getGraphics(), loadOrganismsFromDirectory("images"));
                 add(model.getView());
