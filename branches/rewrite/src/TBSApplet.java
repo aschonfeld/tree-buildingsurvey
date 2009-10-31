@@ -1,4 +1,4 @@
-//TBS Version 0.1
+//TBS Version 0.3
 
 
 import javax.imageio.*;
@@ -19,11 +19,14 @@ public class TBSApplet extends JApplet {
 	private TBSModel model;
 	private TBSView view;
 	private TBSController controller;
-	
+	private ButtonPanel bp;
+
 	public void init() {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
+					bp = new ButtonPanel();
+					add(bp);					
             	model = new TBSModel(getGraphics(), loadOrganismsFromDirectory("images"));
                 add(model.getView());
                 model.getView().addMouseListener(model.getController());

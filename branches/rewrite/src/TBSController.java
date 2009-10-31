@@ -1,4 +1,4 @@
-//TBSController v0.01
+//TBSController v0.3
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -23,7 +23,9 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     private boolean mouseDragged;
     private boolean draggingElement;
     private int previousX, previousY;
-    
+		private Node draggedNode;   
+
+ 
     public TBSController(TBSModel m, TBSView v){
     	model = m;
     	view = v;
@@ -62,17 +64,8 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 				if(me instanceof Node) {
 					// Move Node
 					Node node = (Node) me;
+					draggedNode = node;
 					node.moveTo(x,y);
-
-						//Auto-add/delete: 
-					if (x < TBSView.LINE_OF_DEATH)
-						node.removeFromTree();
-					if (x > TBSView.LINE_OF_DEATH && !node.isInTree() )
-						node.addToTree(); 
-							//is it more efficient to check isInTree in this
-							//case or not to check? It shouldn't affect
-							//performance, but it's an interesting question.
-	
 
 
 			//		if(node instanceof OrganismNode) {
@@ -96,9 +89,22 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
  	}
 	
 	
-	public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(MouseEvent e) 
+	{
 		mousePressed = false;
 		mouseDragged = false;
+						//Auto-add/delete: 
+		if (draggedNode != null)
+		{
+			if (draggedNode.getLeftX() < TBSView.LINE_OF_DEATH )
+				draggedNode.removeFromTree();
+			if (draggedNode.getLeftX() > TBSView.LINE_OF_DEATH )
+				draggedNode.addToTree(); 
+					//is it more efficient to check isInTree in this
+					//case or not to check? It shouldn't affect
+					//performance, but it's an interesting question.
+			draggedNode=null;
+		}
 		int x = e.getX();
 		int y = e.getY();
 		selectedIndices = new ArrayList(); // clear selected items
