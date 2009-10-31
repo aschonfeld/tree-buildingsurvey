@@ -13,35 +13,33 @@ import java.io.*;
 	
 public class EmptyNode extends Node {
 
-	EmptyNode(int x, int y, String n) {
+	TBSModel model;
+	private int initX, initY;
+
+
+	EmptyNode(TBSModel mod, int x, int y, String n) {
 		leftX = x;
 		upperY = y;
+		initY = x;
+		initY = y;
 		width = 5;
 		height = 5;
 		name = n;
+		model = mod;
 	}
 	
 	public boolean collidesWith(ModelElement e) {return false;};
 
 	public void addToTree()
 	{
-		System.out.println ("Empty Node adding itself to the tree");
-
-		//This is here to facilitate auto-add/auto-delete
-		//Please don't delete.
-		// If we fill in some code here, we can probably auto-add empty nodes from the ever-full
-		// well, one of Bolker's requests from early on. Or if we leave it as is, everything's
-		// fine too. ?
+		model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
+	
 	}
 	
 	public void removeFromTree()
 	{
 
-		System.out.println("Deleting this empty node, called " + name);
+		model.delete(this);
 
-		// this should call something like "TBSModel.remove(this)"
-		// We want this in order to allow the "remove" button to function
-		// for all nodes
-		// Null node for now because I need to be able to call removeFromTree
 	}
 }

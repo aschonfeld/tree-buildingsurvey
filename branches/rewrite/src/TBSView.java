@@ -21,7 +21,9 @@ public class TBSView extends JComponent {
 			//changed. 
 	public static int LINE_OF_DEATH = 120;
 
-	
+	private int emptyNodeHeight = 20; //should these be public static?
+	private int emptyNodeWidth = 20;	
+
 	// Contains the length and width of all organism nodes
 	private int organismNodeWidth;
 	private int organismNodeHeight;
@@ -77,7 +79,8 @@ public class TBSView extends JComponent {
 		int imageWidth = 0;
 		int imageStartX = 0;
 		int stringStartX = 0;
-		if(me instanceof OrganismNode) {
+		if(me instanceof OrganismNode) 
+		{
 			OrganismNode on = (OrganismNode) me;
 			stringWidth = (int) on.getStringBounds().getWidth();
 			imageWidth = on.getImage().getWidth();
@@ -89,6 +92,12 @@ public class TBSView extends JComponent {
 			g2.fillRect(on.getLeftX(), on.getUpperY(), organismNodeWidth, organismNodeHeight);
 			g2.drawImage(on.getImage(), imageStartX, on.getUpperY(), null);
 			drawString(g2, on, stringStartX);
+		}
+		else if (me instanceof EmptyNode)
+		{
+			EmptyNode en = (EmptyNode) me;
+			g2.setColor(Color.white);
+			g2.fillRect(en.getLeftX(), en.getUpperY(), emptyNodeWidth, emptyNodeHeight);
 		}
 	}
 	

@@ -52,7 +52,12 @@ public class TBSModel
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
 	}
-	
+
+	public void delete(EmptyNode en)
+	{
+		modelElements.remove(en);		
+	}	
+
 	public int numElements() {
 		return modelElements.size();
 	}
@@ -119,6 +124,9 @@ public class TBSModel
 			addElement(new OrganismNode(img, organismName, rect, currentX, currentY, organismNodeWidth, organismNodeHeight));
 			currentY += organismNodeHeight + ySpacing;
 		}
+		addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
+			//20 is arbitrary, to move it away from the side so you can see
+			//it better. Change at whim.
 	}
 	
 	// calculate the area occupied by a string
