@@ -7,3 +7,5 @@ News:
   Version 0.2 of applet, including the dragability functionality, was completed last night.
 Discussion:
   We began our meeting by discussing the current progress of our group with Professor Bolker.
+
+http://upload.wikimedia.org/wikipedia/commons/2/25/NodeCollision.gif
