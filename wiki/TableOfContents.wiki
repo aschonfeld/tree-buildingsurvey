@@ -1,7 +1,7 @@
   * [Schedule Project Schedule]
   * [MeetingMinutes Meeting Minutes]
-    * [MeetingOneMinutes 10/27/2009]
     * [MeetingTwoMinutes 10/29/2009]
+    * [MeetingOneMinutes 10/27/2009]
   * [VisionStatement Vision Statement]
   * [Versioning Applet Versioning]
   * [AppletGUITesting Applet GUI Testing]
