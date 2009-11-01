@@ -51,11 +51,11 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 				switch (userSelection) {
 				case JOptionPane.YES_OPTION:
 					label = view.promptUserForString("Please enter a label for this node");
-					if ((label == null) || !(label instanceof String)) label = "";
-					model.addElement(new EmptyNode(model, x, y, label));
+					if ((label == null) || !(label instanceof String)) label = " ";
+					model.addElement(new EmptyNode(model, x, y, label ));
 					break;
 				case JOptionPane.NO_OPTION:
-					model.addElement(new EmptyNode(model, x, y, ""));
+					model.addElement(new EmptyNode(model, x, y, "") );
 					break;
 				case JOptionPane.CANCEL_OPTION:
 					// do nothing

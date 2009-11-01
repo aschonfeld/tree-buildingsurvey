@@ -1,3 +1,7 @@
+//TBS version 0.3
+//EmptyNode: connector node, represents a hypothetical common ancestor
+
+
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -17,7 +21,7 @@ public class EmptyNode extends Node {
 	private int initX, initY;
 	private int emptyNodeWidth = 20;
 	private int emptyNodeHeight = 20;
-
+	
 	EmptyNode(TBSModel mod, int x, int y, String n) {
 		leftX = x;
 		upperY = y;
@@ -46,4 +50,5 @@ public class EmptyNode extends Node {
 		model.delete(this);
 
 	}
+	
 }

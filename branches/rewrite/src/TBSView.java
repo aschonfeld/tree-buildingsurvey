@@ -55,7 +55,31 @@ public class TBSView extends JComponent {
 	public int promptUserForYesNoCancel(String message) {
 		return JOptionPane.showConfirmDialog(null, message);
 	}
+	public void drawString(Graphics2D g2, TBSButton b, int xOffset)
+	{
+		
+		g2.setColor(Color.black);
+		int stringHeight = 0;
+		int stringWidth = 0;
+		int x = 0;
+		int y = 0;
+		RenderingHints rh = new RenderingHints(
+		RenderingHints.KEY_TEXT_ANTIALIASING,
+		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHints(rh);
+		x = xOffset;
+		stringHeight = (int) b.getStringBounds().getHeight();
+		y = b.getUpperY() + organismNodeHeight - (organismNodeHeight - stringHeight) / 2;
+   		Point2D loc = new Point(x, y);
+   		Font f = new Font(fontName, fontStyle, fontSize);
+   		g2.setFont(f);
+   		FontRenderContext frc = g2.getFontRenderContext();
+   		TextLayout layout = new TextLayout(b.getName(), f, frc);
+   		layout.draw(g2, (float)loc.getX(), (float)loc.getY());
 	
+		Rectangle2D bounds = layout.getBounds();
+	}
+
 	public void drawString(Graphics2D g2, OrganismNode on, int xOffset) {
 		// ReneringHints tell
 		g2.setColor(Color.black);
@@ -78,13 +102,29 @@ public class TBSView extends JComponent {
    		layout.draw(g2, (float)loc.getX(), (float)loc.getY());
 		Rectangle2D bounds = layout.getBounds();
 	}
+
+	public void renderButton(Graphics g, TBSButton button)
+	{
+		Graphics2D g2 = (Graphics2D) g;
 	
+		TBSButton b = button;
+		int stringWidth = (int) b.getStringBounds().getWidth();
+		int stringXOffset= (b.getWidth()-stringWidth)/2;
+		int stringStartX = b.getLeftX() + stringXOffset;
+		g2.setColor(Color.white);
+		g2.fillRect(b.getLeftX(), b.getUpperY(), b.getWidth(),
+				b.getHeight());
+		drawString(g2, b, stringStartX);
+	}
+
 	public void renderModelElement(Graphics g, ModelElement me) {
 		Graphics2D g2 = (Graphics2D) g;
 		int stringWidth = 0;
 		int imageWidth = 0;
 		int imageStartX = 0;
 		int stringStartX = 0;
+		if (me instanceof TBSButton)
+			renderButton(g, (TBSButton) me);
 		if(me instanceof OrganismNode) 
 		{
 			OrganismNode on = (OrganismNode) me;

@@ -18,7 +18,11 @@ public class TBSModel
 	private TBSView view;
 	private TBSController controller;
 	private ArrayList<ModelElement> modelElements;
-	
+
+	private int buttonHeight;
+	private int buttonWidth;
+	private TBSButton linkButton, unlinkButton, labelButton, deleteButton, splitButton, printButton, undoButton,
+			saveButton;	
 	// Contains the length and width of all organism nodes
 	private int organismNodeWidth = 0;
 	private int organismNodeHeight = 0;
@@ -36,6 +40,7 @@ public class TBSModel
 	
 	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new ArrayList<ModelElement>();
+		createButtons(g);
 		createModelElements(g, organismNameToImage);
 		view = new TBSView(this, organismNodeWidth, organismNodeHeight, paddingWidth, ySpacing, fontName, fontStyle, fontSize);
 		controller = new TBSController(this, view);
@@ -74,6 +79,49 @@ public class TBSModel
 		modelElements.set(i, me);
 	}
 	
+	public void createButtons(Graphics g)
+	{
+		int screenWidth=800; //currently, could change - pass this from Applet to allow resizing
+		int currentX=0;	//start at left edge
+		buttonHeight= 20; //arbitrary, tweak to fit
+		int buttonCount = 8;
+		buttonWidth = screenWidth / buttonCount; 	//all buttons same width, occupy whole screen
+		Graphics2D g2 = (Graphics2D) g;
+		linkButton = new TBSButton(this, "Link", getStringBounds(g2, "Link"), TBSButton.LINK, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+
+		unlinkButton = new TBSButton(this, "Unlink", getStringBounds(g2, "Unlink"), TBSButton.UNLINK, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		labelButton = new TBSButton(this, "Label", getStringBounds(g2, "Label"), TBSButton.LABEL, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		deleteButton = new TBSButton(this, "Delete", getStringBounds(g2, "Delete"), TBSButton.DELETE, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		splitButton = new TBSButton(this, "Split", getStringBounds(g2, "Split"), TBSButton.SPLIT, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		printButton = new TBSButton(this, "Print", getStringBounds(g2, "Print"), TBSButton.PRINT, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		undoButton = new TBSButton(this, "Undo", getStringBounds(g2, "Undo"), TBSButton.UNDO, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+		saveButton = new TBSButton(this, "Save", getStringBounds(g2, "Save"), TBSButton.SAVE, 
+			 currentX,0, buttonHeight, buttonWidth);
+		currentX+=buttonWidth;
+	
+		addElement(linkButton);
+		addElement(unlinkButton);
+		addElement(labelButton);
+		addElement(deleteButton);
+		addElement(splitButton);
+		addElement(printButton);
+		addElement(undoButton);
+		addElement(saveButton);
+	}
 	// called during setup to create organism nodes
 	protected void createModelElements(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		Graphics2D g2 = (Graphics2D) g;
@@ -114,7 +162,7 @@ public class TBSModel
 			organismNodeHeight = maxNameHeight;
 		}
 		currentX = 0;
-		currentY = ySpacing;
+		currentY = ySpacing +25;
 		Rectangle2D currentRect = null;
 		BufferedImage currentImage = null;
 		while(itr.hasNext()) {
@@ -125,7 +173,7 @@ public class TBSModel
 			currentY += organismNodeHeight + ySpacing;
 		}
 		// leave commented unless testing
-		 addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
+		// addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
 		//20 is arbitrary, to move it away from the side so you can see
 		//it better. Change at whim.
 	}

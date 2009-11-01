@@ -58,4 +58,5 @@ public abstract class Node extends ModelElement
 	{ 
 		return inTree;
 	}
+		
 }
