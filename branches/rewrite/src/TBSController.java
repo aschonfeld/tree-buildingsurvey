@@ -23,7 +23,7 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     private boolean mouseDragged;
     private boolean draggingElement;
     private int previousX, previousY;
-		private Node draggedNode;   
+	private Node draggedNode;   
 
  
     public TBSController(TBSModel m, TBSView v){
@@ -35,8 +35,39 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
-	public void mouseClicked(MouseEvent e){}
 	public void mouseMoved(MouseEvent e){}
+	
+	// Check for double click
+	public void mouseClicked(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
+		String message = new String();
+		String label = new String();
+		if(e.getClickCount() == 2) {
+			if(mouseIsOver(x, y).size() == 0) {
+				// user clicked on empty space, create empty node
+				message = new String("Do you want to label this node?");
+				if(view.promptUserForYesNo(message) == JOptionPane.YES_OPTION) {
+					label = view.promptUserForString("Please enter a label for this node");
+				}
+				if ((label == null) || !(label instanceof String)) label = "";
+				model.addElement(new EmptyNode(model, x, y, label));
+			} else {
+				// user clicked on node, ask if wants to delete
+				// remove top most node (in case nodes are stacked)
+				ArrayList<Integer> a = mouseIsOver(x,y);
+				int topIndex = a.get(a.size() - 1);
+				ModelElement me = model.getElement(topIndex);
+				if(me instanceof Node) {
+					Node n = (Node) me;
+					message = "Delete this node?";
+					if(view.promptUserForYesNo("Delete this node?") == JOptionPane.YES_OPTION) {
+						n.removeFromTree();
+					}					
+				}
+			}
+		}
+	}
 	
 	public void mousePressed(MouseEvent e){
 		int x = e.getX();
@@ -66,16 +97,6 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 					Node node = (Node) me;
 					draggedNode = node;
 					node.move(deltaX, deltaY);
-
-			//		if(node instanceof OrganismNode) {
-			//			OrganismNode on = (OrganismNode) node;
-			//			on.addToTree();
-			//		}
-			// Glenn - this conflicts with auto-add/delete, and I think it
-			// can be safely deleted. If you agree, please delete. If not,
-			// call me and we can figure it out. 
-
-					// Refresh Node
 					model.setElement(i, node);
 				}
 			}
@@ -92,16 +113,16 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	{
 		mousePressed = false;
 		mouseDragged = false;
-						//Auto-add/delete: 
+		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
 			if (draggedNode.getLeftX() < TBSView.LINE_OF_DEATH )
 				draggedNode.removeFromTree();
 			if (draggedNode.getLeftX() > TBSView.LINE_OF_DEATH )
 				draggedNode.addToTree(); 
-					//is it more efficient to check isInTree in this
-					//case or not to check? It shouldn't affect
-					//performance, but it's an interesting question.
+				//is it more efficient to check isInTree in this
+				//case or not to check? It shouldn't affect
+				//performance, but it's an interesting question.
 			draggedNode=null;
 		}
 		int x = e.getX();

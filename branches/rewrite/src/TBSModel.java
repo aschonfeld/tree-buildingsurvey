@@ -74,7 +74,7 @@ public class TBSModel
 		modelElements.set(i, me);
 	}
 	
-	// called the first time this component is drawn by paintComponent
+	// called during setup to create organism nodes
 	protected void createModelElements(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		Graphics2D g2 = (Graphics2D) g;
 		TreeMap<String, Rectangle2D> organismNameToStringBounds;
@@ -124,20 +124,29 @@ public class TBSModel
 			addElement(new OrganismNode(img, organismName, rect, currentX, currentY, organismNodeWidth, organismNodeHeight));
 			currentY += organismNodeHeight + ySpacing;
 		}
-		addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
-			//20 is arbitrary, to move it away from the side so you can see
-			//it better. Change at whim.
+		// leave commented unless testing
+		// addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
+		//20 is arbitrary, to move it away from the side so you can see
+		//it better. Change at whim.
+	}
+	
+	// calculate the area occupied by a string using default font
+	public Rectangle2D getStringBounds(Graphics2D g2, String name) {
+		return getStringBounds(g2, name, null);
 	}
 	
 	// calculate the area occupied by a string
-	public Rectangle2D getStringBounds(Graphics2D g2, String name) {
+	public Rectangle2D getStringBounds(Graphics2D g2, String name, Font f) {
 		// ReneringHints tell
 		RenderingHints rh = new RenderingHints(
 		RenderingHints.KEY_TEXT_ANTIALIASING,
 		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
-   		Font f = new Font(fontName, fontStyle, fontSize);
-   		g2.setFont(f);
+		if(f == null) {
+			// default font
+			f = new Font(fontName, fontStyle, fontSize);
+			g2.setFont(f);
+		}
    		FontRenderContext frc = g2.getFontRenderContext();
    		TextLayout layout = new TextLayout(name, f, frc);
    		return layout.getBounds();

@@ -15,15 +15,16 @@ public class EmptyNode extends Node {
 
 	TBSModel model;
 	private int initX, initY;
-
+	private int emptyNodeWidth = 20;
+	private int emptyNodeHeight = 20;
 
 	EmptyNode(TBSModel mod, int x, int y, String n) {
 		leftX = x;
 		upperY = y;
 		initY = x;
 		initY = y;
-		width = 5;
-		height = 5;
+		width = emptyNodeWidth;
+		height = emptyNodeHeight;
 		name = n;
 		model = mod;
 	}
@@ -32,7 +33,9 @@ public class EmptyNode extends Node {
 
 	public void addToTree()
 	{
-		model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
+		//Empty nodes are always in the tree, 
+		//this makes a copy in the left window, please delete
+		//model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
 	
 	}
 	

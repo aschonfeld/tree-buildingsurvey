@@ -17,12 +17,13 @@ public class TBSView extends JComponent {
 
 	private TBSModel model;
 
-			//boundary between active and inactive elements. Name can be
-			//changed. 
+	//boundary between active and inactive elements.
+	//Name can be changed. 
 	public static int LINE_OF_DEATH = 120;
 
-	private int emptyNodeHeight = 20; //should these be public static?
-	private int emptyNodeWidth = 20;	
+	//These should be in EmptyNode so Node.contains(x, y) works
+	//private int emptyNodeHeight = 20; //should these be public static?
+	//private int emptyNodeWidth = 20;	
 
 	// Contains the length and width of all organism nodes
 	private int organismNodeWidth;
@@ -48,6 +49,34 @@ public class TBSView extends JComponent {
         fontName = fName;
         fontStyle = fStyle;
         fontSize = fSize;
+	}
+	
+	public String promptUserForString(String message) {
+		return (String) JOptionPane.showInputDialog(this, message);
+	}
+	
+	public int promptUserForYesNo(String message) {
+		int selection = JOptionPane.showConfirmDialog(this, message, null, JOptionPane.YES_NO_OPTION);
+		if(selection == JOptionPane.YES_OPTION) return JOptionPane.YES_OPTION;
+		// NO_OPTION or user closed prompt window
+		return JOptionPane.NO_OPTION;
+	}
+	
+	public int promptUserForYesNoCancel(String message) {
+		int selection = JOptionPane.showConfirmDialog(this, message, null, JOptionPane.YES_NO_OPTION);
+		if(selection == JOptionPane.YES_OPTION) return 1;
+		if(selection == JOptionPane.NO_OPTION) return 0;
+		// CANCEL_OPTION or user closed prompt window
+		return JOptionPane.CANCEL_OPTION;
+	}
+	
+	public int promptUserWithOptions(String question, String firstOption, String secondOption) {
+		String[] options = new String[2];
+		options[0] = firstOption;
+		options[1] = secondOption;
+		int optionType = JOptionPane.YES_NO_OPTION;
+		int messageType = JOptionPane.QUESTION_MESSAGE;
+		return JOptionPane.showOptionDialog(this, question, null, optionType, messageType, null, options, options[0]);
 	}
 	
 	public void drawString(Graphics2D g2, OrganismNode on, int xOffset) {
@@ -96,8 +125,25 @@ public class TBSView extends JComponent {
 		else if (me instanceof EmptyNode)
 		{
 			EmptyNode en = (EmptyNode) me;
-			g2.setColor(Color.white);
-			g2.fillRect(en.getLeftX(), en.getUpperY(), emptyNodeWidth, emptyNodeHeight);
+			String name = en.getName();
+			int leftX = en.getLeftX();
+			int upperY = en.getUpperY();
+			if(name == null) name = "";
+			// make empty nodes light purple (like Prof. White's node.gif)
+			g2.setColor(new Color(1.0f, 0.5f, 1.0f));
+			g2.fillRect(en.getLeftX(), en.getUpperY(), en.getWidth(), en.getHeight());
+			// make bold for greater visibility;
+	  		Font f = new Font(fontName, Font.BOLD, 18);
+	   		g2.setFont(f);
+			if(name.length() > 0) {
+				// zero length string gives an error
+				Rectangle2D bounds = model.getStringBounds(g2, en.getName(), f);
+				int h = (int) bounds.getHeight();
+				int w = (int) bounds.getWidth();
+				int stringX = leftX + (en.getWidth() / 2) - (w / 2);
+				int stringY = upperY - h;
+				g2.drawString(name, stringX, stringY);
+			}
 		}
 	}
 	

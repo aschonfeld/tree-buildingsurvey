@@ -22,11 +22,14 @@ public class TBSApplet extends JApplet {
 	ButtonPanel bp;
 
 	public void init() {
-			bp = new ButtonPanel();
+		// this can cause weird errors at run time that only happen sometimes
+		// needs to be in Runnable due to "thread safety" issues
+		// bp = new ButtonPanel();
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-					add(bp);					
+            	bp = new ButtonPanel();
+				add(bp);					
             	model = new TBSModel(getGraphics(), loadOrganismsFromDirectory("images"));
                 add(model.getView());
                 model.getView().addMouseListener(model.getController());
