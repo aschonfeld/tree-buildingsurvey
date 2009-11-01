@@ -52,31 +52,11 @@ public class TBSView extends JComponent {
 	}
 	
 	public String promptUserForString(String message) {
-		return (String) JOptionPane.showInputDialog(this, message);
-	}
-	
-	public int promptUserForYesNo(String message) {
-		int selection = JOptionPane.showConfirmDialog(this, message, null, JOptionPane.YES_NO_OPTION);
-		if(selection == JOptionPane.YES_OPTION) return JOptionPane.YES_OPTION;
-		// NO_OPTION or user closed prompt window
-		return JOptionPane.NO_OPTION;
+		return (String) JOptionPane.showInputDialog(message);
 	}
 	
 	public int promptUserForYesNoCancel(String message) {
-		int selection = JOptionPane.showConfirmDialog(this, message, null, JOptionPane.YES_NO_OPTION);
-		if(selection == JOptionPane.YES_OPTION) return 1;
-		if(selection == JOptionPane.NO_OPTION) return 0;
-		// CANCEL_OPTION or user closed prompt window
-		return JOptionPane.CANCEL_OPTION;
-	}
-	
-	public int promptUserWithOptions(String question, String firstOption, String secondOption) {
-		String[] options = new String[2];
-		options[0] = firstOption;
-		options[1] = secondOption;
-		int optionType = JOptionPane.YES_NO_OPTION;
-		int messageType = JOptionPane.QUESTION_MESSAGE;
-		return JOptionPane.showOptionDialog(this, question, null, optionType, messageType, null, options, options[0]);
+		return JOptionPane.showConfirmDialog(null, message);
 	}
 	
 	public void drawString(Graphics2D g2, OrganismNode on, int xOffset) {

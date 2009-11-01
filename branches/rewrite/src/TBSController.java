@@ -47,11 +47,17 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 			if(mouseIsOver(x, y).size() == 0) {
 				// user clicked on empty space, create empty node
 				message = new String("Do you want to label this node?");
-				if(view.promptUserForYesNo(message) == JOptionPane.YES_OPTION) {
+				int userSelection = view.promptUserForYesNoCancel(message);
+				switch (userSelection) {
+				case JOptionPane.YES_OPTION:
 					label = view.promptUserForString("Please enter a label for this node");
+					if ((label == null) || !(label instanceof String)) label = "";
+					model.addElement(new EmptyNode(model, x, y, label));
+				case JOptionPane.NO_OPTION:
+					model.addElement(new EmptyNode(model, x, y, ""));
+				case JOptionPane.CANCEL_OPTION:
+					// do nothing
 				}
-				if ((label == null) || !(label instanceof String)) label = "";
-				model.addElement(new EmptyNode(model, x, y, label));
 			} else {
 				// user clicked on node, ask if wants to delete
 				// remove top most node (in case nodes are stacked)
@@ -61,7 +67,7 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 				if(me instanceof Node) {
 					Node n = (Node) me;
 					message = "Delete this node?";
-					if(view.promptUserForYesNo("Delete this node?") == JOptionPane.YES_OPTION) {
+					if(view.promptUserForYesNoCancel("Delete this node?") == JOptionPane.YES_OPTION) {
 						n.removeFromTree();
 					}					
 				}
