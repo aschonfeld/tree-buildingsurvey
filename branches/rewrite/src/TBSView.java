@@ -1,4 +1,4 @@
-//TBSView.java version 0.01
+//TBSView.java version 0.3
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -21,9 +21,6 @@ public class TBSView extends JComponent {
 	//Name can be changed. 
 	public static int LINE_OF_DEATH = 120;
 
-	//These should be in EmptyNode so Node.contains(x, y) works
-	//private int emptyNodeHeight = 20; //should these be public static?
-	//private int emptyNodeWidth = 20;	
 
 	// Contains the length and width of all organism nodes
 	private int organismNodeWidth;

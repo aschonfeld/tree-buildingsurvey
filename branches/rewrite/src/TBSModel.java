@@ -125,7 +125,7 @@ public class TBSModel
 			currentY += organismNodeHeight + ySpacing;
 		}
 		// leave commented unless testing
-		// addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
+		 addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
 		//20 is arbitrary, to move it away from the side so you can see
 		//it better. Change at whim.
 	}

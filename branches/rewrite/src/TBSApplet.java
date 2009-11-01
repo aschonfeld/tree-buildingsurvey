@@ -29,7 +29,7 @@ public class TBSApplet extends JApplet {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
             	bp = new ButtonPanel();
-				add(bp);					
+					add(bp);
             	model = new TBSModel(getGraphics(), loadOrganismsFromDirectory("images"));
                 add(model.getView());
                 model.getView().addMouseListener(model.getController());

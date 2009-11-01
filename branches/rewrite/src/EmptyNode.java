@@ -35,6 +35,7 @@ public class EmptyNode extends Node {
 	{
 		//Empty nodes are always in the tree, 
 		//this makes a copy in the left window, please delete
+
 		//model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
 	
 	}
