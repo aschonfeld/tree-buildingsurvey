@@ -1,17 +1,21 @@
+package tbs.model;
 //TBSModel v0.02
 
-import javax.imageio.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.net.*;
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
+
+import tbs.controller.TBSController;
+import tbs.view.TBSView;
 
 public class TBSModel 
 {
@@ -127,7 +131,6 @@ public class TBSModel
 		Graphics2D g2 = (Graphics2D) g;
 		TreeMap<String, Rectangle2D> organismNameToStringBounds;
 		organismNameToStringBounds = new TreeMap<String, Rectangle2D>();
-		ImageObserver imageObserver = null;
 		BufferedImage img = null;
 		Rectangle2D rect = null;
 		int currentX = 0;
@@ -141,7 +144,6 @@ public class TBSModel
 		String organismName = "";
 		Set<String> organismNames = organismNameToImage.keySet();
 		Iterator<String> itr = organismNames.iterator();
-		ModelElement on = null;
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);
@@ -163,8 +165,6 @@ public class TBSModel
 		}
 		currentX = 0;
 		currentY = ySpacing +25;
-		Rectangle2D currentRect = null;
-		BufferedImage currentImage = null;
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);

@@ -1,17 +1,20 @@
+package tbs.controller;
 //TBSController v0.3
 
-import javax.imageio.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.net.*;
-import java.util.*;
-import java.lang.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+import tbs.model.EmptyNode;
+import tbs.model.ModelElement;
+import tbs.model.Node;
+import tbs.model.TBSModel;
+import tbs.view.TBSView;
 
 public class TBSController implements MouseListener, MouseMotionListener, ActionListener {
 	
@@ -19,18 +22,13 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	private TBSView view;
 	
 	private ArrayList<Integer> selectedIndices;
-    private boolean mousePressed;
-    private boolean mouseDragged;
-    private boolean draggingElement;
-    private int previousX, previousY;
+	private int previousX, previousY;
 	private Node draggedNode;   
 
  
     public TBSController(TBSModel m, TBSView v){
     	model = m;
     	view = v;
-    	mousePressed = false;
-    	mouseDragged = false;
     }
     
 	public void mouseEntered(MouseEvent e){}
@@ -119,8 +117,6 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	
 	public void mouseReleased(MouseEvent e) 
 	{
-		mousePressed = false;
-		mouseDragged = false;
 		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
@@ -133,10 +129,7 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 				//performance, but it's an interesting question.
 			draggedNode=null;
 		}
-		int x = e.getX();
-		int y = e.getY();
-		selectedIndices = new ArrayList(); // clear selected items
-		//System.out.println("Released: " + x + " " + y);
+		selectedIndices = new ArrayList<Integer>(); // clear selected items
 	}
 	
 	public void actionPerformed(ActionEvent e) {

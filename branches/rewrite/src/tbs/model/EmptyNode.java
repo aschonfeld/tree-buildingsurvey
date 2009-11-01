@@ -1,19 +1,8 @@
+package tbs.model;
 //TBS version 0.3
 //EmptyNode: connector node, represents a hypothetical common ancestor
 
 
-import javax.imageio.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import java.awt.geom.*;
-import java.awt.font.*;
-import java.net.*;
-import java.util.*;
-import java.lang.*;
-import java.io.*;
 	
 public class EmptyNode extends Node {
 
@@ -22,7 +11,7 @@ public class EmptyNode extends Node {
 	private int emptyNodeWidth = 20;
 	private int emptyNodeHeight = 20;
 	
-	EmptyNode(TBSModel mod, int x, int y, String n) {
+	public EmptyNode(TBSModel mod, int x, int y, String n) {
 		leftX = x;
 		upperY = y;
 		initY = x;

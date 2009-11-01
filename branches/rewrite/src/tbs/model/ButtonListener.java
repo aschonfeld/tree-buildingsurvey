@@ -1,3 +1,4 @@
+package tbs.model;
 //TBS version 0.2: ButtonListener
 //Just a listener for the button panel
 

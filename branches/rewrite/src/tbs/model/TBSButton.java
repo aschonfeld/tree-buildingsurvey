@@ -1,3 +1,4 @@
+package tbs.model;
 //TBS version 0.3
 //Non-Swing button class, based on OrganismNode
 
