@@ -9,12 +9,17 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
    * No Model and Controller implementation
   * *0.2*: Draggable Organisms (*Done*)
    * See [MeetingOneMinutes meeting minutes] for detail of model-view-controller division of labor. This version allows the users to stack organisms on top of each other and drag multiple organisms at once.  The alphabetically later organism will be rendered on top.  We plan to add collision detection by Version 1.0.
-  * *0.3*: Distinguish between available organisms (on the left) and organisms nodes (on the right), add button panel (11/01)   
-   * Is this distinction necessary? Can we simply create organism nodes on the left?
-  * *0.4*: Empty nodes can be created (11/04)
-   * If I recall correctly, the means of creating new nodes was one of the possible points of variation we were to offer. If we're preserving this notion, we'll have to keep it in mind at this point here, since it'll probably affect the way this is implemented. 
-  * *0.5*: Nodes can be deleted (11/07)
-  * *0.6*: Empty nodes can be labeled (11/10)
+  * *0.3* 11/01 (*Done*) 
+     * Distinguish between available organisms (on the left) and organisms nodes (on the right)
+     * add button panel: there is a button panel, although the buttons are not yet functional. See notes to r307 for more on the button panel status. Input is requested on how to proceed.    
+     * Empty nodes can be created 
+       * They are not pretty, we are aware of that. This is functionality, not pretty. 
+       * Two methods of node creation have been implemented: the user can drag an empty node from the "bottomless stack" on the left side of the screen, or she may double-click. A conflict between the two methods has been reconciled. There is also a space in the button panel for "label" which is B. White's term for "create an empty node". How many creation methods do we want to use? 
+     * Nodes can be deleted: This also is implemented in two distinct ways. Currently, double-click will ask the user if they want to delete; also, simply dragging a node off-screen will delete it. 
+     *  Empty nodes can be labeled: Double-click node creation offers the user the chance to label the node. 
+     * In addition, we hope that MacOS X compatibility problems have been resolved, at least for the moment. 
+     * If we may toot our collective horn, this release puts us fairly well ahead of schedule: we are 3 minor versions and 1.5 weeks ahead of where we thought we'd be a week ago.  
+     * This however requires that we re-group and determine the feature path from here before any further development: no new code until after meeting on Tuesday. Following release dates are now obsolete; look for new information Tuesday after class.
   * *0.7*: Connections can be created. Deleting a node deletes connections to/from node (11/13)
   * *0.8*: Connections selectable, can be deleted (11/16)
   * *0.9*: Menu allows users to select options for UI display and mouse behavior (11/22)
