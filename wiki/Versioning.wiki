@@ -9,7 +9,7 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
    * No Model and Controller implementation
   * *0.2*: Draggable Organisms (*Done*)
    * See [MeetingOneMinutes meeting minutes] for detail of model-view-controller division of labor. This version allows the users to stack organisms on top of each other and drag multiple organisms at once.  The alphabetically later organism will be rendered on top.  We plan to add collision detection by Version 1.0.
-  * *0.3* 11/01 (*Done*) (see it [http://www.cs.umb.edu/~kiparsky/TBS03/Applet03.html here]
+  * *0.3* 11/01 (*Done*) (see it [http://www.cs.umb.edu/~kiparsky/TBS03/Applet03.html here])
      * Distinguish between available organisms (on the left) and organisms nodes (on the right)
      * add button panel: there is a button panel, although the buttons are not yet functional. See notes to r307 for more on the button panel status. Input is requested on how to proceed.    
      * Empty nodes can be created 
