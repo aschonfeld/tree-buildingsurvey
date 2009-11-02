@@ -1,5 +1,9 @@
 package tbs.model;
 
+//TBS version 0.3
+//Node: superclass for OrganismNode and EmptyNode
+
+
 	
 public abstract class Node extends ModelElement 
 {	

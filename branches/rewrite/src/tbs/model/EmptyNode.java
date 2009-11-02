@@ -14,8 +14,8 @@ public class EmptyNode extends Node {
 	public EmptyNode(TBSModel mod, int x, int y, String n) {
 		leftX = x;
 		upperY = y;
-		initY = x;
-		initY = y;
+		initX = 70;
+		initY = 575;
 		width = emptyNodeWidth;
 		height = emptyNodeHeight;
 		name = n;
@@ -24,12 +24,10 @@ public class EmptyNode extends Node {
 	
 	public boolean collidesWith(ModelElement e) {return false;};
 
+	//Re-fills "bottomless stack" of EmptyNodes
 	public void addToTree()
 	{
-		//Empty nodes are always in the tree, 
-		//this makes a copy in the left window, please delete
-
-		//model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
+		model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
 	
 	}
 	

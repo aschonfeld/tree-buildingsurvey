@@ -1,4 +1,8 @@
 package tbs.model;
+
+//TBS version 0.3
+//OrganismNode: represents "organisms" manipulated by user
+
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 

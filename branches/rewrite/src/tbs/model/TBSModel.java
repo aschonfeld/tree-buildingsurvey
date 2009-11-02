@@ -1,5 +1,5 @@
 package tbs.model;
-//TBSModel v0.02
+//TBSModel v0.03
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -173,7 +173,7 @@ public class TBSModel
 			currentY += organismNodeHeight + ySpacing;
 		}
 		// leave commented unless testing
-		// addElement(new EmptyNode(this, currentX+20, currentY, "Empty"));
+		addElement(new EmptyNode(this, 70,575, "Empty"));
 		//20 is arbitrary, to move it away from the side so you can see
 		//it better. Change at whim.
 	}
