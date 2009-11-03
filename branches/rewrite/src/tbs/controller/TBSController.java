@@ -93,18 +93,15 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		int y = e.getY();
 		int deltaX = x - previousX;
 		int deltaY = y - previousY;
-		if(selectedIndices.size() > 0) {
-			for(Integer Int: selectedIndices) {
-				int i = Int.intValue();
-				//System.out.println(i);
-				ModelElement me = model.getElement(i);
-				if(me instanceof Node) {
-					// Move Node
-					Node node = (Node) me;
-					draggedNode = node;
-					node.move(deltaX, deltaY);
-					model.setElement(i, node);
-				}
+		for(Integer index : selectedIndices) {
+			int i = index.intValue();
+			ModelElement selected = model.getElement(i);
+			if(selected instanceof Node) {
+				// Move Node
+				Node node = (Node) selected;
+				draggedNode = node;
+				node.move(deltaX, deltaY);
+				model.setElement(i, node);
 			}
 		}
 		view.refreshGraphics();
@@ -120,6 +117,15 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
+			for(ModelElement me : model.getElements()){
+				if(me instanceof Node) {
+					Node curr = (Node) me;
+					if(!curr.equals(draggedNode) && curr.isInTree()){
+						if(draggedNode.collidesWith(curr))
+							draggedNode.removeFromTree();
+					}
+				}
+			}
 			if (draggedNode.getLeftX() < TBSView.LINE_OF_DEATH )
 				draggedNode.removeFromTree();
 			if (draggedNode.getLeftX() > TBSView.LINE_OF_DEATH )
@@ -138,12 +144,11 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     
     private ArrayList<Integer> mouseIsOver(int x, int y) {
 	    ArrayList<Integer> activeIndices= new ArrayList<Integer>();
-	    int numElements = model.numElements();
-	    for (int i = 0; i < numElements; i++) {
-		    ModelElement var = model.getElement(i);
-		    if(var.contains(x, y)) {
+	    int i = 0;
+	    for (ModelElement me : model.getElements()) {
+		    if(me.contains(x, y)) 
 		    	activeIndices.add(i);
-		    }
+		    i++;
 		}
 		return activeIndices;
 	}		    

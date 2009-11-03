@@ -67,10 +67,6 @@ public class TBSModel
 		modelElements.remove(en);		
 	}	
 
-	public int numElements() {
-		return modelElements.size();
-	}
-	
 	public ModelElement getElement(int i) {
 		return modelElements.get(i);
 	}

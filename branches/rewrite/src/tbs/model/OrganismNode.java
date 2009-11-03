@@ -50,6 +50,16 @@ public class OrganismNode extends Node
 		
 	public Rectangle2D getStringBounds() {return stringBounds;}
 		
-	public boolean collidesWith(ModelElement m) {return false;}
+	public boolean collidesWith(ModelElement m) {
+		if(m.contains(leftX, upperY))
+			return true;
+		if(m.contains(leftX, upperY+height))
+			return true;
+		if(m.contains(leftX+width, upperY))
+			return true;
+		if(m.contains(leftX+width, upperY+height))
+			return true;
+		return false;
+	}
 		
 }
