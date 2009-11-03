@@ -1,18 +1,40 @@
 <project name="TreeBuildingSurvey" default="jarfile">
+	<property name="build.dir" value="${basedir}/bin" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="images.dir" value="*/images/*.*"/>
+	<property name="main.class" value="tbs.TBSApplet"/>
+	<property name="jarfile" value="TBSRun"/>
 	
-    <target name="compile" description="Compiles the code">
-    	    <javac srcdir="src/" destdir="bin/"/>
+	<target name="clean">
+			<delete dir="${build.home}" description="Deletes the build directory"/>
+	</target>
+		
+	<target name="init" description="Creates the build directory">
+			<mkdir dir="${build.dir}" />
+	</target>
+		
+    <target name="compile" description="Compiles the code" depends="clean,init">
+    	    <javac srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
 
-	<target name="jarfile" depends="compile" description="makes jar file">
-	    <jar destfile="bin/TBSRun.jar">
+	<target name="jarfile" depends="compile" description="Makes jar file">
+	    <jar destfile="${build.dir}/${jarfile}.jar">
 	        <manifest>
-	        	    <attribute name="Main-Class" value="tbs.TBSApplet"/>
+	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
-	    	<fileset dir="bin/"/>
-	    	<fileset dir="lib/"/>
+	    	<fileset dir="${src.dir}" includes="${images.dir}" />
+	    	<fileset dir="${build.dir}"/>
+	    	<fileset dir="${lib.dir}"/>
 	    </jar>
-        <move file="bin/TBSRun.jar" todir="."/>
+        <move file="${build.dir}/TBSRun.jar" todir="c:/"/>
     </target>
+	
+	<target name="help">
+			<echo message="clean:       Deletes the build directory, ${build.dir}" />
+			<echo message="init:     	Creates the build directory, ${build.dir}" />
+			<echo message="compile:     Compiles the code" />
+			<echo message="jarfile:     Makes jar file, ${jarfile}" />
+	</target>
 	
 </project>
