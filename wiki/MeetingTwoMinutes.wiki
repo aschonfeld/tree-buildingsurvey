@@ -38,5 +38,5 @@ http://upload.wikimedia.org/wikipedia/commons/2/25/NodeCollision.gif
 http://upload.wikimedia.org/wikipedia/commons/b/b9/ConnectionFunctionality.gif
 
 Future Meetings:
-  * Tuesday (10/3/2009) during class
-  * Thursday (10/5/2009) with Professor White for discussion of UI's
+  * Tuesday (11/3/2009) during class
+  * Thursday (11/5/2009) with Professor White for discussion of UI's
