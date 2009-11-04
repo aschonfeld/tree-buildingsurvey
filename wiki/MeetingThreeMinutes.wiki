@@ -17,7 +17,7 @@ Discussion:
       # Select another node(the line coming from the mouse will become stationary ending at the node recently selected)
 http://upload.wikimedia.org/wikipedia/commons/4/46/ConnectionCreation.gif
   * Editing text of nodes should be done by double-clicking a node and typing text(possibly within a text box)
-http://upload.wikimedia.org/wikipedia/commons/e/e2/EditingNodeText.gif
+  http://upload.wikimedia.org/wikipedia/commons/e/e2/EditingNodeText.gif
   * Format of meeting with Professor White(Client)
     * The group should take control of the meeting by describing what we are building.  While describing our product Professor White can step in at anytime and inform us of incorrect specifications.
     * The main question that needs to be answered in these early meeting is, "What requirements must be completed in time for the Spring semester?"
