@@ -15,7 +15,7 @@ Discussion:
       # Select node
       # Click "Link" button(a line with an arrow at the end of it will display beginning at the selected node and ending at the current position of the mouse)
       # Select another node(the line coming from the mouse will become stationary ending at the node recently selected)
-*Sample mark-up of behavior coming soon*
+http://upload.wikimedia.org/wikipedia/commons/4/46/ConnectionCreation.gif
   * Editing text of nodes should be done by double-clicking a node and typing text(possibly within a text box)
   * Format of meeting with Professor White(Client)
     * The group should take control of the meeting by describing what we are building.  While describing our product Professor White can step in at anytime and inform us of incorrect specifications.
