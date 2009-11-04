@@ -8,10 +8,11 @@
 	<property name="jarfile" value="TBSRun"/>
 	
 	<target name="clean">
-			<delete>
-				<fileset dir="${build.home}" description="Deletes the build directory"/>
-				<fileset dir="${javadoc.dir}" description="Deletes the javadoc directory"/>
-			</delete>
+			<delete dir="${build.home}" description="Deletes the build directory"/>
+	</target>
+	
+	<target name="clean-javadoc">
+		<delete dir="${javadoc.dir}" description="Deletes the javadoc directory"/>
 	</target>
 		
 	<target name="init" description="Creates the build directory">
@@ -34,7 +35,7 @@
         <move file="${build.dir}/TBSRun.jar" todir="c:/"/>
     </target>
 	
-	<target name="javadoc" description="Create Javadocs for the source code">
+	<target name="javadoc" depends="clean-javadoc" description="Create Javadocs for the source code">
 	    <mkdir dir="${javadoc.dir}"/>
 	    <javadoc 
 	     destdir="${javadoc.dir}"
@@ -48,11 +49,12 @@
 	</target>
 	
 	<target name="help">
-			<echo message="clean:       Deletes the build directory, ${build.dir}" />
-			<echo message="init:     	Creates the build directory, ${build.dir}" />
-			<echo message="compile:     Compiles the code" />
-			<echo message="jarfile:     Makes jar file, ${jarfile}" />
-			<echo message="javadoc:     Creates javadocs for the source code" />
+			<echo message="clean:       		Deletes the build directory, ${build.dir}" />
+			<echo message="clean-javadoc:       Deletes the javadoc directory, ${javadoc.dir}" />
+			<echo message="init:     			Creates the build directory, ${build.dir}" />
+			<echo message="compile:     		Compiles the code" />
+			<echo message="jarfile:     		Makes jar file, ${jarfile}" />
+			<echo message="javadoc:     		Creates javadocs for the source code" />
 	</target>
 	
 </project>
