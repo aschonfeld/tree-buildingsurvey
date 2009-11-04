@@ -13,8 +13,8 @@ Discussion:
     * Connections should have the ability to go through nodes with the display showing the connection on top of the node
     * Creation of a connection should be done in 3 steps(the first 2 are interchangable):
       # Select node
-      # Click "Link" button[a line with an arrow at the end of it will display beginning at the selected node and ending at the current position of the mouse]
-      # Select another node[the line coming from the mouse will become stationary ending at the node recently selected]
+      # Click "Link" button(a line with an arrow at the end of it will display beginning at the selected node and ending at the current position of the mouse)
+      # Select another node(the line coming from the mouse will become stationary ending at the node recently selected)
   *Sample mark-up of behavior coming soon*
   * Editing text of nodes should be done by double-clicking a node and typing text(possibly within a text box)
   * Format of meeting with Professor White(Client)
@@ -37,3 +37,7 @@ Discussion:
   # Making the button panel simply behave like nodes, but instead of being dragable make them activate specific actions
   # Using stored swing components
   We decided the going the first route, not only because it was the one currently implemented, was the more simplistic and efficient approach towards coding the button panel.
+
+Future Meetings:
+  * Wednesday (11/4/2009) with Professor White for discussion of UI's (Andrew may not be present due to work constraints)
+  * Thursday (11/5/2009) during class
