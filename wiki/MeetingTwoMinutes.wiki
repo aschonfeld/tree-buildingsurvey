@@ -1,7 +1,7 @@
 #summary Meeting 2 - 10/29/2009
 = Meting 2 - 10/29/2009 =
 
-Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
+Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld, Professor Bolker
 
 News:
   Version 0.2 of applet, including the dragability functionality, was completed last night.
@@ -39,4 +39,4 @@ http://upload.wikimedia.org/wikipedia/commons/b/b9/ConnectionFunctionality.gif
 
 Future Meetings:
   * Tuesday (10/3/2009) during class
-  * Thirsday (10/5/2009) with Professor White for discussion of UI's
+  * Thursday (10/5/2009) with Professor White for discussion of UI's
