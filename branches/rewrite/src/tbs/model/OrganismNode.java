@@ -5,6 +5,8 @@ package tbs.model;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OrganismNode extends Node
 {
@@ -51,15 +53,25 @@ public class OrganismNode extends Node
 	public Rectangle2D getStringBounds() {return stringBounds;}
 		
 	public boolean collidesWith(ModelElement m) {
-		if(m.contains(leftX, upperY))
-			return true;
+		List<Corners> cornersContained = new LinkedList<Corners>();
 		if(m.contains(leftX, upperY+height))
-			return true;
-		if(m.contains(leftX+width, upperY))
-			return true;
+			cornersContained.add(Corners.A);
 		if(m.contains(leftX+width, upperY+height))
-			return true;
-		return false;
+			cornersContained.add(Corners.B);
+		if(m.contains(leftX+width, upperY))
+			cornersContained.add(Corners.C);
+		if(m.contains(leftX, upperY))
+			cornersContained.add(Corners.D);
+		
+		if(cornersContained.size() == 4){//Organism placed right on top of another Organism
+			//Default: move vertically up or down depending on space left
+			
+		}
+		return cornersContained.size() > 0;
 	}
+	
+	private enum Corners { A, B, C, D };
+
+
 		
 }

@@ -19,7 +19,9 @@ public abstract class Node extends ModelElement
 	protected boolean inTree;
 	
 	public int getLeftX() {return leftX;}
+	public void setLeftX(int leftX){this.leftX = leftX;}
 	public int getUpperY() {return upperY;}
+	public void setUpperY(int upperY){this.upperY = upperY;}
 	public int getWidth() {return width;}
 	public int getHeight() 	{return height;}
 	public String getName() {return name;}

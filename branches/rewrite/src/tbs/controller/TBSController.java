@@ -118,6 +118,8 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
+			//Node dragged to point out of bounds
+			modifyOutOfBounds(draggedNode);
 			for(ModelElement me : model.getElements()){
 				if(me instanceof Node) {
 					Node curr = (Node) me;
@@ -152,6 +154,17 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		    i++;
 		}
 		return activeIndices;
-	}		    
+	}	
+    
+    private void modifyOutOfBounds(Node n){
+    	if(n.getLeftX() < 0 )
+    		n.setLeftX(0);
+    	if((n.getLeftX()+n.getWidth()) > view.getWidth())
+    		n.setLeftX(view.getWidth()-n.getWidth());
+    	if(n.getUpperY() < 0)
+    		n.setUpperY(0);
+    	if((n.getUpperY()+n.getHeight()) > view.getHeight())
+    		n.setUpperY(view.getHeight()-n.getHeight());
+    }
 	
 }
