@@ -1,23 +1,9 @@
 package tbs;
 //TBS Version 0.3
 
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.TreeMap;
 
-import javax.imageio.ImageIO;
-import javax.swing.JApplet;
-
-import tbs.controller.TBSController;
 import tbs.model.TBSButton;
-import tbs.model.TBSModel;
-import tbs.view.TBSView;
 
 public class TBSGraphics {
 	
