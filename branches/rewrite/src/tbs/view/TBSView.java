@@ -16,6 +16,7 @@ import java.util.Iterator;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
+import tbs.TBSGraphics;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.OrganismNode;
@@ -31,36 +32,8 @@ public class TBSView extends JComponent {
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L;
 	
 	private TBSModel model;
-
-	//boundary between active and inactive elements.
-	//Name can be changed. 
-	public static int LINE_OF_DEATH = 120;
-
-
-	// Contains the length and width of all organism nodes
-	private int organismNodeWidth;
-	private int organismNodeHeight;
-	
-	// minimum number of pixels around the right and left of an organism's name
-	private int paddingWidth;
-	
-	// Space between bottom and top of images
-	private int ySpacing;
-	
-	// Font Properties
-	private String fontName; // Use default font
-	private int fontStyle;
-	private int fontSize;
-	
-	public TBSView(TBSModel m, int oNW, int oNH, int pw, int ys, String fName, int fStyle, int fSize) {
+	public TBSView(TBSModel m) {
         model = m;
-        organismNodeWidth = oNW;
-        organismNodeHeight = oNH;
-        paddingWidth = pw;
-        ySpacing = ys;
-        fontName = fName;
-        fontStyle = fStyle;
-        fontSize = fSize;
 	}
 	
 	public String promptUserForString(String message) {
@@ -73,7 +46,6 @@ public class TBSView extends JComponent {
 	
 	public void drawString(Graphics2D g2, TBSButton b, int xOffset)
 	{
-		
 		g2.setColor(Color.black);
 		int stringHeight = 0;
 		int stringWidth = 0;
@@ -85,14 +57,13 @@ public class TBSView extends JComponent {
 		g2.setRenderingHints(rh);
 		x = xOffset;
 		stringHeight = (int) b.getStringBounds().getHeight();
-		y = b.getUpperY() + organismNodeHeight - (organismNodeHeight - stringHeight) / 2;
+		y = b.getUpperY() + TBSGraphics.organismNodeHeight - (TBSGraphics.organismNodeHeight - stringHeight) / 2;
    		Point2D loc = new Point(x, y);
-   		Font f = new Font(fontName, fontStyle, fontSize);
+   		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
    		g2.setFont(f);
    		FontRenderContext frc = g2.getFontRenderContext();
    		TextLayout layout = new TextLayout(b.getName(), f, frc);
    		layout.draw(g2, (float)loc.getX(), (float)loc.getY());
-	
 		Rectangle2D bounds = layout.getBounds();
 	}
 
@@ -109,9 +80,9 @@ public class TBSView extends JComponent {
 		g2.setRenderingHints(rh);
 		x = xOffset;
 		stringHeight = (int) on.getStringBounds().getHeight();
-		y = on.getUpperY() + organismNodeHeight - (organismNodeHeight - stringHeight) / 2;
+		y = on.getUpperY() + TBSGraphics.organismNodeHeight - (TBSGraphics.organismNodeHeight - stringHeight) / 2;
    		Point2D loc = new Point(x, y);
-   		Font f = new Font(fontName, fontStyle, fontSize);
+   		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
    		g2.setFont(f);
    		FontRenderContext frc = g2.getFontRenderContext();
    		TextLayout layout = new TextLayout(on.getName(), f, frc);
@@ -147,11 +118,11 @@ public class TBSView extends JComponent {
 			stringWidth = (int) on.getStringBounds().getWidth();
 			imageWidth = on.getImage().getWidth();
 			// center image and text
-			int imageXOffset = (organismNodeWidth - imageWidth - stringWidth) / 2;
+			int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
 			imageStartX = on.getLeftX() + imageXOffset;
-			stringStartX = on.getLeftX() + imageXOffset + imageWidth + paddingWidth;
+			stringStartX = on.getLeftX() + imageXOffset + imageWidth + TBSGraphics.paddingWidth;
 			g2.setColor(Color.white);
-			g2.fillRect(on.getLeftX(), on.getUpperY(), organismNodeWidth, organismNodeHeight);
+			g2.fillRect(on.getLeftX(), on.getUpperY(), TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight);
 			g2.drawImage(on.getImage(), imageStartX, on.getUpperY(), null);
 			drawString(g2, on, stringStartX);
 		}
@@ -166,7 +137,7 @@ public class TBSView extends JComponent {
 			g2.setColor(new Color(1.0f, 0.5f, 1.0f));
 			g2.fillRect(en.getLeftX(), en.getUpperY(), en.getWidth(), en.getHeight());
 			// make bold for greater visibility;
-	  		Font f = new Font(fontName, Font.BOLD, 18);
+	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
 	   		g2.setFont(f);
 			if(name.length() > 0) {
 				// zero length string gives an error

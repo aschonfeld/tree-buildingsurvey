@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import tbs.TBSGraphics;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
@@ -126,9 +127,9 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 					}
 				}
 			}
-			if (draggedNode.getLeftX() < TBSView.LINE_OF_DEATH )
+			if (draggedNode.getLeftX() < TBSGraphics.LINE_OF_DEATH )
 				draggedNode.removeFromTree();
-			if (draggedNode.getLeftX() > TBSView.LINE_OF_DEATH )
+			if (draggedNode.getLeftX() > TBSGraphics.LINE_OF_DEATH )
 				draggedNode.addToTree(); 
 				//is it more efficient to check isInTree in this
 				//case or not to check? It shouldn't affect
