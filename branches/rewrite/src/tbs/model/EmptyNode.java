@@ -1,4 +1,6 @@
 package tbs.model;
+
+import tbs.TBSGraphics;
 //TBS version 0.3
 //EmptyNode: connector node, represents a hypothetical common ancestor
 
@@ -7,19 +9,28 @@ package tbs.model;
 public class EmptyNode extends Node {
 
 	TBSModel model;
-	private int initX, initY;
-	private int emptyNodeWidth = 20;
-	private int emptyNodeHeight = 20;
+	String defaultName = "[NO NAME]";
 	
-	public EmptyNode(TBSModel mod, int x, int y, String n) {
-		leftX = x;
-		upperY = y;
-		initX = 70;
-		initY = 575;
-		width = emptyNodeWidth;
-		height = emptyNodeHeight;
+
+	public EmptyNode(TBSModel mod, int lX, int uY, String n) {
+		leftX = lX;
+		upperY = uY;
+		width = TBSGraphics.emptyNodeWidth;
+		height = TBSGraphics.emptyNodeHeight;
 		name = n;
 		model = mod;
+		inTree = true;
+	}
+	
+	// all empty nodes start in left panel
+	public EmptyNode(TBSModel mod) {
+		leftX = TBSGraphics.emptyNodeLeftX;
+		upperY = TBSGraphics.emptyNodeUpperY;
+		width = TBSGraphics.emptyNodeWidth;
+		height = TBSGraphics.emptyNodeHeight;
+		name = defaultName;
+		model = mod;
+		inTree = false;
 	}
 	
 	public boolean collidesWith(ModelElement e) {return false;};
@@ -27,15 +38,28 @@ public class EmptyNode extends Node {
 	//Re-fills "bottomless stack" of EmptyNodes
 	public void addToTree()
 	{
-		model.addElement(new EmptyNode(model, initX, initY, "EmptyNode"));
-	
+		this.name =""; // set to unnamed once in tree
+		model.addElement(new EmptyNode(model));
 	}
 	
 	public void removeFromTree()
-	{
-
-		model.delete(this);
-
+	{	
+		// do not allow deletion from left panel
+		if(inTree) {
+			model.delete(this);
+		} else {
+			// empty node was moved, but didn't cross line_of_death, restore to default state
+			leftX = TBSGraphics.emptyNodeLeftX;
+			upperY = TBSGraphics.emptyNodeUpperY;
+		}
+		
+	}
+	
+	public void setName(String n) {
+		// left empty node cannot be renamed
+		if(inTree) {
+			name = n;
+		}
 	}
 	
 }

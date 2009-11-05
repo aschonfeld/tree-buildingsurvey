@@ -14,6 +14,7 @@ import tbs.TBSGraphics;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
+import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.TBSView;
 
@@ -41,40 +42,37 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		int x = e.getX();
 		int y = e.getY();
 		String message = new String();
-		String label = new String();
+		if(y < TBSGraphics.buttonsHeight) {
+			int buttonIndex = x / TBSGraphics.buttonsWidth;
+			if(buttonIndex < TBSGraphics.buttons.size()) {
+				System.out.println(TBSGraphics.buttons.get(buttonIndex));
+			}
+		}
 		if(e.getClickCount() == 2) {
-			if(mouseIsOver(x, y).size() == 0) {
-				// user clicked on empty space, create empty node
-				message = new String("Do you want to label this node?");
-				int userSelection = view.promptUserForYesNoCancel(message);
-				switch (userSelection) {
-				case JOptionPane.YES_OPTION:
-					label = view.promptUserForString("Please enter a label for this node");
-					if ((label == null) || !(label instanceof String)) label = " ";
-					model.addElement(new EmptyNode(model, x, y, label ));
-					break;
-				case JOptionPane.NO_OPTION:
-					model.addElement(new EmptyNode(model, x, y, "") );
-					break;
-				case JOptionPane.CANCEL_OPTION:
-					// do nothing
-				}
-			} else {
+			if(mouseIsOver(x, y).size() != 0) {
 				// user clicked on node, ask if wants to delete
 				// remove top most node (in case nodes are stacked)
 				ArrayList<Integer> a = mouseIsOver(x,y);
 				int topIndex = a.get(a.size() - 1);
 				ModelElement me = model.getElement(topIndex);
-				if(me instanceof Node) {
-					Node n = (Node) me;
+				if(me instanceof OrganismNode) {
+					OrganismNode n = (OrganismNode) me;
 					message = "Delete this node?";
-					if(view.promptUserForYesNoCancel("Delete this node?") == JOptionPane.YES_OPTION) {
+					if(view.promptUserForYesNoCancel(message) == JOptionPane.YES_OPTION) {
 						n.removeFromTree();
+					}
+				}
+				if(me instanceof EmptyNode) {
+					EmptyNode n = (EmptyNode) me;
+					message = "Name this node?";
+					if(view.promptUserForYesNoCancel(message) == JOptionPane.YES_OPTION) {
+						n.setName(view.promptUserForString("Please Enter A Name"));
 					}					
 				}
 			}
 		}
 	}
+		
 	
 	public void mousePressed(MouseEvent e){
 		int x = e.getX();

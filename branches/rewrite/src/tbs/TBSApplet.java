@@ -39,6 +39,8 @@ public class TBSApplet extends JApplet {
                 add(model.getView());
                 model.getView().addMouseListener(model.getController());
                 model.getView().addMouseMotionListener(model.getController());
+                TBSGraphics.appletWidth = getWidth();
+                TBSGraphics.appletHeight = getHeight();
             }
         });
     }

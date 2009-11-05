@@ -44,64 +44,20 @@ public class TBSView extends JComponent {
 		return JOptionPane.showConfirmDialog(null, message);
 	}
 	
-	public void drawString(Graphics2D g2, TBSButton b, int xOffset)
-	{
-		g2.setColor(Color.black);
-		int stringHeight = 0;
-		int stringWidth = 0;
-		int x = 0;
-		int y = 0;
-		RenderingHints rh = new RenderingHints(
-		RenderingHints.KEY_TEXT_ANTIALIASING,
-		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2.setRenderingHints(rh);
-		x = xOffset;
-		stringHeight = (int) b.getStringBounds().getHeight();
-		y = b.getUpperY() + TBSGraphics.organismNodeHeight - (TBSGraphics.organismNodeHeight - stringHeight) / 2;
-   		Point2D loc = new Point(x, y);
-   		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
-   		g2.setFont(f);
-   		FontRenderContext frc = g2.getFontRenderContext();
-   		TextLayout layout = new TextLayout(b.getName(), f, frc);
-   		layout.draw(g2, (float)loc.getX(), (float)loc.getY());
-		Rectangle2D bounds = layout.getBounds();
-	}
-
-	public void drawString(Graphics2D g2, OrganismNode on, int xOffset) {
-		// ReneringHints tell
-		g2.setColor(Color.black);
-		int stringHeight = 0;
-		int stringWidth = 0;
-		int x = 0;
-		int y = 0;
-		RenderingHints rh = new RenderingHints(
-		RenderingHints.KEY_TEXT_ANTIALIASING,
-		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2.setRenderingHints(rh);
-		x = xOffset;
-		stringHeight = (int) on.getStringBounds().getHeight();
-		y = on.getUpperY() + TBSGraphics.organismNodeHeight - (TBSGraphics.organismNodeHeight - stringHeight) / 2;
-   		Point2D loc = new Point(x, y);
-   		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
-   		g2.setFont(f);
-   		FontRenderContext frc = g2.getFontRenderContext();
-   		TextLayout layout = new TextLayout(on.getName(), f, frc);
-   		layout.draw(g2, (float)loc.getX(), (float)loc.getY());
-		Rectangle2D bounds = layout.getBounds();
-	}
-
-	public void renderButton(Graphics g, TBSButton button)
+	public void renderButtons(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-	
-		TBSButton b = button;
-		int stringWidth = (int) b.getStringBounds().getWidth();
-		int stringXOffset= (b.getWidth()-stringWidth)/2;
-		int stringStartX = b.getLeftX() + stringXOffset;
-		g2.setColor(Color.white);
-		g2.fillRect(b.getLeftX(), b.getUpperY(), b.getWidth(),
-				b.getHeight());
-		drawString(g2, b, stringStartX);
+		g2.setColor(Color.WHITE);
+		g2.fillRect(0, 0, 800, TBSGraphics.buttonsHeight);
+		int leftX = 0;
+		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
+		for(String s: TBSGraphics.buttons) {
+			g2.setColor(Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, leftX, upperY, TBSGraphics.buttonsWidth, 0);
+			g2.setColor(Color.BLUE);
+			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
+			leftX += TBSGraphics.buttonsWidth;
+		}
 	}
 
 	public void renderModelElement(Graphics g, ModelElement me) {
@@ -109,22 +65,22 @@ public class TBSView extends JComponent {
 		int stringWidth = 0;
 		int imageWidth = 0;
 		int imageStartX = 0;
-		int stringStartX = 0;
-		if (me instanceof TBSButton)
-			renderButton(g, (TBSButton) me);
-		else if(me instanceof OrganismNode) 
+		if(me instanceof OrganismNode) 
 		{
 			OrganismNode on = (OrganismNode) me;
-			stringWidth = (int) on.getStringBounds().getWidth();
+			stringWidth = (int) TBSGraphics.getStringBounds(g2, on.getName()).getWidth();
 			imageWidth = on.getImage().getWidth();
 			// center image and text
 			int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
 			imageStartX = on.getLeftX() + imageXOffset;
-			stringStartX = on.getLeftX() + imageXOffset + imageWidth + TBSGraphics.paddingWidth;
-			g2.setColor(Color.white);
+			g2.setColor(TBSGraphics.organismBoxColor);
 			g2.fillRect(on.getLeftX(), on.getUpperY(), TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight);
 			g2.drawImage(on.getImage(), imageStartX, on.getUpperY(), null);
-			drawString(g2, on, stringStartX);
+			int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
+			int stringAreaWidth = stringWidth;
+			int stringAreaUpperY = on.getUpperY();
+			int stringAreaHeight = TBSGraphics.organismNodeHeight;			
+			TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight);
 		}
 		else if (me instanceof EmptyNode)
 		{
@@ -134,14 +90,14 @@ public class TBSView extends JComponent {
 			int upperY = en.getUpperY();
 			if(name == null) name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
-			g2.setColor(new Color(1.0f, 0.5f, 1.0f));
+			g2.setColor(new Color(0.5f, 0.5f, 1.0f));
 			g2.fillRect(en.getLeftX(), en.getUpperY(), en.getWidth(), en.getHeight());
 			// make bold for greater visibility;
 	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
 	   		g2.setFont(f);
 			if(name.length() > 0) {
 				// zero length string gives an error
-				Rectangle2D bounds = model.getStringBounds(g2, en.getName(), f);
+				Rectangle2D bounds = TBSGraphics.getStringBounds(g2, en.getName());
 				int h = (int) bounds.getHeight();
 				int w = (int) bounds.getWidth();
 				int stringX = leftX + (en.getWidth() / 2) - (w / 2);
@@ -165,5 +121,6 @@ public class TBSView extends JComponent {
 		while(itr.hasNext()) {
 			renderModelElement(g, itr.next());
 		}
+		renderButtons(g2);
 	}
 }
