@@ -8,6 +8,7 @@
   * [Versioning Applet Versioning]
   * [AppletGUITesting Applet GUI Testing]
   * [Applets Test Applets]
+    * [http://www.cs.umb.edu/~kiparsky/TBS03/Applet03.html Version 0.3]
     * [http://www.cs.umb.edu/~gthelen/version02/applet02.html Version 0.2]
     * [http://www.cs.umb.edu/~skones1/applet01.html Version 0.1]
     * [http://www.cs.umb.edu/~skones1/applet00.html Version 0.0]
