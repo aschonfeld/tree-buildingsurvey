@@ -36,4 +36,6 @@ Discussion:
   Once Professor Bolker listed off these major milestones we started to discuss how we would go about making some of these. Here was our idea for selection of multiple GUIs:
 http://upload.wikimedia.org/wikipedia/commons/4/48/GUIVersionSelection.gif
   We then started to discuss the structure that would store information on a user's tree.  Jon had suggested using a semicolon delimited text file.  At this point we decided that we had gone a little off topic and thought it would be best if scheduled a meeting for this weekend for work on teh presentation.
-Future
+*Future Meetings:* 
+  * Sunday(11/8) Somervile(Jon's apartment) 3pm
+  * Tuesday(11/10) during class
