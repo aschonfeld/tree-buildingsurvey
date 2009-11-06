@@ -32,7 +32,7 @@
 	    	<fileset dir="${build.dir}"/>
 	    	<fileset dir="${lib.dir}"/>
 	    </jar>
-        <move file="${build.dir}/TBSRun.jar" todir="c:/"/>
+        <move file="${build.dir}/TBSRun.jar" todir="."/>
     </target>
 	
 	<target name="javadoc" depends="clean-javadoc" description="Create Javadocs for the source code">
