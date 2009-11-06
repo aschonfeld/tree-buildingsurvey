@@ -1,5 +1,6 @@
 #summary Professor White's TBS Experiment
-
+  This is some information that Professor White gave us in regards to his early experimentation for this project:
+ 
 http://upload.wikimedia.org/wikipedia/commons/9/97/TBSExp-page1.gif
 http://upload.wikimedia.org/wikipedia/commons/d/d5/TBSExp-page2.gif
 http://upload.wikimedia.org/wikipedia/commons/8/8a/TBSExp-page3.gif
