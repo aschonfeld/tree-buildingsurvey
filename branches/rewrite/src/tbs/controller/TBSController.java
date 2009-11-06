@@ -1,17 +1,15 @@
 package tbs.controller;
 //TBSController v0.3
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
 import tbs.TBSGraphics;
-import tbs.model.EmptyNode;
+import tbs.TBSUtils;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
@@ -25,9 +23,9 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	
 	private ArrayList<Integer> selectedIndices;
 	private int previousX, previousY;
-	private Node draggedNode;   
-
- 
+	private Node draggedNode = null;
+	private Node selectedNode = null;
+	
     public TBSController(TBSModel m, TBSView v){
     	model = m;
     	view = v;
@@ -35,41 +33,45 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
     
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
-	public void mouseMoved(MouseEvent e){}
+	
+	public void mouseMoved(MouseEvent e){
+		if(selectedNode != null) {
+			Node dummyNode = (Node) new OrganismNode(model, null, null, e.getX(), e.getY(), 3, 3);
+			Point[] conn = TBSUtils.computeConnectionBounds(selectedNode , dummyNode);
+			view.setConnInProgress(conn);
+		}
+	}
 	
 	// Check for double click
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		String message = new String();
 		if(y < TBSGraphics.buttonsHeight) {
 			int buttonIndex = x / TBSGraphics.buttonsWidth;
 			if(buttonIndex < TBSGraphics.buttons.size()) {
 				System.out.println(TBSGraphics.buttons.get(buttonIndex));
 			}
-		}
-		if(e.getClickCount() == 2) {
+		} else {
 			if(mouseIsOver(x, y).size() != 0) {
-				// user clicked on node, ask if wants to delete
-				// remove top most node (in case nodes are stacked)
 				ArrayList<Integer> a = mouseIsOver(x,y);
 				int topIndex = a.get(a.size() - 1);
 				ModelElement me = model.getElement(topIndex);
-				if(me instanceof OrganismNode) {
-					OrganismNode n = (OrganismNode) me;
-					message = "Delete this node?";
-					if(view.promptUserForYesNoCancel(message) == JOptionPane.YES_OPTION) {
-						n.removeFromTree();
+				if(me instanceof Node) {
+					if((selectedNode) == null) {
+						Node n = (Node) me;
+						// don't allow connection from node not in tree
+						if(n.isInTree()) selectedNode = n;
+					} else {
+						// fromNode already selected, make connection
+						selectedNode.addConnection((Node) me);
+						selectedNode = null;
+						view.setConnInProgress(null);
 					}
 				}
-				if(me instanceof EmptyNode) {
-					EmptyNode n = (EmptyNode) me;
-					message = "Name this node?";
-					if(view.promptUserForYesNoCancel(message) == JOptionPane.YES_OPTION) {
-						n.setName(view.promptUserForString("Please Enter A Name"));
-					}					
-				}
 			}
+		}
+		if(e.getClickCount() == 2) {
+			// no double clicking for now
 		}
 	}
 		

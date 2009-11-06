@@ -13,9 +13,11 @@ public class OrganismNode extends Node
 	private BufferedImage img;
 	private int defaultLeftX;
 	private int defaultUpperY;
+	private TBSModel model;
 		
-	public OrganismNode(BufferedImage i, String n, int x, int y, int w, int h) 
+	public OrganismNode(TBSModel m, BufferedImage i, String n, int x, int y, int w, int h) 
 	{
+		model = m;
 		img = i;
 		name = n;
 		defaultLeftX = x;
@@ -40,7 +42,7 @@ public class OrganismNode extends Node
 		inTree = false;
 		leftX = defaultLeftX;
 		upperY = defaultUpperY;
-
+		model.clearConnections(this);
 		System.out.println("Removed from tree: inTree = " +inTree);
 	}
 		

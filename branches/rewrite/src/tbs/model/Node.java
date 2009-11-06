@@ -1,5 +1,7 @@
 package tbs.model;
 
+import java.util.ArrayList;
+
 //TBS version 0.3
 //Node: superclass for OrganismNode and EmptyNode
 
@@ -11,12 +13,13 @@ public abstract class Node extends ModelElement
 	//the same package. Is this what you want? If so, should declare
 	//public, for clarity. -jpk
 
-	protected String name;
-	protected int leftX;
-	protected int upperY;
-	protected int width;
-	protected int height;
-	protected boolean inTree;
+	String name;
+	int leftX;
+	int upperY;
+	int width;
+	int height;
+	boolean inTree;
+	ArrayList<Node> toNodes = new ArrayList<Node>();
 	
 	public int getLeftX() {return leftX;}
 	public void setLeftX(int leftX){this.leftX = leftX;}
@@ -53,5 +56,21 @@ public abstract class Node extends ModelElement
 	{ 
 		return inTree;
 	}
-		
+	
+	public void addConnection(Node toNode) {
+		if(!isInTree()) return;
+		if(!toNode.isInTree()) return;
+		if(!toNodes.contains(toNode) && (toNode != this)) {
+			toNodes.add(toNode);
+		}
+	}
+	
+	public void removeConnection(Node toNode) {
+		toNodes.remove(toNode);
+	}
+	
+	public ArrayList<Node> getConnections() {
+		return toNodes;
+	}
+	
 }

@@ -15,9 +15,7 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 
-import tbs.controller.TBSController;
 import tbs.model.TBSModel;
-import tbs.view.TBSView;
 
 public class TBSApplet extends JApplet {
 	
@@ -28,19 +26,17 @@ public class TBSApplet extends JApplet {
 	private static final long serialVersionUID = 0x03046F6687102247L;
 	
 	private TBSModel model;
-	private TBSView view;
-	private TBSController controller;
 
 	public void init() {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
+                TBSGraphics.appletWidth = getWidth();
+                TBSGraphics.appletHeight = getHeight();
             	model = new TBSModel(getGraphics(), loadOrganismsFromDirectory("images"));
                 add(model.getView());
                 model.getView().addMouseListener(model.getController());
                 model.getView().addMouseMotionListener(model.getController());
-                TBSGraphics.appletWidth = getWidth();
-                TBSGraphics.appletHeight = getHeight();
             }
         });
     }

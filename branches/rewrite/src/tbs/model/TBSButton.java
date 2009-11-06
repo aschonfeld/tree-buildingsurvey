@@ -103,4 +103,9 @@ public class TBSButton extends ModelElement
 				break;
 		}
 	}
+	
+	// This is just here so we don't get a warning
+	public TBSModel getModel() {
+		return model;
+	}
 }

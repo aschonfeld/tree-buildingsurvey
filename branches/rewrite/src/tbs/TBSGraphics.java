@@ -13,8 +13,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import tbs.model.TBSButton;
-
 public class TBSGraphics {
 	
 	/**

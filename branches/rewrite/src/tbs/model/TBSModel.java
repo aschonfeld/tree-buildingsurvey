@@ -1,20 +1,13 @@
 package tbs.model;
 //TBSModel v0.03
 
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import tbs.TBSGraphics;
@@ -26,6 +19,7 @@ public class TBSModel
 	private TBSView view;
 	private TBSController controller;
 	private ArrayList<ModelElement> modelElements;
+	private EmptyNode immortalEmptyNode;
 
 
 	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
@@ -63,6 +57,24 @@ public class TBSModel
 
 	public void setElement(int i, ModelElement me) {
 		modelElements.set(i, me);
+	}
+	
+	public void clearConnections(Node n) {
+		for(ModelElement me: modelElements) {
+			if(me instanceof Node) {
+				Node n2 = (Node) me;
+				if (n.getConnections().contains(n2)) {
+					n.removeConnection(n2);
+				}
+				if (n2.getConnections().contains(n)) {
+					n2.removeConnection(n);
+				}
+			}
+		}
+	}
+	
+	public EmptyNode getImmortalEmptyNode() {
+		return immortalEmptyNode;
 	}
 	
 	public void createButtons(Graphics g)
@@ -107,13 +119,14 @@ public class TBSModel
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);
-			addElement(new OrganismNode(img, organismName, currentX, currentY, TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight));
+			addElement(new OrganismNode(this, img, organismName, currentX, currentY, TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 		// leave commented unless testing
 		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2 - TBSGraphics.emptyNodeWidth / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + TBSGraphics.emptyNodeYLabelOffset; 
-		addElement(new EmptyNode(this));
+		immortalEmptyNode = new EmptyNode(this);
+		addElement(immortalEmptyNode);
 		//20 is arbitrary, to move it away from the side so you can see
 		//it better. Change at whim.
 	}	

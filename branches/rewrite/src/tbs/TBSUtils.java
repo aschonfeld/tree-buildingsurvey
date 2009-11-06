@@ -19,7 +19,7 @@ public class TBSUtils {
 	 * @param end, (@ Node) where connection ends
 	 * @return (@link Point)[], start and and points of the connection
 	 */
-	public Point[] computeConnectionBounds(Node start , Node end){
+	public static Point[] computeConnectionBounds(Node start , Node end){
 		List<Point> bounds = new LinkedList<Point>();
 		int width, height;
 		width = start.getWidth();
@@ -80,10 +80,10 @@ public class TBSUtils {
 				isInRange(endCorners.get("c").y, startCorners.get("a").y, startCorners.get("d").y)) &&
 				(endCorners.get("b").x < startCorners.get("a").x))
 			return new Point[]{startCorners.get("da"), endCorners.get("bc")};
+		return new Point[]{startCorners.get("da"), endCorners.get("bc")};
 	}
 	
-	public boolean isInRange(int val, int min, int max){
+	public static boolean isInRange(int val, int min, int max){
 		return ((val >= min) && (val <= max));
-	}
 	}
 }

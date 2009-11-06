@@ -38,21 +38,27 @@ public class EmptyNode extends Node {
 	//Re-fills "bottomless stack" of EmptyNodes
 	public void addToTree()
 	{
-		this.name =""; // set to unnamed once in tree
-		model.addElement(new EmptyNode(model));
+		if (this == model.getImmortalEmptyNode()) {
+			EmptyNode newEN = new EmptyNode(model, leftX, upperY, "");
+			newEN.inTree = true;
+			model.addElement(newEN);
+			this.leftX = TBSGraphics.emptyNodeLeftX;
+			this.upperY = TBSGraphics.emptyNodeUpperY;
+		} else {
+			this.inTree = true;
+		}
 	}
 	
 	public void removeFromTree()
 	{	
-		// do not allow deletion from left panel
-		if(inTree) {
+		if(this != model.getImmortalEmptyNode()) {
+			model.clearConnections(this);
 			model.delete(this);
 		} else {
 			// empty node was moved, but didn't cross line_of_death, restore to default state
 			leftX = TBSGraphics.emptyNodeLeftX;
 			upperY = TBSGraphics.emptyNodeUpperY;
 		}
-		
 	}
 	
 	public void setName(String n) {

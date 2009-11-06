@@ -6,10 +6,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
@@ -17,10 +13,11 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
+import tbs.model.Node;
 import tbs.model.OrganismNode;
-import tbs.model.TBSButton;
 import tbs.model.TBSModel;
 
 public class TBSView extends JComponent {
@@ -30,6 +27,9 @@ public class TBSView extends JComponent {
 	 * https://www.fourmilab.ch/hotbits/secure_generate.html
 	 */
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L;
+	
+	// This connection follows the mouse
+	private Point[] connInProgress = null;
 	
 	private TBSModel model;
 	public TBSView(TBSModel m) {
@@ -107,8 +107,44 @@ public class TBSView extends JComponent {
 		}
 	}
 	
+	public void setConnInProgress(Point[] conn) {
+		connInProgress = conn;
+	}
+	
 	public void refreshGraphics() {
 		repaint();	
+	}
+	
+	public void renderConnections(Graphics2D g2) {
+		for(ModelElement me: model.getElements()) {
+			if(me instanceof Node) {
+				Node fromNode = (Node) me;
+				for(Node toNode: fromNode.getConnections()) {
+					Point[] conn = TBSUtils.computeConnectionBounds(fromNode , toNode);
+					g2.setColor(Color.WHITE);
+					g2.drawLine(conn[0].x, conn[0].y, conn[1].x, conn[1].y);
+				}
+			}
+		}
+		if(connInProgress != null) {
+			g2.setColor(Color.WHITE);
+			g2.drawLine(connInProgress[0].x, connInProgress[0].y, connInProgress[1].x, connInProgress[1].y);
+			drawArrow(connInProgress, g2);
+		}
+		
+	}
+	
+	public void drawArrow(Point[] conn, Graphics2D g2) {
+		/*
+		double dx = (conn[1].x - conn[0].x);
+		double dy = (conn[1].y - conn[0].y);
+		double slope = dy / dx;
+		double perp = -1.0 * slope;
+		double lineX = conn[1].x + slope * 5;
+		double lineY = conn[1].y; // + perp * 5;;
+		g2.setColor(Color.WHITE);
+		g2.drawLine((int)lineX, (int) lineY, conn[1].x, conn[1].y);
+		*/
 	}
 
 	// this is what the applet calls to refresh the screen
@@ -121,6 +157,8 @@ public class TBSView extends JComponent {
 		while(itr.hasNext()) {
 			renderModelElement(g, itr.next());
 		}
+		renderConnections(g2);
 		renderButtons(g2);
+		
 	}
 }
