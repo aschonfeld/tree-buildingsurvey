@@ -1,0 +1,23 @@
+#summary Conundrums and puzzlers, mostly about user interface
+
+
+Created this page to move these discussions onto the web, if that can be done. Think of it as an on-line group meeting without such strict time constraints. Post questions as they occur to you. 
+
+These questions will mostly be arbitrary questions of expected behavior. "What is the correct thing to do?" = "What does the user expect?" or "What is the easiest for the user to figure out". 
+Ease of implementation, in principle, should not be a factor in the decision. Impossibility of implementation might be considered an obstacle. 
+
+= Open Questions =
+
+Question: What is the correct action for a double-click on an Organism node? 
+
+  
+-------
+Question: After dragging, should a Node be the selected object? (should drag transfer selected status to this object?)
+
+--------
+Question: True or false - buttons having three states: "grey", "live", and "hot". "Grey" when they cannot operate, "live" when they can be clicked on with effect, and "hot" when they have been clicked on and are awaiting a further selection. 
+
+
+--------
+
+   
