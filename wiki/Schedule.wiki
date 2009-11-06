@@ -19,7 +19,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/9/09||[Technology_Stack Downloaded, Installed, & Configured Technology Stack]||Andrew||main||10/9/09||
 ||10/11/09||Setup local version of the Professor White's code||Andrew||main||10/11/09||
 ||10/13/09||1 story from each team member||team||[Features features]||10/13/09||
-||10/13/09||All members of team have local builds||team||build||Not Completed||
+||10/13/09||All members of team have local builds||team||build||Completed||
 ||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
 ||10/15/09||[VisionStatement Vision statement approved by client]||team||main||10/15/09||
 ||10/15/09||architecture of redesigned code||Glenn||[main]||10/15/09||
@@ -28,10 +28,10 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
 ||10/26/09||Applet Version 0.1||team||[Versioning Versions]||10/26/09||
 ||10/29/09||Applet Version 0.2||team||[Versioning Versions]||10/29/09||
-||11/01/09||Applet Version 0.3||team||[Versioning Versions]||||
-||11/04/09||Applet Version 0.4||team||[Versioning Versions]||||
-||11/07/09||Applet Version 0.5||team||[Versioning Versions]||||
-||11/10/09||Applet Version 0.6||team||[Versioning Versions]||||
+||11/01/09||Applet Version 0.3||team||[Versioning Versions]||11/01/09||
+||11/04/09||Applet Version 0.4||team||[Versioning Versions]||11/01/09||
+||11/07/09||Applet Version 0.5||team||[Versioning Versions]||11/01/09||
+||11/10/09||Applet Version 0.6||team||[Versioning Versions]||11/01/09||
 ||11/13/09||Applet Version 0.7||team||[Versioning Versions]||||
 ||11/16/09||Applet Version 0.8||team||[Versioning Versions]||||
 ||11/19/09||Applet Version 0.9||team||[Versioning Versions]||||
