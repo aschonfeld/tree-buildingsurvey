@@ -1,0 +1,78 @@
+#summary Proposed Behavior Of Controller With Buttons (First Draft)
+
+= Proposed Behavior Of Controller With Buttons =
+
+I think it might be useful to records the user's actions<br>
+Also, most programs have an undo button<br>
+However if this is too hard we can just leave out the undo, actions recording<br>
+
+{{{
+Stack undoActions
+Stack allActions // every time an action occurs it should be added to this
+Node selectedNode
+
+ACTIONS = ADD, MOVE, LABEL, CONNECT, DELETE, UNDO, NO_ACTION, IMPOSSIBLE
+
+if(Node is moved within tree) {
+  performAction(MOVE, x, y)
+  undoActions.add(MOVE, oldX - x, oldY - y)
+}
+
+if(node is dragged from left panel to right panel) {
+  performAction(ADD, node)
+  undoActions.add(DELETE, node);
+}
+
+Buttons = {label, connect, delete, undo, 1, 2, 3, 4}
+Buttons on the left = {label, connect, delete, undo}
+Buttons on the right = {1, 2, 3, 4}
+States = {label, connect, delete}
+ModelElements = {EmptyNode, OrganismNode, Connection}
+
+if label is clicked: state = lable
+if connect is clicked: state = connect
+if delete is clicked {
+  state = delete
+  if(selectedNode != null) {
+    undoActions.add(ADD, selectedNode)
+    performAction(DELETE, selectedNode);
+  }
+}
+if undo is clicked {
+  if undoableActions is not empty {
+    peformAction(undoableActions.pop)
+  }
+}
+
+if {1 ,2, 3, 4} clicked: Switch to corresponding GUI
+
+FOR ALL ACTIONS != NO_ACTION {
+  undoAbleActions.push((opposite of) ACTION)
+  performAction(ACTION, args[])
+}
+
+IF ACTION == IMPOSSIBLE: print error
+
+}}}
+
+==_STATE TABLE:==
+clickedElement = element user most recently clicked on
+||STATE||MODELELEMENTCLICKED||selectedNode||ACTION||
+||label||EmptyNode||null||LABELEMPTYNODE, String label||
+||label||OrganismNode||null||NO_ACTION||
+||label||Connection||null||NO_ACTION||
+||link||EmptyNode||null||selectedNode = clickedElement||
+||link||OrganismNode||null||selectedNode = clickedElement||
+||link||Connection||null||NO_ACTION||
+||delete||EmptyNode||null||DELETE, clickedElement||
+||delete||OrganismNode||null||DELETE, clickedElement||
+||delete||Connection||null||DELETE, clickedElement||
+||label||EmptyNode||selectedNode||LABELEMPTYNODE, String lable||
+||label||OrganismNode||selectedNode||NO_ACTION||
+||label||Connection||selectedNode||NO_ACTION||
+||link||EmptyNode||selectedNode||CONNECT(fromNode = selectedNode, toNode = clickedNode) toNode != selectedNode||
+||link||OrganismNode||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode _toNode != selectedNode_||
+||link||Connection||selectedNode||NO_ACTION||
+||delete||EmptyNode||selectedNode||IMPOSSIBLE||
+||delete||OrganismNode||selectedNode||IMPOSSIBLE||
+||delete||Connection||selectedNode||IMPOSSIBLE||
