@@ -29,7 +29,7 @@ Buttons on the right = {1, 2, 3, 4}
 States = {label, connect, delete}
 ModelElements = {EmptyNode, OrganismNode, Connection}
 
-if label is clicked: state = lable
+if label is clicked: state = label
 if connect is clicked: state = connect
 if delete is clicked {
   state = delete
@@ -39,7 +39,7 @@ if delete is clicked {
   }
 }
 if undo is clicked {
-  if undoableActions is not empty {
+  if undoActions is not empty {
     peformAction(undoableActions.pop)
   }
 }
@@ -47,7 +47,7 @@ if undo is clicked {
 if {1 ,2, 3, 4} clicked: Switch to corresponding GUI
 
 FOR ALL ACTIONS != NO_ACTION {
-  undoAbleActions.push((opposite of) ACTION)
+  undoActions.push((opposite of) ACTION)
   performAction(ACTION, args[])
 }
 
@@ -61,18 +61,18 @@ clickedElement = element user most recently clicked on
 ||label||EmptyNode||null||LABELEMPTYNODE, String label||
 ||label||OrganismNode||null||NO_ACTION||
 ||label||Connection||null||NO_ACTION||
-||link||EmptyNode||null||selectedNode = clickedElement||
-||link||OrganismNode||null||selectedNode = clickedElement||
-||link||Connection||null||NO_ACTION||
+||connect||EmptyNode||null||selectedNode = clickedElement||
+||connect||OrganismNode||null||selectedNode = clickedElement||
+||connect||Connection||null||NO_ACTION||
 ||delete||EmptyNode||null||DELETE, clickedElement||
 ||delete||OrganismNode||null||DELETE, clickedElement||
 ||delete||Connection||null||DELETE, clickedElement||
 ||label||EmptyNode||selectedNode||LABELEMPTYNODE, String lable||
 ||label||OrganismNode||selectedNode||NO_ACTION||
 ||label||Connection||selectedNode||NO_ACTION||
-||link||EmptyNode||selectedNode||CONNECT(fromNode = selectedNode, toNode = clickedNode) toNode != selectedNode||
-||link||OrganismNode||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode _toNode != selectedNode_||
-||link||Connection||selectedNode||NO_ACTION||
+||connect||EmptyNode||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode (toNode != selectedNode)||
+||connect||OrganismNode||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode (toNode != selectedNode)||
+||connect||Connection||selectedNode||NO_ACTION||
 ||delete||EmptyNode||selectedNode||IMPOSSIBLE||
 ||delete||OrganismNode||selectedNode||IMPOSSIBLE||
 ||delete||Connection||selectedNode||IMPOSSIBLE||
