@@ -7,13 +7,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
-import tbs.model.EmptyNode;
 import tbs.view.TBSView;
 
 public class TBSController 

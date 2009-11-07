@@ -2,8 +2,6 @@ package tbs;
 
 import java.awt.Point;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import tbs.model.Node;
@@ -20,7 +18,6 @@ public class TBSUtils {
 	 * @return (@link Point)[], start and and points of the connection
 	 */
 	public static Point[] computeConnectionBounds(Node start , Node end){
-		List<Point> bounds = new LinkedList<Point>();
 		int width, height;
 		width = start.getWidth();
 		height = start.getHeight();
@@ -80,7 +77,9 @@ public class TBSUtils {
 				isInRange(endCorners.get("c").y, startCorners.get("a").y, startCorners.get("d").y)) &&
 				(endCorners.get("b").x < startCorners.get("a").x))
 			return new Point[]{startCorners.get("da"), endCorners.get("bc")};
-		return new Point[]{startCorners.get("da"), endCorners.get("bc")};
+		//Default(If all other cases fail)
+		return new Point[]{new Point(startCorners.get("ab").x, startCorners.get("bc").y),
+				new Point(endCorners.get("ab").x, endCorners.get("bc").y)};
 	}
 	
 	public static boolean isInRange(int val, int min, int max){
