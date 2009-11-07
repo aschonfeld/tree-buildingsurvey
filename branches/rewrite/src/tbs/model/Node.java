@@ -64,14 +64,23 @@ public abstract class Node extends ModelElement
 	*/
 	public void addConnection(Node n)
 	{
-		if (!inTree) return;  	//can't connect, not in tree
-		if (toConnections.indexOf(n) < 0) return; //already connected
+		if (!isInTree())
+		{
+			System.out.println("Returning from addConnection"); 
+			return;  	//can't connect, not in tree
+		}
+		if (toNodes.indexOf(n) >= 0)
+		{
+			System.out.println("error in addConnection");
+
+			 return; //already connected
+		}
 		if (n == this)
 		{
 			System.out.println("Tried to connect node to self");
 			return;
 		}
-		toConnections.add(n); 		 
+		toNodes.add(n); 		 
 		n.connectFrom(this);
 		System.out.println("Connected " +getName()+ " to " +
 				n.getName());
@@ -98,18 +107,18 @@ public abstract class Node extends ModelElement
 	/**
 	* Unlink this Node's connection to the specified object. 
 	*/
-	public void RemoveConnection(Node n)
+	public void removeConnection(Node n)
 	{
-		if (toConnections.indexOf(n) < 0)   //no connections to undo
+		if (toNodes.indexOf(n) < 0)   //no connections to undo
 		{
 			System.out.println("--Bad call to Node.disconnectTo!--");
 			return; 
 		}
 
-		toConnections.remove(toConnections.indexOf(n));
+		toNodes.remove(toNodes.indexOf(n));
 		n.disconnectFrom(this);
 		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toConnections list.");
+			" toNodes list.");
 	}
 
 
@@ -127,7 +136,7 @@ public abstract class Node extends ModelElement
 		}
 		fromConnections.remove(fromConnections.indexOf(n));
 		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toConnections list.");
+			" toNodes list.");
 	}	
 
 	/**
@@ -136,16 +145,23 @@ public abstract class Node extends ModelElement
 	*/
 	public void unlink()
 	{
-		System.out.println("Unlink method called from " + getName());
-	}
+		for (Node n: toNodes)
+		{
+			removeConnection(n);
+		}
+		for (Node n: fromConnections)
+		{
+			disconnectFrom(n);
+		}
+	}		
 
 	public boolean isConnected()
 	{
-		return !toConnections.isEmpty();
+		return !toNodes.isEmpty();
 	}
 	
 	
 	public ArrayList<Node> getConnections() {
-		return to;
+		return toNodes;
 	}
 }	

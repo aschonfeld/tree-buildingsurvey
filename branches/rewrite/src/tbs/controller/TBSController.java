@@ -13,6 +13,7 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
+import tbs.model.EmptyNode;
 import tbs.view.TBSView;
 
 public class TBSController 
@@ -82,33 +83,6 @@ public class TBSController
 		if(e.getClickCount() == 2) {
 			// no double clicking for now
 		}
-	}
-	
-	/**
-	* Returns the top node of a pile
-	*/
-	private ModelElement getTopNode(int x, int y)
-	{
-		ArrayList<Integer> a = mouseIsOver(x,y);
-		int topIndex = a.get(a.size() - 1);
-		return model.getElement(topIndex);
-	}
-
-
-	/**
-	* Prompts the user for a name for this empty node. Should be called
-	* by any EmptyNode creation, but cannot be in EmptyNode.addToTree(),
-	* as that applies to the "on-deck" node, as it were, in the left-hand
-	* column. Should also be called by a "rename" button, I'd think.  
-	*/	
-	public void namePrompt(EmptyNode en)
-	{
-		String message = "Would you like to name this node?";
-		if (view.promptUserForYesNoCancel(message) ==
-					JOptionPane.YES_OPTION)
-			{
-				en.setName(view.promptUserForString("Please enter a name"));
-			}
 	}
 	
 	public void mousePressed(MouseEvent e){

@@ -32,7 +32,7 @@ public class TBSGraphics {
 	
 	//boundary between active and inactive elements.
 	//Name can be changed. 
-	public static int LINE_OF_DEATH = 120;
+	public static int LINE_OF_DEATH = 180;
 	
 	// Contains the length and width of all organism nodes
 	public static int organismNodeWidth = 0;

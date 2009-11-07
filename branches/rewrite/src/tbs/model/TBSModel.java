@@ -81,8 +81,14 @@ public class TBSModel
 	public void setElement(int i, ModelElement me) {
 		modelElements.set(i, me);
 	}
-	
+
+
 	public void clearConnections(Node n) {
+		n.unlink();
+	}
+
+
+/* Unnecessary to iterate the model to do this
 		for(ModelElement me: modelElements) {
 			if(me instanceof Node) {
 				Node n2 = (Node) me;
@@ -95,7 +101,7 @@ public class TBSModel
 			}
 		}
 	}
-	
+*/	
 	public EmptyNode getImmortalEmptyNode() {
 		return immortalEmptyNode;
 	}
@@ -147,7 +153,9 @@ public class TBSModel
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);
-			addElement(new OrganismNode(this, img, organismName, currentX, currentY, TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight));
+			addElement(new OrganismNode(this, img, organismName, 
+				currentX, currentY, TBSGraphics.organismNodeWidth, 
+				TBSGraphics.organismNodeHeight));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 
