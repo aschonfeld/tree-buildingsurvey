@@ -1,5 +1,4 @@
 package tbs.model;
-//TBSModel v0.03
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,31 +29,55 @@ public class TBSModel
 		controller = new TBSController(this, view);
 	}
 	
+	/**
+	* Returns a handle for the View associated with this Model
+   */
 	public TBSView getView() {
 		return view;
 	}
 	
+	/**
+	* Returns a handle for the Controller associated with this Model.
+	*/
 	public TBSController getController() {
 		return controller;
 	}	
 	
+	/**
+	* Adds a ModelElement to the ArrayList of items this Model knows
+	* about.
+	*/
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
 	}
 
+	/**
+	* Deletes an item from the ArrayList of ModelElements. Limited to
+	* EmptyNodes.
+   */
 	public void delete(EmptyNode en)
 	{
 		modelElements.remove(en);		
 	}	
 
+	/**
+	* returns the ith ModelElement in the list.
+	*/
 	public ModelElement getElement(int i) {
 		return modelElements.get(i);
 	}
 	
+
+	/**
+	* returns the complete ArrayList of Model Elements.
+	*/
 	public ArrayList<ModelElement> getElements() {
 		return modelElements;
 	}
 
+	/**
+	* Assigns value me to the ith member of the list. 
+	*/
 	public void setElement(int i, ModelElement me) {
 		modelElements.set(i, me);
 	}
@@ -90,13 +113,17 @@ public class TBSModel
 		TBSGraphics.buttons.add("print");
 		TBSGraphics.buttons.add("undo");
 		TBSGraphics.buttons.add("save");
-		Point buttonBounds = TBSGraphics.get2DStringBounds(g2, TBSGraphics.buttons);
-		TBSGraphics.buttonsWidth = buttonBounds.x + TBSGraphics.buttonsXPadding * 2;
-		TBSGraphics.buttonsHeight = buttonBounds.y + TBSGraphics.buttonsYPadding * 2;
+		Point buttonBounds = TBSGraphics.get2DStringBounds(g2, 
+				TBSGraphics.buttons);
+		TBSGraphics.buttonsWidth = buttonBounds.x + 
+				TBSGraphics.buttonsXPadding * 2;
+		TBSGraphics.buttonsHeight = buttonBounds.y + 
+				TBSGraphics.buttonsYPadding * 2;
 	}
 	
 	// called during setup to create organism nodes
-	protected void createModelElements(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
+	protected void createModelElements(Graphics g, 
+				TreeMap<String, BufferedImage> organismNameToImage) {
 		Graphics2D g2 = (Graphics2D) g;
 		BufferedImage img = null;
 		int currentX = 0;
@@ -106,7 +133,8 @@ public class TBSModel
 		Collection<BufferedImage> organismImages = organismNameToImage.values();
 		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNames);
 		Point imageBounds = TBSGraphics.get2DImageBounds(g2, organismImages);
-		TBSGraphics.organismNodeWidth = stringBounds.x + imageBounds.x + TBSGraphics.paddingWidth * 2;
+		TBSGraphics.organismNodeWidth = stringBounds.x + imageBounds.x + 
+				TBSGraphics.paddingWidth * 2;
 		TBSGraphics.organismNodeHeight = imageBounds.y;
 		int y0 = stringBounds.y;
 		int y1 = imageBounds.y;
@@ -122,13 +150,15 @@ public class TBSModel
 			addElement(new OrganismNode(this, img, organismName, currentX, currentY, TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
-		// leave commented unless testing
-		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2 - TBSGraphics.emptyNodeWidth / 2;
-		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + TBSGraphics.emptyNodeYLabelOffset; 
+
+		//create left-side empty node
+
+		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2 - 
+					TBSGraphics.emptyNodeWidth / 2;
+		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + 
+					TBSGraphics.emptyNodeYLabelOffset; 
 		immortalEmptyNode = new EmptyNode(this);
 		addElement(immortalEmptyNode);
-		//20 is arbitrary, to move it away from the side so you can see
-		//it better. Change at whim.
 	}	
 	
 }

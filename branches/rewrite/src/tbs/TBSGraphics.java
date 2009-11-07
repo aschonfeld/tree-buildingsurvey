@@ -13,6 +13,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+* This class encapsulates the constants used in graphics handling for
+* the TBS applet, and contains some grunt-work methods for setting up
+* objects in the Node hierarchy.
+*/
+
 public class TBSGraphics {
 	
 	/**
@@ -36,6 +42,7 @@ public class TBSGraphics {
 	public static int maxOrganismImageWidth = 0;
 	public static int maxOrganismImageHeight = 0;
 	
+
 	public static int emptyNodeWidth = 20;
 	public static int emptyNodeHeight = 20;
 	public static int emptyNodeLeftX;
@@ -90,31 +97,41 @@ public class TBSGraphics {
 		return max;	
 	}
 	
-	public static Point get2DStringBounds(Graphics2D g2, Collection<String> strings) {
+	public static Point get2DStringBounds(Graphics2D g2, 
+			Collection<String> strings) 
+	{
 		ArrayList<Point> points = new ArrayList<Point>();
-		for(String s: strings) {
+		for(String s: strings) 
+		{
 			Rectangle2D bounds = getStringBounds(g2, s);
-			points.add(new Point((int) bounds.getWidth(), (int) bounds.getHeight()));
+			points.add(new Point((int) bounds.getWidth(), 
+				(int) bounds.getHeight()));
 		}
 		return getMaxBounds(points);
 	}
 	
-	public static Point get2DImageBounds(Graphics2D g2, Collection<BufferedImage> images) {
+	public static Point get2DImageBounds(Graphics2D g2, 
+			Collection<BufferedImage> images) 
+	{
 		ArrayList<Point> points = new ArrayList<Point>();
-		for(BufferedImage i: images) {
+		for(BufferedImage i: images) 
+		{
 			points.add(new Point(i.getWidth(), i.getHeight()));
 		}
 		return getMaxBounds(points);
 	}
 	
-	public static Point get2DBounds(Point p0, Point p1) {
+	public static Point get2DBounds(Point p0, Point p1) 
+	{
 		if(p1.x > p0.x) p0.x = p1.x;
 		if(p1.y > p0.y) p0.y = p1.y;
 		return p0;
 	}
 	
-	public static void drawCenteredString(Graphics2D g2, String s, int leftX, int upperY, int width, int height) {
-		// ReneringHints tell
+	public static void drawCenteredString(Graphics2D g2, String s, 
+				int leftX, int upperY, int width, int height) 
+	{
+		// RenderingHints tell
 		g2.setColor(Color.black);
    		Font f = TBSGraphics.getFont(g2);
    		FontRenderContext frc = g2.getFontRenderContext();

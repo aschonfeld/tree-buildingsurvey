@@ -1,7 +1,6 @@
 package tbs.model;
 
 import tbs.TBSGraphics;
-//TBS version 0.3
 //EmptyNode: connector node, represents a hypothetical common ancestor
 
 

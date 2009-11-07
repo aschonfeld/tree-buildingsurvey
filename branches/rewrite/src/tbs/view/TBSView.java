@@ -1,5 +1,4 @@
 package tbs.view;
-//TBSView.java version 0.3
 
 import java.awt.Color;
 import java.awt.Font;

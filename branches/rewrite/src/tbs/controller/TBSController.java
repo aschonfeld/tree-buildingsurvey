@@ -1,5 +1,4 @@
 package tbs.controller;
-//TBSController v0.3
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -16,19 +15,24 @@ import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.TBSView;
 
-public class TBSController implements MouseListener, MouseMotionListener, ActionListener {
+public class TBSController 
+		implements MouseListener, MouseMotionListener, ActionListener 
+{
 	
 	private TBSModel model;
 	private TBSView view;
-	
+
 	private ArrayList<Integer> selectedIndices;
 	private int previousX, previousY;
 	private Node draggedNode = null;
 	private Node selectedNode = null;
 	
-    public TBSController(TBSModel m, TBSView v){
+   public TBSController(TBSModel m, TBSView v)
+	{
     	model = m;
     	view = v;
+		draggedNode=null;
+		selectedNode=null;
     }
     
 	public void mouseEntered(MouseEvent e){}
@@ -46,9 +50,13 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		if(y < TBSGraphics.buttonsHeight) {
+
+		//if mouse is in button space, call button actions
+		if(y < TBSGraphics.buttonsHeight) 
+		{
 			int buttonIndex = x / TBSGraphics.buttonsWidth;
-			if(buttonIndex < TBSGraphics.buttons.size()) {
+			if(buttonIndex < TBSGraphics.buttons.size()) 
+			{
 				System.out.println(TBSGraphics.buttons.get(buttonIndex));
 			}
 		} else {
@@ -69,12 +77,39 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 					}
 				}
 			}
-		}
+		}	
+	
 		if(e.getClickCount() == 2) {
 			// no double clicking for now
 		}
 	}
-		
+	
+	/**
+	* Returns the top node of a pile
+	*/
+	private ModelElement getTopNode(int x, int y)
+	{
+		ArrayList<Integer> a = mouseIsOver(x,y);
+		int topIndex = a.get(a.size() - 1);
+		return model.getElement(topIndex);
+	}
+
+
+	/**
+	* Prompts the user for a name for this empty node. Should be called
+	* by any EmptyNode creation, but cannot be in EmptyNode.addToTree(),
+	* as that applies to the "on-deck" node, as it were, in the left-hand
+	* column. Should also be called by a "rename" button, I'd think.  
+	*/	
+	public void namePrompt(EmptyNode en)
+	{
+		String message = "Would you like to name this node?";
+		if (view.promptUserForYesNoCancel(message) ==
+					JOptionPane.YES_OPTION)
+			{
+				en.setName(view.promptUserForString("Please enter a name"));
+			}
+	}
 	
 	public void mousePressed(MouseEvent e){
 		int x = e.getX();
@@ -120,10 +155,13 @@ public class TBSController implements MouseListener, MouseMotionListener, Action
 		{
 			//Node dragged to point out of bounds
 			modifyOutOfBounds(draggedNode);
-			for(ModelElement me : model.getElements()){
-				if(me instanceof Node) {
+			for(ModelElement me : model.getElements())
+			{
+				if(me instanceof Node) 
+				{
 					Node curr = (Node) me;
-					if(!curr.equals(draggedNode) && curr.isInTree()){
+					if(!curr.equals(draggedNode) && curr.isInTree())
+					{
 						if(draggedNode.collidesWith(curr))
 							draggedNode.removeFromTree();
 					}
