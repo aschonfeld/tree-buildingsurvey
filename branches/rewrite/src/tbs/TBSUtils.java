@@ -45,36 +45,52 @@ public class TBSUtils {
 		if((endCorners.get("c").x < startCorners.get("a").x) &&
 				(endCorners.get("c").y > startCorners.get("a").y))
 			return new Point[]{startCorners.get("a"), endCorners.get("c")};
-		//Case 2(North)
+		//Case 2a(North with two organisms)
 		if((isInRange(endCorners.get("a").x, startCorners.get("a").x, startCorners.get("b").x) ||
 				isInRange(endCorners.get("b").x, startCorners.get("a").x, startCorners.get("b").x)) &&
 				(endCorners.get("d").y > startCorners.get("a").y))
+			return new Point[]{startCorners.get("ab"), endCorners.get("cd")};
+		//Case 2b(North with organism & node)
+		if((endCorners.get("a").x <= startCorners.get("a").x && endCorners.get("b").x >= startCorners.get("b").x) &&
+				(endCorners.get("a").y > startCorners.get("d").y))
 			return new Point[]{startCorners.get("ab"), endCorners.get("cd")};
 		//Case 3(NorthEast)
 		if((endCorners.get("d").x > startCorners.get("b").x) &&
 				(endCorners.get("d").y > startCorners.get("b").y))
 			return new Point[]{startCorners.get("b"), endCorners.get("d")};	
-		//Case 4(East)
+		//Case 4a(East with two organisms)
 		if((isInRange(endCorners.get("a").y, startCorners.get("c").y, startCorners.get("b").y) ||
 				isInRange(endCorners.get("d").y, startCorners.get("c").y, startCorners.get("b").y)) &&
+				(endCorners.get("a").x > startCorners.get("b").x))
+			return new Point[]{startCorners.get("bc"), endCorners.get("da")};
+		//Case 4b(East with organism & node)
+		if((endCorners.get("a").y >= startCorners.get("c").y && endCorners.get("d").y <= startCorners.get("b").y) &&
 				(endCorners.get("a").x > startCorners.get("b").x))
 			return new Point[]{startCorners.get("bc"), endCorners.get("da")};
 		//Case 5(SouthEast)
 		if((endCorners.get("a").x > startCorners.get("c").x) &&
 				(endCorners.get("a").y < startCorners.get("c").y))
 			return new Point[]{startCorners.get("c"), endCorners.get("a")};	
-		//Case 6(South)
+		//Case 6a(South for two organisms)
 		if((isInRange(endCorners.get("a").x, startCorners.get("a").x, startCorners.get("b").x) ||
 				isInRange(endCorners.get("b").x, startCorners.get("a").x, startCorners.get("b").x)) &&
+				(endCorners.get("a").y < startCorners.get("d").y))
+			return new Point[]{startCorners.get("cd"), endCorners.get("ab")};
+		//Case 6b(South for node & organism)
+		if((endCorners.get("a").x <= startCorners.get("a").x && endCorners.get("b").x >= startCorners.get("b").x) &&
 				(endCorners.get("a").y < startCorners.get("d").y))
 			return new Point[]{startCorners.get("cd"), endCorners.get("ab")};
 		//Case 7(SouthWest)
 		if((endCorners.get("b").x < startCorners.get("d").x) &&
 				(endCorners.get("b").y < startCorners.get("d").y))
 			return new Point[]{startCorners.get("d"), endCorners.get("b")};	
-		//Case 8(West)
-		if((isInRange(endCorners.get("b").y, startCorners.get("a").y, startCorners.get("d").y) ||
-				isInRange(endCorners.get("c").y, startCorners.get("a").y, startCorners.get("d").y)) &&
+		//Case 8a(West with two organisms)
+		if((isInRange(endCorners.get("b").y, startCorners.get("d").y, startCorners.get("a").y) ||
+				isInRange(endCorners.get("c").y, startCorners.get("d").y, startCorners.get("a").y)) &&
+				(endCorners.get("b").x < startCorners.get("a").x))
+			return new Point[]{startCorners.get("da"), endCorners.get("bc")};
+		//Case 8b(West with organism & node)
+		if((endCorners.get("b").y >= startCorners.get("a").y && endCorners.get("c").y <=startCorners.get("d").y) &&
 				(endCorners.get("b").x < startCorners.get("a").x))
 			return new Point[]{startCorners.get("da"), endCorners.get("bc")};
 		//Default(If all other cases fail)
