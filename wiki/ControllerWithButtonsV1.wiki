@@ -58,21 +58,26 @@ IF ACTION == IMPOSSIBLE: print error
 ==_STATE TABLE:==
 clickedElement = element user most recently clicked on
 ||STATE||MODELELEMENTCLICKED||selectedNode||ACTION||
+||null || any      || any or null || SelectedNode=clickedElement||
 ||label||`EmptyNode`||null||LABELEMPTYNODE, String label||
 ||label||`OrganismNode`||null||NO_ACTION||
+||     ||             ||    || or: selectedNode = clickedElement, state=null||
 ||label||`Connection`||null||NO_ACTION||
+||     ||             ||    || or: selectedNode = clickedElement, state=null||
 ||connect||`EmptyNode`||null||selectedNode = clickedElement||
 ||connect||`OrganismNode`||null||selectedNode = clickedElement||
 ||connect||`Connection`||null||NO_ACTION||
 ||delete||`EmptyNode`||null||DELETE, clickedElement||
 ||delete||`OrganismNode`||null||DELETE, clickedElement||
 ||delete||`Connection`||null||DELETE, clickedElement||
+||delete||null || any || delete selectedNode||
 ||label||`EmptyNode`||selectedNode||LABELEMPTYNODE, String lable||
 ||label||`OrganismNode`||selectedNode||NO_ACTION||
 ||label||`Connection`||selectedNode||NO_ACTION||
 ||connect||`EmptyNode`||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode (toNode != selectedNode)||
 ||connect||`OrganismNode`||selectedNode||CONNECT, fromNode = selectedNode, toNode = clickedNode (toNode != selectedNode)||
 ||connect||`Connection`||selectedNode||NO_ACTION||
-||delete||`EmptyNode`||selectedNode||IMPOSSIBLE||
-||delete||`OrganismNode`||selectedNode||IMPOSSIBLE||
-||delete||`Connection`||selectedNode||IMPOSSIBLE||
+||delete||`EmptyNode`||selectedNode||IMPOSSIBLE*||
+||delete||`OrganismNode`||selectedNode||IMPOSSIBLE*||
+||delete||`Connection`||selectedNode||IMPOSSIBLE*||
+
