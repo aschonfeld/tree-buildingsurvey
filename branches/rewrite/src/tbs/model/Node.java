@@ -125,7 +125,6 @@ public abstract class Node extends ModelElement
 	/**
 	* Remove n from list of Nodes connecting to this Node
 	*/
-
 	public void disconnectFrom(Node n)
 	{
 		if (fromConnections.indexOf(n) < 0) //no connection to undo
@@ -134,7 +133,7 @@ public abstract class Node extends ModelElement
 			System.out.println("--Bad call to Node.disconnectFrom!--");
 			return; 
 		}
-		fromConnections.remove(fromConnections.indexOf(n));
+		fromConnections.remove(n);
 		System.out.println("Removed "+ n.getName() +" from " +getName()+
 			" toNodes list.");
 	}	
