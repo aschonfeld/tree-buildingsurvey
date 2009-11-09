@@ -19,8 +19,8 @@ Discussion:
   * Glenn: handle the demo of the current applet and explanation of implementation
   * Jon: ideas on extensions & cost
     * We calculated that each of us spend about 20-30 hours/week on this project, which is the equivalent of 1.5 programmers
-  * Andrew: Summarize the experiment.pdf file that Professor White gave us afew days ago and how we wnated to turn this into an application
+  * Andrew: Summarize the [TBSExperiment experiment .pdf file] that Professor White gave us afew days ago and how we wnated to turn this into an application
     * Also, be sure to mention the size of our group and project and how the project came about
-  We concluded the meeting by going trhough each of the milestones discussed in the [MeetingFourMinutes last meeting] and adding them to the schedule.  We also came up with few new ones that we thought were important.
+  We concluded the meeting by going trhough each of the milestones discussed in the [MeetingFourMinutes last meeting] and adding them to the [Schedule schedule].  We also came up with few new ones that we thought were important.
 *Future Meetings:* 
   * Tuesday(11/10) w/ Professor White to discuss GUIs
