@@ -119,9 +119,9 @@ public class TBSView extends JComponent {
 		for(ModelElement me: model.getElements()) {
 			if(me instanceof Node) {
 				Node fromNode = (Node) me;
-				for(Connection toNode: fromNode.getConnections()) {
-					Point[] conn = TBSUtils.computeConnectionBounds(fromNode , 
-						toNode.getToNode());
+				for(Connection c: fromNode.getConnections()) {
+					Point[] conn = TBSUtils.computeConnectionBounds(c.getFromNode() , 
+						c.getToNode());
 					g2.setColor(Color.WHITE);
 					g2.drawLine(conn[0].x, conn[0].y, conn[1].x, conn[1].y);
 				}
