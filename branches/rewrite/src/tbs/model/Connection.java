@@ -1,6 +1,6 @@
 //TBS version 0.4
 //represents a connection between two node objects
-//impleented to make connections selectable
+//implemented to make connections selectable
 
 package tbs.model;
 

@@ -41,8 +41,10 @@ public class TBSController
 	
 	public void mouseMoved(MouseEvent e){
 		if(selectedNode != null) {
-			Node dummyNode = (Node) new OrganismNode(model, null, null, e.getX(), e.getY(), 3, 3);
-			Point[] conn = TBSUtils.computeConnectionBounds(selectedNode , dummyNode);
+			Node dummyNode = (Node) new OrganismNode(model, null, null, 
+				e.getX(), e.getY(), 3, 3);
+			Point[] conn = 
+				TBSUtils.computeConnectionBounds(selectedNode , dummyNode);
 			view.setConnInProgress(conn);
 		}
 	}
@@ -60,21 +62,30 @@ public class TBSController
 			{
 				System.out.println(TBSGraphics.buttons.get(buttonIndex));
 			}
-		} else {
-			if(mouseIsOver(x, y).size() != 0) {
+		} 
+		else 
+		{
+			if(mouseIsOver(x, y).size() != 0) 
+			{
 				ArrayList<Integer> a = mouseIsOver(x,y);
 				int topIndex = a.get(a.size() - 1);
 				ModelElement me = model.getElement(topIndex);
-				if(me instanceof Node) {
-					if((selectedNode) == null) {
-						Node n = (Node) me;
-						// don't allow connection from node not in tree
-						if(n.isInTree()) selectedNode = n;
-					} else {
+				if(me instanceof Node) 
+				{
+					Node n = (Node) me;
+					// don't allow connection from node not in tree
+					if (n.isInTree())
+					{
+						if((selectedNode) == null) 
+						{	selectedNode = n;	
+						}
+						else 
+						{
 						// fromNode already selected, make connection
-						selectedNode.addConnection((Node) me);
-						selectedNode = null;
-						view.setConnInProgress(null);
+							selectedNode.addConnection((Node) me);
+							selectedNode = null;
+							view.setConnInProgress(null);
+						}
 					}
 				}
 			}

@@ -1,14 +1,15 @@
+//TBS version 0.4
+//EmptyNode: connector node, represents a hypothetical common ancestor
+
 package tbs.model;
 
 import tbs.TBSGraphics;
-//EmptyNode: connector node, represents a hypothetical common ancestor
-
-
 	
-public class EmptyNode extends Node {
+public class EmptyNode extends Node 
+{
 
 	TBSModel model;
-	String defaultName = "[NO NAME]";
+	String defaultName = "";
 	
 
 	public EmptyNode(TBSModel mod, int lX, int uY, String n) {

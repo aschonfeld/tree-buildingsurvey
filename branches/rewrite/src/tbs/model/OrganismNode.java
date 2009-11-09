@@ -1,6 +1,7 @@
-package tbs.model;
-
+//TBS version 0.4
 //OrganismNode: represents "organisms" manipulated by user
+
+package tbs.model;
 
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -14,7 +15,8 @@ public class OrganismNode extends Node
 	private int defaultUpperY;
 	private TBSModel model;
 		
-	public OrganismNode(TBSModel m, BufferedImage i, String n, int x, int y, int w, int h) 
+	public OrganismNode(TBSModel m, BufferedImage i, String n, 
+			int x, int y, int w, int h) 
 	{
 		model = m;
 		img = i;
@@ -38,10 +40,11 @@ public class OrganismNode extends Node
 	}
 	
 	public void removeFromTree() {
+		unlink();
 		inTree = false;
 		leftX = defaultLeftX;
 		upperY = defaultUpperY;
-		model.clearConnections(this);
+//		model.clearConnections(this);
 		System.out.println("Removed from tree: inTree = " +inTree);
 	}
 		

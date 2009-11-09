@@ -30,6 +30,7 @@ public class TBSView extends JComponent {
 	
 	// This connection follows the mouse
 	private Point[] connInProgress = null;
+
 	
 	private TBSModel model;
 	public TBSView(TBSModel m) {
