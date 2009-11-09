@@ -1,6 +1,6 @@
 package tbs.model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 //TBS version 0.3
 //Node: superclass for OrganismNode and EmptyNode
@@ -15,8 +15,9 @@ public abstract class Node extends ModelElement
 	int width;
 	int height;
 	boolean inTree;
-	ArrayList<Node> toNodes = new ArrayList<Node>();
+	ArrayList<Connection> toConnections = new ArrayList<Connection>();
 	protected boolean selected;
+	private Connection conn;
 
 	//connections to and from other ModelElements, respectively
 	protected ArrayList<Node> fromConnections = new ArrayList<Node>();
@@ -69,10 +70,9 @@ public abstract class Node extends ModelElement
 			System.out.println("Returning from addConnection"); 
 			return;  	//can't connect, not in tree
 		}
-		if (toNodes.indexOf(n) >= 0)
+		if (toConnections.indexOf(n) >= 0)
 		{
-			System.out.println("error in addConnection");
-
+			System.out.println("error in addConnection, already connected");
 			 return; //already connected
 		}
 		if (n == this)
@@ -80,7 +80,7 @@ public abstract class Node extends ModelElement
 			System.out.println("Tried to connect node to self");
 			return;
 		}
-		toNodes.add(n); 		 
+		toConnections.add(new Connection(this, n)); 
 		n.connectFrom(this);
 		System.out.println("Connected " +getName()+ " to " +
 				n.getName());
@@ -109,16 +109,25 @@ public abstract class Node extends ModelElement
 	*/
 	public void removeConnection(Node n)
 	{
-		if (toNodes.indexOf(n) < 0)   //no connections to undo
+		if (toConnections.indexOf(n) < 0)   //no connections to undo
 		{
 			System.out.println("--Bad call to Node.disconnectTo!--");
 			return; 
 		}
+	
+		ListIterator it = toConnections.listIterator();
+		while (it.hasNext())
+		{
+			conn = (Connection)it.next();
+			if (conn.getToNode()==n)
+			{	toConnections.remove(conn);
+			}
+		}
+			
 
-		toNodes.remove(toNodes.indexOf(n));
 		n.disconnectFrom(this);
 		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toNodes list.");
+			" toConnections list.");
 	}
 
 
@@ -135,7 +144,7 @@ public abstract class Node extends ModelElement
 		}
 		fromConnections.remove(n);
 		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toNodes list.");
+			" toConnections list.");
 	}	
 
 	/**
@@ -144,23 +153,18 @@ public abstract class Node extends ModelElement
 	*/
 	public void unlink()
 	{
-		for (Node n: toNodes)
-		{
-			removeConnection(n);
-		}
-		for (Node n: fromConnections)
-		{
-			disconnectFrom(n);
-		}
+		toConnections.clear();
+		fromConnections.clear();
 	}		
 
 	public boolean isConnected()
 	{
-		return !toNodes.isEmpty();
+		return !toConnections.isEmpty();
 	}
 	
 	
-	public ArrayList<Node> getConnections() {
-		return toNodes;
+	public ArrayList<Connection> getConnections() 
+	{
+		return toConnections;
 	}
 }	

@@ -1,3 +1,4 @@
+//TBS Version 0.4
 package tbs.view;
 
 import java.awt.Color;
@@ -18,7 +19,7 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
-
+import tbs.model.*;
 public class TBSView extends JComponent {
 
 	/**
@@ -118,8 +119,9 @@ public class TBSView extends JComponent {
 		for(ModelElement me: model.getElements()) {
 			if(me instanceof Node) {
 				Node fromNode = (Node) me;
-				for(Node toNode: fromNode.getConnections()) {
-					Point[] conn = TBSUtils.computeConnectionBounds(fromNode , toNode);
+				for(Connection toNode: fromNode.getConnections()) {
+					Point[] conn = TBSUtils.computeConnectionBounds(fromNode , 
+						toNode.getToNode());
 					g2.setColor(Color.WHITE);
 					g2.drawLine(conn[0].x, conn[0].y, conn[1].x, conn[1].y);
 				}
