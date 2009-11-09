@@ -22,5 +22,8 @@ Discussion:
   * Andrew: Summarize the [TBSExperiment experiment .pdf file] that Professor White gave us afew days ago and how we wnated to turn this into an application
     * Also, be sure to mention the size of our group and project and how the project came about
   We concluded the meeting by going trhough each of the milestones discussed in the [MeetingFourMinutes last meeting] and adding them to the [Schedule schedule].  We also came up with few new ones that we thought were important.
+
+  Those new milestones were: providing a "greeting page" for students to sign in (presumably with the instructions for the game), coding up the post-test (multiple-choice and free-entry answers, as in the original applet); and implementing "undo" - a mighty challenge, that. 
+
 *Future Meetings:* 
   * Tuesday(11/10) w/ Professor White to discuss GUIs
