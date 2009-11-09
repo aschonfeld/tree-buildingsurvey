@@ -14,7 +14,8 @@ Discussion:
   While we were going through the functions that needed to be completed for thursday we came across a bug:
   * When a user drags an organism off the screen and it readjusts to put it back on the screen and then does it again with a different organism in the same spot the collision control code does not function
   After we found this bug we came up with an interesting idea to save tree building space:
-  * What if when the organism nodes were dragged into the tree the label would hide and act as a tooltip that would display when the user hover the mouse over it?(_image coming soon_)
+  * What if when the organism nodes were dragged into the tree the label would hide and act as a tooltip that would display when the user hover the mouse over it?
+http://upload.wikimedia.org/wikipedia/commons/6/6b/HiddenText.gif
   We decided this is a good question to ask Professor White during our GUI discussion on tuesday.  Next we discussed how the duties of the presentation will be broken up:
   * Glenn: handle the demo of the current applet and explanation of implementation
   * Jon: ideas on extensions & cost
