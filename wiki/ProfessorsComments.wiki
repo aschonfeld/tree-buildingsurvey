@@ -6,11 +6,11 @@
 
 Version 0.4 is marked as done at
 http://code.google.com/p/tree-buildingsurvey/wiki/Versioning
-but the link to it is broken.
+but the link to it is broken. (I do see 0.4 from the link on the home page.)
 
-You need a *one step build* that checks the code (and the containing web page?) out of svn compiles the jar file and deploys it. That build process should also set or check the version number so that it's consistent wherever it appears (as an svn label, in the code, on the web page).
+You need a *one step build* that checks the code (and the containing web page?) out of svn, compiles the jar file and deploys it to the server and updates the links on the wiki. That build process should also set or check the version number so that it's consistent wherever it appears (as an svn label, in the code, on the web page, on the wiki).
 
-If you can't automate all those steps the least you can do is provide a human readable script that steps through the process.
+If you can't automate all those steps the least you can do is provide a human readable script that steps through the process, and then make sure you follow your own script! That way you can never "forget to update ...".
 
 === November 9 ===
 
