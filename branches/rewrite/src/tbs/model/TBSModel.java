@@ -1,3 +1,6 @@
+//TBS version 0.4
+//Model: creates and maintains the logical structure underlying TBS
+
 package tbs.model;
 
 import java.awt.Graphics;
@@ -150,28 +153,13 @@ public class TBSModel
 		addElement(immortalEmptyNode);
 	}	
 
-	//temporary model-based unlinker of nodes
-	public void unlink(Node source)
-	{
-		Node target;
-		Connection conn;
-
-		for (ModelElement me:modelElements)
-		{
-			target = (Node)me;
-		
-			if (source.connectedTo(target))
-				source.removeConnection(source.getConn(target));
-			if (target.connectedTo(source))
-				target.removeConnection(target.getConn(source));
-			
-		}
-		
-	}
-
-
-	//prints out a list of all connections to the console
-	//for testing purposes
+	
+	/**
+	* PrintConnections() prints out a list of all connections in each
+	* model element. 
+	* Connection to a Node (toConnection) is indicated by ->
+	* Trace connection from a Node (fromConnection) indicated by <-
+	*/
 	public void printConnections()
 	{
 		Node n;
@@ -204,21 +192,36 @@ public class TBSModel
 	}
 
 
+	/**
+	* Deprecated. Unlink had to live in Model when connections were
+	* one-way. Now, this simply calls the Node-based two-way unlink.
+	*/
+	public void unlink(Node source)
+	{
+		source.unlink;
+
+/*		Node target;
+		Connection conn;
+
+		for (ModelElement me:modelElements)
+		{
+			target = (Node)me;
+		
+			if (source.connectedTo(target))
+				source.removeConnection(source.getConn(target));
+			if (target.connectedTo(source))
+				target.removeConnection(target.getConn(source));
+			
+		}
+*/		
+	}
+
+	/**
+	* Deprecated. Old version of unlink. Now a reference to
+	* Node.unlink().
+	*/
 	public void clearConnections(Node n) 
 	{
-/*
-		for(ModelElement me: modelElements) 
-		{
-			Node n2 = (Node) me;
-			if (n.getConnections().contains(n2)) 
-			{
-				n.removeConnection(n2);
-			}
-			if (n2.getConnections().contains(n)) 
-			{
-				n2.removeConnection(n);
-			}
-		}
-*/	
+		n.unlink();
 	}
 }

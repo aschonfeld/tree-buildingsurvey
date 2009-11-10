@@ -40,7 +40,7 @@ public class OrganismNode extends Node
 	}
 	
 	public void removeFromTree() {
-		model.unlink(this);
+		unlink();
 		inTree = false;
 		leftX = defaultLeftX;
 		upperY = defaultUpperY;

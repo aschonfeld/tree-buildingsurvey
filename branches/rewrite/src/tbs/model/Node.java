@@ -1,12 +1,10 @@
+//TBS version 0.4
+//Node: superclass for OrganismNode and EmptyNode
+
 package tbs.model;
 
 import java.util.*;
 
-//TBS version 0.3
-//Node: superclass for OrganismNode and EmptyNode
-
-
-	
 public abstract class Node extends ModelElement 
 {	
 	String name;
@@ -123,9 +121,7 @@ public abstract class Node extends ModelElement
 		conn= new Connection(n, this);
 		toConnections.add(conn);
 
-
-		//here will go the fromConnection language:
-		//fromConnections.add(n);		
+		n.connectFrom(this);
 		
 		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
@@ -139,14 +135,8 @@ public abstract class Node extends ModelElement
 	*/
 	public void connectFrom(Node n)
 	{
-/*
-		if (!isInTree()) 
-		{	
-			System.out.println("Not in tree");
-			return;  	//can't connect, not in tree
-		}
 		
-		if (fromConnections.indexOf(n) > 0)
+		if (fromConnections.contains(n))
 		{	
 			System.out.println("connectFrom error: already connected");
 			 return; //already connected
@@ -160,7 +150,7 @@ public abstract class Node extends ModelElement
 
 		System.out.println("Connected to " +getName()+ " from " +
 				n.getName());
-*/	}	
+	}	
 
 	/**
 	* Delete this Node's connection to the specified object. 
@@ -209,28 +199,18 @@ public abstract class Node extends ModelElement
 	*/
 	public void unlink()
 	{
-	/*	Node n;
-		ListIterator<ModelElement> li =
-			model.getElements().ListIterator();
-		while (li.hasNext())
+		for (Node n : fromConnections)
 		{
-			n = (Node)li.next();
-			if (this.connectedTo(n))
-				removeConnection(n);
-			if (n.connectedTo(this))
-				removeConnection(this);
-		}
-*/
-	/*
-		System.out.println("Called unlink on "+ getName());
-		toConnections.clear();
-		ListIterator<Node> li = fromConnections.listIterator();
-		while (li.hasNext())
-		{
-			li.next().removeConnection(this);;
+			n.removeConnection(this);
 		}
 		fromConnections.clear();
-	*/
+		
+		for (Connection c: toConnections)
+		{
+			c.getToNode().disconnectFrom(this);    
+		}
+		toConnections.clear();
+
 	}		
 
 	public boolean isConnected()
