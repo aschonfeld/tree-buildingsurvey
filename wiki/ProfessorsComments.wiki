@@ -11,6 +11,12 @@ The sooner you make "About" work from the applet menu bar the easier it will be 
 
 I'd hoped to see the results of a recent meeting with Prof White.
 
+-------
+Right version, I forgot to update that part of the html. It was the same link that every other version 0.3 applet link took you to. 
+Now it takes you to 0.4, which says 0.4 on it. 
+
+Meeting minutes will be posted shortly after the meeting, which is still scheduled for 3/10. 
+
 ----
 
 === October 27 ===
