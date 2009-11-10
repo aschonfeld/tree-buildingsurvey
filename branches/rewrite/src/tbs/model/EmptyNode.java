@@ -52,7 +52,7 @@ public class EmptyNode extends Node
 	public void removeFromTree()
 	{	
 		if(this != model.getImmortalEmptyNode()) {
-			model.clearConnections(this);
+			model.unlink(this);
 			model.delete(this);
 		} else {
 			// empty node was moved, but didn't cross line_of_death, restore to default state
