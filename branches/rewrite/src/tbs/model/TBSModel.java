@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.ListIterator;
 
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
@@ -82,26 +83,6 @@ public class TBSModel
 		modelElements.set(i, me);
 	}
 
-
-	public void clearConnections(Node n) {
-		n.unlink();
-	}
-
-
-/* Unnecessary to iterate the model to do this
-		for(ModelElement me: modelElements) {
-			if(me instanceof Node) {
-				Node n2 = (Node) me;
-				if (n.getConnections().contains(n2)) {
-					n.removeConnection(n2);
-				}
-				if (n2.getConnections().contains(n)) {
-					n2.removeConnection(n);
-				}
-			}
-		}
-	}
-*/	
 	public EmptyNode getImmortalEmptyNode() {
 		return immortalEmptyNode;
 	}
@@ -168,5 +149,76 @@ public class TBSModel
 		immortalEmptyNode = new EmptyNode(this);
 		addElement(immortalEmptyNode);
 	}	
-	
+
+	//temporary model-based unlinker of nodes
+	public void unlink(Node source)
+	{
+		Node target;
+		Connection conn;
+
+		for (ModelElement me:modelElements)
+		{
+			target = (Node)me;
+		
+			if (source.connectedTo(target))
+				source.removeConnection(source.getConn(target));
+			if (target.connectedTo(source))
+				target.removeConnection(target.getConn(source));
+			
+		}
+		
+	}
+
+
+	//prints out a list of all connections to the console
+	//for testing purposes
+	public void printConnections()
+	{
+		Node n;
+		ListIterator<ModelElement> li = modelElements.listIterator();
+		while (li.hasNext())
+		{
+			n = (Node)li.next();
+			
+			if (n.isConnected())
+			{
+				ListIterator<Connection> it = n.getConnections().listIterator();
+
+				while (it.hasNext())
+				{
+					System.out.println(n.getName()+" -> "+
+						it.next().getToNode().getName());
+				}
+			}
+			if (!n.getFromConnections().isEmpty())
+			{
+				ListIterator<Node> it =
+					n.getFromConnections().listIterator();
+				while (it.hasNext())
+				{
+					System.out.println(n.getName() +" <- " +
+						it.next().getName());
+				}
+			}
+		}
+	}
+
+
+	public void clearConnections(Node n) 
+	{
+/*
+		for(ModelElement me: modelElements) 
+		{
+			Node n2 = (Node) me;
+			if (n.getConnections().contains(n2)) 
+			{
+				n.removeConnection(n2);
+			}
+			if (n2.getConnections().contains(n)) 
+			{
+				n2.removeConnection(n);
+			}
+		}
+*/	
+	}
 }

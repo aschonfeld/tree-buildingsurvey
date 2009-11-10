@@ -15,12 +15,12 @@ public abstract class Node extends ModelElement
 	int width;
 	int height;
 	boolean inTree;
-	ArrayList<Connection> toConnections = new ArrayList<Connection>();
 	protected boolean selected;
 	private Connection conn;
 
 	//connections to and from other ModelElements, respectively
 	protected ArrayList<Node> fromConnections = new ArrayList<Node>();
+	ArrayList<Connection> toConnections = new ArrayList<Connection>();
 
 	public int getLeftX() {return leftX;}
 	public void setLeftX(int leftX){this.leftX = leftX;}
@@ -59,14 +59,35 @@ public abstract class Node extends ModelElement
 	{ 
 		return inTree;
 	}
-	
+
+//-------------------------------------------------
+// ---- Connection handling from here to end ------
+//-------------------------------------------------
+
 	public boolean connectedTo(Node n)
 	{
 		ListIterator<Connection> li = toConnections.listIterator();
 		while (li.hasNext())
-			if (li.next().getToNode()==n)
-				return true;
+		{	if (li.next().getToNode()==n)
+			{	return true;}
+		}
 		return false;
+	}
+
+	public Connection  getConn(Node n)
+	{
+		Connection c;
+		ListIterator<Connection> li = toConnections.listIterator();
+		while (li.hasNext())
+		{
+
+			c = li.next();
+			if (c.getToNode()==n)
+			{	
+				return c;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -74,34 +95,62 @@ public abstract class Node extends ModelElement
 	*/
 	public void addConnection(Node n)
 	{
-		if (!isInTree())
+
+		if (!this.isInTree() || !n.isInTree())
 		{
-			System.out.println("Returning from addConnection"); 
-			return;  	//can't connect, not in tree
-		}
-		if (connectedTo(n))
-		{
-			System.out.println("error in addConnection, already connected");
-			 return; //already connected
-		}
-		if (n == this)
-		{
-			System.out.println("Tried to connect node to self");
+			System.out.println("AddConnection error: not in tree");
 			return;
 		}
-		toConnections.add(new Connection(n,this)); 
-		n.connectFrom(this);
-		System.out.println("Connected " +getName()+ " to " +
+
+		if (n == this)
+		{
+			System.out.println("addconn error: tried to connect node to self");
+			return;
+		}
+
+		if (this.connectedTo(n))
+		{
+			System.out.println("AddConnection error: already connected");
+			return;
+		}
+
+		if (n.connectedTo(this))
+		{
+			System.out.println("AddConn warning: reverse connection exists.");
+			System.out.println("Proceeding with connection.");
+		}
+
+		conn= new Connection(n, this);
+		toConnections.add(conn);
+
+
+		//here will go the fromConnection language:
+		//fromConnections.add(n);		
+		
+		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
-	}	
+	}		
+
+
+	
 
 	/**
 	* Add n to this Node's list of objects connecting to it.
 	*/
 	public void connectFrom(Node n)
 	{
-		if (!inTree) return;  	//can't connect, not in tree
-		if (fromConnections.indexOf(n) < 0) return; //already connected
+/*
+		if (!isInTree()) 
+		{	
+			System.out.println("Not in tree");
+			return;  	//can't connect, not in tree
+		}
+		
+		if (fromConnections.indexOf(n) > 0)
+		{	
+			System.out.println("connectFrom error: already connected");
+			 return; //already connected
+		}
 		if (n == this)
 		{
 			System.out.println("Tried to connect node from self");
@@ -111,36 +160,32 @@ public abstract class Node extends ModelElement
 
 		System.out.println("Connected to " +getName()+ " from " +
 				n.getName());
-	}	
+*/	}	
 
 	/**
-	* Unlink this Node's connection to the specified object. 
+	* Delete this Node's connection to the specified object. 
+	* Takes either Connection or Node as argument.
 	*/
-	public void removeConnection(Node n)
+	public void removeConnection(Connection c)
 	{
-
-		
-		if (!connectedTo(n))		
+		if (c==null)
 		{
-			System.out.println("--Bad call to Node.disconnectTo!--");
-			return; 
+			System.out.println("removeConnection: no such connection");
+			return;
 		}
-	
-		ListIterator<Connection> li = toConnections.listIterator();
-		while (li.hasNext())
-		{
-			conn = li.next();
-			if (conn.getToNode()==n)
-			{	toConnections.remove(conn);
-			}
-		}
-			
 
-		n.disconnectFrom(this);
-		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toConnections list.");
+		toConnections.remove(c);
+
+		//n.disconnectFrom(this);
+		System.out.println("Removed connection");
 	}
 
+
+	public void removeConnection(Node n)
+	{
+		conn = getConn(n);
+		removeConnection(conn);
+	}
 
 	/**
 	* Remove n from list of Nodes connecting to this Node
@@ -164,8 +209,28 @@ public abstract class Node extends ModelElement
 	*/
 	public void unlink()
 	{
+	/*	Node n;
+		ListIterator<ModelElement> li =
+			model.getElements().ListIterator();
+		while (li.hasNext())
+		{
+			n = (Node)li.next();
+			if (this.connectedTo(n))
+				removeConnection(n);
+			if (n.connectedTo(this))
+				removeConnection(this);
+		}
+*/
+	/*
+		System.out.println("Called unlink on "+ getName());
 		toConnections.clear();
+		ListIterator<Node> li = fromConnections.listIterator();
+		while (li.hasNext())
+		{
+			li.next().removeConnection(this);;
+		}
 		fromConnections.clear();
+	*/
 	}		
 
 	public boolean isConnected()
@@ -177,5 +242,10 @@ public abstract class Node extends ModelElement
 	public ArrayList<Connection> getConnections() 
 	{
 		return toConnections;
+	}
+		
+	public ArrayList<Node> getFromConnections()
+	{
+		return fromConnections;
 	}
 }	
