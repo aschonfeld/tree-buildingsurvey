@@ -1,3 +1,6 @@
+//TBS version 0.4
+//TBS utils: utility functions of TBS
+
 package tbs;
 
 import java.awt.Point;

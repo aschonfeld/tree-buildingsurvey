@@ -1,3 +1,7 @@
+//TBS version .04
+//TBSController: mousehandling and button handling for TBS
+
+
 package tbs.controller;
 
 import java.awt.Point;
@@ -82,7 +86,7 @@ public class TBSController
 						else 
 						{
 						// fromNode already selected, make connection
-							selectedNode.addConnection((Node) me);
+							selectedNode.addConnection(n);
 							selectedNode = null;
 							view.setConnInProgress(null);
 						}
@@ -92,7 +96,7 @@ public class TBSController
 		}	
 	
 		if(e.getClickCount() == 2) {
-			// no double clicking for now
+//			model.printConnections();
 		}
 	}
 	

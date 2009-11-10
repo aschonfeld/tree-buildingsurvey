@@ -5,6 +5,11 @@ package tbs.model;
 
 import java.util.*;
 
+
+/**
+* This class is the superclass for OrganismNode and EmptyNode, and
+* contains their common elements. 
+*/
 public abstract class Node extends ModelElement 
 {	
 	String name;
@@ -29,7 +34,10 @@ public abstract class Node extends ModelElement
 	public String getName() {return name;}
 
 	
-	
+	/**
+	* Returns true if the point indicated is within the object's
+	* boundaries. 
+	*/
 	public boolean contains(int x, int y) {
 		if((x > leftX) && (x < (leftX + width))) {
 			if((y > upperY) && (y < (upperY + height))) {
@@ -39,20 +47,40 @@ public abstract class Node extends ModelElement
 		return false;
 	}
 	
+	/**
+	* Adjusts the object's position by the indicated amount
+	*/
 	public void move(int deltaX, int deltaY) {
 		leftX += deltaX;
 		upperY += deltaY;
 	}		
-		
+	
+	/**
+	* Sets the object's position to the indicated point. 
+	*/
 	public void moveTo(int x, int y) {
 		leftX = x;
 		upperY = y;
 	}	
 	
+	/**
+	* Asks this node to be gone, by the means appropriate to its type.
+	*/
 	public abstract void removeFromTree();
 
+
+	/**
+	* Called when dragging from the left-side column, this asks the
+	* object to do what is needed to place itself "in the tree", that is,
+	* ready to be connected to other objects.
+	*/
 	public abstract void addToTree();
 		
+
+	/**
+	* Returns true if the node thinks it should accept connections and
+	* selected status. 
+	*/
 	public boolean isInTree()
 	{ 
 		return inTree;
@@ -62,6 +90,13 @@ public abstract class Node extends ModelElement
 // ---- Connection handling from here to end ------
 //-------------------------------------------------
 
+
+	/**
+	* Returns true if this node is connected by a forward connection
+	* (toConnection) to the Node submitted as argument. 
+	* Will return false if this node is connected to by n, and has a
+	* fromConnection to n. 
+	*/
 	public boolean connectedTo(Node n)
 	{
 		ListIterator<Connection> li = toConnections.listIterator();
@@ -72,6 +107,11 @@ public abstract class Node extends ModelElement
 		return false;
 	}
 
+
+	/**
+	* Returns the Connection between this node and Node n, or null if no
+	* connection exists. 
+	*/
 	public Connection  getConn(Node n)
 	{
 		Connection c;
@@ -125,7 +165,8 @@ public abstract class Node extends ModelElement
 		
 		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
-	}		
+
+	} // end of addConnection
 
 
 	
@@ -213,17 +254,31 @@ public abstract class Node extends ModelElement
 
 	}		
 
+
+	/**
+	* Returns true if this object has forward connections (toConnections)
+	* to any objects in the model. 
+	* Will return false if this object is connected to, but does not
+	* connect to any objects (ie, is a terminal node) or if it is
+	* completely isolated in the model.
+	*/
 	public boolean isConnected()
 	{
 		return !toConnections.isEmpty();
 	}
 	
-	
+	/**
+	* Returns the ArrayList of Connections for this Node. 
+	*/
 	public ArrayList<Connection> getConnections() 
 	{
 		return toConnections;
 	}
 		
+
+	/**
+	* Returns the ArrayList of Nodes which connect to this Node. 
+	*/
 	public ArrayList<Node> getFromConnections()
 	{
 		return fromConnections;

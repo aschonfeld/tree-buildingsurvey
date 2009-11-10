@@ -198,7 +198,7 @@ public class TBSModel
 	*/
 	public void unlink(Node source)
 	{
-		source.unlink;
+		source.unlink();
 
 /*		Node target;
 		Connection conn;

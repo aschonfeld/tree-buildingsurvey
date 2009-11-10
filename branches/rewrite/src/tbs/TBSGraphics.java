@@ -1,5 +1,6 @@
+//TBS Version 0.4
+//TBSGraphics: Constants and low-level methods for graphics handling
 package tbs;
-//TBS Version 0.3
 
 import java.awt.Color;
 import java.awt.Font;

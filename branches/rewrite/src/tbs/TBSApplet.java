@@ -1,3 +1,6 @@
+//TBS version 0.4
+//TBSApplet: the runnable frame class of TBS
+
 package tbs;
 
 

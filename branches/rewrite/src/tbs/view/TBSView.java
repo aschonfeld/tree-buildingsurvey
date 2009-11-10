@@ -1,4 +1,6 @@
 //TBS Version 0.4
+//TBSView: one logic for converting Model to a visual representation
+
 package tbs.view;
 
 import java.awt.Color;
