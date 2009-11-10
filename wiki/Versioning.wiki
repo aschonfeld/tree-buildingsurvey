@@ -20,7 +20,7 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
      * In addition, we hope that MacOS X compatibility problems have been resolved, at least for the moment. 
      * If we may toot our collective horn, this release puts us fairly well ahead of schedule: we are 3 minor versions and 1.5 weeks ahead of where we thought we'd be a week ago.  
      * This however requires that we re-group and determine the feature path from here before any further development: no new code until after meeting on Tuesday. Following release dates are now obsolete; look for new information Tuesday after class.
-  * *0.4*: Create & Delete Connections (*DONE, 11/09*)(see it [http://www.cs.umb.edu/~kiparsky/TBS04/Applet04.html here])
+  * *0.4*: Create & Delete Connections (*DONE, 11/09*)(see it [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html here])
     * Connections can be created. Deleting a node deletes connections to/from node 
 
   * *0.5*: Connections selectable, can be deleted. Some buttons functional: link, unlink, remove, rename. (*11/12*)
