@@ -126,29 +126,54 @@ public class TBSView extends JComponent {
 					Point[] conn = TBSUtils.computeConnectionBounds(c.getFromNode() , 
 						c.getToNode());
 					g2.setColor(Color.WHITE);
-					g2.drawLine(conn[0].x, conn[0].y, conn[1].x, conn[1].y);
+					drawArrow(g2, conn);
 				}
 			}
 		}
 		if(connInProgress != null) {
 			g2.setColor(Color.WHITE);
 			g2.drawLine(connInProgress[0].x, connInProgress[0].y, connInProgress[1].x, connInProgress[1].y);
-			drawArrow(connInProgress, g2);
+			drawArrow(g2, connInProgress);
 		}
 		
 	}
 	
-	public void drawArrow(Point[] conn, Graphics2D g2) {
-		/*
+	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1) {
+		g2.setColor(new Color(0.75f, 1.0f, 0.75f));
+		g2.drawLine(x0, y0, x1, y1);
+		for(int i0 = -1; i0 <= 1; i0 += 1) {
+			for(int i1 = -1; i1 <= 1; i1 += 2) {
+				for(int i2 = -1; i2 <= 1; i2 += 1) {
+					for(int i3 = -1; i3 <= 1; i3 += 2) {
+						g2.drawLine(x0 + i0, y0 + i1, x1 + i2, y1 + i3);
+					}
+				}
+			}
+		}
+	}
+	
+	public void drawArrow(Graphics2D g2, Point[] conn) {
+		double arrowLengthInPixels = 10.0;
+		double angle0 = 0.75 * Math.PI;
+		double angle1 = 2 * Math.PI - angle0;
 		double dx = (conn[1].x - conn[0].x);
 		double dy = (conn[1].y - conn[0].y);
-		double slope = dy / dx;
-		double perp = -1.0 * slope;
-		double lineX = conn[1].x + slope * 5;
-		double lineY = conn[1].y; // + perp * 5;;
-		g2.setColor(Color.WHITE);
-		g2.drawLine((int)lineX, (int) lineY, conn[1].x, conn[1].y);
-		*/
+		double dArrowX0 = Math.round(dx * Math.cos(angle0) + dy * Math.sin(angle0));
+		double dArrowY0 = Math.round(dy * Math.cos(angle0) - dx * Math.sin(angle0));
+		double dArrowX1 = Math.round(dx * Math.cos(angle1) + dy * Math.sin(angle1));
+		double dArrowY1 = Math.round(dy * Math.cos(angle1) - dx * Math.sin(angle1));
+		double arrowLength = Math.sqrt(dx * dx + dy * dy);
+		dArrowX0 /= arrowLength * (1.0 / arrowLengthInPixels);
+		dArrowY0 /= arrowLength * (1.0 / arrowLengthInPixels);
+		dArrowX1 /= arrowLength * (1.0 / arrowLengthInPixels);
+		dArrowY1 /= arrowLength * (1.0 / arrowLengthInPixels);
+		int arrowX0 = (int) Math.round(dArrowX0);
+		int arrowY0 = (int) Math.round(dArrowY0);
+		int arrowX1 = (int) Math.round(dArrowX1);
+		int arrowY1 = (int) Math.round(dArrowY1);
+		draw3PixelWideLine(g2, conn[0].x, conn[0].y, conn[1].x, conn[1].y);
+		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX0, conn[1].y + arrowY0);
+		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1);
 	}
 
 	// this is what the applet calls to refresh the screen
