@@ -1,12 +1,12 @@
 <project name="TreeBuildingSurvey" default="jarfile" basedir=".">
 	<property name="build.dir" value="${basedir}/bin" />
 	<property name="src.dir" value="${basedir}/src" />
-	<property name="lib.dir" value="${basedir}/lib" />
-	<property name="images.dir" value="*/images/*.*"/>
 	<property name="javadoc.dir" value="${basedir}/javadoc/"/>
+	<property name="deploy.dir" value="${basedir}/deploy${version}/"/>
 	<property name="main.class" value="tbs.TBSApplet"/>
+	<property name="pscp" value="c:\pscp"/>
 	<property name="jarfile" value="TBSRun"/>
-	
+
 	<target name="clean">
 			<delete dir="${build.home}" description="Deletes the build directory"/>
 	</target>
@@ -28,11 +28,10 @@
 	        <manifest>
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
-	    	<fileset dir="${src.dir}" includes="${images.dir}" />
 	    	<fileset dir="${build.dir}"/>
-	    	<fileset dir="${lib.dir}"/>
+	    	<fileset dir="${basedir}" includes="lib/*.*"/>
 	    </jar>
-        <move file="${build.dir}/TBSRun.jar" todir="."/>
+		<move file="${build.dir}/TBSRun.jar" todir="."/>
     </target>
 	
 	<target name="javadoc" depends="clean-javadoc" description="Create Javadocs for the source code">
@@ -46,6 +45,18 @@
 	        />
 	    	<fileset dir="${basedir}/" includes="**/*.java" />
 	   </javadoc>
+	</target>
+	<!-- you go to http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html and download pscp to your c:\ drive -->
+	<!-- to run this target user "ant -Dversion=0.4 -Dusername=skones1 -Dpassw=**** deploy" -->
+	<!-- YOU MUST REMEMBER TO UPDATE THE applet.html FILE WITH CURRENT VERSION INFO!! -->
+	<target name="deploy">
+		<mkdir dir="${deploy.dir}"/>
+		<copy file="TBSRun.jar" todir="${deploy.dir}"/>
+		<copy file="applet.html" todir="${deploy.dir}"/>
+		<exec executable="${pscp}">
+			<arg line="-batch -pw ${passw} -r ${deploy.dir} ${username}@users.cs.umb.edu:/home/${username}/public_html/"/>
+		</exec>
+		<delete dir="${deploy.dir}"/>
 	</target>
 	
 	<target name="help">
