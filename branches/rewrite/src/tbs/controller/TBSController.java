@@ -5,12 +5,11 @@
 package tbs.controller;
 
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import tbs.TBSGraphics;
@@ -22,26 +21,27 @@ import tbs.model.TBSModel;
 import tbs.view.TBSView;
 
 public class TBSController 
-		implements MouseListener, MouseMotionListener, ActionListener 
+		implements MouseListener, MouseMotionListener, KeyListener
 {
 	
 	private TBSModel model;
 	private TBSView view;
-
-	private ArrayList<Integer> selectedIndices;
-	private int previousX, previousY;
+	private int previousX, previousY, selectedIndex;
 	private Node draggedNode = null;
 	private Node selectedNode = null;
 	private Point lastPosition = null;
 	
-   public TBSController(TBSModel m, TBSView v)
-	{
+	public TBSController(TBSModel m, TBSView v) {
     	model = m;
     	view = v;
 		draggedNode=null;
 		selectedNode=null;
     }
     
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {}
+	
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
 	
@@ -59,60 +59,24 @@ public class TBSController
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-
-		//if mouse is in button space, call button actions
-		if(y < TBSGraphics.buttonsHeight) 
-		{
+		if(y < TBSGraphics.buttonsHeight)  {
 			int buttonIndex = x / TBSGraphics.buttonsWidth;
-			if(buttonIndex < TBSGraphics.buttons.size()) 
-			{
+			if(buttonIndex < TBSGraphics.buttons.size()) {
 				System.out.println(TBSGraphics.buttons.get(buttonIndex));
 			}
-		} 
-		else 
-		{
-			if(mouseIsOver(x, y).size() != 0) 
-			{
-				ArrayList<Integer> a = mouseIsOver(x,y);
-				int topIndex = a.get(a.size() - 1);
-				ModelElement me = model.getElement(topIndex);
-				if(me instanceof Node) 
-				{
-					Node n = (Node) me;
-					// don't allow connection from node not in tree
-					if (n.isInTree())
-					{
-						if((selectedNode) == null) 
-						{	selectedNode = n;	
-						}
-						else 
-						{
-						// fromNode already selected, make connection
-							selectedNode.addConnection(n);
-							selectedNode = null;
-							view.setConnInProgress(null);
-						}
-					}
-				}
-			}
+		} else {
+			creatingConnection(x, y);
 		}	
-	
 		if(e.getClickCount() == 2) {
-//			model.printConnections();
 		}
 	}
 	
 	public void mousePressed(MouseEvent e){
-		int x = e.getX();
-		int y = e.getY();
-		selectedIndices = new ArrayList<Integer>();
-		for(Integer i: mouseIsOver(x, y)) {
-			selectedIndices.add(i);
-			//System.out.println(x + " " + y);
-		}
-		previousX = x;
-		previousY = y;
-		//System.out.println("Pressed: " + x + " " + y);
+        int x = e.getX();
+        int y = e.getY();
+        selectedIndex = indexMouseIsOver(x, y);
+        previousX = x;
+        previousY = y;
 	}
 	
 	public void mouseDragged(MouseEvent e){
@@ -120,18 +84,16 @@ public class TBSController
 		int y = e.getY();
 		int deltaX = x - previousX;
 		int deltaY = y - previousY;
-		for(Integer index : selectedIndices) {
-			int i = index.intValue();
-			ModelElement selected = model.getElement(i);				
-			if(selected instanceof Node) {
-				// Move Node
-				Node node = (Node) selected;
-				if(lastPosition == null)
-					lastPosition = new Point(node.getLeftX(), node.getUpperY());
-				draggedNode = node;
-				node.move(deltaX, deltaY);
-				model.setElement(i, node);
-			}
+		cancelConnection();
+		ModelElement selected = model.getElement(selectedIndex);
+		if(selected instanceof Node) {
+			// Move Node
+			Node node = (Node) selected;
+			if(lastPosition == null)
+			   lastPosition = new Point(node.getLeftX(), node.getUpperY());
+			draggedNode = node;
+			node.move(deltaX, deltaY);
+			model.setElement(selectedIndex, node);
 		}
 		view.refreshGraphics();
 		// update our data
@@ -166,23 +128,27 @@ public class TBSController
 				//performance, but it's an interesting question.
 			draggedNode=null;
 		}
-		selectedIndices = new ArrayList<Integer>(); // clear selected items
+		//selectedIndices = new ArrayList<Integer>(); // clear selected items
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-        //System.out.println(e.getActionCommand()); 
-    }
-    
-    private ArrayList<Integer> mouseIsOver(int x, int y) {
-	    ArrayList<Integer> activeIndices= new ArrayList<Integer>();
+    private int indexMouseIsOver(int x, int y) {
+	    int maxIndex = -1;
 	    int i = 0;
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y)) 
-		    	activeIndices.add(i);
+		    if(me.contains(x, y)) maxIndex = i;
 		    i++;
 		}
-		return activeIndices;
-	}	
+		return maxIndex;
+	}
+    
+    private ModelElement elementMouseIsOver(int x, int y) {
+	    ModelElement topElement = null;
+	    for (ModelElement me : model.getElements()) {
+		    if(me.contains(x, y)) topElement = me;
+		}
+		return topElement;
+	}   
+    
     
     private void modifyOutOfBounds(Node n){
     	if(n.getLeftX() < 0 )
@@ -194,5 +160,40 @@ public class TBSController
     	if((n.getUpperY()) > view.getHeight())
     		n.setUpperY(view.getHeight()-n.getHeight());
     }
+    
+    private void cancelConnection() {
+		view.setConnInProgress(null);
+		selectedNode = null;
+    }
+    
+    // handles code for starting a connection and making a connection
+	private void creatingConnection(int mouseX, int mouseY) {
+		ModelElement me = elementMouseIsOver(mouseX, mouseY);
+		if(me == null) {
+			cancelConnection();
+			return;
+		}
+		if (!(me instanceof Node)) {
+			cancelConnection();
+			return;
+		}
+		Node n = (Node) me;
+		if (!n.isInTree()) {
+			cancelConnection();
+			return;
+		}
+		if(selectedNode == null) {
+			// selected node is from node
+			selectedNode = n;
+			
+		} else {
+			// n is to node
+			if(n != selectedNode) {
+				selectedNode.addConnection(n);
+				selectedNode = null;
+				view.setConnInProgress(null);
+			}
+		}
+	}
 	
 }
