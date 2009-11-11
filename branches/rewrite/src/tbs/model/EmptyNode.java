@@ -33,7 +33,17 @@ public class EmptyNode extends Node
 		inTree = false;
 	}
 	
-	public boolean collidesWith(ModelElement e) {return false;};
+	public boolean collidesWith(ModelElement m) {
+		if(m.contains(leftX, upperY+height))
+			return true;
+		if(m.contains(leftX+width, upperY+height))
+			return true;
+		if(m.contains(leftX+width, upperY))
+			return true;
+		if(m.contains(leftX, upperY))
+			return true;
+		return false;
+	}
 
 	//Re-fills "bottomless stack" of EmptyNodes
 	public void addToTree()

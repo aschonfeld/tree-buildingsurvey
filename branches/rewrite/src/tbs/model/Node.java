@@ -3,7 +3,9 @@
 
 package tbs.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ListIterator;
+import tbs.TBSUtils;
 
 
 /**
@@ -39,11 +41,9 @@ public abstract class Node extends ModelElement
 	* boundaries. 
 	*/
 	public boolean contains(int x, int y) {
-		if((x > leftX) && (x < (leftX + width))) {
-			if((y > upperY) && (y < (upperY + height))) {
+		if(TBSUtils.isInRange(x,leftX,leftX + width) &&
+			TBSUtils.isInRange(y, upperY, upperY + height))
 				return true;
-			}
-		}
 		return false;
 	}
 	

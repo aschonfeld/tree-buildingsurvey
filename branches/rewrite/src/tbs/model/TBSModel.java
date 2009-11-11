@@ -10,8 +10,10 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
@@ -21,7 +23,7 @@ public class TBSModel
 {
 	private TBSView view;
 	private TBSController controller;
-	private ArrayList<ModelElement> modelElements;
+	private List<ModelElement> modelElements;
 	private EmptyNode immortalEmptyNode;
 
 
@@ -75,7 +77,7 @@ public class TBSModel
 	/**
 	* returns the complete ArrayList of Model Elements.
 	*/
-	public ArrayList<ModelElement> getElements() {
+	public List<ModelElement> getElements() {
 		return modelElements;
 	}
 
@@ -223,5 +225,17 @@ public class TBSModel
 	public void clearConnections(Node n) 
 	{
 		n.unlink();
+	}
+	
+	public List<Node> inTreeElements(){
+		List<Node> inTreeElements = new LinkedList<Node>();
+		for(ModelElement m : modelElements){
+			if(m instanceof Node){
+				Node n = (Node) m;
+				if(n.isInTree())
+					inTreeElements.add(n);
+			}
+		}
+		return inTreeElements;
 	}
 }

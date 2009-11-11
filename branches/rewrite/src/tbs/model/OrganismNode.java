@@ -4,8 +4,6 @@
 package tbs.model;
 
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.List;
 
 public class OrganismNode extends Node
 {
@@ -51,25 +49,15 @@ public class OrganismNode extends Node
 	public BufferedImage getImage() {return img;}
 	
 	public boolean collidesWith(ModelElement m) {
-		List<Corners> cornersContained = new LinkedList<Corners>();
 		if(m.contains(leftX, upperY+height))
-			cornersContained.add(Corners.A);
+			return true;
 		if(m.contains(leftX+width, upperY+height))
-			cornersContained.add(Corners.B);
+			return true;
 		if(m.contains(leftX+width, upperY))
-			cornersContained.add(Corners.C);
+			return true;
 		if(m.contains(leftX, upperY))
-			cornersContained.add(Corners.D);
-		
-		if(cornersContained.size() == 4){//Organism placed right on top of another Organism
-			//Default: move vertically up or down depending on space left
-			
-		}
-		return cornersContained.size() > 0;
+			return true;
+		return false;
 	}
-	
-	private enum Corners { A, B, C, D };
-
-
 		
 }

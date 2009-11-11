@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -31,6 +32,7 @@ public class TBSController
 	private int previousX, previousY;
 	private Node draggedNode = null;
 	private Node selectedNode = null;
+	private Point lastPosition = null;
 	
    public TBSController(TBSModel m, TBSView v)
 	{
@@ -104,8 +106,8 @@ public class TBSController
 		int x = e.getX();
 		int y = e.getY();
 		selectedIndices = new ArrayList<Integer>();
-		for(Integer Int: mouseIsOver(x, y)) {
-			selectedIndices.add(Int);
+		for(Integer i: mouseIsOver(x, y)) {
+			selectedIndices.add(i);
 			//System.out.println(x + " " + y);
 		}
 		previousX = x;
@@ -120,10 +122,12 @@ public class TBSController
 		int deltaY = y - previousY;
 		for(Integer index : selectedIndices) {
 			int i = index.intValue();
-			ModelElement selected = model.getElement(i);
+			ModelElement selected = model.getElement(i);				
 			if(selected instanceof Node) {
 				// Move Node
 				Node node = (Node) selected;
+				if(lastPosition == null)
+					lastPosition = new Point(node.getLeftX(), node.getUpperY());
 				draggedNode = node;
 				node.move(deltaX, deltaY);
 				model.setElement(i, node);
@@ -144,18 +148,15 @@ public class TBSController
 		{
 			//Node dragged to point out of bounds
 			modifyOutOfBounds(draggedNode);
-			for(ModelElement me : model.getElements())
-			{
-				if(me instanceof Node) 
-				{
-					Node curr = (Node) me;
-					if(!curr.equals(draggedNode) && curr.isInTree())
-					{
-						if(draggedNode.collidesWith(curr))
-							draggedNode.removeFromTree();
-					}
+			List<Node> inTreeElements = model.inTreeElements();
+			for(Node n : inTreeElements){
+				if(!n.equals(draggedNode) && draggedNode.collidesWith(n)){
+					draggedNode.setLeftX(lastPosition.x);
+					draggedNode.setUpperY(lastPosition.y);
+					break;
 				}
 			}
+			lastPosition = null;
 			if (draggedNode.getLeftX() < TBSGraphics.LINE_OF_DEATH )
 				draggedNode.removeFromTree();
 			if (draggedNode.getLeftX() > TBSGraphics.LINE_OF_DEATH )
@@ -188,9 +189,9 @@ public class TBSController
     		n.setLeftX(0);
     	if((n.getLeftX()+n.getWidth()) > view.getWidth())
     		n.setLeftX(view.getWidth()-n.getWidth());
-    	if(n.getUpperY() < 0)
-    		n.setUpperY(0);
-    	if((n.getUpperY()+n.getHeight()) > view.getHeight())
+    	if(n.getUpperY() <= 0)
+    		n.setUpperY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+    	if((n.getUpperY()) > view.getHeight())
     		n.setUpperY(view.getHeight()-n.getHeight());
     }
 	
