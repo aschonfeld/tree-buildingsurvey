@@ -17,7 +17,6 @@ import tbs.TBSUtils;
 import tbs.model.Connection;
 import tbs.model.ModelElement;
 import tbs.model.Node;
-import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.TBSView;
 
@@ -48,10 +47,7 @@ public class TBSController
 	
 	public void mouseMoved(MouseEvent e){
 		if(selectedNode != null) {
-			Node dummyNode = (Node) new OrganismNode(model, null, null, 
-				e.getX(), e.getY(), 3, 3);
-			Point[] conn = 
-				TBSUtils.computeConnectionBounds(selectedNode , dummyNode);
+			Point[] conn = new Point[]{TBSUtils.getNodeCenter(selectedNode), new Point(e.getX(), e.getY())};
 			view.setConnInProgress(conn);
 		}
 	}

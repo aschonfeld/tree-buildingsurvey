@@ -65,7 +65,7 @@ public class Connection extends ModelElement
 	*/
 	public boolean contains(int x, int y)
 	{
-		Point[] conn = TBSUtils.computeConnectionBounds(toNode, fromNode);
+		Point[] conn = TBSUtils.getConnectionBounds(toNode, fromNode);
 		if(drawOrTestLine(null, conn, x, y)) return true;
 		return false;
 	}

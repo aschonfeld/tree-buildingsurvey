@@ -118,7 +118,7 @@ public class TBSView extends JComponent {
 			if(me instanceof Node) {
 				Node fromNode = (Node) me;
 				for(Connection c: fromNode.getConnections()) {
-					Point[] conn = TBSUtils.computeConnectionBounds(c.getFromNode() , 
+					Point[] conn = TBSUtils.getConnectionBounds(c.getFromNode() , 
 						c.getToNode());
 					g2.setColor(Color.WHITE);
 					drawArrow(g2, conn);
