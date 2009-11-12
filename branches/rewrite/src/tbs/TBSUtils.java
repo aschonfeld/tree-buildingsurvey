@@ -88,6 +88,7 @@ public class TBSUtils {
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
 	}
+	public static Point getNodeCenter(Node n){
 		return new Point(n.getLeftX() + (n.getWidth()/2),
 				n.getUpperY() + (n.getHeight()/2));	
 	}
