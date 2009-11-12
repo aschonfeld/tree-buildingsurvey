@@ -11,7 +11,7 @@ public class OrganismNode extends Node
 	private BufferedImage img;
 	private int defaultLeftX;
 	private int defaultUpperY;
-	private TBSModel model;
+	
 		
 	public OrganismNode(TBSModel m, BufferedImage i, String n, 
 			int x, int y, int w, int h) 

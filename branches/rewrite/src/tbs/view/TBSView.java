@@ -16,11 +16,6 @@ import javax.swing.JOptionPane;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
-import tbs.model.EmptyNode;
-import tbs.model.ModelElement;
-import tbs.model.Node;
-import tbs.model.OrganismNode;
-import tbs.model.TBSModel;
 import tbs.model.*;
 public class TBSView extends JComponent {
 
@@ -93,7 +88,7 @@ public class TBSView extends JComponent {
 			int upperY = en.getUpperY();
 			if(name == null) name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
-			g2.setColor(new Color(0.5f, 0.5f, 1.0f));
+			g2.setColor(TBSGraphics.emptyNodeColor);
 			g2.fillRect(en.getLeftX(), en.getUpperY(), en.getWidth(), en.getHeight());
 			// make bold for greater visibility;
 	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
@@ -127,19 +122,19 @@ public class TBSView extends JComponent {
 						c.getToNode());
 					g2.setColor(Color.WHITE);
 					drawArrow(g2, conn);
+					//Connection.drawOrTestLine(g2, conn, 0, 0);
 				}
 			}
 		}
 		if(connInProgress != null) {
-			g2.setColor(Color.WHITE);
-			g2.drawLine(connInProgress[0].x, connInProgress[0].y, connInProgress[1].x, connInProgress[1].y);
 			drawArrow(g2, connInProgress);
+			//Connection.drawOrTestLine(g2, connInProgress, 0, 0);
 		}
 		
 	}
 	
 	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1) {
-		g2.setColor(new Color(0.75f, 1.0f, 0.75f));
+		g2.setColor(TBSGraphics.connectionColor);
 		g2.drawLine(x0, y0, x1, y1);
 		for(int i0 = -1; i0 <= 1; i0 += 1) {
 			for(int i1 = -1; i1 <= 1; i1 += 2) {
@@ -190,4 +185,5 @@ public class TBSView extends JComponent {
 		renderButtons(g2);
 		
 	}
+	
 }

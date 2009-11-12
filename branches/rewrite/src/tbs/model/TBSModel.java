@@ -64,8 +64,13 @@ public class TBSModel
 	public void delete(EmptyNode en)
 	{
 		modelElements.remove(en);		
+	}
+	
+	public void delete(Connection conn)
+	{
+		modelElements.remove(conn);		
 	}	
-
+	
 	/**
 	* returns the ith ModelElement in the list.
 	*/

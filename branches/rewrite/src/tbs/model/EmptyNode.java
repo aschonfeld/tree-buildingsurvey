@@ -7,8 +7,6 @@ import tbs.TBSGraphics;
 	
 public class EmptyNode extends Node 
 {
-
-	TBSModel model;
 	String defaultName = "";
 	
 

@@ -63,7 +63,9 @@ public class TBSGraphics {
 	
 	public static Color organismStringColor = Color.BLACK;
 	public static Color organismBoxColor = Color.WHITE;
-
+	public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
+	public static Color emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+	
 	public static int buttonsYPadding = 5;
 	public static int buttonsXPadding = 10;
 	public static int buttonsHeight = 0;

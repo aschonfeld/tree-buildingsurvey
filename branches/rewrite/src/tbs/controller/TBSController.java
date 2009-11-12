@@ -14,6 +14,7 @@ import java.util.List;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
+import tbs.model.Connection;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
@@ -59,15 +60,24 @@ public class TBSController
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
-		if(y < TBSGraphics.buttonsHeight)  {
-			int buttonIndex = x / TBSGraphics.buttonsWidth;
-			if(buttonIndex < TBSGraphics.buttons.size()) {
-				System.out.println(TBSGraphics.buttons.get(buttonIndex));
+		if(e.getClickCount() == 1) {
+			if(y < TBSGraphics.buttonsHeight)  {
+				int buttonIndex = x / TBSGraphics.buttonsWidth;
+				if(buttonIndex < TBSGraphics.buttons.size()) {
+					System.out.println(TBSGraphics.buttons.get(buttonIndex));
+				}
+			} else {
+				creatingConnection(x, y);
 			}
-		} else {
-			creatingConnection(x, y);
 		}	
-		if(e.getClickCount() == 2) {
+		if(e.getClickCount() == 1) {
+			ModelElement me = elementMouseIsOver(x, y);
+			if (me != null) {
+				if(me instanceof Connection) {
+					Connection c = (Connection) me;
+					c.removeFromTree();
+				}
+			}
 		}
 	}
 	
@@ -85,6 +95,7 @@ public class TBSController
 		int deltaX = x - previousX;
 		int deltaY = y - previousY;
 		cancelConnection();
+		if(selectedIndex < 0) return;
 		ModelElement selected = model.getElement(selectedIndex);
 		if(selected instanceof Node) {
 			// Move Node
@@ -190,8 +201,8 @@ public class TBSController
 			// n is to node
 			if(n != selectedNode) {
 				selectedNode.addConnection(n);
-				selectedNode = null;
-				view.setConnInProgress(null);
+				model.addElement(new Connection(model, selectedNode, n));
+				cancelConnection();
 			}
 		}
 	}

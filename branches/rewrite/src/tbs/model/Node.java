@@ -19,6 +19,7 @@ public abstract class Node extends ModelElement
 	int upperY;
 	int width;
 	int height;
+	TBSModel model;
 	boolean inTree;
 	protected boolean selected;
 	private Connection conn;
@@ -158,7 +159,7 @@ public abstract class Node extends ModelElement
 			System.out.println("Proceeding with connection.");
 		}
 
-		conn= new Connection(n, this);
+		conn= new Connection(model, n, this);
 		toConnections.add(conn);
 
 		n.connectFrom(this);
