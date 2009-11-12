@@ -49,7 +49,11 @@ public class TBSUtils {
 		}
 		return new Point[]{start, end};
 	}
-	
+
+	/**
+	* Takes a value and a one-dimensional range defined by min and max,
+	* and returns true if the object is within the range, inclusive.
+	*/
 	private static List<Line2D> nodeSides(Node n){
 		int width, height, x, y;
 		width = n.getWidth();
@@ -84,8 +88,6 @@ public class TBSUtils {
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
 	}
-	
-	public static Point getNodeCenter(Node n){
 		return new Point(n.getLeftX() + (n.getWidth()/2),
 				n.getUpperY() + (n.getHeight()/2));	
 	}
