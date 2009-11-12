@@ -118,6 +118,8 @@ public class Connection extends ModelElement
 					g2.drawLine((minXY.x + xdiff), (drawY + ydiff), (maxXY.x - xdiff), (drawY2 + ydiff));
 					g2.drawLine((minXY.x + xdiff), (drawY - ydiff), (maxXY.x + xdiff), (drawY2 + ydiff));
 				} else {
+					if(xdiff > 1) xdiff = 1;
+					if(ydiff > 1) ydiff = 1;
 					//System.out.println("=========================================");
 					boolean b0 = isOnLine((minXY.x + xdiff), (drawY + ydiff), (maxXY.x - xdiff), (drawY2 - ydiff), x, y);
 					boolean b1 = isOnLine((minXY.x + xdiff), (drawY - ydiff), (maxXY.x + xdiff), (drawY2 - ydiff), x, y);
@@ -156,32 +158,36 @@ public class Connection extends ModelElement
 		double dy = (y1 - y0);
 		double slope = 0;
 		double yIntercept = 0;
+		int yTest = 0;
 		Point[] p = new Point[2];
 		p[0] = new Point(x0, y0);
 		p[1] = new Point(x1, y1);
 		Point minXY = getMinXY(p);
 		Point maxXY = getMaxXY(p);
 		if((maxXY.x - minXY.x) < 4) {
-			// eliminates a bug when slope is large
+			// fixes rounding problems in nearly vertical lines
 			minXY.x -= 2;
 			maxXY.x += 2;
 			if((x >= minXY.x) && (x <= maxXY.x) && (y >= minXY.y) && (y <= maxXY.y)) return true;
 			return false;
 		}
-		if(dx == 0) {
-			if(((x == x0) || (x == x1)) && ((y >= minXY.y) && (y <= maxXY.y))) return true;
-			return false;
-		} else {
-			slope = dy / dx;
-		}
+		slope = dy / dx;
 		if((y >= minXY.y) && (y <= maxXY.y)) {
 			if((x >= minXY.x) && (x <= maxXY.x)) {
 				// x and y are within bounds 
 				// use slope intercept form to see if point is on line
 				yIntercept = y0 - slope * x0;
-				if (y == (int) Math.round((slope * x) + yIntercept)) {
-					return true;
+				int yMin = (int) Math.round((slope * (x - 1.0)) + yIntercept);
+				int yMax = (int) Math.round((slope * (x + 1.0)) + yIntercept);
+				int yMinCopy = yMin;
+				if(yMax < yMin) {
+					yMin = yMax;
+					yMax = yMinCopy;
 				}
+				System.out.println(y + " " + yTest);
+				// fixes rounding problems in nearly vertical lines
+				if ((y >= yMin) && (y <= yMax)) return true;
+				return false;
 			}
 		}
 		//System.out.println(x0 + " " + y0 + " " + x1 + " " + y1 + " " + x + " " + y);
