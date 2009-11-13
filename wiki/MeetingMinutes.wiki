@@ -1,7 +1,8 @@
 #summary Meeting Minutes Contents
 = Minutes=
 
-  * [MeetingFourMinutes Meeting 5 - 11/8/2009]
+  * [MeetingSixMinutes Meeting 6 - 11/10/2009]
+  * [MeetingFiveMinutes Meeting 5 - 11/8/2009]
   * [MeetingFourMinutes Meeting 4 - 11/5/2009]
   * [MeetingThreeMinutes Meeting 3 - 11/3/2009]
   * [MeetingTwoMinutes Meeting 2 - 10/29/2009]
