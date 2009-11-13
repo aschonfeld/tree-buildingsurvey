@@ -6,8 +6,7 @@ Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld, Brian White
 News:
   The venture capitalist presentation is in two days (11/12).
 Discussion:
-  This meeting marked the first meeting between our group and the client (Brian White).  The main topic of discussion was the current UI and how well it stacked up against Professor White's current vision.  We began by giving him a demo of what we currently had on [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Google Code].  Here is some of his feedback(*_For most of these points there will be visual representations added soon_*
-):
+  This meeting marked the first meeting between our group and the client (Brian White).  The main topic of discussion was the current UI and how well it stacked up against Professor White's current vision.  We began by giving him a demo of what we currently had on [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Google Code].  Here is some of his feedback(*_For most of these points there will be visual representations added soon_*):
   * Likes
     * Look and feel was much better than previous version
     * Collision control was nice feature
