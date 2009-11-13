@@ -32,12 +32,15 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||11/09/09||Applet Version 0.4||team||[Versioning Versions]||11/09/09||
 ||11/10/09||Client meeting||team||Features/UI||11/10/09||
 ||11/12/09||Applet Version 0.5||team||[Versioning Versions]||||
-||11/12/09||Venture Capital presentation||team||main||||
+||11/12/09||Venture Capital presentation||team||main||11/12/09||
+||11/15/09||First draft of javadoc||Jon||||||
+||11/20/09||Rewrite applet testing protocols - draft|| Jon||[Applet GUI Testing] ||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
 ||1/30/10||Functioning program with full feature set||team||main||||
 
 
 == Discussion ==
+11/12 - Venture cap meeting. Expecting trailer truck loaded with bales of money, any day now. Added some writing assignments for myself. No outlook for version 0.6 yet, or scheduled release - should have that soon. 
 11/08 - Productive meeting, see minutes. 
 10/20 - We did not discuss the question of further feature development in class today, so that's a missed schedule item (and it's even one that we rolled back, for shame).
 I suggest we carry on that discussion via the wiki for the moment, over on the [Features features] page. 
