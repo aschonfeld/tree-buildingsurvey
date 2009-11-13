@@ -1,4 +1,7 @@
-#summary Project Status/Discussion/Bulleting Board
+#summary Project Status/Discussion/Bulletin Board
+
+I'll be striking this page from the table of contents on 11/20/09, unless it's taken up as a channel of communication. -jpk
+
 
 = Introduction =
 Informal intra-group channel. Observations, questions, agenda items, own-horn-tootings, and such belong here. Open channel. Sign your comments. 
