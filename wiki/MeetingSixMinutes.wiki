@@ -1,13 +1,32 @@
-#summary One-sentence summary of this page.
+#summary Meeting 6 - 11/10/2009
+= Meeting 6 - 11/10/2009 =
 
-= Introduction =
+Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld, Brian White
 
-Add your content here.
+News:
+  The venture capitalist presentation is in two days (11/12).
+Discussion:
+  This meeting marked the first meeting between our group and the client (Brian White).  The main topic of discussion was the current UI and how well it stacked up against Professor White's current vision.  We began by giving him a demo of what we currently had on [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Google Code].  Here is some of his feedback:
+  * Likes
+    * Look and feel was much better than previous version
+    * Collision control was nice feature
+    * Creation & thickness of connections was very good
+  * Dislikes
+    * Current actions that are available through mouse and keyboard, would like it simplified
+  * Would like to have
+    * Deletion of nodes/connections be obtained by selection & pressing of the "delete" key on the keyboard
+    * Simplify buttons to just 3 main features (Undo, Print, Save) & make all other functions be controlled by mouse and keyboard
+    * Help feature display at bottom of screen that updates after the user makes a move giving them feedback on successive moves are available & how they are performed
+    * Once an organism is moved from the resivoir, remove its text & leave the image, but keep a shaded version of the whole organism (image & text) in its place in the resivoir.
+    * When an administrator(teacher, researcher, etc.) logs into TBS they should be able to select from the list of saved trees and have an area that displays the scoring algorithm's assessment of the tree
+*_For most of these points there will be visual representations added soon_*
+  These were just some of them more major items that were discussed in the meeting.  Next we wanted to mkae sure that we left the meeeting with a rough decision on the 2X2 feature options for the 4 UI's the researcher will have available.  Here is the listing:
+  # Node Resivoir/Arrows on connections
+  # No Node Resivoir (creation by clicking empty space)/Arrows on connections
+  # Node Resivoir/No Arrows on connections
+  # No Node Resivoir (creation by clicking empty space)/No Arrows on connections
+  We ended off the meeting discussing some of the possiblities for data storage, searching & retrieval of saved data, & scoring algorithms, but much of this was very preliminary.  We came to the understanding that this would not be the last interaction that we would have with Professor White to discuss features of this product.
+  After the meeting the three of us (Jon, Glenn, Andrew) organized where we were for thursday's presentation and any possible shortcomings we may have.  We agreed that our current version of the applet should be sufficient for a demo in the presentation, but Andrew assured that he would refactor how connections are made by thursday.
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+*Future Meetings:* 
+  * Tuesday(11/17)
