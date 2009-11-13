@@ -1,5 +1,9 @@
 #summary Try to find bugs in the user interface
 
+This was intended to test a preliminary draft of the model: it's completely outdated and should be replaced by new testing protocols. I'll undertake to draft that. Shooting for 11/20, but I'll let it slip if there's more critical items. 
+
+
+
 =Behavior=
 
 The model should perform intuitively under the following conditions. Some of these are more arbitrary than intuitive, but for the purposes of testing, intuitive is as stated, if stated.
