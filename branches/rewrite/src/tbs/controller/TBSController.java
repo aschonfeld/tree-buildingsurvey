@@ -30,6 +30,7 @@ public class TBSController
 	private Node draggedNode = null;
 	private Node selectedNode = null;
 	private Point lastPosition = null;
+	private String statusString = null;
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
@@ -38,9 +39,19 @@ public class TBSController
 		selectedNode=null;
     }
     
-	public void keyPressed(KeyEvent e) {}
+	public void keyPressed(KeyEvent e) {
+		if(statusString == null) statusString = new String();
+		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
+			statusString += " DEL ";
+		}
+	}
 	public void keyReleased(KeyEvent e) {}
-	public void keyTyped(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {
+		if(statusString == null) statusString = new String();
+		char c = e.getKeyChar();
+		statusString += c;
+		view.setStatusString(statusString);
+	}
 	
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
@@ -56,6 +67,8 @@ public class TBSController
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
+		// get keyboard focus when user clicks in window
+		view.requestFocusInWindow();
 		if(e.getClickCount() == 1) {
 			if(y < TBSGraphics.buttonsHeight)  {
 				int buttonIndex = x / TBSGraphics.buttonsWidth;

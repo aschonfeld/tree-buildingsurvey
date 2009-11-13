@@ -27,6 +27,7 @@ public class TBSView extends JComponent {
 	
 	// This connection follows the mouse
 	private Point[] connInProgress = null;
+	private String statusString = null;
 
 	
 	private TBSModel model;
@@ -44,9 +45,11 @@ public class TBSView extends JComponent {
 	
 	public void renderButtons(Graphics g)
 	{
+		int width = TBSGraphics.appletWidth;
+		if(width < 800) width = 800;
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.WHITE);
-		g2.fillRect(0, 0, 800, TBSGraphics.buttonsHeight);
+		g2.fillRect(0, 0, width, TBSGraphics.buttonsHeight);
 		int leftX = 0;
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(String s: TBSGraphics.buttons) {
@@ -56,6 +59,8 @@ public class TBSView extends JComponent {
 			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			leftX += TBSGraphics.buttonsWidth;
 		}
+		int stringStartX = leftX + 20;
+		renderStatusString(g2, stringStartX);
 	}
 
 	public void renderModelElement(Graphics g, ModelElement me) {
@@ -170,7 +175,19 @@ public class TBSView extends JComponent {
 		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX0, conn[1].y + arrowY0);
 		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1);
 	}
+	
+	public void setStatusString(String s) {
+		statusString = s;
+	}
 
+	public void renderStatusString(Graphics2D g2, int leftX) {
+		if(statusString == null) return;
+		int upperY = 0;
+		int height = TBSGraphics.buttonsHeight;
+		TBSGraphics.drawCenteredString(g2, statusString, leftX, upperY, 0, height);
+	}
+	
+	
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;

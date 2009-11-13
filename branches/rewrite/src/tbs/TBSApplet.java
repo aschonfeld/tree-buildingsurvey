@@ -50,6 +50,7 @@ public class TBSApplet extends JApplet {
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
+ 			model.getView().addKeyListener(model.getController());
  		}});
  	}
  

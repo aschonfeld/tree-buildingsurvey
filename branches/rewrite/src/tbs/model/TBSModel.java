@@ -102,11 +102,7 @@ public class TBSModel
 		Graphics2D g2 = (Graphics2D) g;
 		TBSGraphics.getFont(g2);
 		TBSGraphics.buttons = new ArrayList<String>();
-		TBSGraphics.buttons.add("link");
-		TBSGraphics.buttons.add("unlink");
-		TBSGraphics.buttons.add("label");
 		TBSGraphics.buttons.add("delete");
-		TBSGraphics.buttons.add("split");
 		TBSGraphics.buttons.add("print");
 		TBSGraphics.buttons.add("undo");
 		TBSGraphics.buttons.add("save");
