@@ -6,7 +6,8 @@ Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld, Brian White
 News:
   The venture capitalist presentation is in two days (11/12).
 Discussion:
-  This meeting marked the first meeting between our group and the client (Brian White).  The main topic of discussion was the current UI and how well it stacked up against Professor White's current vision.  We began by giving him a demo of what we currently had on [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Google Code].  Here is some of his feedback:
+  This meeting marked the first meeting between our group and the client (Brian White).  The main topic of discussion was the current UI and how well it stacked up against Professor White's current vision.  We began by giving him a demo of what we currently had on [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Google Code].  Here is some of his feedback(*_For most of these points there will be visual representations added soon_*
+):
   * Likes
     * Look and feel was much better than previous version
     * Collision control was nice feature
@@ -19,7 +20,6 @@ Discussion:
     * Help feature display at bottom of screen that updates after the user makes a move giving them feedback on successive moves are available & how they are performed
     * Once an organism is moved from the resivoir, remove its text & leave the image, but keep a shaded version of the whole organism (image & text) in its place in the resivoir.
     * When an administrator(teacher, researcher, etc.) logs into TBS they should be able to select from the list of saved trees and have an area that displays the scoring algorithm's assessment of the tree
-*_For most of these points there will be visual representations added soon_*
   These were just some of them more major items that were discussed in the meeting.  Next we wanted to mkae sure that we left the meeeting with a rough decision on the 2X2 feature options for the 4 UI's the researcher will have available.  Here is the listing:
   # Node Resivoir/Arrows on connections
   # No Node Resivoir (creation by clicking empty space)/Arrows on connections
