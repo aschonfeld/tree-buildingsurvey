@@ -25,6 +25,7 @@ Discussion:
   # Node Resivoir/No Arrows on connections
   # No Node Resivoir (creation by clicking empty space)/No Arrows on connections
   We ended off the meeting discussing some of the possiblities for data storage, searching & retrieval of saved data, & scoring algorithms, but much of this was very preliminary.  We came to the understanding that this would not be the last interaction that we would have with Professor White to discuss features of this product.
+
   After the meeting the three of us (Jon, Glenn, Andrew) organized where we were for thursday's presentation and any possible shortcomings we may have.  We agreed that our current version of the applet should be sufficient for a demo in the presentation, but Andrew assured that he would refactor how connections are made by thursday.
 
 *Future Meetings:* 
