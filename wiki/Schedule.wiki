@@ -30,7 +30,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/29/09||Applet Version 0.2||team||[Versioning Versions]||10/29/09||
 ||11/01/09||Applet Version 0.3||team||[Versioning Versions]||11/01/09||
 ||11/09/09||Applet Version 0.4||team||[Versioning Versions]||11/09/09||
-||11/10/09||Client meeting||team||||
+||11/10/09||Client meeting||team||Features/UI||11/10/09||
 ||11/12/09||Applet Version 0.5||team||[Versioning Versions]||||
 ||11/12/09||Venture Capital presentation||team||main||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
