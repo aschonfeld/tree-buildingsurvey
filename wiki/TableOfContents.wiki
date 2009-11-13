@@ -23,7 +23,6 @@
     * [The_Story_of_Amy The Story Of Amy]
     * [StoryOfEdwin The Story of Edwin]
   * [Roadblocks Project Road Blocks]
-  * [Status Status]
   * [OpenQuestions Open Questions - discussion page]
   * [UI_Options UI Options]
   * [ProfessorsComments Professor Bolker's Comments]
@@ -37,3 +36,4 @@
     * [TestServerDeployment Deploying to Professor White's Test Server]
   * [Resources Resources]
   * [RequirementsDiscussion Requirements Discussion]
+  * [Status Status]
