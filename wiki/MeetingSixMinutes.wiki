@@ -12,7 +12,7 @@ Discussion:
     * Collision control was nice feature
     * Creation & thickness of connections was very good
   * Dislikes
-    * Current actions that are available through mouse and keyboard, would like it simplified
+    * Lack of actions that are available through mouse and keyboard, would like it simplified
   * Would like to have
     * Deletion of nodes/connections be obtained by selection & pressing of the "delete" key on the keyboard
     * Simplify buttons to just 3 main features (Undo, Print, Save) & make all other functions be controlled by mouse and keyboard
