@@ -18,7 +18,9 @@ Discussion:
     * Simplify buttons to just 3 main features (Undo, Print, Save) & make all other functions be controlled by mouse and keyboard
     * Help feature display at bottom of screen that updates after the user makes a move giving them feedback on successive moves are available & how they are performed
     * Once an organism is moved from the resivoir, remove its text & leave the image, but keep a shaded version of the whole organism (image & text) in its place in the resivoir.
+http://upload.wikimedia.org/wikipedia/commons/f/fb/HiddenText2.gif
     * When an administrator(teacher, researcher, etc.) logs into TBS they should be able to select from the list of saved trees and have an area that displays the scoring algorithm's assessment of the tree
+http://upload.wikimedia.org/wikipedia/commons/3/39/SavedTrees.gif
   These were just some of them more major items that were discussed in the meeting.  Next we wanted to make sure that we left the meeeting with a rough decision on the 2X2 feature options for the 4 UI's the researcher will have available.  Here is the listing:
   # Node Resivoir/Arrows on connections
   # No Node Resivoir (creation by clicking empty space)/Arrows on connections
