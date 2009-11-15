@@ -14,7 +14,7 @@ NODE = {EMPTYNODE, ORGANISMNODE}<br>
 ||STATE||selectedElement||clickedElement||ACTION||
 ||SELECT||null||null||NONE||
 ||SELECT||null||ANY|| selectedElement=clickedElement||
-||ADD||ANY or null||null||model.add(new 'EmptyNode')||
+||ADD||ANY or null||null||model.add(new `EmptyNode`)||
 ||ADD||ANY or null||ANY||NONE||
 ||DELETE||ANY||ANY or null||ERROR 1||
 ||DELETE||null||null||NO_ACTION||
@@ -37,6 +37,8 @@ ERRORS:<br>
 1. selectedElement is deleted by pressing DELETE button<br>
 <br>
 *BUTTON BEHAVIOR:*<br>
+
+currentState = BUTTON PRESSED
 <br>
 ||BUTTON PRESSED||selectedElement||ACTION||
 ||SELECT||ANY or NULL||NONE||
