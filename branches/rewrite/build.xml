@@ -1,6 +1,8 @@
 <project name="TreeBuildingSurvey" default="jarfile" basedir=".">
 	<property name="build.dir" value="${basedir}/bin" />
 	<property name="src.dir" value="${basedir}/src" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="images.dir" value="*/images/*.*"/>
 	<property name="javadoc.dir" value="${basedir}/javadoc/"/>
 	<property name="deploy.dir" value="${basedir}/deploy${version}/"/>
 	<property name="main.class" value="tbs.TBSApplet"/>
@@ -28,7 +30,9 @@
 	        <manifest>
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
+	    	<fileset dir="${src.dir}" includes="${images.dir}" />
 	    	<fileset dir="${build.dir}"/>
+	    	<fileset dir="${lib.dir}"/>
 	    </jar>
 		<move file="${build.dir}/TBSRun.jar" todir="."/>
     </target>
