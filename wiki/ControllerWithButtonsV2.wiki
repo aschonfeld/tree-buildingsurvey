@@ -17,7 +17,7 @@ NODE = {EMPTYNODE, ORGANISMNODE}<br>
 ||ADD||ANY or null||null||model.add(new `EmptyNode`)||
 ||ADD||ANY or null||ANY||NONE||
 ||DELETE||ANY||ANY or null||ERROR 1||
-||DELETE||null||null||NO_ACTION||
+||DELETE||null||null||NONE||
 ||DELETE||null||ANY||model.remove(clickedElement)||
 ||LINK||CONNECTION or null||CONNECTION or null||NONE||
 ||LINK||NODE||null||cancelConnection()||
