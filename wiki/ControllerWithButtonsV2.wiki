@@ -1,6 +1,6 @@
 #summary Proposed Behavior Of Controller With Buttons (Second Draft)
 
-= Proposed Behavior Of Controller With Buttons =<br>
+==Proposed Behavior Of Controller With Buttons (Second Draft)==
 <br>
 *MOUSE BEHAVIOR:*<br>
 <br>
@@ -13,8 +13,8 @@ NODE = {EMPTYNODE, ORGANISMNODE}<br>
 <br>
 ||STATE||selectedElement||clickedElement||ACTION||
 ||SELECT||null||null||NONE||
-||SELECT||null||ANY|| SelectedElement=clickedElement||
-||ADD||ANY or null||null||model.add(new EmptyNode)||
+||SELECT||null||ANY|| selectedElement=clickedElement||
+||ADD||ANY or null||null||model.add(new 'EmptyNode')||
 ||ADD||ANY or null||ANY||NONE||
 ||DELETE||ANY||ANY or null||ERROR 1||
 ||DELETE||null||null||NO_ACTION||
@@ -36,7 +36,7 @@ NOTES:<br>
 ERRORS:<br>
 1. selectedElement is deleted by pressing DELETE button<br>
 <br>
-*BUTTON BEHAVIOR*<br>
+*BUTTON BEHAVIOR:*<br>
 <br>
 ||BUTTON PRESSED||selectedElement||ACTION||
 ||SELECT||ANY or NULL||NONE||
