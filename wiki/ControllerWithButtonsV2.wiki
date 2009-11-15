@@ -1,0 +1,50 @@
+#summary Proposed Behavior Of Controller With Buttons (Second Draft)
+
+= Proposed Behavior Of Controller With Buttons =<br>
+<br>
+*MOUSE BEHAVIOR:*<br>
+<br>
+selectedElement = previously selected element OR null<br>
+clickedElement = element user most recently clicked on OR null if empty space clicked on<br>
+ANY (STATE) = {SELECT, ADD, DELETE, LINK, UNLINK}<br>
+DEFAULT STATE = SELECT<br>
+ANY (ELEMENT) = {CONNECTION, EMPTYNODE, ORGANISMNODE}<br>
+NODE = {EMPTYNODE, ORGANISMNODE}<br>
+<br>
+||STATE||selectedElement||clickedElement||ACTION||
+||SELECT||null||null||NONE||
+||SELECT||null||ANY|| SelectedElement=clickedElement||
+||ADD||ANY or null||null||model.add(new EmptyNode)||
+||ADD||ANY or null||ANY||NONE||
+||DELETE||ANY||ANY or null||ERROR 1||
+||DELETE||null||null||NO_ACTION||
+||DELETE||null||ANY||model.remove(clickedElement)||
+||LINK||CONNECTION or null||CONNECTION or null||NONE||
+||LINK||NODE||null||cancelConnection()||
+||LINK||null||NODE||createConnection(x, y), NOTE 1||
+||LINK||NODE||NODE||createConnection(x, y), NOTE 1||
+||UNLINK||ANY or null||NODE||clickedElement.unlink()||
+||UNLINK||ANY or null||CONNECTION||deleteConnection(selectedElement)||
+
+NOTES:<br>
+1. createConnection(x, y) behavior is based on selectedElement<br>
+   if selectedElement==null, selectedElement = clickedElement<br>
+   if selectedElement!=null:<br>
+   selectedElement.addConnection(selectedElement, clickedElement)<br>
+   clickedElement.addConnection(selectedElement, clickedElement)<br>
+<br>
+ERRORS:<br>
+1. selectedElement is deleted by pressing DELETE button<br>
+<br>
+*BUTTON BEHAVIOR*<br>
+<br>
+||BUTTON PRESSED||selectedElement||ACTION||
+||SELECT||ANY or NULL||NONE||
+||ADD||ANY or null||NONE||
+||DELETE||null||NONE||
+||DELETE||ANY||selectedElement.removeFromTree()||
+||LINK||CONNECTION or null||NONE||
+||LINK||NODE||createConnection(x, y), NOTE 1||
+||UNLINK||null||NONE||
+||UNLINK||NODE||selectedElement.unlink()||
+||UNLINK||CONNECTION||deleteConnection(selectedElement)||
