@@ -110,8 +110,12 @@ public class TBSController
 						Node n = (Node) me;
 						if(selectedNode == null)
 							setSelectedNode(n);
-						else
-							creatingConnection(n, x, y);
+						else{
+							if(TBSButtonType.CONNECT.equals(buttonClicked))
+								creatingConnection(n, x, y);
+							else
+								setSelectedNode(n);
+						}
 					}
 				}else
 					cancelConnection();
@@ -221,8 +225,7 @@ public class TBSController
     
     // handles code for starting a connection and making a connection
     private void creatingConnection(Node n, int x, int y) {
-    	if(TBSButtonType.CONNECT.equals(buttonClicked)){
-    		if(model.inTreeElements().size() > 1){
+    	if(model.inTreeElements().size() > 1){
     			if(n.isInTree()){
     				if(n != selectedNode) {
     					selectedNode.addConnection(n);
@@ -232,26 +235,21 @@ public class TBSController
     				}
     			}
     		}
-    	}
     	cancelConnection();
     }
     
     private void setSelectedNode(Node n){
-    	if(n == null){
-    		if(selectedNode != null)
-    			selectedNode.setSelected(false);
-    	}
+    	if(selectedNode != null)
+    		selectedNode.setSelected(false);
     	selectedNode = n;
     	if(selectedNode != null)
     		selectedNode.setSelected(true);
     }
     
     private void setSelectedConnection(Connection c){
-    	if(c == null){
-    		if(selectedConnection != null){
-    			selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
-    			selectedConnection.setSelected(false);
-    		}
+    	if(selectedConnection != null){
+    		selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
+    		selectedConnection.setSelected(false);
     	}
     	selectedConnection = c;
     	if(selectedConnection != null){
