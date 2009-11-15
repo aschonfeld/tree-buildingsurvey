@@ -26,4 +26,14 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
   * *0.5*: Connections selectable, can be deleted. Some buttons functional: link, unlink, remove, rename. (*11/12*)
   * *0.6*: Fix mouse semantics of connection. Must determine what they are before fixing! Still room for other issues in this release.(11/15?)
   * *1.0*: Menu allows users to select options for UI display and mouse behavior. Trees can be saved to database and loaded from database. Responsibility areas: Multi-GUI - Glenn / Save structure - Jon / Database connection - Andrew (12/01)
-  * 1.x*: "Scoring" (graph analysis) enabled,  pop-up help (tooltip and help window), undo, front screen ("Hello, please select your name from this list"), back screen (multiple-choice and free-entry tests). (1/31/10) *These will be divided into smaller iterations by 12/01). 1/31 is release date for all features*
+  * 1.x*: "Scoring" (graph analysis) enabled,  pop-up help (tooltip and help window), undo, front screen ("Hello, please select your name from this list"), back screen (multiple-choice and free-entry tests). (1/31/10) *These will be divided into smaller iterations by 12/01). 1/31 is release date for the version to be tested on the spring biology class*
+
+
+Some features for forthcoming iterations. No particular order. These to follow the now long-delayed 0.5
+
+  * solidify UI. Explicit, written expectations of mouse and button behavior. Susceptible to change, but changes to behavior must follow changes to design, not vice versa. This may or may not include determining the behavior in issue 16.  
+  * status line (I see it's already in the code, we might as well schedule it for deployment, so it's not so obvious that we're hacking away at this at random without a schedule or a plan)
+  * minimize oNodes to icon only
+  * rework emptyNode labels 
+  * issue 21
+  * issue 19
