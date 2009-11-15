@@ -213,6 +213,7 @@ public class TBSController
     
     private void cancelConnection() {
 		view.setConnInProgress(null);
+		setSelectedNode(null);
 		setSelectedConnection(null);
 		if(TBSButtonType.CONNECT.equals(buttonClicked))
 			buttonClicked = null;
