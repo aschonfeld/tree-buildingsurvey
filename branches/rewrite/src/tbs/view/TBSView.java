@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.*;
+
 public class TBSView extends JComponent {
 
 	/**
@@ -26,13 +27,15 @@ public class TBSView extends JComponent {
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L;
 	
 	// This connection follows the mouse
-	private Point[] connInProgress = null;
-	private String statusString = null;
+	private Point[] connInProgress;
+	private String statusString;
 
 	
 	private TBSModel model;
 	public TBSView(TBSModel m) {
         model = m;
+        connInProgress = null;
+    	statusString = null;
 	}
 	
 	public String promptUserForString(String message) {
@@ -52,9 +55,9 @@ public class TBSView extends JComponent {
 		g2.fillRect(0, 0, width, TBSGraphics.buttonsHeight);
 		int leftX = 0;
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
-		for(String s: TBSGraphics.buttons) {
+		for(TBSButtonType b: TBSGraphics.buttons) {
 			g2.setColor(Color.BLACK);
-			TBSGraphics.drawCenteredString(g2, s, leftX, upperY, TBSGraphics.buttonsWidth, 0);
+			TBSGraphics.drawCenteredString(g2, b.toString(), leftX, upperY, TBSGraphics.buttonsWidth, 0);
 			g2.setColor(Color.BLUE);
 			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			leftX += TBSGraphics.buttonsWidth;
@@ -108,6 +111,13 @@ public class TBSView extends JComponent {
 				g2.drawString(name, stringX, stringY);
 			}
 		}
+		if(me.getSelected() && me instanceof Node){
+			Node n = (Node) me;
+			Graphics selectedBorder = g;
+			selectedBorder.setColor(TBSGraphics.selectedNodeBorderColor);
+			for (int i = 0; i <= TBSGraphics.selectedNodeBorderThickness; i++)
+		    	selectedBorder.drawRect(n.getLeftX()-i, n.getUpperY()-i, n.getWidth() +(2*i), n.getHeight() +(2*i));
+		}
 	}
 	
 	public void setConnInProgress(Point[] conn) {
@@ -125,21 +135,21 @@ public class TBSView extends JComponent {
 				for(Connection c: fromNode.getConnections()) {
 					Point[] conn = TBSUtils.getConnectionBounds(c.getFromNode() , 
 						c.getToNode());
-					g2.setColor(Color.WHITE);
-					drawArrow(g2, conn);
+					//g2.setColor(Color.WHITE);
+					drawArrow(g2, conn, c.getSelected());
 					//Connection.drawOrTestLine(g2, conn, 0, 0);
 				}
 			}
 		}
 		if(connInProgress != null) {
-			drawArrow(g2, connInProgress);
+			drawArrow(g2, connInProgress, false);
 			//Connection.drawOrTestLine(g2, connInProgress, 0, 0);
 		}
 		
 	}
 	
-	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1) {
-		g2.setColor(TBSGraphics.connectionColor);
+	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1, boolean selected) {
+		g2.setColor(selected ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
 		g2.drawLine(x0, y0, x1, y1);
 		for(int i0 = -1; i0 <= 1; i0 += 1) {
 			for(int i1 = -1; i1 <= 1; i1 += 2) {
@@ -152,7 +162,7 @@ public class TBSView extends JComponent {
 		}
 	}
 	
-	public void drawArrow(Graphics2D g2, Point[] conn) {
+	public void drawArrow(Graphics2D g2, Point[] conn, boolean selected) {
 		double arrowLengthInPixels = 10.0;
 		double angle0 = 0.75 * Math.PI;
 		double angle1 = 2 * Math.PI - angle0;
@@ -171,9 +181,9 @@ public class TBSView extends JComponent {
 		int arrowY0 = (int) Math.round(dArrowY0);
 		int arrowX1 = (int) Math.round(dArrowX1);
 		int arrowY1 = (int) Math.round(dArrowY1);
-		draw3PixelWideLine(g2, conn[0].x, conn[0].y, conn[1].x, conn[1].y);
-		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX0, conn[1].y + arrowY0);
-		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1);
+		draw3PixelWideLine(g2, conn[0].x, conn[0].y, conn[1].x, conn[1].y, selected);
+		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX0, conn[1].y + arrowY0, selected);
+		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1, selected);
 	}
 	
 	public void setStatusString(String s) {
@@ -186,8 +196,7 @@ public class TBSView extends JComponent {
 		int height = TBSGraphics.buttonsHeight;
 		TBSGraphics.drawCenteredString(g2, statusString, leftX, upperY, 0, height);
 	}
-	
-	
+
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;

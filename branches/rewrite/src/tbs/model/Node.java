@@ -21,7 +21,6 @@ public abstract class Node extends ModelElement
 	int height;
 	TBSModel model;
 	boolean inTree;
-	protected boolean selected;
 	private Connection conn;
 
 	//connections to and from other ModelElements, respectively
@@ -35,7 +34,6 @@ public abstract class Node extends ModelElement
 	public int getWidth() {return width;}
 	public int getHeight() 	{return height;}
 	public String getName() {return name;}
-
 	
 	/**
 	* Returns true if the point indicated is within the object's

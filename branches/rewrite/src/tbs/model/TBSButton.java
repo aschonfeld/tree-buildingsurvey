@@ -1,7 +1,9 @@
 package tbs.model;
 //Non-Swing button class, based on OrganismNode
 
-import java.awt.geom.*;
+import java.awt.geom.Rectangle2D;
+
+import tbs.view.TBSButtonType;
 
 public class TBSButton extends ModelElement
 {
@@ -12,22 +14,14 @@ public class TBSButton extends ModelElement
 	private int height;
 	private Rectangle2D stringBounds;
 	private TBSModel model;
-	private int action;
-	public static final int LINK=0;
-	public static final int UNLINK=1;
-	public static final int LABEL=2;
-	public static final int DELETE=3;
-	public static final int SPLIT=4;
-	public static final int PRINT=5;
-	public static final int UNDO=6;
-	public static final int SAVE=7;
+	private TBSButtonType action;
 
 	public boolean collidesWith(ModelElement e)
-		{
-			return false;
-		}
+	{
+		return false;
+	}
 
-	public TBSButton(TBSModel m, String n, Rectangle2D sb, int a,
+	public TBSButton(TBSModel m, String n, Rectangle2D sb, TBSButtonType a,
  			int x, int y, int h, int w)
 	{
 		model = m;
@@ -84,15 +78,9 @@ public class TBSButton extends ModelElement
 	{
 		switch (action) 
 		{
-			case LINK:
-				break;
-			case UNLINK:
-				break;
-			case LABEL:
+			case CONNECT:
 				break;
 			case DELETE:
-				break;
-			case SPLIT:
 				break;
 			case PRINT:
 				break;

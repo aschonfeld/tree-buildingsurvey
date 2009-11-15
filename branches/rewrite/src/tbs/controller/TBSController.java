@@ -18,6 +18,7 @@ import tbs.model.Connection;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.TBSModel;
+import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
 public class TBSController 
@@ -27,16 +28,20 @@ public class TBSController
 	private TBSModel model;
 	private TBSView view;
 	private int previousX, previousY, selectedIndex;
-	private Node draggedNode = null;
-	private Node selectedNode = null;
+	private Node draggedNode;
+	private Node selectedNode;
+	private Connection selectedConnection;
 	private Point lastPosition = null;
 	private String statusString = null;
+	private TBSButtonType buttonClicked;
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
     	view = v;
 		draggedNode=null;
 		selectedNode=null;
+		buttonClicked=null;
+		selectedConnection=null;
     }
     
 	public void keyPressed(KeyEvent e) {
@@ -57,7 +62,7 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(selectedNode != null) {
+		if(selectedNode != null && TBSButtonType.CONNECT.equals(buttonClicked)) {
 			Point[] conn = new Point[]{TBSUtils.getNodeCenter(selectedNode), new Point(e.getX(), e.getY())};
 			view.setConnInProgress(conn);
 		}
@@ -73,19 +78,43 @@ public class TBSController
 			if(y < TBSGraphics.buttonsHeight)  {
 				int buttonIndex = x / TBSGraphics.buttonsWidth;
 				if(buttonIndex < TBSGraphics.buttons.size()) {
-					System.out.println(TBSGraphics.buttons.get(buttonIndex));
+					buttonClicked = TBSGraphics.buttons.get(buttonIndex);
+					System.out.println(buttonClicked.toString());
+					if(selectedConnection != null){
+						if(TBSButtonType.DELETE.equals(buttonClicked)){
+							selectedConnection.removeFromTree();
+							buttonClicked = null;
+							return;
+						}
+					}
+					if(selectedNode != null){
+						if(TBSButtonType.DELETE.equals(buttonClicked)){
+							selectedNode.removeFromTree();
+							buttonClicked = null;
+							return;
+						}
+					}
 				}
 			} else {
-				creatingConnection(x, y);
-			}
-		}	
-		if(e.getClickCount() == 1) {
-			ModelElement me = elementMouseIsOver(x, y);
-			if (me != null) {
-				if(me instanceof Connection) {
-					Connection c = (Connection) me;
-					c.removeFromTree();
-				}
+				ModelElement me = elementMouseIsOver(x, y);
+				if (me != null) {
+					if(me instanceof Connection) {
+						Connection c = (Connection) me;
+						if(TBSButtonType.DELETE.equals(buttonClicked)){
+							c.removeFromTree();
+							buttonClicked = null;
+						}else
+							setSelectedConnection(c);
+					}
+					if(me instanceof Node){
+						Node n = (Node) me;
+						if(selectedNode == null)
+							setSelectedNode(n);
+						else
+							creatingConnection(n, x, y);
+					}
+				}else
+					cancelConnection();
 			}
 		}
 	}
@@ -103,7 +132,7 @@ public class TBSController
 		int y = e.getY();
 		int deltaX = x - previousX;
 		int deltaY = y - previousY;
-		cancelConnection();
+		//cancelConnection();
 		if(selectedIndex < 0) return;
 		ModelElement selected = model.getElement(selectedIndex);
 		if(selected instanceof Node) {
@@ -164,7 +193,8 @@ public class TBSController
     private ModelElement elementMouseIsOver(int x, int y) {
 	    ModelElement topElement = null;
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y)) topElement = me;
+		    if(me.contains(x, y))
+		    	topElement = me;
 		}
 		return topElement;
 	}   
@@ -183,37 +213,50 @@ public class TBSController
     
     private void cancelConnection() {
 		view.setConnInProgress(null);
-		selectedNode = null;
+		setSelectedConnection(null);
+		if(TBSButtonType.CONNECT.equals(buttonClicked))
+			buttonClicked = null;
     }
     
     // handles code for starting a connection and making a connection
-	private void creatingConnection(int mouseX, int mouseY) {
-		ModelElement me = elementMouseIsOver(mouseX, mouseY);
-		if(me == null) {
-			cancelConnection();
-			return;
-		}
-		if (!(me instanceof Node)) {
-			cancelConnection();
-			return;
-		}
-		Node n = (Node) me;
-		if (!n.isInTree()) {
-			cancelConnection();
-			return;
-		}
-		if(selectedNode == null) {
-			// selected node is from node
-			selectedNode = n;
-			
-		} else {
-			// n is to node
-			if(n != selectedNode) {
-				selectedNode.addConnection(n);
-				model.addElement(new Connection(model, selectedNode, n));
-				cancelConnection();
-			}
-		}
-	}
+    private void creatingConnection(Node n, int x, int y) {
+    	if(TBSButtonType.CONNECT.equals(buttonClicked)){
+    		if(model.inTreeElements().size() > 1){
+    			if(n.isInTree()){
+    				if(n != selectedNode) {
+    					selectedNode.addConnection(n);
+    					model.addElement(new Connection(model, selectedNode, n));
+    					//Point[] conn = new Point[]{TBSUtils.getNodeCenter(selectedNode), new Point(x, y)};
+    					//view.setConnInProgress(conn);
+    				}
+    			}
+    		}
+    	}
+    	cancelConnection();
+    }
+    
+    private void setSelectedNode(Node n){
+    	if(n == null){
+    		if(selectedNode != null)
+    			selectedNode.setSelected(false);
+    	}
+    	selectedNode = n;
+    	if(selectedNode != null)
+    		selectedNode.setSelected(true);
+    }
+    
+    private void setSelectedConnection(Connection c){
+    	if(c == null){
+    		if(selectedConnection != null){
+    			selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
+    			selectedConnection.setSelected(false);
+    		}
+    	}
+    	selectedConnection = c;
+    	if(selectedConnection != null){
+    		c.getToNode().getConn(c.getFromNode()).setSelected(true);
+    		selectedConnection.setSelected(true);
+    	}
+    }
 	
 }

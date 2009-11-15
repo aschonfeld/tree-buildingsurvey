@@ -17,6 +17,7 @@ import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
+import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
 public class TBSModel 
@@ -101,11 +102,9 @@ public class TBSModel
 	{
 		Graphics2D g2 = (Graphics2D) g;
 		TBSGraphics.getFont(g2);
-		TBSGraphics.buttons = new ArrayList<String>();
-		TBSGraphics.buttons.add("delete");
-		TBSGraphics.buttons.add("print");
-		TBSGraphics.buttons.add("undo");
-		TBSGraphics.buttons.add("save");
+		TBSGraphics.buttons = new ArrayList<TBSButtonType>();
+		for(TBSButtonType b : TBSButtonType.values())
+			TBSGraphics.buttons.add(b);
 		Point buttonBounds = TBSGraphics.get2DStringBounds(g2, 
 				TBSGraphics.buttons);
 		TBSGraphics.buttonsWidth = buttonBounds.x + 

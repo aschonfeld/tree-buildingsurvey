@@ -60,6 +60,7 @@ public class EmptyNode extends Node
 	public void removeFromTree()
 	{	
 		if(this != model.getImmortalEmptyNode()) {
+			this.setSelected(false);
 			unlink();
 			model.delete(this);
 		} else {

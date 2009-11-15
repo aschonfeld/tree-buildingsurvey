@@ -38,6 +38,7 @@ public class OrganismNode extends Node
 	}
 	
 	public void removeFromTree() {
+		this.setSelected(false);
 		unlink();
 		inTree = false;
 		leftX = defaultLeftX;

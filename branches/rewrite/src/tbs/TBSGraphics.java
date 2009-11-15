@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import tbs.view.TBSButtonType;
+
 /**
 * This class encapsulates the constants used in graphics handling for
 * the TBS applet, and contains some grunt-work methods for setting up
@@ -139,7 +141,7 @@ public class TBSGraphics {
 	public static int fontSize = 16;
 	
 	/**
-	* Color of text strings labelling OrganismNodes. Currently set to
+	* Color of text strings labeling OrganismNodes. Currently set to
 	* black.
 	*/
 	public static Color organismStringColor = Color.BLACK;
@@ -150,6 +152,13 @@ public class TBSGraphics {
 	public static Color organismBoxColor = Color.WHITE;
 	public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
 	public static Color emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+	
+	/**
+	 * Styling of selected elements
+	 */
+	public static Color connectionSelectedColor = Color.GREEN;
+	public static Color selectedNodeBorderColor = Color.GREEN;
+	public static int selectedNodeBorderThickness = 4;
 	
 	/**
 	* Vertical spacing of buttons.
@@ -174,7 +183,7 @@ public class TBSGraphics {
 	/**
 	* ArrayList holding names of the buttons used
 	*/
-	public static ArrayList<String> buttons;
+	public static ArrayList<TBSButtonType> buttons;
 	
 	/**
 	* Returns correct Font for TBS text.
@@ -211,12 +220,12 @@ public class TBSGraphics {
 	}
 	
 	public static Point get2DStringBounds(Graphics2D g2, 
-			Collection<String> strings) 
+			Collection<?> strings) 
 	{
 		ArrayList<Point> points = new ArrayList<Point>();
-		for(String s: strings) 
+		for(Object s: strings) 
 		{
-			Rectangle2D bounds = getStringBounds(g2, s);
+			Rectangle2D bounds = getStringBounds(g2, s.toString());
 			points.add(new Point((int) bounds.getWidth(), 
 				(int) bounds.getHeight()));
 		}
