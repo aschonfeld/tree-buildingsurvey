@@ -18,6 +18,10 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.*;
 
+/**
+* TBSView contains the logic for rendering the information contained in
+* the data model.
+**/
 public class TBSView extends JComponent {
 
 	/**
@@ -38,14 +42,26 @@ public class TBSView extends JComponent {
     	statusString = null;
 	}
 	
+	/**
+	* Calls up a Swing-based string text entry box and returns the
+	* submitted String. 
+	* Avoiding Swing, so we're not using this. 
+	*/
 	public String promptUserForString(String message) {
 		return (String) JOptionPane.showInputDialog(message);
 	}
 	
+	/**
+	* Calls up a Swing-based yes/no/cancel dialog box, returns the user's
+	* selection. Avoiding this, since it's Swing. 
+	*/
 	public int promptUserForYesNoCancel(String message) {
 		return JOptionPane.showConfirmDialog(null, message);
 	}
 	
+	/**
+	* Displays the button bar.
+	*/
 	public void renderButtons(Graphics g)
 	{
 		int width = TBSGraphics.appletWidth;
@@ -66,6 +82,9 @@ public class TBSView extends JComponent {
 		renderStatusString(g2, stringStartX);
 	}
 
+	/**
+	* draws a modelElement
+	*/
 	public void renderModelElement(Graphics g, ModelElement me) {
 		Graphics2D g2 = (Graphics2D) g;
 		int stringWidth = 0;
@@ -120,14 +139,24 @@ public class TBSView extends JComponent {
 		}
 	}
 	
+	/**
+	* Establish this connection as the one to update and set. 	
+	*/
 	public void setConnInProgress(Point[] conn) {
 		connInProgress = conn;
 	}
+
 	
+	/**
+	* Redraw the screen.
+	*/
 	public void refreshGraphics() {
 		repaint();	
 	}
 	
+	/**
+	* Draw a connection. 
+	*/
 	public void renderConnections(Graphics2D g2) {
 		for(ModelElement me: model.getElements()) {
 			if(me instanceof Node) {
@@ -147,7 +176,10 @@ public class TBSView extends JComponent {
 		}
 		
 	}
-	
+
+	/**
+	* Draw a 3-pixel wide line between two points.
+	*/
 	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1, boolean selected) {
 		g2.setColor(selected ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
 		g2.drawLine(x0, y0, x1, y1);
@@ -162,6 +194,9 @@ public class TBSView extends JComponent {
 		}
 	}
 	
+	/**
+	* Draw the arrowhead at the end of a connection.
+	*/
 	public void drawArrow(Graphics2D g2, Point[] conn, boolean selected) {
 		double arrowLengthInPixels = 10.0;
 		double angle0 = 0.75 * Math.PI;
@@ -186,10 +221,17 @@ public class TBSView extends JComponent {
 		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1, selected);
 	}
 	
+
+	/**
+	* Set status string.
+	*/
 	public void setStatusString(String s) {
 		statusString = s;
 	}
 
+	/**
+	* Draw the statusString. 	
+	*/
 	public void renderStatusString(Graphics2D g2, int leftX) {
 		if(statusString == null) return;
 		int upperY = 0;
@@ -197,6 +239,10 @@ public class TBSView extends JComponent {
 		TBSGraphics.drawCenteredString(g2, statusString, leftX, upperY, 0, height);
 	}
 
+	
+	/**
+	* How to paint the screen.
+	*/
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;

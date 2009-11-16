@@ -3,6 +3,7 @@
 
 package tbs.model;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import tbs.TBSUtils;
@@ -27,12 +28,49 @@ public abstract class Node extends ModelElement
 	protected ArrayList<Node> fromConnections = new ArrayList<Node>();
 	ArrayList<Connection> toConnections = new ArrayList<Connection>();
 
+	
+	/**
+	* Node locations are given by their upper left corner; this method
+	* returns that value as a Point.
+	*/
+	public Point getXY()
+	{
+		return new Point(leftX, upperY);	
+	}
+	
+	/**
+	* Returns X coordinate Node's location (upper left corner)
+	*/
 	public int getLeftX() {return leftX;}
+	/**
+	* Sets X coordinate Node's location (upper left corner)
+	*/
+
 	public void setLeftX(int leftX){this.leftX = leftX;}
+	/**
+	* Returns Y coordinate Node's location (upper left corner)
+	*/
+
 	public int getUpperY() {return upperY;}
+
+	/**
+	* Sets Y coordinate Node's location (upper left corner)
+	*/
 	public void setUpperY(int upperY){this.upperY = upperY;}
+	
+	/**
+	* gets width of this Node.
+	*/
 	public int getWidth() {return width;}
+	
+	/** 
+	* Gets height of this Node.
+	*/
 	public int getHeight() 	{return height;}
+
+	/**
+	* Returns this Node's name.
+	*/
 	public String getName() {return name;}
 	
 	/**
@@ -210,7 +248,9 @@ public abstract class Node extends ModelElement
 		System.out.println("Removed connection");
 	}
 
-
+	/**
+	* RemoveConnection, overloaded to take Node as argument.
+	*/
 	public void removeConnection(Node n)
 	{
 		conn = getConn(n);

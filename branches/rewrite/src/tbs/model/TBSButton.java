@@ -5,6 +5,11 @@ import java.awt.geom.Rectangle2D;
 
 import tbs.view.TBSButtonType;
 
+
+/**
+* Deprecated home-made button class. Buttons are currently implemented
+* in TBSController.
+*/
 public class TBSButton extends ModelElement
 {
 	private String name;

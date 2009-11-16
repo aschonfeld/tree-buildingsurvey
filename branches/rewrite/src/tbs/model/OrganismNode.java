@@ -29,14 +29,23 @@ public class OrganismNode extends Node
 	}
 				
 	public boolean isInTree() {return inTree;}
-		
+	
+
+	/**
+	* Ad this object to the active list. All this does is to set a
+	* boolean to true, telling the code that this is active.  
+	*/	
 	public void addToTree() 
 	{
 		inTree = true;
 		
 		System.out.println("Added to tree: inTree = " +inTree);
 	}
-	
+
+	/**
+	* Remove this Organism from the tree: delete its connections and
+	* return it to its original place.
+	*/	
 	public void removeFromTree() {
 		this.setSelected(false);
 		unlink();
@@ -48,7 +57,12 @@ public class OrganismNode extends Node
 	}
 		
 	public BufferedImage getImage() {return img;}
-	
+
+
+	/**
+	* Returns true if this Node overlaps another ModelElement. Should be
+	* able to deal with Connections, but I haven't checked. 
+	*/	
 	public boolean collidesWith(ModelElement m) {
 		if(m.contains(leftX, upperY+height))
 			return true;
@@ -60,5 +74,6 @@ public class OrganismNode extends Node
 			return true;
 		return false;
 	}
+	
 		
 }

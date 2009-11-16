@@ -59,14 +59,16 @@ public class TBSModel
 	}
 
 	/**
-	* Deletes an item from the ArrayList of ModelElements. Limited to
-	* EmptyNodes.
+	* Deletes an EmptyNode from the ArrayList of ModelElements. 
    */
 	public void delete(EmptyNode en)
 	{
 		modelElements.remove(en);		
 	}
 	
+	/**
+	* Deletes a Connection from the ArrayList of ModelElements.
+	*/
 	public void delete(Connection conn)
 	{
 		modelElements.remove(conn);		
@@ -226,7 +228,11 @@ public class TBSModel
 	{
 		n.unlink();
 	}
-	
+
+
+	/**
+	* Returns the list of active elements
+	*/	
 	public List<Node> inTreeElements(){
 		List<Node> inTreeElements = new LinkedList<Node>();
 		for(ModelElement m : modelElements){

@@ -21,6 +21,10 @@ import tbs.model.TBSModel;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
+/**
+* TBSController contains the methods allowing the user to manipulate the
+* data stored in the data model.
+**/
 public class TBSController 
 		implements MouseListener, MouseMotionListener, KeyListener
 {
@@ -68,18 +72,24 @@ public class TBSController
 		}
 	}
 	
-	// Check for double click
+	// Handle mouseClicked events. Check position of mouse pointer and
+	// respond accordingly. This is complicated and still unstable; 
+	// will cover in more detail as it settles down. 
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
 		// get keyboard focus when user clicks in window
 		view.requestFocusInWindow();
 		if(e.getClickCount() == 1) {
+
+			// if mouse is in button bar
+
 			if(y < TBSGraphics.buttonsHeight)  {
 				int buttonIndex = x / TBSGraphics.buttonsWidth;
 				if(buttonIndex < TBSGraphics.buttons.size()) {
 					buttonClicked = TBSGraphics.buttons.get(buttonIndex);
 					System.out.println(buttonClicked.toString());
+
 					if(selectedConnection != null){
 						if(TBSButtonType.DELETE.equals(buttonClicked)){
 							selectedConnection.removeFromTree();
@@ -108,7 +118,7 @@ public class TBSController
 					}
 					if(me instanceof Node){
 						Node n = (Node) me;
-						if(selectedNode == null)
+						if(selectedNode == null && n.isInTree())
 							setSelectedNode(n);
 						else{
 							if(TBSButtonType.CONNECT.equals(buttonClicked))
@@ -123,6 +133,12 @@ public class TBSController
 		}
 	}
 	
+
+
+	/**
+	* Handle mousePressed events: if the mouse is over an object, select
+	* it.
+	*/
 	public void mousePressed(MouseEvent e){
         int x = e.getX();
         int y = e.getY();
@@ -131,6 +147,10 @@ public class TBSController
         previousY = y;
 	}
 	
+	/**
+	* Handle mouseDragged events: adjust position of selected Node and
+	* refresh screen image.
+	*/
 	public void mouseDragged(MouseEvent e){
 		int x = e.getX();
 		int y = e.getY();
@@ -155,7 +175,11 @@ public class TBSController
 		
  	}
 	
-	
+
+	/**
+	* Handle mouseReleased events. Drop the object being dragged and
+	* correct its location if necessary. 
+	*/	
 	public void mouseReleased(MouseEvent e) 
 	{
 		//Auto-add/delete: 
@@ -244,6 +268,7 @@ public class TBSController
     	selectedNode = n;
     	if(selectedNode != null)
     		selectedNode.setSelected(true);
+
     }
     
     private void setSelectedConnection(Connection c){

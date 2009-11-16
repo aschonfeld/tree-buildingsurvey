@@ -50,14 +50,14 @@ public class Connection extends ModelElement
 	{
 		return false;
 	}
-	
+
+
+	/**
+	* Removes this connection from the tree. If we want to execute
+	* two-way disconnect, we can uncomment the commented line. That's a
+	* UI decision.
+	*/	
 	public void removeFromTree() {
-		/*I don't think we need these two lines of code, unless we want both to and from connections
-		* e.g.(<-->) getting removed.  If those type of connections exist they will have to run
-		* the delete functionality on the connection twice, that's all. -Andrew
-		*/
-		//toNode.disconnectFrom(fromNode);
-		fromNode.disconnectFrom(toNode);
 		toNode.removeConnection(fromNode);
 		//fromNode.removeConnection(toNode);
 		model.delete(this);
