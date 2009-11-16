@@ -26,6 +26,7 @@ public class OrganismNode extends Node
 		width = w;
 		height = h;
 		inTree = false;
+		serial = model.getSerial();
 	}
 				
 	public boolean isInTree() {return inTree;}

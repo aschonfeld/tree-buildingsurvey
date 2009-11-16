@@ -27,6 +27,8 @@ public class TBSModel
 	private List<ModelElement> modelElements;
 	private EmptyNode immortalEmptyNode;
 
+	private int MESerialNumber;
+	
 
 	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new ArrayList<ModelElement>();
@@ -50,6 +52,18 @@ public class TBSModel
 		return controller;
 	}	
 	
+	/**
+	* Returns a serial number for a model element. Serial numbers start
+	* at 0 and simply increment; they are unique within a tree, but not
+	* outside it.
+	*/
+	public int getSerial()
+	{
+		MESerialNumber ++;
+		System.out.println(MESerialNumber);
+		return MESerialNumber;
+	}
+
 	/**
 	* Adds a ModelElement to the ArrayList of items this Model knows
 	* about.

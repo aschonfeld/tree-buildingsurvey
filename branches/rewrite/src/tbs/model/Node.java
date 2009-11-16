@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import tbs.TBSUtils;
 
 
+
 /**
 * This class is the superclass for OrganismNode and EmptyNode, and
 * contains their common elements. 
@@ -23,6 +24,7 @@ public abstract class Node extends ModelElement
 	TBSModel model;
 	boolean inTree;
 	private Connection conn;
+	public int serial;
 
 	//connections to and from other ModelElements, respectively
 	protected ArrayList<Node> fromConnections = new ArrayList<Node>();

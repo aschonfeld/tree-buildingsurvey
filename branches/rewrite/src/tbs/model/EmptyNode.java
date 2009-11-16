@@ -26,6 +26,8 @@ public class EmptyNode extends Node
 		name = n;
 		model = mod;
 		inTree = true;
+		serial = model.getSerial();
+		System.out.println("Added EmptyNode # " +serial);
 	}
 	
 	/**
@@ -40,6 +42,8 @@ public class EmptyNode extends Node
 		name = defaultName;
 		model = mod;
 		inTree = false;
+		serial = model.getSerial();
+		System.out.println("Created EmptyNode # " +serial);
 	}
 	
 	/**
@@ -108,4 +112,16 @@ public class EmptyNode extends Node
 		}
 	}
 	
+	/**
+	* Returns this EmptyNode's "name" string, if any, or the label "Empty
+	* Node # N" where N is a serial number"
+	**/
+	public String getName()
+	{
+		if (!inTree)
+			return("Empty Node");
+		if (name == "")
+			return new String("Empty Node #"+serial);
+		else return name;
+	}	
 }
