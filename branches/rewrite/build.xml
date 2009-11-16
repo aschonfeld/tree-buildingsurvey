@@ -46,7 +46,7 @@
 	         name="org.apache.commons.attributes.javadoc.CATaglet"
 	         path="${ant.home}/lib/commons-attributes-compiler-2.2.jar"
 	        />
-	    	<fileset dir="${basedir}/" includes="**/*.java" />
+	    	<fileset dir="${src.dir}/" includes="**/*.java" />
 	   </javadoc>
 	</target>
 	<!-- you go to http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html and download pscp to your c:\ drive -->
