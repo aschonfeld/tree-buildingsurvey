@@ -22,8 +22,8 @@ public class TBSUtils {
 	 * two objects are in proportion to each other, two (@link Point) objects are computed
 	 * representing the start and end of a line that will represent a connection in the applet.
 	 * 
-	 * @param start, (@link Node) where connection starts
-	 * @param end, (@ Node) where connection ends
+	 * @param n1, (@link Node) where connection starts
+	 * @param n2, (@link Node) where connection ends
 	 * @return (@link Point)[], start and and points of the connection
 	 */
 	public static Point[] getConnectionBounds(Node n1, Node n2){
