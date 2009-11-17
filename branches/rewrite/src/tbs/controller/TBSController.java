@@ -16,8 +16,10 @@ import java.util.List;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.Connection;
+import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
+import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
@@ -34,19 +36,16 @@ public class TBSController
 	private TBSView view;
 	private int previousX, previousY, selectedIndex;
 	private Node draggedNode;
-	private Node selectedNode;
-	private Connection selectedConnection;
+	private ModelElement selectedElement;
 	private Point lastPosition = null;
 	private String statusString = null;
-	private TBSButtonType buttonClicked;
+	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
     	view = v;
 		draggedNode=null;
-		selectedNode=null;
 		buttonClicked=null;
-		selectedConnection=null;
     }
     
 	public void keyPressed(KeyEvent e) {
@@ -67,10 +66,13 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(selectedNode != null && TBSButtonType.CONNECT.equals(buttonClicked))
-		    view.setConnInProgress(
-		    		new Line2D.Double(TBSUtils.getNodeCenter(selectedNode),
+		if(selectedElement == null) return;
+		if(selectedElement instanceof Node) {
+			if(TBSButtonType.CONNECT.equals(buttonClicked))
+				view.setConnInProgress(
+		    		new Line2D.Double(TBSUtils.getNodeCenter((Node) selectedElement),
 		    				new Point(e.getX(), e.getY())));
+		}
 	}
 	
 	// Handle mouseClicked events. Check position of mouse pointer and
@@ -82,57 +84,11 @@ public class TBSController
 		// get keyboard focus when user clicks in window
 		view.requestFocusInWindow();
 		if(e.getClickCount() == 1) {
-
 			// if mouse is in button bar
-
 			if(y < TBSGraphics.buttonsHeight)  {
-				int buttonIndex = x / TBSGraphics.buttonsWidth;
-				if(buttonIndex < TBSGraphics.buttons.size()) {
-					buttonClicked = TBSGraphics.buttons.get(buttonIndex);
-					System.out.println(buttonClicked.toString());
-
-					if(selectedConnection != null){
-						if(TBSButtonType.DELETE.equals(buttonClicked)){
-							selectedConnection.removeFromTree();
-							selectedConnection = null;
-							buttonClicked = null;
-							return;
-						}
-					}
-					if(selectedNode != null){
-						if(TBSButtonType.DELETE.equals(buttonClicked)){
-							selectedNode.removeFromTree();
-							buttonClicked = null;
-							return;
-						}
-					}
-				}
+				handleButtonClicked(x, y);
 			} else {
-				ModelElement me = elementMouseIsOver(x, y);
-				if (me != null) {
-					if(me instanceof Connection) {
-						Connection c = (Connection) me;
-						if(TBSButtonType.DELETE.equals(buttonClicked)){
-							c.removeFromTree();
-							buttonClicked = null;
-						}else
-							setSelectedConnection(c);
-						setSelectedNode(null);
-					}
-					if(me instanceof Node){
-						Node n = (Node) me;
-						if(selectedNode == null && n.isInTree())
-							setSelectedNode(n);
-						else{
-							if(TBSButtonType.CONNECT.equals(buttonClicked))
-								creatingConnection(n, x, y);
-							else
-								setSelectedNode(n);
-						}
-						setSelectedConnection(null);
-					}
-				}else
-					cancelConnection();
+				if(x > TBSGraphics.LINE_OF_DEATH) handleMouseClicked(x, y);
 			}
 		}
 	}
@@ -173,6 +129,8 @@ public class TBSController
 			model.setElement(selectedIndex, node);
 		}
 		view.refreshGraphics();
+		unselectPrevious();
+		cancelConnection();
 		// update our data
 		previousX = x;
 		previousY = y;
@@ -245,45 +203,173 @@ public class TBSController
     
     private void cancelConnection() {
 		view.setConnInProgress(null);
-		setSelectedNode(null);
-		setSelectedConnection(null);
-		if(TBSButtonType.CONNECT.equals(buttonClicked))
-			buttonClicked = null;
     }
     
-    // handles code for starting a connection and making a connection
-    private void creatingConnection(Node n, int x, int y) {
-    	if(model.inTreeElements().size() > 1){
-    			if(n.isInTree()){
-    				if(n != selectedNode) {
-    					selectedNode.addConnection(n);
-    					model.addElement(new Connection(model, selectedNode, n));
-    				}
-    			}
-    		}
-    	cancelConnection();
+    // creates a connection if conditions are correct
+    // returns true if connection created
+    private boolean creatingConnection(Node n, int x, int y) {
+        if(model.inTreeElements().size() > 1){
+        	if(n.isInTree()){
+        		if(n != selectedElement) {
+        			if(selectedElement instanceof Node) {
+        				Node fromNode = (Node) selectedElement;
+        				if(fromNode.isInTree()) {
+        					Node n1 = (Node) selectedElement;
+        					n1.addConnection(n);
+        					model.addElement(new Connection(model, n1, n));
+        					cancelConnection();
+        					return true;
+        				}
+        			}
+                }
+            }
+        }
+        cancelConnection();
+        return false;
     }
     
-    private void setSelectedNode(Node n){
-    	if(selectedNode != null)
-    		selectedNode.setSelected(false);
-    	selectedNode = n;
-    	if(selectedNode != null)
-    		selectedNode.setSelected(true);
+    private void setSelectedElement(ModelElement me) {
+    	unselectPrevious();
+    	if(me == null) return;
+    	if(me == model.getImmortalEmptyNode()) return;
+    	if(me instanceof Connection) {
+        	Connection selectedConn = (Connection) selectedElement;
+        	if(selectedElement != null) {
+        		Connection c1 = selectedConn.getToNode().getConn(selectedConn.getFromNode());
+        		if(c1 != null) c1.setSelected(false);
+        	}
+        } else {
+        	selectedElement = me;
+        }
+    	if(selectedElement != null) selectedElement.setSelected(true);
+    }
+
+    // unselect previously selected element, otherwise will keep green box
+    private void unselectPrevious(){
+    	if(selectedElement == null) return;
+        if(selectedElement instanceof Connection){
+        	Connection selectedConn = (Connection) selectedElement;
+        	Connection c1 = selectedConn.getToNode().getConn(selectedConn.getFromNode());
+        	if(c1 != null) {
+        		c1.setSelected(false);
+        	}
+        }
+        selectedElement.setSelected(false);
+        selectedElement = null;
+    }
+
+
+    public TBSButtonType getButtonClicked() {
+    	return buttonClicked;
     }
     
-    private void setSelectedConnection(Connection c){
-    	if(selectedConnection != c){
-    		if(selectedConnection != null){
-    			selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
-    			selectedConnection.setSelected(false);
+    private void handleButtonClicked(int x, int y) {
+    	cancelConnection(); // clicking button panel cancels connection
+		int buttonIndex = x / TBSGraphics.buttonsWidth;
+		if(buttonIndex >= TBSGraphics.buttons.size()) return;
+		buttonClicked = TBSGraphics.buttons.get(buttonIndex);
+		System.out.println(buttonClicked.toString());
+		switch (buttonClicked) {
+		case SELECT:
+			break;
+		case ADD:
+			break;
+		case DELETE:
+			if(selectedElement == null) break;
+			selectedElement.removeFromTree();
+			selectedElement = null;
+			break;
+		case CONNECT:
+			if(selectedElement == null) break;
+			//if(selectedElement instanceof Node) {
+			//	creatingConnection((Node) selectedElement, x, y);
+			//}
+			break;
+		case DISCONNECT:
+			if(selectedElement == null) break;
+			if(selectedElement instanceof Connection) {
+				selectedElement.removeFromTree();
+			}
+			if(selectedElement instanceof Node) {
+				Node n = (Node) selectedElement;
+				n.unlink();
+			}
+			break;
+		case PRINT:
+		case UNDO:
+		case SAVE:
+		}
+    }
+    
+    private void handleMouseClicked(int x, int y) {
+    	if(buttonClicked == null) buttonClicked = TBSButtonType.SELECT;
+		ModelElement clickedElement = elementMouseIsOver(x, y);
+		// clicking on empty space always cancels connection
+		if(clickedElement == null) {
+			cancelConnection();
+			unselectPrevious();
+		}
+    	switch (buttonClicked) {
+		case SELECT:
+			break;
+		case ADD:
+			if(clickedElement == null) {
+				Node newNode = new EmptyNode(model, x, y, "");
+				for(Node n : model.inTreeElements()){
+					// make sure not putting it on top of another item
+					if(n.collidesWith(newNode)){
+						newNode = null;
+						break;
+					}
+				}
+				if(newNode != null) model.addElement(newNode);
+			}
+			break;
+		case DELETE:
+			if(clickedElement == null) break;
+			clickedElement.removeFromTree();
+			break;
+		case CONNECT:
+			if(clickedElement == null) break;
+			if(clickedElement instanceof Node) {
+				if(creatingConnection((Node) clickedElement, x, y)) {
+					// do not automatically start a new connection
+					clickedElement = null;
+				}
+				break;
+			}
+			break;
+		case DISCONNECT:
+			if(clickedElement == null) break;
+			if(clickedElement instanceof Node) {
+				Node n = (Node) clickedElement;
+				n.unlink();
+				break;
+			}
+			if(clickedElement instanceof Connection) {
+				clickedElement.removeFromTree();
+				break;
+			}
+			break;
+		case PRINT:
+		case UNDO:
+		case SAVE:
+		}
+    	// default action unless return
+    	if(clickedElement instanceof OrganismNode) {
+    		
+    		OrganismNode on = (OrganismNode) clickedElement;
+    		if(on.isInTree()) {
+    			// organism node is in tree, selectable
+    			setSelectedElement(clickedElement);
+    		} else {
+    			// organism node is not in tree, just unselect previous
+    			unselectPrevious();
     		}
-    		selectedConnection = c;
-    		if(selectedConnection != null){
-    			c.getToNode().getConn(c.getFromNode()).setSelected(true);
-    			selectedConnection.setSelected(true);
-    		}
+    	} else {
+    		// default set selectedElement = clickedElement
+    		setSelectedElement(clickedElement);
     	}
-    }
+    }		
 	
 }

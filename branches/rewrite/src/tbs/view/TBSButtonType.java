@@ -1,7 +1,15 @@
 package tbs.view;
 
 public enum TBSButtonType {
-	CONNECT("connect"), DELETE("delete"), PRINT("print"), UNDO("undo"), SAVE("save");
+
+	SELECT("Select"),
+	ADD("Add"),
+	DELETE("Delete"),
+	CONNECT("Connect"),
+	DISCONNECT("Disconnect"),
+	PRINT("Print"), 
+	UNDO("Undo"), 
+	SAVE("Save");
 	
 	private String text;
 	

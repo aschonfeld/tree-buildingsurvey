@@ -100,4 +100,6 @@ public class TBSButton extends ModelElement
 	public TBSModel getModel() {
 		return model;
 	}
+	
+	public void removeFromTree() {};
 }

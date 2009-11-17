@@ -29,5 +29,10 @@ public abstract class ModelElement {
 	* Sets this object's "selected" status
 	*/
 	public void setSelected(boolean selected){this.selected = selected;}
+	
+	/**
+	* Delete this object or place back in left panel
+	*/	
+	public abstract void removeFromTree();
 
 }

@@ -35,6 +35,7 @@ public class TBSView extends JComponent {
 	 * https://www.fourmilab.ch/hotbits/secure_generate.html
 	 */
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L;
+	private static boolean firstButtonRender = true; 
 	
 	// This connection follows the mouse
 	private Line2D connInProgress;
@@ -70,14 +71,22 @@ public class TBSView extends JComponent {
 	*/
 	public void renderButtons(Graphics g)
 	{
+		TBSButtonType buttonClicked = model.getController().getButtonClicked();
+		if(buttonClicked == null) buttonClicked = TBSButtonType.SELECT;
 		int width = TBSGraphics.appletWidth;
-		if(width < 800) width = 800;
+		int minWidth = TBSGraphics.buttonsWidth * TBSGraphics.buttons.size();
+		if(width < minWidth) width = minWidth;
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, width, TBSGraphics.buttonsHeight);
 		int leftX = 0;
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: TBSGraphics.buttons) {
+			if(b == buttonClicked) {
+				// display button clicked in green
+				g2.setColor(Color.GREEN);
+				g2.fillRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
+			}
 			g2.setColor(Color.BLACK);
 			TBSGraphics.drawCenteredString(g2, b.toString(), leftX, upperY, TBSGraphics.buttonsWidth, 0);
 			g2.setColor(Color.BLUE);
@@ -225,7 +234,13 @@ public class TBSView extends JComponent {
 		TBSGraphics.drawCenteredString(g2, statusString, leftX, upperY, 0, height);
 	}
 
-	
+	/**
+	* How to paint the screen (using view's graphics)
+	*/
+	public void paintComponent() {
+		paintComponent(getGraphics());
+	}
+
 	/**
 	* How to paint the screen.
 	*/
