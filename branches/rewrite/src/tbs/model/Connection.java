@@ -58,6 +58,7 @@ public class Connection extends ModelElement
 	* UI decision.
 	*/	
 	public void removeFromTree() {
+		this.setSelected(false);
 		toNode.removeConnection(fromNode);
 		//fromNode.removeConnection(toNode);
 		model.delete(this);

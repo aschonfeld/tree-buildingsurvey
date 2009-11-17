@@ -93,6 +93,7 @@ public class TBSController
 					if(selectedConnection != null){
 						if(TBSButtonType.DELETE.equals(buttonClicked)){
 							selectedConnection.removeFromTree();
+							selectedConnection = null;
 							buttonClicked = null;
 							return;
 						}
@@ -115,6 +116,7 @@ public class TBSController
 							buttonClicked = null;
 						}else
 							setSelectedConnection(c);
+						setSelectedNode(null);
 					}
 					if(me instanceof Node){
 						Node n = (Node) me;
@@ -126,6 +128,7 @@ public class TBSController
 							else
 								setSelectedNode(n);
 						}
+						setSelectedConnection(null);
 					}
 				}else
 					cancelConnection();
@@ -254,8 +257,6 @@ public class TBSController
     				if(n != selectedNode) {
     					selectedNode.addConnection(n);
     					model.addElement(new Connection(model, selectedNode, n));
-    					//Point[] conn = new Point[]{TBSUtils.getNodeCenter(selectedNode), new Point(x, y)};
-    					//view.setConnInProgress(conn);
     				}
     			}
     		}
@@ -268,18 +269,19 @@ public class TBSController
     	selectedNode = n;
     	if(selectedNode != null)
     		selectedNode.setSelected(true);
-
     }
     
     private void setSelectedConnection(Connection c){
-    	if(selectedConnection != null){
-    		selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
-    		selectedConnection.setSelected(false);
-    	}
-    	selectedConnection = c;
-    	if(selectedConnection != null){
-    		c.getToNode().getConn(c.getFromNode()).setSelected(true);
-    		selectedConnection.setSelected(true);
+    	if(selectedConnection != c){
+    		if(selectedConnection != null){
+    			selectedConnection.getToNode().getConn(selectedConnection.getFromNode()).setSelected(false);
+    			selectedConnection.setSelected(false);
+    		}
+    		selectedConnection = c;
+    		if(selectedConnection != null){
+    			c.getToNode().getConn(c.getFromNode()).setSelected(true);
+    			selectedConnection.setSelected(true);
+    		}
     	}
     }
 	
