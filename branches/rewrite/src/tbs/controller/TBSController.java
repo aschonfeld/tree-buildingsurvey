@@ -10,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.util.List;
 
 import tbs.TBSGraphics;
@@ -66,10 +67,10 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(selectedNode != null && TBSButtonType.CONNECT.equals(buttonClicked)) {
-			Point[] conn = new Point[]{TBSUtils.getNodeCenter(selectedNode), new Point(e.getX(), e.getY())};
-			view.setConnInProgress(conn);
-		}
+		if(selectedNode != null && TBSButtonType.CONNECT.equals(buttonClicked))
+		    view.setConnInProgress(
+		    		new Line2D.Double(TBSUtils.getNodeCenter(selectedNode),
+		    				new Point(e.getX(), e.getY())));
 	}
 	
 	// Handle mouseClicked events. Check position of mouse pointer and

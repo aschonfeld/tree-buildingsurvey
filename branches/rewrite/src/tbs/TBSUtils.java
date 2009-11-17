@@ -17,6 +17,10 @@ public class TBSUtils {
 		return ((val >= min) && (val <= max));
 	}
 	
+	public static double dx(Line2D l){return l.getX2() - l.getX1();}
+	public static double dy(Line2D l){return l.getY2() - l.getY1();}
+	public static double slope(Line2D l){return dx(l)/dy(l);}
+	
 	/**
 	 * This method takes in two (@link Node) objects as parameters and based on where the
 	 * two objects are in proportion to each other, two (@link Point) objects are computed
@@ -26,7 +30,7 @@ public class TBSUtils {
 	 * @param n2, (@link Node) where connection ends
 	 * @return (@link Point)[], start and and points of the connection
 	 */
-	public static Point[] getConnectionBounds(Node n1, Node n2){
+	public static Line2D getConnectionBounds(Node n1, Node n2){
 		Point start = new Point(),end = new Point();
 		Point n1Mid = getNodeCenter(n1), n2Mid = getNodeCenter(n2);
 		Line2D l1 = new Line2D.Double(n1Mid.x, n1Mid.y, n2Mid.x, n2Mid.y);
@@ -47,7 +51,7 @@ public class TBSUtils {
 				break;
 			}
 		}
-		return new Point[]{start, end};
+		return new Line2D.Double(start, end);
 	}
 
 	/**
@@ -88,6 +92,7 @@ public class TBSUtils {
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
 	}
+	
 	public static Point getNodeCenter(Node n){
 		return new Point(n.getLeftX() + (n.getWidth()/2),
 				n.getUpperY() + (n.getHeight()/2));	

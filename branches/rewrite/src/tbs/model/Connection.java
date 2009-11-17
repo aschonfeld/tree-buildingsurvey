@@ -6,6 +6,7 @@ package tbs.model;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Line2D;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -69,16 +70,16 @@ public class Connection extends ModelElement
 	*/
 	public boolean contains(int x, int y)
 	{
-		Point[] conn = TBSUtils.getConnectionBounds(toNode, fromNode);
-		if(drawOrTestLine(null, conn, x, y)) return true;
+		if(drawOrTestLine(null, TBSUtils.getConnectionBounds(toNode, fromNode), x, y))
+			return true;
 		return false;
 	}
 	
-	public static boolean drawOrTestLine(Graphics2D g2, Point[] conn, int x, int y) {
+	public static boolean drawOrTestLine(Graphics2D g2, Line2D conn, int x, int y) {
 		double slope = 0;
 		boolean vertical = false; // slope is infinite for vertical line
-		double dx = (conn[1].x - conn[0].x);
-		double dy = (conn[1].y - conn[0].y);
+		double dx = TBSUtils.dx(conn);
+		double dy = TBSUtils.dy(conn);
 		double yIntercept = 0;
 		if(dx == 0) {
 			vertical = true;
@@ -91,12 +92,12 @@ public class Connection extends ModelElement
 			if(g2 != null) {
 				g2.setColor(TBSGraphics.connectionColor);
 				for(int xOffset = -2; xOffset <= 2; xOffset++) {
-					g2.drawLine(conn[0].x - xOffset, minXY.y, conn[1].x - xOffset, maxXY.y);
+					g2.drawLine((int) conn.getP1().getX() - xOffset, minXY.y, (int) conn.getP2().getX() - xOffset, maxXY.y);
 				}
 				return false;
 			} else {
 				for(int xOffset = -2; xOffset <= 2; xOffset++) {
-					if (isOnLine(conn[0].x - xOffset, minXY.y, conn[1].x - xOffset, maxXY.y, x, y)) return true;
+					if (isOnLine((int) conn.getP1().getX() - xOffset, minXY.y, (int) conn.getP2().getX() - xOffset, maxXY.y, x, y)) return true;
 				}
 				return false;
 			}
@@ -112,7 +113,7 @@ public class Connection extends ModelElement
 			for(int y2 = y - yOffset; y2 <= y + yOffset; y2++) {
 				int xdiff = x2 - x;
 				int ydiff = y2 - y;
-				yIntercept = conn[0].y - slope * conn[0].x;
+				yIntercept = conn.getP1().getY() - slope * conn.getP1().getX();
 				int drawY = (int) Math.round(slope * minXY.x + yIntercept);
 				int drawY2 = (int) Math.round(slope * maxXY.x + yIntercept);				
 				if(g2 != null) {
@@ -137,24 +138,16 @@ public class Connection extends ModelElement
 		return false;
 	}
 	
-	private static Point getMinXY(Point[] p) {
-		int minX = p[0].x;
-		int minY = p[0].y;
-		for(int i = 1; i < p.length; i++) {
-			if (p[i].x < minX) minX = p[i].x;
-			if (p[i].y < minY) minY = p[i].y;
-		}
-		return new Point(minX, minY);
+	private static Point getMinXY(Line2D l) {
+		return new Point(
+				(int) (l.getP1().getX() < l.getP2().getX() ? l.getP1().getX() : l.getP2().getX()),
+				(int) (l.getP1().getY() < l.getP2().getY() ? l.getP1().getY() : l.getP2().getY()));
 	}
 	
-	private static Point getMaxXY(Point[] p) {
-		int maxX = p[0].x;
-		int maxY = p[0].y;
-		for(int i = 1; i < p.length; i++) {
-			if (p[i].x > maxX) maxX = p[i].x;
-			if (p[i].y > maxY) maxY = p[i].y;
-		}
-		return new Point(maxX, maxY);
+	private static Point getMaxXY(Line2D l) {
+		return new Point(
+				(int) (l.getP1().getX() > l.getP2().getX() ? l.getP1().getX() : l.getP2().getX()),
+				(int) (l.getP1().getY() > l.getP2().getY() ? l.getP1().getY() : l.getP2().getY()));
 	}
 	
 	private static boolean isOnLine(int x0, int y0, int x1, int y1, int x, int y) {
@@ -163,11 +156,9 @@ public class Connection extends ModelElement
 		double slope = 0;
 		double yIntercept = 0;
 		int yTest = 0;
-		Point[] p = new Point[2];
-		p[0] = new Point(x0, y0);
-		p[1] = new Point(x1, y1);
-		Point minXY = getMinXY(p);
-		Point maxXY = getMaxXY(p);
+		Line2D temp = new Line2D.Double(new Point(x0, y0), new Point(x1, y1));
+		Point minXY = getMinXY(temp);
+		Point maxXY = getMaxXY(temp);
 		if((maxXY.x - minXY.x) < 4) {
 			// fixes rounding problems in nearly vertical lines
 			minXY.x -= 2;

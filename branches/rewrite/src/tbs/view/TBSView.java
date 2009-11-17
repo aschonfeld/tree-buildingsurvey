@@ -3,11 +3,12 @@
 
 package tbs.view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
@@ -16,7 +17,12 @@ import javax.swing.JOptionPane;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
-import tbs.model.*;
+import tbs.model.Connection;
+import tbs.model.EmptyNode;
+import tbs.model.ModelElement;
+import tbs.model.Node;
+import tbs.model.OrganismNode;
+import tbs.model.TBSModel;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -31,7 +37,7 @@ public class TBSView extends JComponent {
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L;
 	
 	// This connection follows the mouse
-	private Point[] connInProgress;
+	private Line2D connInProgress;
 	private String statusString;
 
 	
@@ -142,7 +148,7 @@ public class TBSView extends JComponent {
 	/**
 	* Establish this connection as the one to update and set. 	
 	*/
-	public void setConnInProgress(Point[] conn) {
+	public void setConnInProgress(Line2D conn) {
 		connInProgress = conn;
 	}
 
@@ -162,65 +168,45 @@ public class TBSView extends JComponent {
 			if(me instanceof Node) {
 				Node fromNode = (Node) me;
 				for(Connection c: fromNode.getConnections()) {
-					Point[] conn = TBSUtils.getConnectionBounds(c.getFromNode() , 
+					Line2D conn = TBSUtils.getConnectionBounds(c.getFromNode() , 
 						c.getToNode());
-					//g2.setColor(Color.WHITE);
-					drawArrow(g2, conn, c.getSelected());
-					//Connection.drawOrTestLine(g2, conn, 0, 0);
+					g2.setColor(c.getSelected() ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
+					g2.setStroke(new BasicStroke(3));
+					g2.draw(conn);
+					g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+					g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 				}
 			}
 		}
-		if(connInProgress != null) {
-			drawArrow(g2, connInProgress, false);
-			//Connection.drawOrTestLine(g2, connInProgress, 0, 0);
+		if(connInProgress != null){
+			g2.setColor(TBSGraphics.connectionColor);
+			g2.setStroke(new BasicStroke(3));
+			g2.draw(connInProgress);
+			g2.draw(getArrowHead(connInProgress, 0.75 * Math.PI));
+			g2.draw(getArrowHead(connInProgress, 1.25 * Math.PI));
 		}
-		
-	}
-
-	/**
-	* Draw a 3-pixel wide line between two points.
-	*/
-	public void draw3PixelWideLine(Graphics g2, int x0, int y0, int x1, int y1, boolean selected) {
-		g2.setColor(selected ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
-		g2.drawLine(x0, y0, x1, y1);
-		for(int i0 = -1; i0 <= 1; i0 += 1) {
-			for(int i1 = -1; i1 <= 1; i1 += 2) {
-				for(int i2 = -1; i2 <= 1; i2 += 1) {
-					for(int i3 = -1; i3 <= 1; i3 += 2) {
-						g2.drawLine(x0 + i0, y0 + i1, x1 + i2, y1 + i3);
-					}
-				}
-			}
-		}
+		g2.setStroke(new BasicStroke());
 	}
 	
 	/**
 	* Draw the arrowhead at the end of a connection.
 	*/
-	public void drawArrow(Graphics2D g2, Point[] conn, boolean selected) {
-		double arrowLengthInPixels = 10.0;
-		double angle0 = 0.75 * Math.PI;
-		double angle1 = 2 * Math.PI - angle0;
-		double dx = (conn[1].x - conn[0].x);
-		double dy = (conn[1].y - conn[0].y);
-		double dArrowX0 = Math.round(dx * Math.cos(angle0) + dy * Math.sin(angle0));
-		double dArrowY0 = Math.round(dy * Math.cos(angle0) - dx * Math.sin(angle0));
-		double dArrowX1 = Math.round(dx * Math.cos(angle1) + dy * Math.sin(angle1));
-		double dArrowY1 = Math.round(dy * Math.cos(angle1) - dx * Math.sin(angle1));
+	public Line2D getArrowHead(Line2D conn, double angle) {
+		double dx = (conn.getX2() - conn.getX1());
+		double dy = (conn.getY2() - conn.getY1());
+		double dArrowX = Math.round(dx * Math.cos(angle) + dy * Math.sin(angle));
+		double dArrowY = Math.round(dy * Math.cos(angle) - dx * Math.sin(angle));
 		double arrowLength = Math.sqrt(dx * dx + dy * dy);
-		dArrowX0 /= arrowLength * (1.0 / arrowLengthInPixels);
-		dArrowY0 /= arrowLength * (1.0 / arrowLengthInPixels);
-		dArrowX1 /= arrowLength * (1.0 / arrowLengthInPixels);
-		dArrowY1 /= arrowLength * (1.0 / arrowLengthInPixels);
-		int arrowX0 = (int) Math.round(dArrowX0);
-		int arrowY0 = (int) Math.round(dArrowY0);
-		int arrowX1 = (int) Math.round(dArrowX1);
-		int arrowY1 = (int) Math.round(dArrowY1);
-		draw3PixelWideLine(g2, conn[0].x, conn[0].y, conn[1].x, conn[1].y, selected);
-		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX0, conn[1].y + arrowY0, selected);
-		draw3PixelWideLine(g2, conn[1].x, conn[1].y, conn[1].x + arrowX1, conn[1].y + arrowY1, selected);
+		dArrowX /= arrowLength * TBSGraphics.arrowLength;
+		dArrowY /= arrowLength * TBSGraphics.arrowLength;
+		int arrowX = (int) Math.round(dArrowX);
+		int arrowY = (int) Math.round(dArrowY);
+		return new Line2D.Double(
+				conn.getP2().getX(),
+				conn.getP2().getY(),
+				conn.getP2().getX() + arrowX,
+				conn.getP2().getY() + arrowY);
 	}
-	
 
 	/**
 	* Set status string.

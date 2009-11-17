@@ -115,6 +115,11 @@ public class TBSGraphics {
 	public static int emptyNodeYLabelOffset = 5;
 	
 	/**
+	* The initial length of all arrowheads.
+	*/ 
+	public static double arrowLength = 0.1;
+	
+	/**
 	* Minimum number of pixels around the right and left of an organism's name
 	*/
 	public static int paddingWidth = 5;
@@ -158,7 +163,7 @@ public class TBSGraphics {
 	 */
 	public static Color connectionSelectedColor = Color.GREEN;
 	public static Color selectedNodeBorderColor = Color.GREEN;
-	public static int selectedNodeBorderThickness = 4;
+	public static int selectedNodeBorderThickness = 3;
 	
 	/**
 	* Vertical spacing of buttons.
