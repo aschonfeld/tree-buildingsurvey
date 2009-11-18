@@ -151,42 +151,9 @@ public class Connection extends ModelElement
 	}
 	
 	private static boolean isOnLine(int x0, int y0, int x1, int y1, int x, int y) {
-		double dx = (x1 - x0);
-		double dy = (y1 - y0);
-		double slope = 0;
-		double yIntercept = 0;
-		int yTest = 0;
 		Line2D temp = new Line2D.Double(new Point(x0, y0), new Point(x1, y1));
-		Point minXY = getMinXY(temp);
-		Point maxXY = getMaxXY(temp);
-		if((maxXY.x - minXY.x) < 4) {
-			// fixes rounding problems in nearly vertical lines
-			minXY.x -= 2;
-			maxXY.x += 2;
-			if((x >= minXY.x) && (x <= maxXY.x) && (y >= minXY.y) && (y <= maxXY.y)) return true;
-			return false;
-		}
-		slope = dy / dx;
-		if((y >= minXY.y) && (y <= maxXY.y)) {
-			if((x >= minXY.x) && (x <= maxXY.x)) {
-				// x and y are within bounds 
-				// use slope intercept form to see if point is on line
-				yIntercept = y0 - slope * x0;
-				int yMin = (int) Math.round((slope * (x - 1.0)) + yIntercept);
-				int yMax = (int) Math.round((slope * (x + 1.0)) + yIntercept);
-				int yMinCopy = yMin;
-				if(yMax < yMin) {
-					yMin = yMax;
-					yMax = yMinCopy;
-				}
-				System.out.println(y + " " + yTest);
-				// fixes rounding problems in nearly vertical lines
-				if ((y >= yMin) && (y <= yMax)) return true;
-				return false;
-			}
-		}
-		//System.out.println(x0 + " " + y0 + " " + x1 + " " + y1 + " " + x + " " + y);
+		if(Math.abs(temp.ptSegDist(new Point(x, y))) < 1.0) return true;
 		return false;
 	}
-	
+
 }
