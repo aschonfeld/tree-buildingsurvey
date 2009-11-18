@@ -32,7 +32,7 @@ public class TBSUtils {
 	 */
 	public static Line2D getConnectionBounds(Node n1, Node n2){
 		Point start = new Point(),end = new Point();
-		Point n1Mid = getNodeCenter(n1), n2Mid = getNodeCenter(n2);
+		Point n1Mid = n1.getCenter(), n2Mid = n2.getCenter();
 		Line2D l1 = new Line2D.Double(n1Mid.x, n1Mid.y, n2Mid.x, n2Mid.y);
 		List<Line2D> n1Sides = nodeSides(n1);
 		List<Line2D> n2Sides = nodeSides(n2);
@@ -62,8 +62,8 @@ public class TBSUtils {
 		int width, height, x, y;
 		width = n.getWidth();
 		height = n.getHeight();
-		x = n.getLeftX();
-		y = n.getUpperY();
+		x = n.getX();
+		y = n.getY();
 		List<Line2D> sides = new LinkedList<Line2D>();
 		sides.add(new Line2D.Double(x, y+height,x+width, y+height));
 		sides.add(new Line2D.Double(x+width, y+height,x+width, y));
@@ -91,11 +91,6 @@ public class TBSUtils {
 				return null;  // intersection at end point!
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
-	}
-	
-	public static Point getNodeCenter(Node n){
-		return new Point(n.getLeftX() + (n.getWidth()/2),
-				n.getUpperY() + (n.getHeight()/2));	
 	}
 
 }

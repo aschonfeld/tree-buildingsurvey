@@ -6,7 +6,6 @@ package tbs.model;
 * OrganismNodes, EmptyNodes, and Connections. 
 */
 public abstract class ModelElement {
-	private boolean selected = false;
 	
 	/**
 	* CollidesWith should return true if this object overlaps with
@@ -19,20 +18,5 @@ public abstract class ModelElement {
 	* boundaries delineated by this ModelElement.
 	*/ 
 	public abstract boolean contains(int x, int y);
-	
-	/**
-	* Returns true if this ModelElement is the selected object. 	
-	*/
-	public boolean getSelected() {return selected;}
-
-	/**
-	* Sets this object's "selected" status
-	*/
-	public void setSelected(boolean selected){this.selected = selected;}
-	
-	/**
-	* Delete this object or place back in left panel
-	*/	
-	public abstract void removeFromTree();
 
 }

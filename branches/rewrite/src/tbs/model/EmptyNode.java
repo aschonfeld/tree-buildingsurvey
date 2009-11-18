@@ -18,15 +18,10 @@ public class EmptyNode extends Node
 	* EmptyNode's fully-specified constructor sets position and name
 	* explicitly. This is never called. 
 	*/
-	public EmptyNode(TBSModel mod, int lX, int uY, String n) {
-		leftX = lX;
-		upperY = uY;
-		width = TBSGraphics.emptyNodeWidth;
-		height = TBSGraphics.emptyNodeHeight;
-		name = n;
-		model = mod;
-		inTree = true;
-		serial = model.getSerial();
+	public EmptyNode(int serial, int x, int y) {
+		super("Empty Node #"+serial, x, y,
+				TBSGraphics.emptyNodeHeight, TBSGraphics.emptyNodeWidth);
+		setInTree(true);
 		System.out.println("Added EmptyNode # " +serial);
 	}
 	
@@ -34,33 +29,13 @@ public class EmptyNode extends Node
 	* EmptyNode(model) sets name to null, position to the default
 	* (left-hand panel, beneath ONodes)
 	*/
-	public EmptyNode(TBSModel mod) {
-		leftX = TBSGraphics.emptyNodeLeftX;
-		upperY = TBSGraphics.emptyNodeUpperY;
-		width = TBSGraphics.emptyNodeWidth;
-		height = TBSGraphics.emptyNodeHeight;
-		name = defaultName;
-		model = mod;
-		inTree = false;
-		serial = model.getSerial();
+	public EmptyNode() {
+		super("Empty Node", TBSGraphics.emptyNodeLeftX,
+				TBSGraphics.emptyNodeUpperY, TBSGraphics.emptyNodeHeight,
+				TBSGraphics.emptyNodeWidth);
 		System.out.println("Created EmptyNode # " +serial);
 	}
 	
-	/**
-	* CollidesWith returns true if this element overlaps with another.
-	*/
-	public boolean collidesWith(ModelElement m) {
-		if(m.contains(leftX, upperY+height))
-			return true;
-		if(m.contains(leftX+width, upperY+height))
-			return true;
-		if(m.contains(leftX+width, upperY))
-			return true;
-		if(m.contains(leftX, upperY))
-			return true;
-		return false;
-	}
-
 	/**
 	* Creates a new emptyNode() in the default start position and sets
 	* this node to inTree. 
@@ -70,58 +45,5 @@ public class EmptyNode extends Node
 	* is called, it means that the initial EmptyNode has been moved, and
 	* so it creates a new one. 
 	*/
-	public void addToTree()
-	{
-		if (this == model.getImmortalEmptyNode()) {
-			EmptyNode newEN = new EmptyNode(model, leftX, upperY, "");
-			newEN.inTree = true;
-			model.addElement(newEN);
-			this.leftX = TBSGraphics.emptyNodeLeftX;
-			this.upperY = TBSGraphics.emptyNodeUpperY;
-		} else {
-			this.inTree = true;
-		}
-	}
 	
-	/**
-	* removeFromTree unlinks any connections this EmptyNode may be
-	* involved in and deletes it from the model. 
-	*/
-	public void removeFromTree()
-	{	
-		if (isInTree())
-		{
-			this.setSelected(false);
-			unlink();
-			model.delete(this);
-		} else {
-			// empty node was moved, but didn't cross line_of_death, restore to default state
-			leftX = TBSGraphics.emptyNodeLeftX;
-			upperY = TBSGraphics.emptyNodeUpperY;
-		}
-	}
-	
-	/**
-	* Sets name of this string. Cannot be called on the initial EmptyNode
-	* in the inactive panel. 
-	*/
-	public void setName(String n) {
-		// left empty node cannot be renamed
-		if(inTree) {
-			name = n;
-		}
-	}
-	
-	/**
-	* Returns this EmptyNode's "name" string, if any, or the label "Empty
-	* Node # N" where N is a serial number"
-	**/
-	public String getName()
-	{
-		if (!inTree)
-			return("Empty Node");
-		if (name == "")
-			return new String("Empty Node #"+serial);
-		else return name;
-	}	
 }

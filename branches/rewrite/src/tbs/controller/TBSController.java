@@ -14,8 +14,6 @@ import java.awt.geom.Line2D;
 import java.util.List;
 
 import tbs.TBSGraphics;
-import tbs.TBSUtils;
-import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
@@ -66,11 +64,12 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(selectedElement == null) return;
+		if(selectedElement == null)
+			return;
 		if(selectedElement instanceof Node) {
 			if(TBSButtonType.CONNECT.equals(buttonClicked))
 				view.setConnInProgress(
-		    		new Line2D.Double(TBSUtils.getNodeCenter((Node) selectedElement),
+		    		new Line2D.Double(((Node) selectedElement).getCenter(),
 		    				new Point(e.getX(), e.getY())));
 		}
 	}
@@ -123,7 +122,7 @@ public class TBSController
 			// Move Node
 			Node node = (Node) selected;
 			if(lastPosition == null)
-			   lastPosition = new Point(node.getLeftX(), node.getUpperY());
+			   lastPosition = new Point(node.getX(), node.getY());
 			draggedNode = node;
 			node.move(deltaX, deltaY);
 			model.setElement(selectedIndex, node);
@@ -152,16 +151,16 @@ public class TBSController
 			List<Node> inTreeElements = model.inTreeElements();
 			for(Node n : inTreeElements){
 				if(!n.equals(draggedNode) && draggedNode.collidesWith(n)){
-					draggedNode.setLeftX(lastPosition.x);
-					draggedNode.setUpperY(lastPosition.y);
+					draggedNode.setX(lastPosition.x);
+					draggedNode.setY(lastPosition.y);
 					break;
 				}
 			}
 			lastPosition = null;
-			if (draggedNode.getLeftX() < TBSGraphics.LINE_OF_DEATH )
-				draggedNode.removeFromTree();
-			if (draggedNode.getLeftX() > TBSGraphics.LINE_OF_DEATH )
-				draggedNode.addToTree(); 
+			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH )
+				model.removeFromTree(draggedNode);
+			if (draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
+				model.addToTree(draggedNode); 
 				//is it more efficient to check isInTree in this
 				//case or not to check? It shouldn't affect
 				//performance, but it's an interesting question.
@@ -186,19 +185,19 @@ public class TBSController
 		    if(me.contains(x, y))
 		    	topElement = me;
 		}
-		return topElement;
+	    return topElement;
 	}   
     
     
     private void modifyOutOfBounds(Node n){
-    	if(n.getLeftX() < 0 )
-    		n.setLeftX(0);
-    	if((n.getLeftX()+n.getWidth()) > view.getWidth())
-    		n.setLeftX(view.getWidth()-n.getWidth());
-    	if(n.getUpperY() <= 0)
-    		n.setUpperY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    	if((n.getUpperY()) > view.getHeight())
-    		n.setUpperY(view.getHeight()-n.getHeight());
+    	if(n.getX() < 0 )
+    		n.setX(0);
+    	if((n.getX()+n.getWidth()) > view.getWidth())
+    		n.setX(view.getWidth()-n.getWidth());
+    	if(n.getY() <= 0)
+    		n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+    	if((n.getY()) > view.getHeight())
+    		n.setY(view.getHeight()-n.getHeight());
     }
     
     private void cancelConnection() {
@@ -207,19 +206,14 @@ public class TBSController
     
     // creates a connection if conditions are correct
     // returns true if connection created
-    private boolean creatingConnection(Node n, int x, int y) {
+    private boolean creatingConnection(Node n) {
         if(model.inTreeElements().size() > 1){
         	if(n.isInTree()){
         		if(n != selectedElement) {
         			if(selectedElement instanceof Node) {
-        				Node fromNode = (Node) selectedElement;
-        				if(fromNode.isInTree()) {
-        					Node n1 = (Node) selectedElement;
-        					n1.addConnection(n);
-        					model.addElement(new Connection(model, n1, n));
-        					cancelConnection();
-        					return true;
-        				}
+        				model.addConnection((Node) selectedElement, n);
+        				cancelConnection();
+        				return true;
         			}
                 }
             }
@@ -230,31 +224,13 @@ public class TBSController
     
     private void setSelectedElement(ModelElement me) {
     	unselectPrevious();
-    	if(me == null) return;
-    	if(me == model.getImmortalEmptyNode()) return;
-    	if(me instanceof Connection) {
-        	Connection selectedConn = (Connection) selectedElement;
-        	if(selectedElement != null) {
-        		Connection c1 = selectedConn.getToNode().getConn(selectedConn.getFromNode());
-        		if(c1 != null) c1.setSelected(false);
-        	}
-        } else {
-        	selectedElement = me;
-        }
-    	if(selectedElement != null) selectedElement.setSelected(true);
+    	model.setSelectedModelElement(me);
+        selectedElement = me;
     }
 
     // unselect previously selected element, otherwise will keep green box
     private void unselectPrevious(){
-    	if(selectedElement == null) return;
-        if(selectedElement instanceof Connection){
-        	Connection selectedConn = (Connection) selectedElement;
-        	Connection c1 = selectedConn.getToNode().getConn(selectedConn.getFromNode());
-        	if(c1 != null) {
-        		c1.setSelected(false);
-        	}
-        }
-        selectedElement.setSelected(false);
+    	model.setSelectedModelElement(null);
         selectedElement = null;
     }
 
@@ -275,25 +251,25 @@ public class TBSController
 		case ADD:
 			break;
 		case DELETE:
-			if(selectedElement == null) break;
-			selectedElement.removeFromTree();
-			selectedElement = null;
+			if(selectedElement == null)
+				break;
+			model.removeFromTree(selectedElement);
+			unselectPrevious();
 			break;
 		case CONNECT:
-			if(selectedElement == null) break;
+			if(selectedElement == null) 
+				break;
 			//if(selectedElement instanceof Node) {
 			//	creatingConnection((Node) selectedElement, x, y);
 			//}
 			break;
 		case DISCONNECT:
-			if(selectedElement == null) break;
-			if(selectedElement instanceof Connection) {
-				selectedElement.removeFromTree();
-			}
-			if(selectedElement instanceof Node) {
-				Node n = (Node) selectedElement;
-				n.unlink();
-			}
+			if(selectedElement == null) 
+				break;
+			if(selectedElement instanceof Node)
+				model.unlink((Node) selectedElement);
+			else
+				model.removeFromTree(selectedElement);
 			break;
 		case PRINT:
 		case UNDO:
@@ -302,7 +278,8 @@ public class TBSController
     }
     
     private void handleMouseClicked(int x, int y) {
-    	if(buttonClicked == null) buttonClicked = TBSButtonType.SELECT;
+    	if(buttonClicked == null)
+    		buttonClicked = TBSButtonType.SELECT;
 		ModelElement clickedElement = elementMouseIsOver(x, y);
 		// clicking on empty space always cancels connection
 		if(clickedElement == null) {
@@ -314,7 +291,7 @@ public class TBSController
 			break;
 		case ADD:
 			if(clickedElement == null) {
-				Node newNode = new EmptyNode(model, x, y, "");
+				Node newNode = new EmptyNode(model.getSerial(), x, y);
 				for(Node n : model.inTreeElements()){
 					// make sure not putting it on top of another item
 					if(n.collidesWith(newNode)){
@@ -326,13 +303,15 @@ public class TBSController
 			}
 			break;
 		case DELETE:
-			if(clickedElement == null) break;
-			clickedElement.removeFromTree();
-			break;
+			if(clickedElement == null)
+				break;
+			model.removeFromTree(clickedElement);
+			return;
 		case CONNECT:
-			if(clickedElement == null) break;
+			if(clickedElement == null) 
+				break;
 			if(clickedElement instanceof Node) {
-				if(creatingConnection((Node) clickedElement, x, y)) {
+				if(creatingConnection((Node) clickedElement)) {
 					// do not automatically start a new connection
 					clickedElement = null;
 				}
@@ -340,36 +319,26 @@ public class TBSController
 			}
 			break;
 		case DISCONNECT:
-			if(clickedElement == null) break;
-			if(clickedElement instanceof Node) {
-				Node n = (Node) clickedElement;
-				n.unlink();
+			if(clickedElement == null)
 				break;
-			}
-			if(clickedElement instanceof Connection) {
-				clickedElement.removeFromTree();
-				break;
-			}
+			if(clickedElement instanceof Node)
+				model.unlink((Node) clickedElement);
+			else
+				model.removeFromTree(clickedElement);
 			break;
 		case PRINT:
 		case UNDO:
 		case SAVE:
 		}
     	// default action unless return
-    	if(clickedElement instanceof OrganismNode) {
-    		
-    		OrganismNode on = (OrganismNode) clickedElement;
-    		if(on.isInTree()) {
-    			// organism node is in tree, selectable
+    	// default action unless return
+    	if(clickedElement instanceof Node) {
+    		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
     			setSelectedElement(clickedElement);
-    		} else {
-    			// organism node is not in tree, just unselect previous
+    		else // organism node is not in tree, just unselect previous
     			unselectPrevious();
-    		}
-    	} else {
-    		// default set selectedElement = clickedElement
+    	} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);
-    	}
     }		
 	
 }

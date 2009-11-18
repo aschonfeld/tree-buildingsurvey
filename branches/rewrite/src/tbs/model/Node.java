@@ -4,8 +4,9 @@
 package tbs.model;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import tbs.TBSUtils;
 
 
@@ -16,106 +17,110 @@ import tbs.TBSUtils;
 */
 public abstract class Node extends ModelElement 
 {	
-	String name;
-	int leftX;
-	int upperY;
-	int width;
-	int height;
-	TBSModel model;
-	boolean inTree;
-	private Connection conn;
+	private String name;
+	private int height;
+	private int width;
+	private Point anchorPoint;
+	private boolean inTree;
 	public int serial;
 
 	//connections to and from other ModelElements, respectively
-	protected ArrayList<Node> fromConnections = new ArrayList<Node>();
-	ArrayList<Connection> toConnections = new ArrayList<Connection>();
+	private List<Node> connectedFrom = new LinkedList<Node>();
+	private List<Node> connectedTo = new LinkedList<Node>();
 
+	public Node(String name, int x, int y, int height, int width){
+		this.name = name;
+		this.height = height;
+		this.width = width;
+		this.anchorPoint = new Point(x,y);
+		this.inTree = false;
+	}
+	/**
+	* Node locations are given by their upper left corner; this method
+	* returns that value as a Point.
+	*/
+	public Point getAnchorPoint()
+	{
+		return anchorPoint;	
+	}
 	
 	/**
 	* Node locations are given by their upper left corner; this method
 	* returns that value as a Point.
 	*/
-	public Point getXY()
+	public void setAnchorPoint(Point anchorPoint)
 	{
-		return new Point(leftX, upperY);	
+		this.anchorPoint = anchorPoint;
 	}
 	
 	/**
 	* Returns X coordinate Node's location (upper left corner)
 	*/
-	public int getLeftX() {return leftX;}
+	public int getX() {return anchorPoint.x;}
+	
 	/**
 	* Sets X coordinate Node's location (upper left corner)
 	*/
-
-	public void setLeftX(int leftX){this.leftX = leftX;}
+	public void setX(int x){this.anchorPoint.x = x;}
+	
 	/**
 	* Returns Y coordinate Node's location (upper left corner)
 	*/
-
-	public int getUpperY() {return upperY;}
+	public int getY() {return anchorPoint.y;}
 
 	/**
 	* Sets Y coordinate Node's location (upper left corner)
 	*/
-	public void setUpperY(int upperY){this.upperY = upperY;}
+	public void setY(int y){this.anchorPoint.y = y;}
 	
-	/**
-	* gets width of this Node.
-	*/
-	public int getWidth() {return width;}
-	
-	/** 
-	* Gets height of this Node.
-	*/
-	public int getHeight() 	{return height;}
-
+	public int getHeight() {
+		return height;
+	}
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	public int getWidth() {
+		return width;
+	}
+	public void setWidth(int width) {
+		this.width = width;
+	}
 	/**
 	* Returns this Node's name.
 	*/
 	public String getName() {return name;}
 	
-	/**
-	* Returns true if the point indicated is within the object's
-	* boundaries. 
-	*/
-	public boolean contains(int x, int y) {
-		if(TBSUtils.isInRange(x,leftX,leftX + width) &&
-			TBSUtils.isInRange(y, upperY, upperY + height))
-				return true;
-		return false;
+	public List<Node> getConnectedFrom() {
+		return connectedFrom;
 	}
+
+	public void setConnectedFrom(List<Node> connectedFrom) {
+		this.connectedFrom = connectedFrom;
+	}
+
+	public List<Node> getConnectedTo() {
+		return connectedTo;
+	}
+
+	public void setConnectedTo(List<Node> connectedTo) {
+		this.connectedTo = connectedTo;
+	}	
+	
 	
 	/**
 	* Adjusts the object's position by the indicated amount
 	*/
 	public void move(int deltaX, int deltaY) {
-		leftX += deltaX;
-		upperY += deltaY;
+		anchorPoint = new Point(anchorPoint.x + deltaX, anchorPoint.y + deltaY);
 	}		
 	
 	/**
 	* Sets the object's position to the indicated point. 
 	*/
 	public void moveTo(int x, int y) {
-		leftX = x;
-		upperY = y;
+		anchorPoint = new Point(x, y);
 	}	
 	
-	/**
-	* Asks this node to be gone, by the means appropriate to its type.
-	*/
-	public abstract void removeFromTree();
-
-
-	/**
-	* Called when dragging from the left-side column, this asks the
-	* object to do what is needed to place itself "in the tree", that is,
-	* ready to be connected to other objects.
-	*/
-	public abstract void addToTree();
-		
-
 	/**
 	* Returns true if the node thinks it should accept connections and
 	* selected status. 
@@ -124,6 +129,8 @@ public abstract class Node extends ModelElement
 	{ 
 		return inTree;
 	}
+	
+	public void setInTree(boolean inTree){ this.inTree = inTree;}
 
 //-------------------------------------------------
 // ---- Connection handling from here to end ------
@@ -131,197 +138,70 @@ public abstract class Node extends ModelElement
 
 
 	/**
-	* Returns true if this node is connected by a forward connection
-	* (toConnection) to the Node submitted as argument. 
-	* Will return false if this node is connected to by n, and has a
-	* fromConnection to n. 
-	*/
-	public boolean connectedTo(Node n)
-	{
-		ListIterator<Connection> li = toConnections.listIterator();
-		while (li.hasNext())
-		{	if (li.next().getToNode()==n)
-			{	return true;}
-		}
-		return false;
-	}
-
-
-	/**
-	* Returns the Connection between this node and Node n, or null if no
-	* connection exists. 
-	*/
-	public Connection  getConn(Node n)
-	{
-		Connection c;
-		ListIterator<Connection> li = toConnections.listIterator();
-		while (li.hasNext())
-		{
-
-			c = li.next();
-			if (c.getToNode()==n)
-			{	
-				return c;
-			}
-		}
-		return null;
-	}
-
-	/**
 	* Establish a directional link between this object and another.
 	*/
-	public void addConnection(Node n)
+	public void addConnectionTo(Node n)
 	{
-
-		if (!this.isInTree() || !n.isInTree())
-		{
-			System.out.println("AddConnection error: not in tree");
-			return;
-		}
-
-		if (n == this)
-		{
-			System.out.println("addconn error: tried to connect node to self");
-			return;
-		}
-
-		if (this.connectedTo(n))
-		{
+		if (this.connectedTo.contains(n)){
 			System.out.println("AddConnection error: already connected");
 			return;
-		}
-
-		if (n.connectedTo(this))
-		{
-			System.out.println("AddConn warning: reverse connection exists.");
-			System.out.println("Proceeding with connection.");
-		}
-
-		conn= new Connection(model, n, this);
-		toConnections.add(conn);
-
-		n.connectFrom(this);
+		}else
+			connectedTo.add(n);
 		
 		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
-
-	} // end of addConnection
-
-
-	
+	}
 
 	/**
 	* Add n to this Node's list of objects connecting to it.
 	*/
-	public void connectFrom(Node n)
+	public void addConnectionFrom(Node n)
 	{
-		
-		if (fromConnections.contains(n))
-		{	
+		if (connectedFrom.contains(n)){	
 			System.out.println("connectFrom error: already connected");
-			 return; //already connected
-		}
-		if (n == this)
-		{
-			System.out.println("Tried to connect node from self");
-			return;
-		}
-		fromConnections.add(n); 		 
+			 return;
+		}else
+			connectedFrom.add(n); 		 
 
 		System.out.println("Connected to " +getName()+ " from " +
 				n.getName());
-	}	
-
-	/**
-	* Delete this Node's connection to the specified object. 
-	* Takes either Connection or Node as argument.
-	*/
-	public void removeConnection(Connection c)
-	{
-		if (c==null)
-		{
-			System.out.println("removeConnection: no such connection");
-			return;
-		}
-
-		toConnections.remove(c);
-
-		//n.disconnectFrom(this);
-		System.out.println("Removed connection");
 	}
-
-	/**
-	* RemoveConnection, overloaded to take Node as argument.
-	*/
-	public void removeConnection(Node n)
-	{
-		conn = getConn(n);
-		removeConnection(conn);
-	}
-
-	/**
-	* Remove n from list of Nodes connecting to this Node
-	*/
-	public void disconnectFrom(Node n)
-	{
-		if (fromConnections.indexOf(n) < 0) //no connection to undo
-		{
-			
-			System.out.println("--Bad call to Node.disconnectFrom!--");
-			return; 
-		}
-		fromConnections.remove(n);
-		System.out.println("Removed "+ n.getName() +" from " +getName()+
-			" toConnections list.");
-	}	
-
-	/**
-	* Remove all of this Node's connections; in preparation, perhaps,
-	* for deleting it.
-	*/
-	public void unlink()
-	{
-		for (Node n : fromConnections)
-		{
-			n.removeConnection(this);
-		}
-		fromConnections.clear();
-		
-		for (Connection c: toConnections)
-		{
-			c.getToNode().disconnectFrom(this);    
-		}
-		toConnections.clear();
-
-	}		
-
-
-	/**
-	* Returns true if this object has forward connections (toConnections)
-	* to any objects in the model. 
-	* Will return false if this object is connected to, but does not
-	* connect to any objects (ie, is a terminal node) or if it is
-	* completely isolated in the model.
-	*/
-	public boolean isConnected()
-	{
-		return !toConnections.isEmpty();
+	
+	public void unlink(){
+		this.connectedTo.clear();
+		this.connectedFrom.clear();
 	}
 	
 	/**
-	* Returns the ArrayList of Connections for this Node. 
-	*/
-	public ArrayList<Connection> getConnections() 
-	{
-		return toConnections;
+	* Returns true if this Node overlaps another ModelElement. Should be
+	* able to deal with Connections, but I haven't checked. 
+	*/	
+	@Override
+	public boolean collidesWith(ModelElement m) {
+		if(m.contains(anchorPoint.x, anchorPoint.y+height))
+			return true;
+		if(m.contains(anchorPoint.x+width, anchorPoint.y+height))
+			return true;
+		if(m.contains(anchorPoint.x+width, anchorPoint.y))
+			return true;
+		if(m.contains(anchorPoint.x, anchorPoint.y))
+			return true;
+		return false;
 	}
-		
-
+	
 	/**
-	* Returns the ArrayList of Nodes which connect to this Node. 
+	* Returns true if the point indicated is within the object's
+	* boundaries. 
 	*/
-	public ArrayList<Node> getFromConnections()
-	{
-		return fromConnections;
+	@Override
+	public boolean contains(int x, int y) {
+		if(TBSUtils.isInRange(x,this.anchorPoint.x,this.anchorPoint.x + width) &&
+			TBSUtils.isInRange(y, this.anchorPoint.y, this.anchorPoint.y + height))
+				return true;
+		return false;
+	}
+	
+	public Point getCenter(){
+		return new Point(anchorPoint.x + (width/2),anchorPoint.y + (height/2));	
 	}
 }	

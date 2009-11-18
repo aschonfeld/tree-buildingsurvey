@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.TreeMap;
 
 import tbs.TBSGraphics;
@@ -25,13 +24,15 @@ public class TBSModel
 	private TBSView view;
 	private TBSController controller;
 	private List<ModelElement> modelElements;
+	private ModelElement selectedModelElement;
 	private EmptyNode immortalEmptyNode;
 
 	private int MESerialNumber;
 	
 
 	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
-		modelElements = new ArrayList<ModelElement>();
+		modelElements = new LinkedList<ModelElement>();
+		selectedModelElement = null;
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
 		view = new TBSView(this);
@@ -70,22 +71,6 @@ public class TBSModel
 	*/
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
-	}
-
-	/**
-	* Deletes an EmptyNode from the ArrayList of ModelElements. 
-   */
-	public void delete(EmptyNode en)
-	{
-		modelElements.remove(en);		
-	}
-	
-	/**
-	* Deletes a Connection from the ArrayList of ModelElements.
-	*/
-	public void delete(Connection conn)
-	{
-		modelElements.remove(conn);		
 	}	
 	
 	/**
@@ -101,6 +86,14 @@ public class TBSModel
 	*/
 	public List<ModelElement> getElements() {
 		return modelElements;
+	}
+	
+	public ModelElement getSelectedModelElement() {
+		return selectedModelElement;
+	}
+
+	public void setSelectedModelElement(ModelElement selectedModelElement) {
+		this.selectedModelElement = selectedModelElement;
 	}
 
 	/**
@@ -155,9 +148,8 @@ public class TBSModel
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);
-			addElement(new OrganismNode(this, img, organismName, 
-				currentX, currentY, TBSGraphics.organismNodeWidth, 
-				TBSGraphics.organismNodeHeight));
+			addElement(new OrganismNode(img, organismName, 
+				currentX, currentY, this.getSerial()));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 
@@ -167,7 +159,7 @@ public class TBSModel
 					TBSGraphics.emptyNodeWidth / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + 
 					TBSGraphics.emptyNodeYLabelOffset; 
-		immortalEmptyNode = new EmptyNode(this);
+		immortalEmptyNode = new EmptyNode();
 		addElement(immortalEmptyNode);
 	}	
 
@@ -181,68 +173,16 @@ public class TBSModel
 	public void printConnections()
 	{
 		Node n;
-		ListIterator<ModelElement> li = modelElements.listIterator();
-		while (li.hasNext())
-		{
-			n = (Node)li.next();
-			
-			if (n.isConnected())
-			{
-				ListIterator<Connection> it = n.getConnections().listIterator();
-
-				while (it.hasNext())
-				{
-					System.out.println(n.getName()+" -> "+
-						it.next().getToNode().getName());
-				}
-			}
-			if (!n.getFromConnections().isEmpty())
-			{
-				ListIterator<Node> it =
-					n.getFromConnections().listIterator();
-				while (it.hasNext())
-				{
-					System.out.println(n.getName() +" <- " +
-						it.next().getName());
-				}
+		for(ModelElement m : modelElements){
+			if(m instanceof Node){
+				n = (Node) m;
+				for(Node to : n.getConnectedTo())
+					System.out.println(n.getName()+" -> "+to.getName());
+				for(Node from : n.getConnectedFrom())
+					System.out.println(from.getName()+" -> "+n.getName());
 			}
 		}
 	}
-
-
-	/**
-	* Deprecated. Unlink had to live in Model when connections were
-	* one-way. Now, this simply calls the Node-based two-way unlink.
-	*/
-	public void unlink(Node source)
-	{
-		source.unlink();
-
-/*		Node target;
-		Connection conn;
-
-		for (ModelElement me:modelElements)
-		{
-			target = (Node)me;
-		
-			if (source.connectedTo(target))
-				source.removeConnection(source.getConn(target));
-			if (target.connectedTo(source))
-				target.removeConnection(target.getConn(source));
-			
-		}
-*/		
-	}
-
-	/**
-	* Deprecated. Old version of unlink. Now a reference to
-	* Node.unlink().
-	*/
-	public void clearConnections(Node n) 
-	{
-		n.unlink();
-	}
-
 
 	/**
 	* Returns the list of active elements
@@ -258,4 +198,66 @@ public class TBSModel
 		}
 		return inTreeElements;
 	}
+	
+	public void addToTree(Node n)
+	{
+		if (n.equals(immortalEmptyNode)) {
+			EmptyNode newEN = new EmptyNode(this.getSerial(), n.getX(), n.getY());
+			modelElements.add(newEN);
+			n.setX(TBSGraphics.emptyNodeLeftX);
+			n.setY(TBSGraphics.emptyNodeUpperY);
+		} else {
+			n.setInTree(true);
+		}
+	}
+	
+	public void addConnection(Node from, Node to)
+	{
+		modelElements.add(new Connection(from, to));
+		from.addConnectionTo(to);
+		to.addConnectionFrom(from);
+	}
+	
+	/**
+	* Deprecated. Unlink had to live in Model when connections were
+	* one-way. Now, this simply calls the Node-based two-way unlink.
+	*/
+	public void unlink(Node n)
+	{
+		List<Connection> toBeRemoved = new LinkedList<Connection>();
+		Connection c;
+		for (ModelElement me: modelElements)
+		{
+			if(me instanceof Connection){
+				c = (Connection) me;
+				if(c.getTo().equals(n) || c.getFrom().equals(n))
+					toBeRemoved.add(c);
+			}
+		}
+		modelElements.removeAll(toBeRemoved);
+		n.unlink();
+	}
+	public void removeFromTree(ModelElement m){
+		if(m instanceof Node)
+			removeFromTree((Node) m);
+		else
+			removeFromTree((Connection) m);
+	}
+	
+	public void removeFromTree(Node n){
+		unlink(n);
+		if(n instanceof OrganismNode){
+			n.setInTree(false);
+			((OrganismNode) n).resetPosition();
+		}else
+			modelElements.remove(n);
+	}
+	
+	public void removeFromTree(Connection c){
+		c.getFrom().getConnectedTo().remove(c.getTo());
+		c.getTo().getConnectedFrom().remove(c.getFrom());
+		modelElements.remove(c);
+	}
+	
+	
 }
