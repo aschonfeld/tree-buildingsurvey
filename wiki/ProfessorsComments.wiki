@@ -2,6 +2,13 @@
 
 = Comments and questions from the professor = 
 
+
+=== November 18 ===
+
+The good news is that you have open issues. The bad news is that there seem to be no closed issues. One of Joel's recommendations is that you fix bugs as you find them. Please do that.
+
+The downloads page seems to have a zip of the source files (at least that's what the name suggests). It should provide a complete release: the compiled jar, a sample html page to invoke the applet, a readme file and the source code. And that file should be prepared by a one step build - see my comment below from more than a week ago.
+
 === November 10 ===
 
 Version 0.4 is marked as done at
