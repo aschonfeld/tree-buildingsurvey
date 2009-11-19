@@ -23,6 +23,7 @@ public abstract class Node extends ModelElement
 	private Point anchorPoint;
 	private boolean inTree;
 	public int serial;
+	private int maxNameLength = 30;
 
 	//connections to and from other ModelElements, respectively
 	private List<Node> connectedFrom = new LinkedList<Node>();
@@ -89,6 +90,14 @@ public abstract class Node extends ModelElement
 	* Returns this Node's name.
 	*/
 	public String getName() {return name;}
+	
+	public void setName(String s) {
+		if(this instanceof EmptyNode) {
+			if(s.length() < maxNameLength) {
+				name = s;
+			}
+		}
+	}
 	
 	public List<Node> getConnectedFrom() {
 		return connectedFrom;

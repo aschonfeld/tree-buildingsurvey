@@ -5,8 +5,9 @@ public enum TBSButtonType {
 	SELECT("Select"),
 	ADD("Add"),
 	DELETE("Delete"),
-	CONNECT("Connect"),
-	DISCONNECT("Disconnect"),
+	CONNECT("Link"),
+	DISCONNECT("Unlink"),
+	LABEL("Label"),
 	PRINT("Print"), 
 	UNDO("Undo"), 
 	SAVE("Save");

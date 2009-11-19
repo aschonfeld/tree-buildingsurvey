@@ -238,6 +238,7 @@ public class TBSModel
 		n.unlink();
 	}
 	public void removeFromTree(ModelElement m){
+		if((m == null) || (m == immortalEmptyNode)) return;
 		if(m instanceof Node)
 			removeFromTree((Node) m);
 		else
@@ -245,6 +246,7 @@ public class TBSModel
 	}
 	
 	public void removeFromTree(Node n){
+		if((n == null) || (n == immortalEmptyNode)) return;
 		unlink(n);
 		if(n instanceof OrganismNode){
 			n.setInTree(false);
@@ -254,6 +256,7 @@ public class TBSModel
 	}
 	
 	public void removeFromTree(Connection c){
+		if(c == null) return;
 		c.getFrom().getConnectedTo().remove(c.getTo());
 		c.getTo().getConnectedFrom().remove(c.getFrom());
 		modelElements.remove(c);

@@ -17,7 +17,6 @@ import tbs.TBSGraphics;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
-import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
@@ -38,6 +37,7 @@ public class TBSController
 	private Point lastPosition = null;
 	private String statusString = null;
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
+	private boolean labelingInProgress = false;
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
@@ -49,15 +49,26 @@ public class TBSController
 	public void keyPressed(KeyEvent e) {
 		if(statusString == null) statusString = new String();
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-			statusString += " DEL ";
+			handleDelete();
 		}
+		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if(labelingInProgress) {
+				cancelLabel();
+				setSelectedElement(null);
+			}
+		}
+		
 	}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {
-		if(statusString == null) statusString = new String();
 		char c = e.getKeyChar();
-		statusString += c;
-		view.setStatusString(statusString);
+		if(selectedElement == null) return;
+		if(labelingInProgress) {
+			if(selectedElement instanceof EmptyNode) {
+				EmptyNode en = (EmptyNode) selectedElement;
+				en.setName(en.getName() + c);
+			}
+		}
 	}
 	
 	public void mouseEntered(MouseEvent e){}
@@ -86,8 +97,11 @@ public class TBSController
 			// if mouse is in button bar
 			if(y < TBSGraphics.buttonsHeight)  {
 				handleButtonClicked(x, y);
+			} else if (x > TBSGraphics.LINE_OF_DEATH) {
+				handleMouseClicked(x, y);
 			} else {
-				if(x > TBSGraphics.LINE_OF_DEATH) handleMouseClicked(x, y);
+				clearCurrentActions();
+				setSelectedElement(null);
 			}
 		}
 	}
@@ -169,6 +183,10 @@ public class TBSController
 		//selectedIndices = new ArrayList<Integer>(); // clear selected items
 	}
 	
+	public TBSButtonType getButtonClicked() {
+		return buttonClicked;
+	}
+	
     private int indexMouseIsOver(int x, int y) {
 	    int maxIndex = -1;
 	    int i = 0;
@@ -222,6 +240,18 @@ public class TBSController
         return false;
     }
     
+    public void cancelLabel() {
+    	labelingInProgress = false;
+    }
+    
+    public void creatingLabel(EmptyNode en) {
+    	if(!labelingInProgress) {
+    		labelingInProgress = true;
+    		en.setName("");
+    		selectedElement = en;
+    	}
+    }
+    
     private void setSelectedElement(ModelElement me) {
     	unselectPrevious();
     	model.setSelectedModelElement(me);
@@ -233,14 +263,21 @@ public class TBSController
     	model.setSelectedModelElement(null);
         selectedElement = null;
     }
-
-
-    public TBSButtonType getButtonClicked() {
-    	return buttonClicked;
+ 
+    public void handleDelete() {
+		if(selectedElement == null) return;
+		clearCurrentActions();
+		model.removeFromTree(selectedElement);
+		unselectPrevious();
+    }
+    
+    public void clearCurrentActions() {
+		cancelConnection();
+		cancelLabel();
     }
     
     private void handleButtonClicked(int x, int y) {
-    	cancelConnection(); // clicking button panel cancels connection
+    	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
 		if(buttonIndex >= TBSGraphics.buttons.size()) return;
 		buttonClicked = TBSGraphics.buttons.get(buttonIndex);
@@ -251,18 +288,11 @@ public class TBSController
 		case ADD:
 			break;
 		case DELETE:
-			if(selectedElement == null)
-				break;
-			model.removeFromTree(selectedElement);
-			unselectPrevious();
+			handleDelete();
 			break;
 		case CONNECT:
 			if(selectedElement == null) 
 				break;
-			//if(selectedElement instanceof Node) {
-			//	creatingConnection((Node) selectedElement, x, y);
-			//}
-			break;
 		case DISCONNECT:
 			if(selectedElement == null) 
 				break;
@@ -271,10 +301,12 @@ public class TBSController
 			else
 				model.removeFromTree(selectedElement);
 			break;
+		case LABEL:
 		case PRINT:
 		case UNDO:
 		case SAVE:
 		}
+		setSelectedElement(null);
     }
     
     private void handleMouseClicked(int x, int y) {
@@ -283,9 +315,9 @@ public class TBSController
 		ModelElement clickedElement = elementMouseIsOver(x, y);
 		// clicking on empty space always cancels connection
 		if(clickedElement == null) {
-			cancelConnection();
 			unselectPrevious();
 		}
+		clearCurrentActions();
     	switch (buttonClicked) {
 		case SELECT:
 			break;
@@ -305,7 +337,8 @@ public class TBSController
 		case DELETE:
 			if(clickedElement == null)
 				break;
-			model.removeFromTree(clickedElement);
+			selectedElement = clickedElement;
+			handleDelete();
 			return;
 		case CONNECT:
 			if(clickedElement == null) 
@@ -325,6 +358,12 @@ public class TBSController
 				model.unlink((Node) clickedElement);
 			else
 				model.removeFromTree(clickedElement);
+			break;
+		case LABEL:
+			if(clickedElement == null)
+				break;
+			if(clickedElement instanceof EmptyNode)
+				creatingLabel((EmptyNode) clickedElement);
 			break;
 		case PRINT:
 		case UNDO:
