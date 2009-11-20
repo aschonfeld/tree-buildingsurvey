@@ -28,3 +28,5 @@ this will deploy the application on whichever server you would like to house it
 	-"Test Current Tree-Building Applet" link on home page
 	-"Test Applets", wiki page (http://code.google.com/p/tree-buildingsurvey/wiki/Applets)
 	-wiki table of contents (http://code.google.com/p/tree-buildingsurvey/w/edit/TableOfContents)
+	-any changes to README.TXT should be reflected in the wiki page OneStepBuild
+	
