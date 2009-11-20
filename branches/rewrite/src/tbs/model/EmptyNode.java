@@ -34,16 +34,5 @@ public class EmptyNode extends Node
 				TBSGraphics.emptyNodeUpperY, TBSGraphics.emptyNodeHeight,
 				TBSGraphics.emptyNodeWidth);
 		System.out.println("Created EmptyNode # " +serial);
-	}
-	
-	/**
-	* Creates a new emptyNode() in the default start position and sets
-	* this node to inTree. 
-	* addToTree is called when a Node is moved from the inactive left
-	* panel position (where EmptyNodes are created, see
-	* constructor(model) to the active portion of the display. When this
-	* is called, it means that the initial EmptyNode has been moved, and
-	* so it creates a new one. 
-	*/
-	
+	}	
 }

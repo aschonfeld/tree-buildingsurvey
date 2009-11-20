@@ -4,10 +4,9 @@
 package tbs.model;
 
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-
-import tbs.TBSUtils;
 
 
 
@@ -43,6 +42,10 @@ public abstract class Node extends ModelElement
 	public Point getAnchorPoint()
 	{
 		return anchorPoint;	
+	}
+	
+	public Rectangle2D getRectangle(){
+		return new Rectangle2D.Double(getX(), getY(), width, height);
 	}
 	
 	/**
@@ -186,15 +189,9 @@ public abstract class Node extends ModelElement
 	* able to deal with Connections, but I haven't checked. 
 	*/	
 	@Override
-	public boolean collidesWith(ModelElement m) {
-		if(m.contains(anchorPoint.x, anchorPoint.y+height))
-			return true;
-		if(m.contains(anchorPoint.x+width, anchorPoint.y+height))
-			return true;
-		if(m.contains(anchorPoint.x+width, anchorPoint.y))
-			return true;
-		if(m.contains(anchorPoint.x, anchorPoint.y))
-			return true;
+	public boolean collidesWith(ModelElement m) {		
+		if(m instanceof Node)
+			return ((Node) m).getRectangle().intersects(getRectangle()); 
 		return false;
 	}
 	
@@ -204,10 +201,7 @@ public abstract class Node extends ModelElement
 	*/
 	@Override
 	public boolean contains(int x, int y) {
-		if(TBSUtils.isInRange(x,this.anchorPoint.x,this.anchorPoint.x + width) &&
-			TBSUtils.isInRange(y, this.anchorPoint.y, this.anchorPoint.y + height))
-				return true;
-		return false;
+		return this.getRectangle().contains(new Point(x,y));
 	}
 	
 	public Point getCenter(){

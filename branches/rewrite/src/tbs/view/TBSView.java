@@ -161,8 +161,11 @@ public class TBSView extends JComponent {
 		if(me instanceof Node){
 			Node n = (Node) me;
 			selectedGraphics.setColor(TBSGraphics.selectedNodeBorderColor);
-			for (int i = 0; i <= TBSGraphics.selectedNodeBorderThickness; i++)
-				selectedGraphics.drawRect(n.getX()-i, n.getY()-i, n.getWidth() +(2*i), n.getHeight() +(2*i));
+			selectedGraphics.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
+			selectedGraphics.draw(new Rectangle2D.Double(n.getX()-1.5,
+					n.getY()-1.5,
+					n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
+					n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
 		}else{
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
@@ -195,8 +198,8 @@ public class TBSView extends JComponent {
 	* Draw the arrowhead at the end of a connection.
 	*/
 	public Line2D getArrowHead(Line2D conn, double angle) {
-		double dx = (conn.getX2() - conn.getX1());
-		double dy = (conn.getY2() - conn.getY1());
+		double dx = TBSUtils.dx(conn);
+		double dy = TBSUtils.dy(conn);
 		double dArrowX = Math.round(dx * Math.cos(angle) + dy * Math.sin(angle));
 		double dArrowY = Math.round(dy * Math.cos(angle) - dx * Math.sin(angle));
 		double arrowLength = Math.sqrt(dx * dx + dy * dy);
@@ -255,7 +258,6 @@ public class TBSView extends JComponent {
 			g2.draw(getArrowHead(connInProgress, 1.25 * Math.PI));
 		}
 		g2.setStroke(new BasicStroke());
-		//renderConnections(g2);
 		renderButtons(g2);
 		
 	}

@@ -202,8 +202,7 @@ public class TBSModel
 	public void addToTree(Node n)
 	{
 		if (n.equals(immortalEmptyNode)) {
-			EmptyNode newEN = new EmptyNode(this.getSerial(), n.getX(), n.getY());
-			modelElements.add(newEN);
+			modelElements.add(new EmptyNode(this.getSerial(), n.getX(), n.getY()));
 			n.setX(TBSGraphics.emptyNodeLeftX);
 			n.setY(TBSGraphics.emptyNodeUpperY);
 		} else {
@@ -218,49 +217,48 @@ public class TBSModel
 		to.addConnectionFrom(from);
 	}
 	
-	/**
-	* Deprecated. Unlink had to live in Model when connections were
-	* one-way. Now, this simply calls the Node-based two-way unlink.
-	*/
-	public void unlink(Node n)
-	{
-		List<Connection> toBeRemoved = new LinkedList<Connection>();
+	public List<Connection> getConnectionsByNode(Node n){
+		List<Connection> connections = new LinkedList<Connection>();
 		Connection c;
 		for (ModelElement me: modelElements)
 		{
 			if(me instanceof Connection){
 				c = (Connection) me;
-				if(c.getTo().equals(n) || c.getFrom().equals(n))
-					toBeRemoved.add(c);
+				if(c.hasNode(n))
+					connections.add(c);
 			}
 		}
-		modelElements.removeAll(toBeRemoved);
+		return connections;
+	}
+	
+	/**
+	* Unlink had to live in Model when connections were
+	* one-way. Now, this simply calls the Node-based two-way unlink.
+	*/
+	public void unlink(Node n)
+	{
+		modelElements.removeAll(getConnectionsByNode(n));
 		n.unlink();
 	}
+	
+	
 	public void removeFromTree(ModelElement m){
-		if((m == null) || (m == immortalEmptyNode)) return;
-		if(m instanceof Node)
-			removeFromTree((Node) m);
-		else
-			removeFromTree((Connection) m);
-	}
-	
-	public void removeFromTree(Node n){
-		if((n == null) || (n == immortalEmptyNode)) return;
-		unlink(n);
-		if(n instanceof OrganismNode){
-			n.setInTree(false);
-			((OrganismNode) n).resetPosition();
-		}else
-			modelElements.remove(n);
-	}
-	
-	public void removeFromTree(Connection c){
-		if(c == null) return;
-		c.getFrom().getConnectedTo().remove(c.getTo());
-		c.getTo().getConnectedFrom().remove(c.getFrom());
-		modelElements.remove(c);
-	}
-	
+		if((m == null) || (m.equals(immortalEmptyNode)))
+			return;
+		if(m instanceof Node){
+			Node n = (Node) m;
+			unlink(n);
+			if(n instanceof OrganismNode){
+				n.setInTree(false);
+				((OrganismNode) n).resetPosition();
+			}
+		}else{
+			Connection c = (Connection) m;
+			c.getFrom().getConnectedTo().remove(c.getTo());
+			c.getTo().getConnectedFrom().remove(c.getFrom());
+		}
+		if(!(m instanceof OrganismNode))
+			modelElements.remove(m);
+	}	
 	
 }

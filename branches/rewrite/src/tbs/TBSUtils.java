@@ -13,10 +13,6 @@ import tbs.model.Node;
 
 public class TBSUtils {
 
-	public static boolean isInRange(int val, int min, int max){
-		return ((val >= min) && (val <= max));
-	}
-	
 	public static double dx(Line2D l){return l.getX2() - l.getX1();}
 	public static double dy(Line2D l){return l.getY2() - l.getY1();}
 	public static double slope(Line2D l){return dx(l)/dy(l);}

@@ -135,8 +135,9 @@ public class TBSController
 		if(selected instanceof Node) {
 			// Move Node
 			Node node = (Node) selected;
-			if(lastPosition == null)
+			if(lastPosition == null){
 			   lastPosition = new Point(node.getX(), node.getY());
+			}
 			draggedNode = node;
 			node.move(deltaX, deltaY);
 			model.setElement(selectedIndex, node);

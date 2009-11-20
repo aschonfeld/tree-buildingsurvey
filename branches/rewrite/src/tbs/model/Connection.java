@@ -38,10 +38,15 @@ public class Connection extends ModelElement
 	{
 		return from;
 	}
+	
+	public boolean hasNode(Node n){
+		return to.equals(n) || from.equals(n);
+	}
 
 	/**
 	* Returns true for a point on the line, as determined algebraically
 	*/
+	@Override
 	public boolean contains(int x, int y)
 	{
 		double dist = Math.abs(TBSUtils.getConnectionBounds(from, to).ptSegDist(new Point(x, y)));
