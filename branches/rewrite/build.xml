@@ -6,8 +6,8 @@
 	<property name="javadoc.dir" value="${basedir}/javadoc/"/>
 	<property name="deploy.dir" value="${basedir}/deploy${version}/"/>
 	<property name="main.class" value="tbs.TBSApplet"/>
-	<property name="pscp" value="c:\pscp"/>
 	<property name="jarfile" value="TBSRun"/>
+	
 
 	<target name="clean">
 			<delete dir="${build.home}" description="Deletes the build directory"/>
@@ -56,8 +56,11 @@
 		<mkdir dir="${deploy.dir}"/>
 		<copy file="TBSRun.jar" todir="${deploy.dir}"/>
 		<copy file="applet.html" todir="${deploy.dir}"/>
-		<exec executable="${pscp}">
-			<arg line="-batch -pw ${passw} -r ${deploy.dir} ${username}@users.cs.umb.edu:/home/${username}/public_html/"/>
+		<copy todir="${deploy.dir}">
+			<fileset dir="${javadoc.dir}"/>
+		</copy>
+		<exec executable="pscp">
+			<arg line="-batch -pw ${passw} -r ${deploy.dir} ${username}@${hostname}:${server_dir}"/>
 		</exec>
 		<delete dir="${deploy.dir}"/>
 	</target>
