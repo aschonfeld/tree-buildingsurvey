@@ -12,10 +12,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
+import tbs.model.history.Action;
+import tbs.model.history.Add;
+import tbs.model.history.Drag;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
@@ -26,7 +30,7 @@ public class TBSModel
 	private List<ModelElement> modelElements;
 	private ModelElement selectedModelElement;
 	private EmptyNode immortalEmptyNode;
-
+	private Stack<Action> history;
 	private int MESerialNumber;
 	
 
@@ -37,6 +41,7 @@ public class TBSModel
 		createModelElements(g, organismNameToImage);
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
+		history = new Stack<Action>();
 	}
 	
 	/**
@@ -80,6 +85,17 @@ public class TBSModel
 		return modelElements.get(i);
 	}
 	
+	public int findIndexByElement(ModelElement m){
+		int index = -1;
+		for(int i=0;i<modelElements.size();i++){
+			if(modelElements.get(i).getId().equals(m.getId())){
+				index = i;
+				break;
+			}
+		}
+		return index;
+	}
+	
 
 	/**
 	* returns the complete ArrayList of Model Elements.
@@ -105,6 +121,14 @@ public class TBSModel
 
 	public EmptyNode getImmortalEmptyNode() {
 		return immortalEmptyNode;
+	}
+	
+	public Stack<Action> getHistory() {
+		return history;
+	}
+
+	public void setHistory(Stack<Action> history) {
+		this.history = history;
 	}
 	
 	public void createButtons(Graphics g)
@@ -148,8 +172,8 @@ public class TBSModel
 		while(itr.hasNext()) {
 			organismName = itr.next();
 			img = organismNameToImage.get(organismName);
-			addElement(new OrganismNode(img, organismName, 
-				currentX, currentY, this.getSerial()));
+			addElement(new OrganismNode( getSerial(), organismName, 
+				new Point(currentX, currentY), img));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 
@@ -159,7 +183,7 @@ public class TBSModel
 					TBSGraphics.emptyNodeWidth / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + 
 					TBSGraphics.emptyNodeYLabelOffset; 
-		immortalEmptyNode = new EmptyNode();
+		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
 	}	
 
@@ -201,18 +225,28 @@ public class TBSModel
 	
 	public void addToTree(Node n)
 	{
+		Node newNode;
 		if (n.equals(immortalEmptyNode)) {
-			modelElements.add(new EmptyNode(this.getSerial(), n.getX(), n.getY()));
-			n.setX(TBSGraphics.emptyNodeLeftX);
-			n.setY(TBSGraphics.emptyNodeUpperY);
+			newNode = new EmptyNode(getSerial(), n.getAnchorPoint());
+			modelElements.add(newNode);
+			n.setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY));
 		} else {
 			n.setInTree(true);
+			newNode = n;
+		}
+		if(history.peek() instanceof Drag)
+			history.pop();
+		try{
+			history.push(new Add((Node) newNode.clone()));
+			System.out.println("Added action(add) to history.");
+		}catch(CloneNotSupportedException c){
+			System.out.println("Unable to add action to history.");
 		}
 	}
 	
 	public void addConnection(Node from, Node to)
 	{
-		modelElements.add(new Connection(from, to));
+		modelElements.add(new Connection(getSerial(), from, to));
 		from.addConnectionTo(to);
 		to.addConnectionFrom(from);
 	}
@@ -251,14 +285,14 @@ public class TBSModel
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
 				((OrganismNode) n).resetPosition();
+				return;
 			}
 		}else{
 			Connection c = (Connection) m;
 			c.getFrom().getConnectedTo().remove(c.getTo());
 			c.getTo().getConnectedFrom().remove(c.getFrom());
 		}
-		if(!(m instanceof OrganismNode))
-			modelElements.remove(m);
+		modelElements.remove(m);
 	}	
 	
 }

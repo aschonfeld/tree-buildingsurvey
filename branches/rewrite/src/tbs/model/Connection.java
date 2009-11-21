@@ -17,8 +17,9 @@ public class Connection extends ModelElement
 	/**
 	* Connection registers a connection between two nodes
 	*/
-	public Connection(Node from, Node to)
+	public Connection(int id, Node from, Node to)
 	{
+		super(id);
 		this.from=from;
 		this.to=to;
 	}

@@ -3,6 +3,7 @@
 
 package tbs.model;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import tbs.TBSGraphics;
@@ -10,22 +11,17 @@ import tbs.TBSGraphics;
 public class OrganismNode extends Node
 {
 	private BufferedImage img;
-	private int defaultLeftX;
-	private int defaultUpperY;
-	
+	private Point defaultPoint;
 		
-	public OrganismNode(BufferedImage i, String name, int x, int y, int serial) 
+	public OrganismNode(int id, String name, Point anchorPoint, BufferedImage i) 
 	{
-		super(name, x, y, TBSGraphics.organismNodeHeight, TBSGraphics.organismNodeWidth);
+		super(id, name, anchorPoint, TBSGraphics.organismNodeHeight, TBSGraphics.organismNodeWidth);
 		img = i;
-		defaultLeftX = x;
-		defaultUpperY = y;
-		this.serial = serial;
+		defaultPoint = anchorPoint;
 	}
 				
 	public void resetPosition(){
-		setX(defaultLeftX);
-		setY(defaultUpperY);
+		setAnchorPoint(defaultPoint);
 	}
 		
 	public BufferedImage getImage() {return img;}		

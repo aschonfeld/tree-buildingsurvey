@@ -14,25 +14,25 @@ import java.util.List;
 * This class is the superclass for OrganismNode and EmptyNode, and
 * contains their common elements. 
 */
-public abstract class Node extends ModelElement 
+public abstract class Node extends ModelElement implements Cloneable
 {	
 	private String name;
 	private int height;
 	private int width;
 	private Point anchorPoint;
 	private boolean inTree;
-	public int serial;
 	private int maxNameLength = 30;
 
 	//connections to and from other ModelElements, respectively
 	private List<Node> connectedFrom = new LinkedList<Node>();
 	private List<Node> connectedTo = new LinkedList<Node>();
 
-	public Node(String name, int x, int y, int height, int width){
+	public Node(int id, String name, Point anchorPoint, int height, int width){
+		super(id);
 		this.name = name;
 		this.height = height;
 		this.width = width;
-		this.anchorPoint = new Point(x,y);
+		this.anchorPoint = anchorPoint;
 		this.inTree = false;
 	}
 	/**
@@ -89,6 +89,7 @@ public abstract class Node extends ModelElement
 	public void setWidth(int width) {
 		this.width = width;
 	}
+	
 	/**
 	* Returns this Node's name.
 	*/
@@ -206,5 +207,15 @@ public abstract class Node extends ModelElement
 	
 	public Point getCenter(){
 		return new Point(anchorPoint.x + (width/2),anchorPoint.y + (height/2));	
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Node copy = (Node) super.clone();
+		copy.setName(getName());
+		copy.setAnchorPoint(anchorPoint);
+		copy.setHeight(height);
+		copy.setWidth(width);
+		return copy;
 	}
 }	

@@ -18,6 +18,7 @@ import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.TBSModel;
+import tbs.model.history.Drag;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
@@ -136,7 +137,13 @@ public class TBSController
 			// Move Node
 			Node node = (Node) selected;
 			if(lastPosition == null){
-			   lastPosition = new Point(node.getX(), node.getY());
+				lastPosition = new Point(node.getX(), node.getY());
+				try{
+					model.getHistory().push(new Drag((Node) node.clone()));
+					System.out.println("Added action(drag) to history.");
+				}catch(CloneNotSupportedException c){
+					System.out.println("Unable to add action to history.");
+				}
 			}
 			draggedNode = node;
 			node.move(deltaX, deltaY);
@@ -174,14 +181,10 @@ public class TBSController
 			lastPosition = null;
 			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH )
 				model.removeFromTree(draggedNode);
-			if (draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
+			if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
 				model.addToTree(draggedNode); 
-				//is it more efficient to check isInTree in this
-				//case or not to check? It shouldn't affect
-				//performance, but it's an interesting question.
 			draggedNode=null;
 		}
-		//selectedIndices = new ArrayList<Integer>(); // clear selected items
 	}
 	
 	public TBSButtonType getButtonClicked() {
@@ -305,6 +308,10 @@ public class TBSController
 		case LABEL:
 		case PRINT:
 		case UNDO:
+			System.out.println("Here");
+			if(!model.getHistory().isEmpty())
+				model.getHistory().pop().execute(model);
+			break;
 		case SAVE:
 		}
 		setSelectedElement(null);
@@ -324,7 +331,7 @@ public class TBSController
 			break;
 		case ADD:
 			if(clickedElement == null) {
-				Node newNode = new EmptyNode(model.getSerial(), x, y);
+				Node newNode = new EmptyNode(model.getSerial(), new Point(x, y));
 				for(Node n : model.inTreeElements()){
 					// make sure not putting it on top of another item
 					if(n.collidesWith(newNode)){
@@ -368,6 +375,9 @@ public class TBSController
 			break;
 		case PRINT:
 		case UNDO:
+			if(!model.getHistory().isEmpty())
+				model.getHistory().pop().execute(model);
+			break;
 		case SAVE:
 		}
     	// default action unless return
@@ -379,6 +389,5 @@ public class TBSController
     			unselectPrevious();
     	} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);
-    }		
-	
+    }			
 }

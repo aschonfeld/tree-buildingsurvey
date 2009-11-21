@@ -18,7 +18,6 @@ public class TBSButton extends ModelElement
 	private int width;
 	private int height;
 	private Rectangle2D stringBounds;
-	private TBSModel model;
 	private TBSButtonType action;
 
 	public boolean collidesWith(ModelElement e)
@@ -26,11 +25,11 @@ public class TBSButton extends ModelElement
 		return false;
 	}
 
-	public TBSButton(TBSModel m, String n, Rectangle2D sb, TBSButtonType a,
+	public TBSButton(int id, String name, Rectangle2D sb, TBSButtonType a,
  			int x, int y, int h, int w)
 	{
-		model = m;
-		name = n;
+		super(id);
+		this.name = name;
 		stringBounds=sb;
 		action=a;
 		leftX=x;
@@ -94,10 +93,5 @@ public class TBSButton extends ModelElement
 			case SAVE:
 				break;
 		}
-	}
-	
-	// This is just here so we don't get a warning
-	public TBSModel getModel() {
-		return model;
 	}
 }

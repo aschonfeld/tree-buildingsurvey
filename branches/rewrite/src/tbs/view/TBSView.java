@@ -112,7 +112,7 @@ public class TBSView extends JComponent {
 			int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
 			imageStartX = on.getX() + imageXOffset;
 			g2.setColor(TBSGraphics.organismBoxColor);
-			g2.fillRect(on.getX(), on.getY(), TBSGraphics.organismNodeWidth, TBSGraphics.organismNodeHeight);
+			g2.fill(on.getRectangle());
 			g2.drawImage(on.getImage(), imageStartX, on.getY(), null);
 			int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
 			int stringAreaWidth = stringWidth;
@@ -129,7 +129,7 @@ public class TBSView extends JComponent {
 			if(name == null) name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			g2.fillRect(en.getX(), en.getY(), en.getWidth(), en.getHeight());
+			g2.fill(en.getRectangle());
 			// make bold for greater visibility;
 	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
 	   		g2.setFont(f);

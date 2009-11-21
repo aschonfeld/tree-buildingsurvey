@@ -7,6 +7,12 @@ package tbs.model;
 */
 public abstract class ModelElement {
 	
+	private Integer id;
+	
+	public ModelElement(int id){this.id = id;}
+	
+	public Integer getId(){return id;}
+	
 	/**
 	* CollidesWith should return true if this object overlaps with
 	* another ModelElement

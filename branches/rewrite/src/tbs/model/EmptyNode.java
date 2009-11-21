@@ -3,6 +3,8 @@
 
 package tbs.model;
 
+import java.awt.Point;
+
 import tbs.TBSGraphics;
 
 
@@ -11,28 +13,25 @@ import tbs.TBSGraphics;
 */	
 public class EmptyNode extends Node 
 {
-	String defaultName = "";
-	
-
 	/**
 	* EmptyNode's fully-specified constructor sets position and name
 	* explicitly. This is never called. 
 	*/
-	public EmptyNode(int serial, int x, int y) {
-		super("Empty Node #"+serial, x, y,
+	public EmptyNode(int id, Point anchorPoint) {
+		super(id, String.format(TBSGraphics.emptyNodeLabel, id), anchorPoint,
 				TBSGraphics.emptyNodeHeight, TBSGraphics.emptyNodeWidth);
 		setInTree(true);
-		System.out.println("Added EmptyNode # " +serial);
+		System.out.println("Added EmptyNode #" +id);
 	}
 	
 	/**
 	* EmptyNode(model) sets name to null, position to the default
 	* (left-hand panel, beneath ONodes)
 	*/
-	public EmptyNode() {
-		super("Empty Node", TBSGraphics.emptyNodeLeftX,
-				TBSGraphics.emptyNodeUpperY, TBSGraphics.emptyNodeHeight,
+	public EmptyNode(int id) {
+		super(id, TBSGraphics.emptyNodeDefaultLabel, new Point(TBSGraphics.emptyNodeLeftX,
+				TBSGraphics.emptyNodeUpperY), TBSGraphics.emptyNodeHeight,
 				TBSGraphics.emptyNodeWidth);
-		System.out.println("Created EmptyNode # " +serial);
+		System.out.println("Created EmptyNode #" +id);
 	}	
 }
