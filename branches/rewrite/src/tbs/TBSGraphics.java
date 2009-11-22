@@ -92,12 +92,12 @@ public class TBSGraphics {
 	/**
 	 * Default label for unused empty nodes
 	 */
-	public static String emptyNodeDefaultLabel = "Empty Node";
+	public static String emptyNodeDefaultLabel = "User Labeled";
 	
 	/**
 	 * Label for inTree empty nodes
 	 */
-	public static String emptyNodeLabel = "Empty Node #%d";
+	public static String emptyNodeLabel = "#%d";
 	
 	/**
 	* The fixed width of all EmptyNodes. 
@@ -122,6 +122,7 @@ public class TBSGraphics {
 	*/ 
 	public static int emptyNodeUpperY;
 	public static int emptyNodeYLabelOffset = 5;
+	public static int emptyNodePadding = 4;
 	
 	/**
 	* The initial length of all arrowheads.

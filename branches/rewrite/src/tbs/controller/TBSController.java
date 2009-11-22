@@ -32,7 +32,7 @@ public class TBSController
 	
 	private TBSModel model;
 	private TBSView view;
-	//private int previousX, previousY 
+	private int previousX, previousY; 
 	private int selectedIndex;
 	private Node draggedNode;
 	private ModelElement selectedElement;
@@ -68,7 +68,7 @@ public class TBSController
 		if(labelingInProgress) {
 			if(selectedElement instanceof EmptyNode) {
 				EmptyNode en = (EmptyNode) selectedElement;
-				en.setName(en.getName() + c);
+				en.rename(en.getName() + c);
 			}
 		}
 	}
@@ -122,8 +122,8 @@ public class TBSController
         int x = e.getX();
         int y = e.getY();
         selectedIndex = indexMouseIsOver(x, y);
-        //previousX = x;
-        //previousY = y;
+        previousX = x;
+        previousY = y;
 	}
 	
 	/**
@@ -133,8 +133,8 @@ public class TBSController
 	public void mouseDragged(MouseEvent e){
 		int x = e.getX();
 		int y = e.getY();
-		//int deltaX = x - previousX;
-		//int deltaY = y - previousY;
+		int deltaX = x - previousX;
+		int deltaY = y - previousY;
 		//cancelConnection();
 		if(selectedIndex < 0) return;
 		ModelElement selected = model.getElement(selectedIndex);
@@ -151,16 +151,20 @@ public class TBSController
 				}
 			}
 			draggedNode = node;
-			//node.move(deltaX, deltaY);
-			node.moveTo(x, y);
+			if(node.isInTree()) {
+				node.move(deltaX, deltaY);
+			} else {
+				// if organism node being added to tree snap to mouse location
+				node.moveTo(x, y);
+			}
 			model.setElement(selectedIndex, node);
 		}
 		view.refreshGraphics();
 		unselectPrevious();
 		cancelConnection();
 		// update our data
-		//previousX = x;
-		//previousY = y;
+		previousX = x;
+		previousY = y;
 		
  	}
 	
@@ -257,7 +261,7 @@ public class TBSController
     public void creatingLabel(EmptyNode en) {
     	if(!labelingInProgress) {
     		labelingInProgress = true;
-    		en.setName("");
+    		en.rename("");
     		selectedElement = en;
     	}
     }
@@ -312,13 +316,16 @@ public class TBSController
 				model.removeFromTree(selectedElement);
 			break;
 		case LABEL:
+			break;
 		case PRINT:
+			break;
 		case UNDO:
 			System.out.println("Here");
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().execute(model);
 			break;
 		case SAVE:
+			break;
 		}
 		setSelectedElement(null);
     }
@@ -380,13 +387,14 @@ public class TBSController
 				creatingLabel((EmptyNode) clickedElement);
 			break;
 		case PRINT:
+			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().execute(model);
 			break;
 		case SAVE:
+			break;
 		}
-    	// default action unless return
     	// default action unless return
     	if(clickedElement instanceof Node) {
     		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable

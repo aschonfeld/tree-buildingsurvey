@@ -3,6 +3,7 @@
 
 package tbs.model;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
@@ -14,6 +15,9 @@ import tbs.TBSGraphics;
 */	
 public class EmptyNode extends Node 
 {
+	// need this for calculating EmptyNode size
+	public static Graphics2D g2 = null;
+	
 	/**
 	* EmptyNode's fully-specified constructor sets position and name
 	* explicitly. This is never called. 
@@ -22,6 +26,7 @@ public class EmptyNode extends Node
 		super(id, String.format(TBSGraphics.emptyNodeLabel, id), anchorPoint,
 				TBSGraphics.emptyNodeHeight, TBSGraphics.emptyNodeWidth);
 		setInTree(true);
+		initName();
 		System.out.println("Added EmptyNode #" +id);
 	}
 	
@@ -33,6 +38,7 @@ public class EmptyNode extends Node
 		super(id, TBSGraphics.emptyNodeDefaultLabel, new Point(TBSGraphics.emptyNodeLeftX,
 				TBSGraphics.emptyNodeUpperY), TBSGraphics.emptyNodeHeight,
 				TBSGraphics.emptyNodeWidth);
+		initName();
 		System.out.println("Created EmptyNode #" +id);
 	}
 	
@@ -41,19 +47,37 @@ public class EmptyNode extends Node
 	}
 	
 	public int getHeight() {
-		if(this.isInTree()) {
-			return getDefaultHeight();
-		} else {
-			return getDefaultHeight();
-		}
+		return getDefaultHeight();
 	}
 	
 	public int getWidth() {
-		if(this.isInTree()) {
-			return getDefaultWidth();
-		} else {
-			return getDefaultWidth();
-		}
+		return getDefaultWidth();
 	}
+	
+	public void initName() {
+		rename(getName());
+	}
+	
+	public void rename(String name) {
+		int width = TBSGraphics.emptyNodeWidth;
+		int height = TBSGraphics.emptyNodeHeight;
+		int padding = TBSGraphics.emptyNodePadding;
+		if(name == null) name = "";
+		if(name.length() == 0) {
+			setName("");
+			setWidth(width);
+			setHeight(height);
+			return;
+		}
+		Rectangle2D stringBounds = TBSGraphics.getStringBounds(g2, name);
+		int testWidth = (int) stringBounds.getWidth() + 2 * padding;
+		int testHeight = (int) stringBounds.getHeight() + 2 * padding;
+		if (testWidth > TBSGraphics.emptyNodeWidth) width = testWidth;
+		if (testHeight > TBSGraphics.emptyNodeHeight) height = testHeight;
+		setName(name);
+		setWidth(width);
+		setHeight(height);		
+	}
+	
 	
 }

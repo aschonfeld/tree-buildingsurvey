@@ -6,6 +6,7 @@ package tbs.model;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -150,6 +151,7 @@ public class TBSModel
 	protected void createModelElements(Graphics g, 
 				TreeMap<String, BufferedImage> organismNameToImage) {
 		Graphics2D g2 = (Graphics2D) g;
+		EmptyNode.g2 = g2;
 		BufferedImage img = null;
 		int currentX = 0;
 		int currentY = TBSGraphics.buttonsHeight + 10;
@@ -178,16 +180,14 @@ public class TBSModel
 		}
 
 		//create left-side empty node
-
-		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2 - 
-					TBSGraphics.emptyNodeWidth / 2;
-		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight + 
-					TBSGraphics.emptyNodeYLabelOffset; 
+		Rectangle2D enStringBounds = TBSGraphics.getStringBounds(g2, TBSGraphics.emptyNodeDefaultLabel);
+		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2;
+		TBSGraphics.emptyNodeLeftX -= (int) enStringBounds.getWidth() / 2;
+		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight / 2;
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
 	}	
 
-	
 	/**
 	* PrintConnections() prints out a list of all connections in each
 	* model element. 
@@ -293,6 +293,11 @@ public class TBSModel
 			c.getTo().getConnectedFrom().remove(c.getFrom());
 		}
 		modelElements.remove(m);
-	}	
+	}
 	
+	/**
+	* Need to call this in order to have EmptyNode width and height
+	* set based on it's name, otherwise need reference to model in EmptyNode
+	*/
+
 }

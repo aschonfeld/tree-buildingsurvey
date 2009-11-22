@@ -108,8 +108,6 @@ public class TBSView extends JComponent {
 		{
 			EmptyNode en = (EmptyNode) me;
 			String name = en.getName();
-			int leftX = en.getX();
-			int upperY = en.getY();
 			if(name == null) name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
 			g2.setColor(TBSGraphics.emptyNodeColor);
@@ -119,12 +117,9 @@ public class TBSView extends JComponent {
 	   		g2.setFont(f);
 			if(name.length() > 0) {
 				// zero length string gives an error
-				Rectangle2D bounds = TBSGraphics.getStringBounds(g2, en.getName());
-				int h = (int) bounds.getHeight();
-				int w = (int) bounds.getWidth();
-				int stringX = leftX + (en.getWidth() / 2) - (w / 2);
-				int stringY = upperY - h;
-				g2.drawString(name, stringX, stringY);
+				int h = (int) en.getHeight();
+				int w = (int) en.getWidth();
+				TBSGraphics.drawCenteredString(g2, name, en.getX(), en.getY(), w, h, Color.black);
 			}
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
