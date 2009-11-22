@@ -81,18 +81,54 @@ public class TBSView extends JComponent {
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: TBSGraphics.buttons) {
 			if(b == buttonClicked) {
-				// display button clicked in green
-				g2.setColor(Color.GREEN);
-				g2.fillRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
+				Color start = new Color(0.45f, 0.65f, 0.55f);
+				Color end = new Color(1.0f, 1.0f, 1.0f);
+				renderButtonBackground(g2, leftX, start, end);
+			} else {
+				Color start = new Color(0.45f, 0.55f, 0.65f);
+				Color end = new Color(1.0f, 1.0f, 1.0f);
+				renderButtonBackground(g2, leftX, start, end);
 			}
 			g2.setColor(Color.BLACK);
 			TBSGraphics.drawCenteredString(g2, b.toString(), leftX, upperY, TBSGraphics.buttonsWidth, 0);
-			g2.setColor(Color.BLUE);
+			g2.setColor(Color.gray);
 			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			leftX += TBSGraphics.buttonsWidth;
 		}
 		int stringStartX = leftX + 20;
 		renderStatusString(g2, stringStartX);
+	}
+	
+	public void renderButtonBackground(Graphics2D g2, int leftX, Color start, Color end) {
+		float redDiff = end.getRed() - start.getRed();
+		float greenDiff = end.getGreen() - start.getGreen();
+		float blueDiff = end.getBlue() - start.getBlue();
+		for(int y = 0; y <= TBSGraphics.buttonsHeight / 3; y++) {
+			float fy = (float) y;
+			float fh = (float) TBSGraphics.buttonsHeight / 3;
+			float fdiff = 0.6f + 0.4f * fy / fh;
+			float red = start.getRed() + redDiff * fdiff;
+			float green = start.getGreen() + greenDiff * fdiff;
+			float blue = start.getBlue() + blueDiff * fdiff;
+			red /= 255.0f;
+			green /= 255.0f;
+			blue /= 255.0f;
+			g2.setColor(new Color(red, green, blue));
+			g2.drawLine(leftX, y , leftX + TBSGraphics.buttonsWidth, y);
+		}
+		for(int y = TBSGraphics.buttonsHeight / 3; y < TBSGraphics.buttonsHeight; y++) {
+			float fy = (float) y - (TBSGraphics.buttonsHeight / 3);
+			float fh = (float) 2.0f * (TBSGraphics.buttonsHeight / 3);
+			float fdiff = fy / fh;
+			float red = end.getRed() - redDiff * fdiff;
+			float green = end.getGreen() - greenDiff * fdiff;
+			float blue = end.getBlue() - blueDiff * fdiff;
+			red /= 255.0f;
+			green /= 255.0f;
+			blue /= 255.0f;
+			g2.setColor(new Color(red, green, blue));
+			g2.drawLine(leftX, y , leftX + TBSGraphics.buttonsWidth, y);
+		}
 	}
 
 	/**
