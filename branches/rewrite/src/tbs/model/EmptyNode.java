@@ -4,6 +4,7 @@
 package tbs.model;
 
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 
 import tbs.TBSGraphics;
 
@@ -33,5 +34,26 @@ public class EmptyNode extends Node
 				TBSGraphics.emptyNodeUpperY), TBSGraphics.emptyNodeHeight,
 				TBSGraphics.emptyNodeWidth);
 		System.out.println("Created EmptyNode #" +id);
-	}	
+	}
+	
+	public Rectangle2D getRectangle(){
+		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+	}
+	
+	public int getHeight() {
+		if(this.isInTree()) {
+			return getDefaultHeight();
+		} else {
+			return getDefaultHeight();
+		}
+	}
+	
+	public int getWidth() {
+		if(this.isInTree()) {
+			return getDefaultWidth();
+		} else {
+			return getDefaultWidth();
+		}
+	}
+	
 }

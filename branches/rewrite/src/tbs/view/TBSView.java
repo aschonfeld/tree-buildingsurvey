@@ -100,25 +100,9 @@ public class TBSView extends JComponent {
 	*/
 	public void renderModelElement(Graphics g, ModelElement me) {
 		Graphics2D g2 = (Graphics2D) g;
-		int stringWidth = 0;
-		int imageWidth = 0;
-		int imageStartX = 0;
 		if(me instanceof OrganismNode) 
 		{
-			OrganismNode on = (OrganismNode) me;
-			stringWidth = (int) TBSGraphics.getStringBounds(g2, on.getName()).getWidth();
-			imageWidth = on.getImage().getWidth();
-			// center image and text
-			int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
-			imageStartX = on.getX() + imageXOffset;
-			g2.setColor(TBSGraphics.organismBoxColor);
-			g2.fill(on.getRectangle());
-			g2.drawImage(on.getImage(), imageStartX, on.getY(), null);
-			int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
-			int stringAreaWidth = stringWidth;
-			int stringAreaUpperY = on.getY();
-			int stringAreaHeight = TBSGraphics.organismNodeHeight;			
-			TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight);
+			renderOrganismNode(g2, (OrganismNode) me);
 		}
 		else if (me instanceof EmptyNode)
 		{
@@ -152,6 +136,38 @@ public class TBSView extends JComponent {
 				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
 				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 		}
+	}
+	
+	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
+		Color stringColor = TBSGraphics.organismStringColor;
+		Color boxColor = TBSGraphics.organismBoxColor;
+		int stringWidth = 0;
+		int imageWidth = 0;
+		int imageStartX = 0;
+		stringWidth = (int) TBSGraphics.getStringBounds(g2, on.getName()).getWidth();
+		imageWidth = on.getImage().getWidth();
+		// center image and text
+		int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
+		imageStartX = on.getDefaultPoint().x + imageXOffset;
+		if(on.isInTree()) {
+			stringColor = TBSGraphics.organismBoxColor;
+			boxColor = TBSGraphics.organismStringColor;
+			g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
+		} else {
+			// organism is being dragged for possible addition to tree
+			if(on.getX() > 0) {
+				g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
+				return;
+			}
+		}
+		int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
+		int stringAreaWidth = stringWidth;
+		int stringAreaUpperY = on.getDefaultPoint().y;
+		int stringAreaHeight = TBSGraphics.organismNodeHeight;
+		g2.setColor(boxColor);
+		g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getDefaultWidth(), on.getDefaultHeight());
+		TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight, stringColor);
+		g2.drawImage(on.getImage(), imageStartX, on.getDefaultPoint().y, null);
 	}
 	
 	public void renderSelectedModelElement(Graphics g, ModelElement me){
@@ -250,6 +266,8 @@ public class TBSView extends JComponent {
 		for(ModelElement m : model.getElements())
 			renderModelElement(g, m);
 		renderSelectedModelElement(g,model.getSelectedModelElement());
+		Node draggedNode = model.getController().getDraggedNode();
+		if(draggedNode != null) renderModelElement(g, draggedNode);
 		if(connInProgress != null){
 			g2.setColor(TBSGraphics.connectionColor);
 			g2.setStroke(new BasicStroke(3));

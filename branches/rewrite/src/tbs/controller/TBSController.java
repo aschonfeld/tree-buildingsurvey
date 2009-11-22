@@ -32,7 +32,8 @@ public class TBSController
 	
 	private TBSModel model;
 	private TBSView view;
-	private int previousX, previousY, selectedIndex;
+	//private int previousX, previousY 
+	private int selectedIndex;
 	private Node draggedNode;
 	private ModelElement selectedElement;
 	private Point lastPosition = null;
@@ -70,6 +71,10 @@ public class TBSController
 				en.setName(en.getName() + c);
 			}
 		}
+	}
+		
+	public Node getDraggedNode() {
+		return draggedNode;
 	}
 	
 	public void mouseEntered(MouseEvent e){}
@@ -117,8 +122,8 @@ public class TBSController
         int x = e.getX();
         int y = e.getY();
         selectedIndex = indexMouseIsOver(x, y);
-        previousX = x;
-        previousY = y;
+        //previousX = x;
+        //previousY = y;
 	}
 	
 	/**
@@ -128,8 +133,8 @@ public class TBSController
 	public void mouseDragged(MouseEvent e){
 		int x = e.getX();
 		int y = e.getY();
-		int deltaX = x - previousX;
-		int deltaY = y - previousY;
+		//int deltaX = x - previousX;
+		//int deltaY = y - previousY;
 		//cancelConnection();
 		if(selectedIndex < 0) return;
 		ModelElement selected = model.getElement(selectedIndex);
@@ -146,15 +151,16 @@ public class TBSController
 				}
 			}
 			draggedNode = node;
-			node.move(deltaX, deltaY);
+			//node.move(deltaX, deltaY);
+			node.moveTo(x, y);
 			model.setElement(selectedIndex, node);
 		}
 		view.refreshGraphics();
 		unselectPrevious();
 		cancelConnection();
 		// update our data
-		previousX = x;
-		previousY = y;
+		//previousX = x;
+		//previousY = y;
 		
  	}
 	

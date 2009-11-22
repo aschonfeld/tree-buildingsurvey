@@ -263,16 +263,21 @@ public class TBSGraphics {
 		if(p1.y > p0.y) p0.y = p1.y;
 		return p0;
 	}
+	
+	public static void drawCenteredString(Graphics2D g2, String s, 
+			int leftX, int upperY, int width, int height) { 
+		drawCenteredString(g2, s, leftX, upperY, width, height, Color.black);
+	}
 
 
 	/**
 	* Paints a string centered in the rectangle defined.
 	*/	
 	public static void drawCenteredString(Graphics2D g2, String s, 
-				int leftX, int upperY, int width, int height) 
+				int leftX, int upperY, int width, int height, Color c) 
 	{
 		// RenderingHints tell
-		g2.setColor(Color.black);
+		g2.setColor(c);
    		Font f = TBSGraphics.getFont(g2);
    		FontRenderContext frc = g2.getFontRenderContext();
 		TextLayout layout = new TextLayout(s, f, frc);

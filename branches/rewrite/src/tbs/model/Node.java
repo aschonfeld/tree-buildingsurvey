@@ -44,9 +44,7 @@ public abstract class Node extends ModelElement implements Cloneable
 		return anchorPoint;	
 	}
 	
-	public Rectangle2D getRectangle(){
-		return new Rectangle2D.Double(getX(), getY(), width, height);
-	}
+	public abstract Rectangle2D getRectangle();
 	
 	/**
 	* Node locations are given by their upper left corner; this method
@@ -77,15 +75,22 @@ public abstract class Node extends ModelElement implements Cloneable
 	*/
 	public void setY(int y){this.anchorPoint.y = y;}
 	
-	public int getHeight() {
+	public abstract int getHeight();
+	
+	public int getDefaultHeight() {
 		return height;
 	}
+	
 	public void setHeight(int height) {
 		this.height = height;
 	}
-	public int getWidth() {
+	
+	public abstract int getWidth();
+	
+	public int getDefaultWidth() {
 		return width;
 	}
+	
 	public void setWidth(int width) {
 		this.width = width;
 	}
@@ -206,7 +211,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	}
 	
 	public Point getCenter(){
-		return new Point(anchorPoint.x + (width/2),anchorPoint.y + (height/2));	
+		return new Point(anchorPoint.x + (getWidth()/2),anchorPoint.y + (getHeight()/2));	
 	}
 	
 	@Override
