@@ -1,5 +1,7 @@
 Here are links to different versions of Applets:
 
+    * [http://www.cs.umb.edu/~gthelen/applet.html Version 0.6] <br> Current state of version 0.6 is r455. <br>
+
     * [http://www.cs.umb.edu/~kiparsky/TBS041/Applet04.html Version 0.4] <br> Final revision under version 0.4 (including wider connections with arrows) is r387. <br>
 
     * [http://www.cs.umb.edu/~kiparsky/TBS03/Applet03.html Version 0.3] <br> Final revision under version 0.3 is r311. <br>
