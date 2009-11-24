@@ -2,6 +2,13 @@
 
 = Comments and questions from the professor = 
 
+=== November 18 ===
+
+Good start on the one step build. What's there now are developer instructions. 
+
+You also need instructions for a biology professor who wants to install TBS using the jar file you've compiled. She'll need a compiled jar file with classes (not source) and instructions. (Eventually those instructions will need to explain database connections too - perhaps you should explicitly offer a standalone version. It would still be useful as long as print was supported.) 
+ 
+----
 
 === November 18 ===
 
