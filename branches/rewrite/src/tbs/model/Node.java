@@ -169,6 +169,8 @@ public abstract class Node extends ModelElement implements Cloneable
 		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
 	}
+	
+	public void removeConnectionTo(Node n){connectedTo.remove(n);}
 
 	/**
 	* Add n to this Node's list of objects connecting to it.
@@ -184,6 +186,8 @@ public abstract class Node extends ModelElement implements Cloneable
 		System.out.println("Connected to " +getName()+ " from " +
 				n.getName());
 	}
+	
+	public void removeConnectionFrom(Node n){connectedFrom.remove(n);}
 	
 	public void unlink(){
 		this.connectedTo.clear();

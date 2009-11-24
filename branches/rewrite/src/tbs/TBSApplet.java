@@ -111,6 +111,7 @@ public class TBSApplet extends JApplet {
 		{
  			e.printStackTrace();
  		} 
+ 		TBSGraphics.numOfOrganisms = organismNameToImage.size();
  		return organismNameToImage;
 	}
 

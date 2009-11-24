@@ -24,5 +24,14 @@ public abstract class ModelElement {
 	* boundaries delineated by this ModelElement.
 	*/ 
 	public abstract boolean contains(int x, int y);
+	
+	@Override
+	public boolean equals( Object o ) {
+		if ( this == o )
+			return true;
+		if ( !(o instanceof ModelElement) )
+			return false;
+		return ((ModelElement) o).getId().equals(id);
+	}
 
 }

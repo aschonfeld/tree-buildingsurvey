@@ -18,9 +18,12 @@ import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
-import tbs.model.history.Action;
 import tbs.model.history.Add;
+import tbs.model.history.Command;
+import tbs.model.history.Delete;
 import tbs.model.history.Drag;
+import tbs.model.history.Link;
+import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
@@ -31,7 +34,7 @@ public class TBSModel
 	private List<ModelElement> modelElements;
 	private ModelElement selectedModelElement;
 	private EmptyNode immortalEmptyNode;
-	private Stack<Action> history;
+	private Stack<Command> history;
 	private int MESerialNumber;
 	
 
@@ -42,7 +45,7 @@ public class TBSModel
 		createModelElements(g, organismNameToImage);
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
-		history = new Stack<Action>();
+		history = new Stack<Command>();
 	}
 	
 	/**
@@ -86,15 +89,39 @@ public class TBSModel
 		return modelElements.get(i);
 	}
 	
+	/**
+	* removes the ith ModelElement in the list.
+	*/
+	public ModelElement removeElement(int i) {
+		return modelElements.remove(i);
+	}
+	
 	public int findIndexByElement(ModelElement m){
-		int index = -1;
-		for(int i=0;i<modelElements.size();i++){
-			if(modelElements.get(i).getId().equals(m.getId())){
-				index = i;
-				break;
-			}
+		/*
+		 * For OrganismNodes we can just use serialId-1(-1 since it starts at 1 rather than 0)
+		 * because they are the first loaded into the List and never actually removed from the
+		 * List.
+		 */		
+		if(m instanceof OrganismNode)
+			return (m.getId()-1);
+		else
+			return modelElements.indexOf(m);
+	}
+	
+	public int findIndexById(Integer id){
+		if(id <= TBSGraphics.numOfOrganisms)
+			return (id-1);
+		/*
+		 * As you can see we can begin searching the List of ModelElement
+		 * objects from where the number of loaded organisms ends since these
+		 * items (with the exception of the immortalEmptyNode can be removed
+		 * and thus have their serialId changed/out of order.
+		 */
+		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
+			if(modelElements.get(i).getId().equals(id))
+				return i;
 		}
-		return index;
+		return -1;
 	}
 	
 
@@ -124,11 +151,11 @@ public class TBSModel
 		return immortalEmptyNode;
 	}
 	
-	public Stack<Action> getHistory() {
+	public Stack<Command> getHistory() {
 		return history;
 	}
 
-	public void setHistory(Stack<Action> history) {
+	public void setHistory(Stack<Command> history) {
 		this.history = history;
 	}
 	
@@ -246,22 +273,39 @@ public class TBSModel
 	
 	public void addConnection(Node from, Node to)
 	{
-		modelElements.add(new Connection(getSerial(), from, to));
+		Connection newConn = new Connection(getSerial(), from, to);
+		modelElements.add(newConn);
 		from.addConnectionTo(to);
 		to.addConnectionFrom(from);
+		try{
+			history.push(new Link((Connection) newConn.clone()));
+			System.out.println("Added action(link) to history.");
+		}catch(CloneNotSupportedException c){
+			System.out.println("Unable to add action to history.");
+		}
 	}
 	
 	public List<Connection> getConnectionsByNode(Node n){
+		Unlink unlink = new Unlink();
+		unlink.setNode(n);
 		List<Connection> connections = new LinkedList<Connection>();
 		Connection c;
 		for (ModelElement me: modelElements)
 		{
 			if(me instanceof Connection){
 				c = (Connection) me;
-				if(c.hasNode(n))
+				if(c.hasNode(n)){
 					connections.add(c);
+					try{
+						unlink.addConnection((Connection) c.clone());
+					}catch(CloneNotSupportedException e){
+						System.out.println("Unable to create connection clone.");
+					}
+				}
 			}
 		}
+		history.push(unlink);
+		System.out.println("Added action(unlink) to history.");
 		return connections;
 	}
 	
@@ -275,12 +319,23 @@ public class TBSModel
 		n.unlink();
 	}
 	
-	
 	public void removeFromTree(ModelElement m){
+		removeFromTree(m, false);
+	}
+	
+	public void removeFromTree(ModelElement m, boolean isUndo){
 		if((m == null) || (m.equals(immortalEmptyNode)))
 			return;
 		if(m instanceof Node){
 			Node n = (Node) m;
+			if(!isUndo){
+				try{
+					history.push(new Delete((Node) n.clone()));
+					System.out.println("Added action(delete) to history.");
+				}catch(CloneNotSupportedException e){
+					System.out.println("Unable to add action to history.");
+				}
+			}
 			unlink(n);
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
@@ -291,13 +346,15 @@ public class TBSModel
 			Connection c = (Connection) m;
 			c.getFrom().getConnectedTo().remove(c.getTo());
 			c.getTo().getConnectedFrom().remove(c.getFrom());
+			if(!isUndo){
+				try{
+					history.push(new Delete((Connection) c.clone()));
+					System.out.println("Added action(delete) to history.");
+				}catch(CloneNotSupportedException e){
+					System.out.println("Unable to add action to history.");
+				}
+			}
 		}
 		modelElements.remove(m);
 	}
-	
-	/**
-	* Need to call this in order to have EmptyNode width and height
-	* set based on it's name, otherwise need reference to model in EmptyNode
-	*/
-
 }

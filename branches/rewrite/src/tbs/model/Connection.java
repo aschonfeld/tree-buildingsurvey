@@ -8,7 +8,7 @@ import java.awt.Point;
 
 import tbs.TBSUtils;
 
-public class Connection extends ModelElement
+public class Connection extends ModelElement implements Cloneable
 {
 
 	private Node to;
@@ -27,18 +27,16 @@ public class Connection extends ModelElement
 	/**
 	* Returns the target node of this connection
 	*/
-	public Node getTo()
-	{
-		return to;
-	}
+	public Node getTo(){ return to; }
+	
+	public void setTo(Node to){ this.to=to; }
 		
 	/**
 	* Returns the origin node of this connection
 	*/
-	public Node getFrom()
-	{
-		return from;
-	}
+	public Node getFrom(){ return from; }
+	
+	public void setFrom(Node from){ this.from=from; }
 	
 	public boolean hasNode(Node n){
 		return to.equals(n) || from.equals(n);
@@ -57,4 +55,12 @@ public class Connection extends ModelElement
 
 	@Override
 	public boolean collidesWith(ModelElement e) {return false;}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Connection copy = (Connection) super.clone();
+		copy.setTo((Node) to.clone());
+		copy.setFrom((Node) from.clone());
+		return copy;
+	}
 }

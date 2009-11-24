@@ -3,7 +3,7 @@ package tbs.model.history;
 import tbs.model.Node;
 import tbs.model.TBSModel;
 
-public class Add extends Action{
+public class Add extends Command{
 
 	private Node node;
  	
@@ -12,10 +12,15 @@ public class Add extends Action{
 	}
 
 	@Override
-	public void execute(TBSModel model) {
-		int selection = model.findIndexByElement(node);
-		if(selection >= 0)
-			model.removeFromTree(model.getElements().get(selection));		
+	public void execute(TBSModel model){
+		model.addToTree(node);	
+	}
+	
+	@Override
+	public void undo(TBSModel model) {
+		int index = model.findIndexByElement(node);
+		if(index >= 0)
+			model.removeFromTree(model.getElement(index), true);		
 	}
 	
 	

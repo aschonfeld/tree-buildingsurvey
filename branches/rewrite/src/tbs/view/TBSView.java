@@ -297,8 +297,6 @@ public class TBSView extends JComponent {
 		for(ModelElement m : model.getElements())
 			renderModelElement(g, m);
 		renderSelectedModelElement(g,model.getSelectedModelElement());
-		Node draggedNode = model.getController().getDraggedNode();
-		if(draggedNode != null) renderModelElement(g, draggedNode);
 		if(connInProgress != null){
 			g2.setColor(TBSGraphics.connectionColor);
 			g2.setStroke(new BasicStroke(3));

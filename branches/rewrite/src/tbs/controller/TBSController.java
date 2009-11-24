@@ -14,11 +14,13 @@ import java.awt.geom.Line2D;
 import java.util.List;
 
 import tbs.TBSGraphics;
+import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.TBSModel;
 import tbs.model.history.Drag;
+import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 
@@ -73,10 +75,6 @@ public class TBSController
 		}
 	}
 		
-	public Node getDraggedNode() {
-		return draggedNode;
-	}
-	
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
 	
@@ -84,7 +82,7 @@ public class TBSController
 		if(selectedElement == null)
 			return;
 		if(selectedElement instanceof Node) {
-			if(TBSButtonType.CONNECT.equals(buttonClicked))
+			if(TBSButtonType.LINK.equals(buttonClicked))
 				view.setConnInProgress(
 		    		new Line2D.Double(((Node) selectedElement).getCenter(),
 		    				new Point(e.getX(), e.getY())));
@@ -143,12 +141,8 @@ public class TBSController
 			Node node = (Node) selected;
 			if(lastPosition == null){
 				lastPosition = new Point(node.getX(), node.getY());
-				try{
-					model.getHistory().push(new Drag((Node) node.clone()));
-					System.out.println("Added action(drag) to history.");
-				}catch(CloneNotSupportedException c){
-					System.out.println("Unable to add action to history.");
-				}
+				model.getHistory().push(new Drag(node.getId(), node.getAnchorPoint()));
+				System.out.println("Added action(drag) to history.");
 			}
 			draggedNode = node;
 			if(node.isInTree()) {
@@ -193,6 +187,8 @@ public class TBSController
 				model.removeFromTree(draggedNode);
 			if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
 				model.addToTree(draggedNode); 
+			else
+				((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
 			draggedNode=null;
 		}
 	}
@@ -304,25 +300,35 @@ public class TBSController
 		case DELETE:
 			handleDelete();
 			break;
-		case CONNECT:
+		case LINK:
 			if(selectedElement == null) 
 				break;
-		case DISCONNECT:
+		case UNLINK:
 			if(selectedElement == null) 
 				break;
-			if(selectedElement instanceof Node)
-				model.unlink((Node) selectedElement);
-			else
-				model.removeFromTree(selectedElement);
+			try{
+				if(selectedElement instanceof Node){
+					model.unlink((Node) selectedElement);
+				}else{
+					Connection c = (Connection) selectedElement;
+					Unlink unlink = new Unlink();
+					unlink.addConnection((Connection) c.clone());
+					model.getHistory().push(unlink);
+					System.out.println("Added action(unlink) to history.");
+					model.removeFromTree(c, true);
+				}
+			}catch(CloneNotSupportedException c){
+				System.out.println("Unable to add action to history.");
+			}
 			break;
 		case LABEL:
 			break;
 		case PRINT:
 			break;
 		case UNDO:
-			System.out.println("Here");
 			if(!model.getHistory().isEmpty())
-				model.getHistory().pop().execute(model);
+				model.getHistory().pop().undo(model);
+			buttonClicked = TBSButtonType.SELECT;
 			break;
 		case SAVE:
 			break;
@@ -361,7 +367,7 @@ public class TBSController
 			selectedElement = clickedElement;
 			handleDelete();
 			return;
-		case CONNECT:
+		case LINK:
 			if(clickedElement == null) 
 				break;
 			if(clickedElement instanceof Node) {
@@ -372,7 +378,7 @@ public class TBSController
 				break;
 			}
 			break;
-		case DISCONNECT:
+		case UNLINK:
 			if(clickedElement == null)
 				break;
 			if(clickedElement instanceof Node)
@@ -390,7 +396,8 @@ public class TBSController
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
-				model.getHistory().pop().execute(model);
+				model.getHistory().pop().undo(model);
+			buttonClicked = TBSButtonType.SELECT;
 			break;
 		case SAVE:
 			break;

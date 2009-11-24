@@ -52,7 +52,13 @@ public class TBSGraphics {
 	*/
 	public static int LINE_OF_DEATH = 180;
 	
-
+	/**
+	 * Total number of Organisms contained in the applet, this will
+	 * be used in the future to more efficiently search the list of
+	 * ModelElement objects in the Model.
+	 */
+	public static int numOfOrganisms;
+	
 	/**
 	* The fixed width of all OrganismNodes. Value is calculated in
 	* TBSModel.createModelElements (CHECK THIS)

@@ -82,7 +82,7 @@ public class TBSButton extends ModelElement
 	{
 		switch (action) 
 		{
-			case CONNECT:
+			case LINK:
 				break;
 			case DELETE:
 				break;
