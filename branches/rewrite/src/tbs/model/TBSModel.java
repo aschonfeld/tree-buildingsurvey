@@ -90,48 +90,25 @@ public class TBSModel
 		return modelElements.get(i);
 	}
 
-	/**
-	* Returns the ModelElement with a given serial number
-	*/
-	public ModelElement getElementBySN(int sn)
-	{
-		int checknum = sn;
-
-		List <ModelElement> model = getElements();
-		do 
-		{
-			ModelElement me = (ModelElement)model.get(checknum);
-			if (me.getId() == sn)
-			return me;
-			if (me.getId() < checknum)
-				checknum--;
-		} while (checknum >= 0);
-
-		return null;
-	}
-	
-	/**
-	* removes the ith ModelElement in the list.
-	*/
 	public ModelElement removeElement(int i) {
 		return modelElements.remove(i);
 	}
 	
 	public int findIndexByElement(ModelElement m){
 		/*
-		 * For OrganismNodes we can just use serialId-1(-1 since it starts at 1 rather than 0)
+		 * For OrganismNodes we can just use serialId
 		 * because they are the first loaded into the List and never actually removed from the
 		 * List.
 		 */		
 		if(m instanceof OrganismNode)
-			return (m.getId()-1);
+			return (m.getId());
 		else
 			return modelElements.indexOf(m);
 	}
 	
 	public int findIndexById(Integer id){
 		if(id <= TBSGraphics.numOfOrganisms)
-			return (id-1);
+			return (id);
 		/*
 		 * As you can see we can begin searching the List of ModelElement
 		 * objects from where the number of loaded organisms ends since these
@@ -146,6 +123,31 @@ public class TBSModel
 	}
 	
 
+	/**
+	* Returns the ModelElement with a given serial number
+	* This method relies on the fact that objects are added in serial#
+	* order, and remain sorted, although they may be deleted. If this
+	* assumption ceases to be true, this method will fail. 
+	*/
+	public ModelElement getElementBySN(int sn)
+	{
+		ModelElement me;
+		int checknum = sn;
+		List <ModelElement> model = getElements();
+		do 
+		{
+			 me = (ModelElement)model.get(checknum);
+			if (me.getId() == sn)
+				return me;
+			checknum--;
+		} while (checknum >= me.getId());
+
+		return null;
+	}
+	
+	/**
+	* removes the ith ModelElement in the list.
+	*/
 	/**
 	* returns the complete List of Model Elements.
 	*/
