@@ -22,6 +22,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	private Point anchorPoint;
 	private boolean inTree;
 	private int maxNameLength = 30;
+	protected String imgFileName;
 
 	//connections to and from other ModelElements, respectively
 	private List<Node> connectedFrom = new LinkedList<Node>();
@@ -107,7 +108,14 @@ public abstract class Node extends ModelElement implements Cloneable
 			}
 		}
 	}
-	
+
+	/**
+	* Returns the name of the image file associated with this object
+	*/
+	public String getImgFileName()
+	{
+		return imgFileName;
+	}	
 	
 	/**
 	* Adjusts the object's position by the indicated amount
@@ -156,10 +164,11 @@ public abstract class Node extends ModelElement implements Cloneable
 	*/
 	public String dump()
 	{
-		String ret = "";
-
+		String ret;
+		ret = (this instanceof OrganismNode)?"O:":"E:";
 		ret = ret + this.getId()+":";
 		ret = ret + this.getName()+":";
+		ret = ret + this.getImgFileName()+":";
 		ret = ret + this.getX()+":" + this.getY()+":";
 		ret = ret + this.isInTree()+":(";
 		for (Node toNode : this.getConnectedTo())
@@ -206,8 +215,11 @@ public abstract class Node extends ModelElement implements Cloneable
 		System.out.println("AddConnection: connected" + getName() + " to " +
 				n.getName());
 	}
-	
-	public void removeConnectionTo(Node n){connectedTo.remove(n);}
+
+	public void removeConnectionTo(Node n)
+	{
+		connectedTo.remove(n);
+	}
 
 	/**
 	* Add n to this Node's list of objects connecting to it.
@@ -223,9 +235,12 @@ public abstract class Node extends ModelElement implements Cloneable
 		System.out.println("Connected to " +getName()+ " from " +
 				n.getName());
 	}
-	
-	public void removeConnectionFrom(Node n){connectedFrom.remove(n);}
-	
+
+	public void removeConnectionFrom(Node n)
+	{
+		connectedFrom.remove(n);
+	}
+
 	public void unlink(){
 		this.connectedTo.clear();
 		this.connectedFrom.clear();

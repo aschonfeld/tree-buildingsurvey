@@ -18,6 +18,11 @@ public class OrganismNode extends Node
 	{
 		super(id, name, anchorPoint, TBSGraphics.organismNodeHeight, TBSGraphics.organismNodeWidth);
 		img = i;
+			//This is crude and brittle; should be changed to pass image file name in setup
+			//rather than reverse engineering it from the name of the organisme. Works for now,
+			//though.
+		imgFileName = name.toLowerCase().replace(" ", "") +".gif";
+		
 		defaultPoint = anchorPoint;
 	}
 				

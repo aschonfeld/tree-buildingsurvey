@@ -28,6 +28,7 @@ public class EmptyNode extends Node
 		setInTree(true);
 		initName();
 		System.out.println("Added EmptyNode #" +id);
+		imgFileName="";
 	}
 	
 	/**
