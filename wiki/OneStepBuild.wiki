@@ -7,7 +7,7 @@ _The exact information that follows may also be found in `/branches/rewrite/READ
 === Deployment Notes: ===
 *Prerequisites:*<br>
   # You must go to the google code site, http://code.google.com/p/tree-buildingsurvey/, and download the existing project one of two ways.
-   * A) Download Toroise SVN and use the directions listed on the "Source" tab of the google code page to checkout the current project
+   * A) Download Tortoise SVN and use the directions listed on the "Source" tab of the google code page to checkout the current project
    * B) Go to the "Downloads" tab and download the latest .zip file of the project
   # You must have Java 6(or most recent version) installed on your computer
   # You must have Ant 1.7(or latest version) installed on your computer
