@@ -56,22 +56,22 @@ public abstract class Node extends ModelElement implements Cloneable
 	}
 	
 	/**
-	* Returns X coordinate Node's location (upper left corner)
+	* Returns X coordinate of Node's location (upper left corner)
 	*/
 	public int getX() {return anchorPoint.x;}
 	
 	/**
-	* Sets X coordinate Node's location (upper left corner)
+	* Sets X coordinate of Node's location (upper left corner)
 	*/
 	public void setX(int x){this.anchorPoint.x = x;}
 	
 	/**
-	* Returns Y coordinate Node's location (upper left corner)
+	* Returns Y coordinatei of Node's location (upper left corner)
 	*/
 	public int getY() {return anchorPoint.y;}
 
 	/**
-	* Sets Y coordinate Node's location (upper left corner)
+	* Sets Y coordinate of Node's location (upper left corner)
 	*/
 	public void setY(int y){this.anchorPoint.y = y;}
 	
@@ -108,22 +108,6 @@ public abstract class Node extends ModelElement implements Cloneable
 		}
 	}
 	
-	public List<Node> getConnectedFrom() {
-		return connectedFrom;
-	}
-
-	public void setConnectedFrom(List<Node> connectedFrom) {
-		this.connectedFrom = connectedFrom;
-	}
-
-	public List<Node> getConnectedTo() {
-		return connectedTo;
-	}
-
-	public void setConnectedTo(List<Node> connectedTo) {
-		this.connectedTo = connectedTo;
-	}	
-	
 	
 	/**
 	* Adjusts the object's position by the indicated amount
@@ -148,13 +132,66 @@ public abstract class Node extends ModelElement implements Cloneable
 		return inTree;
 	}
 	
-	public void setInTree(boolean inTree){ this.inTree = inTree;}
+	/**
+	* Explicitly declares this object to be active (true) or inactive
+	* (false). This method should only be called to reflect actual change
+	* in status, ie, if an Organism Node is moved out of the active
+	* field, setInTree(false) would be the correct way to ensure that the
+	* object knows it is not to connect to other objects. .
+	*/ 
+	public void setInTree(boolean inTree)
+	{ 
+		this.inTree = inTree;
+	}
+
+	/**
+	*	creates a string describing all the parameter of this object for
+	*	saving/scoring and possibly undo
+	*	The string's format is colon-delimited text fields, as follows:
+	*	Serial number:Name:x location:y location:inTree:[toConnections]:
+	*	[fromConnections]. Connection lists are comma-delimited lists of
+	*	serial numbers surrounded by parentheses - this could be
+	*	improved.
+	*	Make suggestions. 
+	*/
+	public String dump()
+	{
+		String ret = "";
+
+		ret = ret + this.getId()+":";
+		ret = ret + this.getName()+":";
+		ret = ret + this.getX()+":" + this.getY()+":";
+		ret = ret + this.isInTree()+":(";
+		for (Node toNode : this.getConnectedTo())
+			ret = ret + toNode.getId()+",";
+		ret = ret +"):(";
+		for (Node fromNode : this.getConnectedFrom())
+			ret = ret + fromNode.getId()+",";	
+		ret = ret +"):";
+		return ret;
+	}
 
 //-------------------------------------------------
 // ---- Connection handling from here to end ------
 //-------------------------------------------------
 
 
+	public List<Node> getConnectedFrom() {
+		return connectedFrom;
+	}
+
+	public void setConnectedFrom(List<Node> connectedFrom) {
+		this.connectedFrom = connectedFrom;
+	}
+
+	public List<Node> getConnectedTo() {
+		return connectedTo;
+	}
+
+	public void setConnectedTo(List<Node> connectedTo) {
+		this.connectedTo = connectedTo;
+	}	
+	
 	/**
 	* Establish a directional link between this object and another.
 	*/

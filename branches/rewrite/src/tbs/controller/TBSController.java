@@ -1,4 +1,3 @@
-//TBS version .04
 //TBSController: mousehandling and button handling for TBS
 
 
@@ -324,13 +323,31 @@ public class TBSController
 		case LABEL:
 			break;
 		case PRINT:
+			for (ModelElement me : model.getElements())
+			{
+				if (me instanceof Node)
+				{
+					Node n = (Node)me;
+					System.out.println(n.dump());
+				}
+			}
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().undo(model);
 			buttonClicked = TBSButtonType.SELECT;
 			break;
-		case SAVE:
+		case SAVE: 	//Dumps Node data to console for testing
+						//This should not happen in a release unless it is
+						//explicitly highlighted as a temporary demonstration
+						//of the save format
+			if (selectedElement == null)
+				break;
+			if (selectedElement instanceof Node)
+			{
+				Node n = (Node)selectedElement;
+				System.out.println(n.dump());
+			}
 			break;
 		}
 		setSelectedElement(null);

@@ -35,7 +35,7 @@ public class TBSModel
 	private ModelElement selectedModelElement;
 	private EmptyNode immortalEmptyNode;
 	private Stack<Command> history;
-	private int MESerialNumber;
+	private int MESerialNumber=0;
 	
 
 	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
@@ -69,9 +69,10 @@ public class TBSModel
 	*/
 	public int getSerial()
 	{
-		MESerialNumber ++;
+		int sn = MESerialNumber;
 		System.out.println(MESerialNumber);
-		return MESerialNumber;
+		MESerialNumber ++;
+		return sn;
 	}
 
 	/**
@@ -87,6 +88,26 @@ public class TBSModel
 	*/
 	public ModelElement getElement(int i) {
 		return modelElements.get(i);
+	}
+
+	/**
+	* Returns the ModelElement with a given serial number
+	*/
+	public ModelElement getElementBySN(int sn)
+	{
+		int checknum = sn;
+
+		List <ModelElement> model = getElements();
+		do 
+		{
+			ModelElement me = (ModelElement)model.get(checknum);
+			if (me.getId() == sn)
+			return me;
+			if (me.getId() < checknum)
+				checknum--;
+		} while (checknum >= 0);
+
+		return null;
 	}
 	
 	/**
@@ -126,7 +147,7 @@ public class TBSModel
 	
 
 	/**
-	* returns the complete ArrayList of Model Elements.
+	* returns the complete List of Model Elements.
 	*/
 	public List<ModelElement> getElements() {
 		return modelElements;
@@ -220,6 +241,8 @@ public class TBSModel
 	* model element. 
 	* Connection to a Node (toConnection) is indicated by ->
 	* Trace connection from a Node (fromConnection) indicated by <-
+	* Written for testing connections; functionality may not have
+	* survived rewrite of connections methodology.
 	*/
 	public void printConnections()
 	{
