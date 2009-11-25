@@ -34,14 +34,16 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||11/12/09||Applet Version 0.5||team||[Versioning Versions]||Skipped||
 ||11/12/09||Venture Capital presentation||team||main||11/12/09||
 ||11/15/09||First draft of javadoc||Jon||main||11/15/09||
-||11/15/09||Applet Version 0.6||team||[Versioning Versions]||11/15/09||
+||11/15/09||Applet Version 0.6||team||[Versioning Versions]||11/23/09||
 ||12/01/09||Applet Version 1.0||team||[Versioning Versions]||||
-||12/15/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
+||11/20/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
 ||1/30/10||Functioning program with full feature set||team||main||||
 
 
 == Discussion ==
+11/24 - the testing protocols are behind schedule. This is partly due to my failure to manage my time effectively, and partly due to over-optimistic scheduling. 
+Progress on this front would be facilitated by some specification of features and interface, or even stability of those elements from iteration to iteration. -jpk
 11/12 - Venture cap meeting. Expecting trailer truck loaded with bales of money, any day now. Added some writing assignments for myself. No outlook for version 0.6 yet, or scheduled release - should have that soon. 
 11/08 - Productive meeting, see minutes. 
 10/20 - We did not discuss the question of further feature development in class today, so that's a missed schedule item (and it's even one that we rolled back, for shame).
