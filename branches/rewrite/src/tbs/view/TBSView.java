@@ -72,14 +72,14 @@ public class TBSView extends JComponent {
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
 		if(buttonClicked == null) buttonClicked = TBSButtonType.SELECT;
 		int width = TBSGraphics.appletWidth;
-		int minWidth = TBSGraphics.buttonsWidth * TBSGraphics.buttons.size();
+		int minWidth = TBSGraphics.buttonsWidth * TBSButtonType.values().length;
 		if(width < minWidth) width = minWidth;
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.WHITE);
 		g2.fillRect(0, 0, width, TBSGraphics.buttonsHeight);
 		int leftX = 0;
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
-		for(TBSButtonType b: TBSGraphics.buttons) {
+		for(TBSButtonType b: TBSButtonType.values()) {
 			if(b == buttonClicked) {
 				Color start = new Color(0.2f, 0.8f, 0.2f);
 				Color end = new Color(1.0f, 1.0f, 1.0f);

@@ -4,7 +4,6 @@
 package tbs.model;
 
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import tbs.TBSGraphics;
@@ -31,10 +30,6 @@ public class OrganismNode extends Node
 	}
 		
 	public BufferedImage getImage() {return img;}
-	
-	public Rectangle2D getRectangle(){
-		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
-	}
 	
 	public int getHeight() {
 		if(getX() > 0) {

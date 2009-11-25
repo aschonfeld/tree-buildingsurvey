@@ -45,7 +45,13 @@ public abstract class Node extends ModelElement implements Cloneable
 		return anchorPoint;	
 	}
 	
-	public abstract Rectangle2D getRectangle();
+	public Rectangle2D getRectangle(){
+		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+	}
+	
+	public Rectangle2D getPaddedRectangle(){
+		return new Rectangle2D.Double(getX()-4, getY()-4, getWidth()+8, getHeight()+8);
+	}
 	
 	/**
 	* Node locations are given by their upper left corner; this method
@@ -253,7 +259,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	@Override
 	public boolean collidesWith(ModelElement m) {		
 		if(m instanceof Node)
-			return ((Node) m).getRectangle().intersects(getRectangle()); 
+			return ((Node) m).getPaddedRectangle().intersects(getRectangle()); 
 		return false;
 	}
 	

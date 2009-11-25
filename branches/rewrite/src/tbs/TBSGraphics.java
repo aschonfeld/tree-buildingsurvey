@@ -14,8 +14,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import tbs.view.TBSButtonType;
-
 /**
 * This class encapsulates the constants used in graphics handling for
 * the TBS applet, and contains some grunt-work methods for setting up
@@ -196,11 +194,6 @@ public class TBSGraphics {
 	*/ 
 	public static int buttonsWidth = 0;
 
-	/**
-	* ArrayList holding names of the buttons used
-	*/
-	public static ArrayList<TBSButtonType> buttons;
-	
 	/**
 	* Returns correct Font for TBS text.
 	*/

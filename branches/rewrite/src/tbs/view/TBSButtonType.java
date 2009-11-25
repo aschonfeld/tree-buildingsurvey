@@ -10,7 +10,8 @@ public enum TBSButtonType {
 	LABEL("Label"),
 	PRINT("Print"), 
 	UNDO("Undo"), 
-	SAVE("Save");
+	SAVE("Save"),
+	CLEAR("Clear");
 	
 	private String text;
 	

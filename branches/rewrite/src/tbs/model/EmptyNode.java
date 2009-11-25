@@ -43,10 +43,6 @@ public class EmptyNode extends Node
 		System.out.println("Created EmptyNode #" +id);
 	}
 	
-	public Rectangle2D getRectangle(){
-		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
-	}
-	
 	public int getHeight() {
 		return getDefaultHeight();
 	}

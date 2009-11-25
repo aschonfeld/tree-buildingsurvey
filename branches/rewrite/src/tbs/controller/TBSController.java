@@ -288,8 +288,8 @@ public class TBSController
     private void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= TBSGraphics.buttons.size()) return;
-		buttonClicked = TBSGraphics.buttons.get(buttonIndex);
+		if(buttonIndex >= TBSButtonType.values().length) return;
+		buttonClicked = TBSButtonType.values()[buttonIndex];
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case SELECT:
@@ -302,12 +302,16 @@ public class TBSController
 		case LINK:
 			if(selectedElement == null) 
 				break;
+			else if(selectedElement instanceof Node)
+				return;
+			else
+				break;
 		case UNLINK:
 			if(selectedElement == null) 
 				break;
 			try{
 				if(selectedElement instanceof Node){
-					model.unlink((Node) selectedElement);
+					model.unlink((Node) selectedElement, false);
 				}else{
 					Connection c = (Connection) selectedElement;
 					Unlink unlink = new Unlink();
@@ -349,6 +353,11 @@ public class TBSController
 				System.out.println(n.dump());
 			}
 			break;
+			
+		case CLEAR:
+			model.resetModel();
+			buttonClicked = TBSButtonType.SELECT;
+			break;
 		}
 		setSelectedElement(null);
     }
@@ -360,6 +369,8 @@ public class TBSController
 		// clicking on empty space always cancels connection
 		if(clickedElement == null) {
 			unselectPrevious();
+			if(!buttonClicked.equals(TBSButtonType.ADD))
+				buttonClicked = TBSButtonType.SELECT;
 		}
 		clearCurrentActions();
     	switch (buttonClicked) {
@@ -399,7 +410,7 @@ public class TBSController
 			if(clickedElement == null)
 				break;
 			if(clickedElement instanceof Node)
-				model.unlink((Node) clickedElement);
+				model.unlink((Node) clickedElement, false);
 			else
 				model.removeFromTree(clickedElement);
 			break;

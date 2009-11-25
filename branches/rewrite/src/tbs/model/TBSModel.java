@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,10 +48,10 @@ public class TBSModel
 	}
 	
 	public void resetModel(){
-		for(int i=0;i<TBSGraphics.numOfOrganisms;i++)
-			((OrganismNode) modelElements.get(i)).reset();
-		if(modelElements.size() > (TBSGraphics.numOfOrganisms+1))
-			modelElements.removeAll(modelElements.subList(TBSGraphics.numOfOrganisms+1, modelElements.size()-1));
+		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
+			removeFromTree(modelElements.get(modelElements.size()-1),true);
+		for(ModelElement m : modelElements)
+			removeFromTree(m,true);
 	}
 	
 	/**
@@ -96,8 +96,8 @@ public class TBSModel
 		return modelElements.get(i);
 	}
 
-	public ModelElement removeElement(int i) {
-		return modelElements.remove(i);
+	public void removeElement(int i) {
+		modelElements.remove(i);
 	}
 	
 	public int findIndexByElement(ModelElement m){
@@ -192,11 +192,8 @@ public class TBSModel
 	{
 		Graphics2D g2 = (Graphics2D) g;
 		TBSGraphics.getFont(g2);
-		TBSGraphics.buttons = new ArrayList<TBSButtonType>();
-		for(TBSButtonType b : TBSButtonType.values())
-			TBSGraphics.buttons.add(b);
-		Point buttonBounds = TBSGraphics.get2DStringBounds(g2, 
-				TBSGraphics.buttons);
+		Point buttonBounds = TBSGraphics.get2DStringBounds(g2,
+				Arrays.asList(TBSButtonType.values()));
 		TBSGraphics.buttonsWidth = buttonBounds.x + 
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonBounds.y + 
@@ -315,6 +312,10 @@ public class TBSModel
 	}
 	
 	public List<Connection> getConnectionsByNode(Node n){
+		return getConnectionsByNode(n, false);
+	}
+	
+	public List<Connection> getConnectionsByNode(Node n, Boolean isUndo){
 		Unlink unlink = new Unlink();
 		unlink.setNode(n);
 		List<Connection> connections = new LinkedList<Connection>();
@@ -333,8 +334,10 @@ public class TBSModel
 				}
 			}
 		}
-		history.push(unlink);
-		System.out.println("Added action(unlink) to history.");
+		if(!isUndo){
+			history.push(unlink);
+			System.out.println("Added action(unlink) to history.");
+		}
 		return connections;
 	}
 	
@@ -342,9 +345,9 @@ public class TBSModel
 	* Unlink had to live in Model when connections were
 	* one-way. Now, this simply calls the Node-based two-way unlink.
 	*/
-	public void unlink(Node n)
+	public void unlink(Node n, boolean isUndo)
 	{
-		modelElements.removeAll(getConnectionsByNode(n));
+		modelElements.removeAll(getConnectionsByNode(n, isUndo));
 		n.unlink();
 	}
 	
@@ -370,7 +373,7 @@ public class TBSModel
 					System.out.println("Unable to add action to history.");
 				}
 			}
-			unlink(n);
+			unlink(n, isUndo);
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
 				((OrganismNode) n).resetPosition();
