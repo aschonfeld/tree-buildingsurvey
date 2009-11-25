@@ -54,4 +54,11 @@ public class OrganismNode extends Node
 		return defaultPoint;
 	}
 	
+	public void reset(){
+		getConnectedTo().clear();
+		getConnectedFrom().clear();
+		setInTree(false);
+		resetPosition();
+	}
+	
 }

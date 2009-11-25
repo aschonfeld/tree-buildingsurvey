@@ -19,6 +19,7 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.TBSModel;
 import tbs.model.history.Drag;
+import tbs.model.history.Label;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
@@ -57,6 +58,7 @@ public class TBSController
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if(labelingInProgress) {
 				cancelLabel();
+				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
 				setSelectedElement(null);
 			}
 		}
@@ -181,13 +183,20 @@ public class TBSController
 					break;
 				}
 			}
-			lastPosition = null;
-			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH )
+			
+			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH ){
+				if(lastPosition.x < TBSGraphics.LINE_OF_DEATH && (model.getHistory().peek() instanceof Drag)){
+					model.getHistory().pop();
+					System.out.println("Invalid drag move removed from history.");
+				}
 				model.removeFromTree(draggedNode);
-			if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
-				model.addToTree(draggedNode); 
-			else
-				((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
+			}else{
+				if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
+					model.addToTree(draggedNode); 
+				else
+					((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
+			}
+			lastPosition = null;
 			draggedNode=null;
 		}
 	}
@@ -256,6 +265,7 @@ public class TBSController
     public void creatingLabel(EmptyNode en) {
     	if(!labelingInProgress) {
     		labelingInProgress = true;
+    		model.getHistory().push(new Label(en.getId(), en.getName()));
     		en.rename("");
     		selectedElement = en;
     	}

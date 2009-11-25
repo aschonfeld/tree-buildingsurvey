@@ -23,7 +23,7 @@ public class EmptyNode extends Node
 	* explicitly. This is never called. 
 	*/
 	public EmptyNode(int id, Point anchorPoint) {
-		super(id, String.format(TBSGraphics.emptyNodeLabel, id), anchorPoint,
+		super(id, "", anchorPoint,
 				TBSGraphics.emptyNodeHeight, TBSGraphics.emptyNodeWidth);
 		setInTree(true);
 		initName();
@@ -36,7 +36,7 @@ public class EmptyNode extends Node
 	* (left-hand panel, beneath ONodes)
 	*/
 	public EmptyNode(int id) {
-		super(id, TBSGraphics.emptyNodeDefaultLabel, new Point(TBSGraphics.emptyNodeLeftX,
+		super(id, "", new Point(TBSGraphics.emptyNodeLeftX,
 				TBSGraphics.emptyNodeUpperY), TBSGraphics.emptyNodeHeight,
 				TBSGraphics.emptyNodeWidth);
 		initName();
@@ -60,16 +60,15 @@ public class EmptyNode extends Node
 	}
 	
 	public void rename(String name) {
+		if(name.isEmpty()){
+			setName("");
+			setWidth(TBSGraphics.emptyNodeWidth);
+			setHeight(TBSGraphics.emptyNodeHeight);
+			return;
+		}
 		int width = TBSGraphics.emptyNodeWidth;
 		int height = TBSGraphics.emptyNodeHeight;
 		int padding = TBSGraphics.emptyNodePadding;
-		if(name == null) name = "";
-		if(name.length() == 0) {
-			setName("");
-			setWidth(width);
-			setHeight(height);
-			return;
-		}
 		Rectangle2D stringBounds = TBSGraphics.getStringBounds(g2, name);
 		int testWidth = (int) stringBounds.getWidth() + 2 * padding;
 		int testHeight = (int) stringBounds.getHeight() + 2 * padding;

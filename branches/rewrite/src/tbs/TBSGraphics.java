@@ -96,11 +96,6 @@ public class TBSGraphics {
 	public static int maxOrganismImageHeight = 0;
 	
 	/**
-	 * Default label for unused empty nodes
-	 */
-	public static String emptyNodeDefaultLabel = "User Labeled";
-	
-	/**
 	 * Label for inTree empty nodes
 	 */
 	public static String emptyNodeLabel = "#%d";

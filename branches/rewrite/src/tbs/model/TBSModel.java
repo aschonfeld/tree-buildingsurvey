@@ -6,7 +6,6 @@ package tbs.model;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +45,13 @@ public class TBSModel
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();
+	}
+	
+	public void resetModel(){
+		for(int i=0;i<TBSGraphics.numOfOrganisms;i++)
+			((OrganismNode) modelElements.get(i)).reset();
+		if(modelElements.size() > (TBSGraphics.numOfOrganisms+1))
+			modelElements.removeAll(modelElements.subList(TBSGraphics.numOfOrganisms+1, modelElements.size()-1));
 	}
 	
 	/**
@@ -230,9 +236,7 @@ public class TBSModel
 		}
 
 		//create left-side empty node
-		Rectangle2D enStringBounds = TBSGraphics.getStringBounds(g2, TBSGraphics.emptyNodeDefaultLabel);
 		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2;
-		TBSGraphics.emptyNodeLeftX -= (int) enStringBounds.getWidth() / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight / 2;
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
@@ -349,8 +353,13 @@ public class TBSModel
 	}
 	
 	public void removeFromTree(ModelElement m, boolean isUndo){
-		if((m == null) || (m.equals(immortalEmptyNode)))
+		if(m == null)
 			return;
+		if(m.equals(immortalEmptyNode)){
+			immortalEmptyNode.setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX,
+					TBSGraphics.emptyNodeUpperY));
+			return;
+		}
 		if(m instanceof Node){
 			Node n = (Node) m;
 			if(!isUndo){
