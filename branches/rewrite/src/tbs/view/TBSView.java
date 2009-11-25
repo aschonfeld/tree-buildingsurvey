@@ -81,7 +81,7 @@ public class TBSView extends JComponent {
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: TBSGraphics.buttons) {
 			if(b == buttonClicked) {
-				Color start = new Color(0.45f, 0.65f, 0.55f);
+				Color start = new Color(0.2f, 0.8f, 0.2f);
 				Color end = new Color(1.0f, 1.0f, 1.0f);
 				renderButtonBackground(g2, leftX, start, end);
 			} else {

@@ -90,29 +90,9 @@ public class TBSController
 		}
 	}
 	
-	// Handle mouseClicked events. Check position of mouse pointer and
-	// respond accordingly. This is complicated and still unstable; 
-	// will cover in more detail as it settles down. 
-	public void mouseClicked(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-		// get keyboard focus when user clicks in window
-		view.requestFocusInWindow();
-		if(e.getClickCount() == 1) {
-			// if mouse is in button bar
-			if(y < TBSGraphics.buttonsHeight)  {
-				handleButtonClicked(x, y);
-			} else if (x > TBSGraphics.LINE_OF_DEATH) {
-				handleMouseClicked(x, y);
-			} else {
-				clearCurrentActions();
-				setSelectedElement(null);
-			}
-		}
-	}
+	// No need to use since mousePressed is used instead
+	public void mouseClicked(MouseEvent e) { }
 	
-
-
 	/**
 	* Handle mousePressed events: if the mouse is over an object, select
 	* it.
@@ -123,6 +103,16 @@ public class TBSController
         selectedIndex = indexMouseIsOver(x, y);
         previousX = x;
         previousY = y;
+		view.requestFocusInWindow();
+		// if mouse is in button bar
+		if(y < TBSGraphics.buttonsHeight)  {
+			handleMouseButtonPressed(x, y);
+		} else if (x > TBSGraphics.LINE_OF_DEATH) {
+			handleMousePressed(x, y);
+		} else {
+			clearCurrentActions();
+			setSelectedElement(null);
+		}
 	}
 	
 	/**
@@ -295,7 +285,7 @@ public class TBSController
 		cancelLabel();
     }
     
-    private void handleButtonClicked(int x, int y) {
+    private void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
 		if(buttonIndex >= TBSGraphics.buttons.size()) return;
@@ -363,7 +353,7 @@ public class TBSController
 		setSelectedElement(null);
     }
     
-    private void handleMouseClicked(int x, int y) {
+    private void handleMousePressed(int x, int y) {
     	if(buttonClicked == null)
     		buttonClicked = TBSButtonType.SELECT;
 		ModelElement clickedElement = elementMouseIsOver(x, y);
