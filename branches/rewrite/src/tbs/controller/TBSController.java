@@ -47,7 +47,6 @@ public class TBSController
     	model = m;
     	view = v;
 		draggedNode=null;
-		buttonClicked=null;
     }
     
 	public void keyPressed(KeyEvent e) {
@@ -91,7 +90,10 @@ public class TBSController
 	}
 	
 	// No need to use since mousePressed is used instead
-	public void mouseClicked(MouseEvent e) { }
+	public void mouseClicked(MouseEvent e) {
+		if(buttonClicked != null && !buttonClicked.getIsMode())
+			buttonClicked = TBSButtonType.SELECT;
+	}
 	
 	/**
 	* Handle mousePressed events: if the mouse is over an object, select
@@ -339,7 +341,6 @@ public class TBSController
 		case UNDO:
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().undo(model);
-			buttonClicked = TBSButtonType.SELECT;
 			break;
 		case SAVE: 	//Dumps Node data to console for testing
 						//This should not happen in a release unless it is
@@ -356,16 +357,13 @@ public class TBSController
 			
 		case CLEAR:
 			model.resetModel();
-			buttonClicked = TBSButtonType.SELECT;
 			break;
 		}
 		setSelectedElement(null);
     }
     
     private void handleMousePressed(int x, int y) {
-    	if(buttonClicked == null)
-    		buttonClicked = TBSButtonType.SELECT;
-		ModelElement clickedElement = elementMouseIsOver(x, y);
+    	ModelElement clickedElement = elementMouseIsOver(x, y);
 		// clicking on empty space always cancels connection
 		if(clickedElement == null) {
 			unselectPrevious();
@@ -425,7 +423,6 @@ public class TBSController
 		case UNDO:
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().undo(model);
-			buttonClicked = TBSButtonType.SELECT;
 			break;
 		case SAVE:
 			break;

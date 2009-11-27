@@ -2,25 +2,38 @@ package tbs.view;
 
 public enum TBSButtonType {
 
-	SELECT("Select"),
-	ADD("Add"),
-	DELETE("Delete"),
-	LINK("Link"),
-	UNLINK("Unlink"),
-	LABEL("Label"),
-	PRINT("Print"), 
-	UNDO("Undo"), 
-	SAVE("Save"),
-	CLEAR("Clear");
+	SELECT("Select", true),
+	ADD("Add", true),
+	DELETE("Delete", false),
+	LINK("Link", true),
+	UNLINK("Unlink", true),
+	LABEL("Label", true),
+	PRINT("Print", false), 
+	UNDO("Undo", false), 
+	SAVE("Save", false),
+	CLEAR("Clear", false);
 	
 	private String text;
 	
-	private TBSButtonType(String text){
+	/**
+	 * If this value is True after the user clicks this button once
+	 * the button stays selected, otherwise it automatically rolls back
+	 * to the SELECT button being selected.
+	 */
+	
+	private Boolean isMode;
+	
+	private TBSButtonType(String text, Boolean isMode){
 		this.text = text;
+		this.isMode = isMode;
 	}
 	
 	public String getText(){
-		return text;
+		return text;	
+	}
+	
+	public Boolean getIsMode(){
+		return isMode;
 	}
 	
 	@Override
