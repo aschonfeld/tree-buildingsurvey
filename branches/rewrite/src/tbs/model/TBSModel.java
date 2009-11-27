@@ -50,8 +50,10 @@ public class TBSModel
 	public void resetModel(){
 		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
 			removeFromTree(modelElements.get(modelElements.size()-1),true);
-		for(ModelElement m : modelElements)
-			removeFromTree(m,true);
+		List<Node> inTreeElements = inTreeElements();
+		for(Node n : inTreeElements){
+			removeFromTree(n,true);
+		}
 	}
 	
 	/**
@@ -373,7 +375,7 @@ public class TBSModel
 					System.out.println("Unable to add action to history.");
 				}
 			}
-			unlink(n, isUndo);
+			unlink(n, true);
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
 				((OrganismNode) n).resetPosition();
