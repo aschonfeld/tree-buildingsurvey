@@ -28,7 +28,7 @@ public class Delete extends Command{
 		}else if(modelElement instanceof EmptyNode){
 			model.addElement(modelElement);
 		}else
-			model.setElement(modelElement.getId()-1, modelElement);
+			model.setElement(modelElement.getId(), modelElement);
 	}
 	
 	
