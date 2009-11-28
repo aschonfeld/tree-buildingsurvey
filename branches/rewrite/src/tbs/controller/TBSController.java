@@ -341,6 +341,10 @@ public class TBSController
 			}
 			break;
 		case LABEL:
+			if(selectedElement instanceof EmptyNode){
+				creatingLabel((EmptyNode) selectedElement);
+				return;
+			}
 			break;
 		case PRINT:
 			for (ModelElement me : model.getElements())
