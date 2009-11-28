@@ -18,6 +18,7 @@ import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.TBSModel;
+import tbs.model.history.Add;
 import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
@@ -52,13 +53,19 @@ public class TBSController
 	public void keyPressed(KeyEvent e) {
 		if(statusString == null) statusString = new String();
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-			handleDelete();
+			if(!labelingInProgress){
+				buttonClicked = TBSButtonType.DELETE;
+				handleDelete();
+				buttonClicked = TBSButtonType.SELECT;
+			}
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if(labelingInProgress) {
 				cancelLabel();
 				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
+				System.out.println("Added command(label) to history.");
 				setSelectedElement(null);
+				buttonClicked = TBSButtonType.SELECT;
 			}
 		}
 		
@@ -70,7 +77,12 @@ public class TBSController
 		if(labelingInProgress) {
 			if(selectedElement instanceof EmptyNode) {
 				EmptyNode en = (EmptyNode) selectedElement;
-				en.rename(en.getName() + c);
+				String name =en.getName();
+				if(c == '\b'){
+					if(name.length() > 0)
+						en.rename(name.substring(0,name.length()-1));
+				}else
+					en.rename(name + c);
 			}
 		}
 	}
@@ -197,6 +209,10 @@ public class TBSController
 		return buttonClicked;
 	}
 	
+	public Node getDraggedNode(){
+		return draggedNode;
+	}
+	
     private int indexMouseIsOver(int x, int y) {
 	    int maxIndex = -1;
 	    int i = 0;
@@ -258,7 +274,7 @@ public class TBSController
     	if(!labelingInProgress) {
     		labelingInProgress = true;
     		model.getHistory().push(new Label(en.getId(), en.getName()));
-    		en.rename("");
+    		en.rename(en.getName());
     		selectedElement = en;
     	}
     }
@@ -313,14 +329,12 @@ public class TBSController
 				break;
 			try{
 				if(selectedElement instanceof Node){
-					model.unlink((Node) selectedElement, false);
+					model.unlink((Node) selectedElement);
 				}else{
 					Connection c = (Connection) selectedElement;
-					Unlink unlink = new Unlink();
-					unlink.addConnection((Connection) c.clone());
-					model.getHistory().push(unlink);
+					model.getHistory().push(new Unlink((Connection) c.clone()));
 					System.out.println("Added action(unlink) to history.");
-					model.removeFromTree(c, true);
+					model.removeFromTree(c);
 				}
 			}catch(CloneNotSupportedException c){
 				System.out.println("Unable to add action to history.");
@@ -384,7 +398,15 @@ public class TBSController
 						break;
 					}
 				}
-				if(newNode != null) model.addElement(newNode);
+				if(newNode != null){
+					model.addElement(newNode);
+					try{
+						model.getHistory().push(new Add((Node) newNode.clone()));
+						System.out.println("Added action(add) to history.");
+					}catch(CloneNotSupportedException c){
+						System.out.println("Unable to add action to history.");
+					}
+				}
 			}
 			break;
 		case DELETE:
@@ -408,7 +430,7 @@ public class TBSController
 			if(clickedElement == null)
 				break;
 			if(clickedElement instanceof Node)
-				model.unlink((Node) clickedElement, false);
+				model.unlink((Node) clickedElement);
 			else
 				model.removeFromTree(clickedElement);
 			break;

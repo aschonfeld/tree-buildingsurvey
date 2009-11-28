@@ -33,6 +33,7 @@ public class Drag extends Command{
 	
 	@Override
 	public void undo(TBSModel model) {
+		System.out.println("Undoing drag command.");
 		int index = model.findIndexById(nodeId);
 		if(index >= 0)
 			((Node) model.getElement(index)).setAnchorPoint(pointBefore);		

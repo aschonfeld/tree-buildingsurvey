@@ -49,10 +49,10 @@ public class TBSModel
 	
 	public void resetModel(){
 		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
-			removeFromTree(modelElements.get(modelElements.size()-1),true);
+			removeFromTree(modelElements.get(modelElements.size()-1));
 		List<Node> inTreeElements = inTreeElements();
 		for(Node n : inTreeElements){
-			removeFromTree(n,true);
+			removeFromTree(n);
 		}
 	}
 	
@@ -314,10 +314,6 @@ public class TBSModel
 	}
 	
 	public List<Connection> getConnectionsByNode(Node n){
-		return getConnectionsByNode(n, false);
-	}
-	
-	public List<Connection> getConnectionsByNode(Node n, Boolean isUndo){
 		Unlink unlink = new Unlink();
 		unlink.setNode(n);
 		List<Connection> connections = new LinkedList<Connection>();
@@ -336,7 +332,7 @@ public class TBSModel
 				}
 			}
 		}
-		if(!isUndo){
+		if(controller.getButtonClicked().equals(TBSButtonType.UNLINK)){
 			history.push(unlink);
 			System.out.println("Added action(unlink) to history.");
 		}
@@ -347,17 +343,13 @@ public class TBSModel
 	* Unlink had to live in Model when connections were
 	* one-way. Now, this simply calls the Node-based two-way unlink.
 	*/
-	public void unlink(Node n, boolean isUndo)
+	public void unlink(Node n)
 	{
-		modelElements.removeAll(getConnectionsByNode(n, isUndo));
+		modelElements.removeAll(getConnectionsByNode(n));
 		n.unlink();
 	}
 	
 	public void removeFromTree(ModelElement m){
-		removeFromTree(m, false);
-	}
-	
-	public void removeFromTree(ModelElement m, boolean isUndo){
 		if(m == null)
 			return;
 		if(m.equals(immortalEmptyNode)){
@@ -367,7 +359,7 @@ public class TBSModel
 		}
 		if(m instanceof Node){
 			Node n = (Node) m;
-			if(!isUndo){
+			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
 					history.push(new Delete((Node) n.clone()));
 					System.out.println("Added action(delete) to history.");
@@ -375,7 +367,7 @@ public class TBSModel
 					System.out.println("Unable to add action to history.");
 				}
 			}
-			unlink(n, true);
+			unlink(n);
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
 				((OrganismNode) n).resetPosition();
@@ -385,7 +377,7 @@ public class TBSModel
 			Connection c = (Connection) m;
 			c.getFrom().getConnectedTo().remove(c.getTo());
 			c.getTo().getConnectedFrom().remove(c.getFrom());
-			if(!isUndo){
+			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
 					history.push(new Delete((Connection) c.clone()));
 					System.out.println("Added action(delete) to history.");

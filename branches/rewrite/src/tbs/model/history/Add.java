@@ -18,9 +18,10 @@ public class Add extends Command{
 	
 	@Override
 	public void undo(TBSModel model) {
+		System.out.println("Undoing add command.");
 		int index = model.findIndexByElement(node);
 		if(index >= 0)
-			model.removeFromTree(model.getElement(index), true);		
+			model.removeFromTree(model.getElement(index));		
 	}
 	
 	

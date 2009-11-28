@@ -41,6 +41,7 @@ public class Label extends Command{
 	
 	@Override
 	public void undo(TBSModel model) {
+		System.out.println("Undoing label command.");
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
 			ModelElement selection = model.getElement(index);

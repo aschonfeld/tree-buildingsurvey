@@ -17,6 +17,17 @@ public class Unlink extends Command{
 		this.connections = new LinkedList<Connection>();
 	}
 	
+	public Unlink(Connection c){
+		this();
+		this.connections.add(c);
+	}
+	
+	public Unlink(Node node){
+		this();
+		this.node = node;
+	}
+	
+	
 	public List<Connection> getConnections() {
 		return connections;
 	}
@@ -52,6 +63,7 @@ public class Unlink extends Command{
 
 	@Override
 	public void undo(TBSModel model) {
+		System.out.println("Undoing unlink command.");
 		int index;
 		if(node != null){
 			model.getElements().addAll(connections);

@@ -19,6 +19,7 @@ public class Link extends Command{
 
 	@Override
 	public void undo(TBSModel model) {
+		System.out.println("Undoing link command.");
 		int index = model.findIndexByElement(connection);
 		if(index >= 0){
 			model.removeElement(index);
