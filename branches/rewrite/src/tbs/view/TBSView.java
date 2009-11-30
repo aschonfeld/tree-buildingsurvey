@@ -4,15 +4,18 @@
 package tbs.view;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -38,6 +41,8 @@ public class TBSView extends JComponent {
 	// This connection follows the mouse
 	private Line2D connInProgress;
 	private String statusString;
+	private JScrollBar verticalBar;
+	private int yOffset = 0; // start of viewable tree area
 
 	
 	private TBSModel model;
@@ -45,6 +50,22 @@ public class TBSView extends JComponent {
         model = m;
         connInProgress = null;
     	statusString = null;
+    	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
+		setLayout(new BorderLayout());
+ 		add(verticalBar, BorderLayout.EAST);
+	}
+	
+	public JScrollBar getVerticalBar() {
+		return verticalBar;
+	}
+	
+	public int getYOffset() {
+		return yOffset;
+	}
+	
+	// sets the start of viewable tree area
+	public void setYOffset(int yo) {
+		yOffset = yo;
 	}
 	
 	/**
@@ -148,7 +169,9 @@ public class TBSView extends JComponent {
 			if(name == null) name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			g2.fill(en.getRectangle());
+			Rectangle2D r = en.getRectangle();
+			Rectangle2D yAdjust = new Rectangle2D.Double(r.getX(), r.getY() - yOffset, r.getWidth(), r.getHeight()); 
+			if(me != model.getImmortalEmptyNode()) g2.fill(yAdjust); else g2.fill(r);
 			// make bold for greater visibility;
 	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
 	   		g2.setFont(f);
@@ -156,12 +179,14 @@ public class TBSView extends JComponent {
 				// zero length string gives an error
 				int h = (int) en.getHeight();
 				int w = (int) en.getWidth();
-				TBSGraphics.drawCenteredString(g2, name, en.getX(), en.getY(), w, h, Color.black);
+				int y = en.getY() - yOffset;
+				TBSGraphics.drawCenteredString(g2, name, en.getX(), y, w, h, Color.black);
 			}
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
 					c.getTo());
+				conn = scrollAdjust(conn);
 				g2.setColor(me.equals(model.getSelectedModelElement()) ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
 				g2.setStroke(new BasicStroke(3));
 				g2.draw(conn);
@@ -184,7 +209,7 @@ public class TBSView extends JComponent {
 		if(on.isInTree()) {
 			stringColor = TBSGraphics.organismBoxColor;
 			boxColor = TBSGraphics.organismStringColor;
-			g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
+			g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
 		} else {
 			// organism is being dragged for possible addition to tree
 			if(on.getX() > 0) {
@@ -208,16 +233,19 @@ public class TBSView extends JComponent {
 		Graphics2D selectedGraphics = (Graphics2D) g;
 		if(me instanceof Node){
 			Node n = (Node) me;
+			double y = n.getY() - 1.5;
+			if(n.isInTree()) y -= yOffset;
 			selectedGraphics.setColor(TBSGraphics.selectedNodeBorderColor);
 			selectedGraphics.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
 			selectedGraphics.draw(new Rectangle2D.Double(n.getX()-1.5,
-					n.getY()-1.5,
+					y,
 					n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
 					n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
 		}else{
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
 					c.getTo());
+			conn = scrollAdjust(conn);
 			selectedGraphics.setColor(TBSGraphics.connectionSelectedColor);
 			selectedGraphics.setStroke(new BasicStroke(3));
 			selectedGraphics.draw(conn);
@@ -260,6 +288,12 @@ public class TBSView extends JComponent {
 				conn.getP2().getY(),
 				conn.getP2().getX() + arrowX,
 				conn.getP2().getY() + arrowY);
+	}
+	
+	public Line2D scrollAdjust(Line2D l) {
+		double y1 = l.getY1() - yOffset;
+		double y2 = l.getY2() - yOffset;
+		return new Line2D.Double(l.getX1(), y1, l.getX2(), y2);
 	}
 
 	/**
@@ -308,13 +342,12 @@ public class TBSView extends JComponent {
 		if(connInProgress != null){
 			g2.setColor(TBSGraphics.connectionColor);
 			g2.setStroke(new BasicStroke(3));
-			g2.draw(connInProgress);
-			g2.draw(getArrowHead(connInProgress, 0.75 * Math.PI));
-			g2.draw(getArrowHead(connInProgress, 1.25 * Math.PI));
+			g2.draw(scrollAdjust(connInProgress));
+			g2.draw(getArrowHead(scrollAdjust(connInProgress), 0.75 * Math.PI));
+			g2.draw(getArrowHead(scrollAdjust(connInProgress), 1.25 * Math.PI));
 		}
 		g2.setStroke(new BasicStroke());
 		renderButtons(g2);
 		
-	}
-	
+	}	
 }

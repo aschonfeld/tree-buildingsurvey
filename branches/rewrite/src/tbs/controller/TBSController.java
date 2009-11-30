@@ -4,6 +4,8 @@
 package tbs.controller;
 
 import java.awt.Point;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -30,7 +32,7 @@ import tbs.view.TBSView;
 * data stored in the data model.
 **/
 public class TBSController 
-		implements MouseListener, MouseMotionListener, KeyListener
+		implements MouseListener, MouseMotionListener, KeyListener, AdjustmentListener
 {
 	
 	private TBSModel model;
@@ -42,13 +44,19 @@ public class TBSController
 	private Point lastPosition = null;
 	private String statusString = null;
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
+	
 	private boolean labelingInProgress = false;
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
     	view = v;
+ 		view.getVerticalBar().addAdjustmentListener(this);
 		draggedNode=null;
     }
+	
+	public void adjustmentValueChanged(AdjustmentEvent e) {
+		view.setYOffset((e.getValue() * view.getHeight()) / 100);
+	}
     
 	public void keyPressed(KeyEvent e) {
 		if(statusString == null) statusString = new String();
@@ -97,7 +105,7 @@ public class TBSController
 			if(TBSButtonType.LINK.equals(buttonClicked))
 				view.setConnInProgress(
 		    		new Line2D.Double(((Node) selectedElement).getCenter(),
-		    				new Point(e.getX(), e.getY())));
+		    				new Point(e.getX(), e.getY() + view.getYOffset())));
 		}
 	}
 	
@@ -180,6 +188,7 @@ public class TBSController
 			//Node dragged to point out of bounds
 			modifyOutOfBounds(draggedNode);
 			List<Node> inTreeElements = model.inTreeElements();
+			if(!draggedNode.isInTree()) draggedNode.setY(draggedNode.getY() + view.getYOffset());
 			for(Node n : inTreeElements){
 				if(!n.equals(draggedNode) && draggedNode.collidesWith(n)){
 					draggedNode.setX(lastPosition.x);
@@ -195,10 +204,12 @@ public class TBSController
 				}
 				model.removeFromTree(draggedNode);
 			}else{
-				if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH )
+				if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH ) {
+					//draggedNode.setY(draggedNode.getY() + view.getYOffset());
 					model.addToTree(draggedNode); 
-				else
+				} else {
 					((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
+				}
 			}
 			lastPosition = null;
 			draggedNode=null;
@@ -216,8 +227,10 @@ public class TBSController
     private int indexMouseIsOver(int x, int y) {
 	    int maxIndex = -1;
 	    int i = 0;
+	    int yOffset = 0;
+	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y)) maxIndex = i;
+		    if(me.contains(x, y + yOffset)) maxIndex = i;
 		    i++;
 		}
 		return maxIndex;
@@ -225,8 +238,10 @@ public class TBSController
     
     private ModelElement elementMouseIsOver(int x, int y) {
 	    ModelElement topElement = null;
+	    int yOffset = 0;
+	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y))
+		    if(me.contains(x, y + yOffset))
 		    	topElement = me;
 		}
 	    return topElement;
@@ -236,12 +251,19 @@ public class TBSController
     private void modifyOutOfBounds(Node n){
     	if(n.getX() < 0 )
     		n.setX(0);
-    	if((n.getX()+n.getWidth()) > view.getWidth())
-    		n.setX(view.getWidth()-n.getWidth());
-    	if(n.getY() <= 0)
-    		n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    	if((n.getY()) > view.getHeight())
-    		n.setY(view.getHeight()-n.getHeight());
+    	if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
+    		n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
+    	if(n.isInTree()) {
+    		if(n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
+    			n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+    		if((n.getY()) > view.getHeight() + view.getYOffset())
+    			n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
+    	} else {
+    		if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
+    			n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+    		if((n.getY()) > view.getHeight())
+    			n.setY(view.getHeight()-n.getHeight());   		
+    	}
     }
     
     private void cancelConnection() {
@@ -394,13 +416,17 @@ public class TBSController
 			break;
 		case ADD:
 			if(clickedElement == null) {
-				Node newNode = new EmptyNode(model.getSerial(), new Point(x, y));
+				if(x > view.getWidth() - view.getVerticalBar().getWidth()) 
+					x = view.getWidth() - view.getVerticalBar().getWidth();
+				Node newNode = new EmptyNode(model.getSerial(), new Point(x, y + view.getYOffset()));
 				for(Node n : model.inTreeElements()){
 					// make sure not putting it on top of another item
 					if(n.collidesWith(newNode)){
 						newNode = null;
 						break;
 					}
+					// make sure it's not under the scroll bar
+					
 				}
 				if(newNode != null){
 					model.addElement(newNode);
