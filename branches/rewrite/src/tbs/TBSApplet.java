@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.TreeMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
@@ -33,6 +35,7 @@ public class TBSApplet extends JApplet {
 	private static final long serialVersionUID = 0x03046F6687102247L;
 	
 	private TBSModel model;
+	private TBSApplet app = this;
 
 	/**
 	* INIT instantiates TBSGraphics and TBSModel, and calls the
@@ -45,7 +48,7 @@ public class TBSApplet extends JApplet {
  		public void run() {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
- 			model = new TBSModel(getGraphics(), 
+ 			model = new TBSModel(app, getGraphics(), 
 					loadOrganismsFromDirectory("images"));
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
@@ -115,5 +118,42 @@ public class TBSApplet extends JApplet {
  		return organismNameToImage;
 	}
 
+
+	/**
+	* Read a file and return a list of Strings, one String per Node.
+	*/
+	public List<String> loadTreeFile(String fileName)
+	{
+		URL fileURL = null;	
+		URLConnection conn = null;
+		InputStream is= null;
+		BufferedReader reader = null;
+ 		ArrayList<String> lines = new ArrayList<String>();
+		String line = "";
+	try{
+		fileURL=new URL(getCodeBase(), fileName);
+		System.out.println("Got a file");
+		 conn = (URLConnection) fileURL.openConnection();
+		conn.setRequestProperty("REFERER", getDocumentBase().toString());
+		 is = conn.getInputStream();
+		reader= new BufferedReader(new
+			InputStreamReader(is));
+		line = null;
+		while ((line = reader.readLine()) != null)
+		{
+		 	lines.add(line);
+		}
+	is.close();	
+	}//end try block
+	
+
+	catch (Exception e)
+	{
+		System.out.println("loadTreeFile: "+e);
+		e.printStackTrace();
+
+	}
+	return lines;
+	}//end loadTreeFile		
 }
 

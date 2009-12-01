@@ -174,7 +174,7 @@ public abstract class Node extends ModelElement implements Cloneable
 		ret = (this instanceof OrganismNode)?"O:":"E:";
 		ret = ret + this.getId()+":";
 		ret = ret + this.getName()+":";
-		ret = ret + this.getImgFileName()+":";
+		//ret = ret + this.getImgFileName()+":";
 		ret = ret + this.getX()+":" + this.getY()+":";
 		ret = ret + this.isInTree()+":(";
 		for (Node toNode : this.getConnectedTo())

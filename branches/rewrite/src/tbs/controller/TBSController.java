@@ -13,7 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.List;
-
+import java.util.Iterator;
 import tbs.TBSGraphics;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
@@ -369,6 +369,16 @@ public class TBSController
 			}
 			break;
 		case PRINT:
+			model.loadTree();
+			break;
+		case UNDO:
+			if(!model.getHistory().isEmpty())
+				model.getHistory().pop().undo(model);
+			break;
+		case SAVE: 	//Dumps tree data to console for testing
+						//This should not happen in a release unless it is
+						//explicitly highlighted as a temporary demonstration
+						//of the save format
 			for (ModelElement me : model.getElements())
 			{
 				if (me instanceof Node)
@@ -376,22 +386,6 @@ public class TBSController
 					Node n = (Node)me;
 					System.out.println(n.dump());
 				}
-			}
-			break;
-		case UNDO:
-			if(!model.getHistory().isEmpty())
-				model.getHistory().pop().undo(model);
-			break;
-		case SAVE: 	//Dumps Node data to console for testing
-						//This should not happen in a release unless it is
-						//explicitly highlighted as a temporary demonstration
-						//of the save format
-			if (selectedElement == null)
-				break;
-			if (selectedElement instanceof Node)
-			{
-				Node n = (Node)selectedElement;
-				System.out.println(n.dump());
 			}
 			break;
 			
@@ -485,7 +479,11 @@ public class TBSController
     			setSelectedElement(clickedElement);
     		else // organism node is not in tree, just unselect previous
     			unselectPrevious();
-    	} else // default set selectedElement = clickedElement
-    		setSelectedElement(clickedElement);
-    }			
+		} else // default set selectedElement = clickedElement
+    		setSelectedElement(clickedElement);	
+	}			
+
+
+
+
 }

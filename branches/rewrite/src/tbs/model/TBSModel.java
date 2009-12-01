@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -25,6 +26,7 @@ import tbs.model.history.Link;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
+import tbs.TBSApplet;
 
 public class TBSModel 
 {
@@ -35,9 +37,9 @@ public class TBSModel
 	private EmptyNode immortalEmptyNode;
 	private Stack<Command> history;
 	private int MESerialNumber=0;
-	
+	private TBSApplet applet;	
 
-	public TBSModel(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
+	public TBSModel(TBSApplet app, Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new LinkedList<ModelElement>();
 		selectedModelElement = null;
 		createButtons(g); // call before creating model elements
@@ -45,6 +47,12 @@ public class TBSModel
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();
+		applet = app;
+	}
+
+	public void setModelElements(List<ModelElement> newList)
+	{
+		modelElements = newList;
 	}
 	
 	public void resetModel(){
@@ -153,9 +161,6 @@ public class TBSModel
 		return null;
 	}
 	
-	/**
-	* removes the ith ModelElement in the list.
-	*/
 	/**
 	* returns the complete List of Model Elements.
 	*/
@@ -388,4 +393,98 @@ public class TBSModel
 		}
 		modelElements.remove(m);
 	}
+
+	/**
+	* Take a list of strings extracted from a file by
+	* Applet.loadTreeFile(), and recreate the stored tree.
+	* Two passes: first pass recreates nodes, second makes connections. 
+	*/
+   public void loadTree()
+   {
+		List<String> list=applet.loadTreeFile("testfile.tbs");
+      ArrayList <ModelElement> newList=new ArrayList<ModelElement>();
+      Iterator<String> it = list.iterator();
+      while (it.hasNext())
+      {
+         String data[] = it.next().split(":");
+         if (data[0].equals("O"))
+            newList.add(loadOrganismNode(data));
+         else if (data[0].equals("E"))
+            newList.add(loadEmptyNode(data));
+         else
+         {
+            System.out.println("Problem in loadTree");
+            break;
+         }
+			System.out.println("loadTree: end of while loop");
+      }
+      setModelElements(newList);
+		it = list.iterator();
+		while (it.hasNext())
+		{
+			String data[] = it.next().split(":");
+			Node node = (Node)getElementBySN(Integer.parseInt(data[1]));
+			String cList[]=data[6].split("[(,)]");
+			if (cList.length>0)
+      	{
+      	   for (String s:cList)
+      	   {
+					if (s.equals("")) continue;
+					else 
+					{
+      	      	Node cNode = (Node)getElementBySN(Integer.parseInt(s));
+      	      	addConnection(node,cNode);
+  					}
+				}
+      	}
+		}
+		System.out.println("loadTree: end");
+   }
+
+	/**
+	* Load an OrganismNode. Might be possible to combine this with
+	* loadEmptyNode(). 
+	* This does not create any new OrganismNodes; it simply resets the
+	* old ones and sets their values where we want them. This saves
+	* reloading the image files, but it means we have to always use the
+	* same set of organisms. 
+	*/
+   public ModelElement loadOrganismNode(String[] data)
+   {
+      ModelElement me;
+      int id = Integer.parseInt(data[1]);
+		System.out.println(data[0]);
+      me = getElementBySN(id);
+      OrganismNode node = (OrganismNode) me;
+      node.reset();
+      int x = Integer.parseInt(data[3]);
+      int y = Integer.parseInt(data[4]);
+      Point pt = new Point(x,y);
+      node.setAnchorPoint(pt);
+      node.setInTree((data[5].equals("true")?true:false));
+      me = (ModelElement)node;
+		System.out.println ("End of LoadOrganismNode");
+      return me;
+   }
+
+	/**
+	* Load an EmptyNode. Might be possible to combine this with
+	* loadOrganismNode().
+	*/
+   public ModelElement loadEmptyNode(String[] data)
+   {
+      ModelElement me;
+		System.out.println(data[1]);
+      int id = Integer.parseInt(data[1]);
+      String name = data[2];
+      int x = Integer.parseInt(data[3]);
+      int y = Integer.parseInt(data[4]);
+      Point pt = new Point(x,y);
+      Boolean in = (data[5].equals("true")?true:false);
+      EmptyNode node = new EmptyNode(id, pt);
+      node.rename(name);
+      node.setInTree(in);
+      me = (ModelElement)node;
+      return me;
+	}	
 }

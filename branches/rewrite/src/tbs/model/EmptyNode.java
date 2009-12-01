@@ -56,7 +56,7 @@ public class EmptyNode extends Node
 	}
 	
 	public void rename(String name) {
-		if(name.isEmpty()){
+		if(name.length()==0){
 			setName("");
 			setWidth(TBSGraphics.emptyNodeWidth);
 			setHeight(TBSGraphics.emptyNodeHeight);
