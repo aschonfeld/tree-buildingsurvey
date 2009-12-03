@@ -8,6 +8,8 @@ The last meeting seems to have been very productive. Please update the schedule 
 
 You might want to move the database connection discussion and resolution to separate page where a curious future developer cam find out why you did it as you did.
 
+One step build page still needs instructions for the Biology professor (in Idaho) who just wants to deploy the applet - s/he shouldn't have to compile it first. S/he's never heard of ant except in biological contexts. (His/her job will be much harder when the applet must connect to a database. Maybe there should be a version that does not require that. Ask Professor White.)
+
 === November 18 ===
 
 Good start on the one step build. What's there now are developer instructions. 
