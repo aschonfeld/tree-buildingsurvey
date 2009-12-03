@@ -13,11 +13,12 @@
   # Download [http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html putty]
   # Go to server, cluster.bio.whe.umb.edu
   # use (User:root, Password:********)
-  # Type the following commands: `cd /var/www/cgi-bin/Test/
-chmod +x TreeSurvey.pl
-cd /var/www/html/Test/
-chown nobody:nobody phylogenySurvey.jar
-chmod +x phylogenySurvey.jar`
+  # Type the following commands: 
+    * `cd /var/www/cgi-bin/Test/`
+    * `chmod +x TreeSurvey.pl`
+    * `cd /var/www/html/Test/`
+    * `chown nobody:nobody phylogenySurvey.jar`
+    * `chmod +x phylogenySurvey.jar`
 
 (password available from Jon or Andrew)
 
