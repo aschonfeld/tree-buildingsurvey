@@ -9,9 +9,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -332,12 +332,16 @@ public class TBSView extends JComponent {
 		for(ModelElement m : model.getElements())
 			renderModelElement(g, m);
 		ModelElement selected = model.getSelectedModelElement();
+		List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
 		if(selected == null){
 			Node draggedNode = model.getController().getDraggedNode();
 			if(draggedNode != null)
 				selected = draggedNode;
 		}
-		if(selected != null)
+		if(selectedTwoWay != null){
+			for(ModelElement m : selectedTwoWay)
+				renderSelectedModelElement(g,m);
+		}else if(selected != null)
 			renderSelectedModelElement(g,selected);
 		if(connInProgress != null){
 			g2.setColor(TBSGraphics.connectionColor);

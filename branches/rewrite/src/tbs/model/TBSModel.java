@@ -34,6 +34,7 @@ public class TBSModel
 	private TBSController controller;
 	private List<ModelElement> modelElements;
 	private ModelElement selectedModelElement;
+	private List<ModelElement> selectedTwoWay;
 	private EmptyNode immortalEmptyNode;
 	private Stack<Command> history;
 	private int MESerialNumber=0;
@@ -42,6 +43,7 @@ public class TBSModel
 	public TBSModel(TBSApplet app, Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new LinkedList<ModelElement>();
 		selectedModelElement = null;
+		selectedTwoWay = null;
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
 		view = new TBSView(this);
@@ -174,6 +176,14 @@ public class TBSModel
 
 	public void setSelectedModelElement(ModelElement selectedModelElement) {
 		this.selectedModelElement = selectedModelElement;
+	}
+
+	public List<ModelElement> getSelectedTwoWay() {
+		return selectedTwoWay;
+	}
+
+	public void setSelectedTwoWay(List<ModelElement> selectedTwoWay) {
+		this.selectedTwoWay = selectedTwoWay;
 	}
 
 	/**
@@ -367,7 +377,7 @@ public class TBSModel
 			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
 					history.push(new Delete((Node) n.clone()));
-					System.out.println("Added action(delete) to history.");
+					System.out.println("Added action(node delete) to history.");
 				}catch(CloneNotSupportedException e){
 					System.out.println("Unable to add action to history.");
 				}
@@ -384,8 +394,19 @@ public class TBSModel
 			c.getTo().getConnectedFrom().remove(c.getFrom());
 			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
-					history.push(new Delete((Connection) c.clone()));
-					System.out.println("Added action(delete) to history.");
+					if(selectedTwoWay != null){
+						Command command = history.peek();
+						if(command instanceof Delete && ((Delete) command).getTwoWayConnection() != null)
+							((Delete) command).addConnection((Connection) c.clone());
+						else{
+							history.push(new Delete());
+							((Delete) history.peek()).addConnection((Connection) c.clone());
+							System.out.println("Added action(two-way connection delete) to history.");
+						}
+					}else{
+						history.push(new Delete((Connection) c.clone()));
+						System.out.println("Added action(connection delete) to history.");
+					}
 				}catch(CloneNotSupportedException e){
 					System.out.println("Unable to add action to history.");
 				}

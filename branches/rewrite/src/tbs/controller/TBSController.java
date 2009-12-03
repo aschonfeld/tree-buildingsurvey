@@ -12,8 +12,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Iterator;
+
 import tbs.TBSGraphics;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
@@ -237,13 +238,20 @@ public class TBSController
 	}
     
     private ModelElement elementMouseIsOver(int x, int y) {
-	    ModelElement topElement = null;
+    	ModelElement topElement = null;
+	    List<ModelElement> selectedTwoWay = new LinkedList<ModelElement>();
 	    int yOffset = 0;
 	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y + yOffset))
+		    if(me.contains(x, y + yOffset)){
 		    	topElement = me;
+		    	if(me instanceof Connection)
+		    		selectedTwoWay.add(me);
+		    }
 		}
+	    if(selectedTwoWay.size() > 1)
+	    	model.setSelectedTwoWay(selectedTwoWay);
+	    	
 	    return topElement;
 	}   
     
@@ -316,7 +324,12 @@ public class TBSController
     public void handleDelete() {
 		if(selectedElement == null) return;
 		clearCurrentActions();
-		model.removeFromTree(selectedElement);
+		if(model.getSelectedTwoWay() != null){
+			for(ModelElement tw : model.getSelectedTwoWay())
+				model.removeFromTree(tw);
+			model.setSelectedTwoWay(null);
+		}else
+			model.removeFromTree(selectedElement);
 		unselectPrevious();
     }
     
@@ -398,7 +411,7 @@ public class TBSController
     
     private void handleMousePressed(int x, int y) {
     	ModelElement clickedElement = elementMouseIsOver(x, y);
-		// clicking on empty space always cancels connection
+    	// clicking on empty space always cancels connection
 		if(clickedElement == null) {
 			unselectPrevious();
 			if(!buttonClicked.equals(TBSButtonType.ADD))
@@ -433,12 +446,6 @@ public class TBSController
 				}
 			}
 			break;
-		case DELETE:
-			if(clickedElement == null)
-				break;
-			selectedElement = clickedElement;
-			handleDelete();
-			return;
 		case LINK:
 			if(clickedElement == null) 
 				break;
@@ -465,10 +472,6 @@ public class TBSController
 				creatingLabel((EmptyNode) clickedElement);
 			break;
 		case PRINT:
-			break;
-		case UNDO:
-			if(!model.getHistory().isEmpty())
-				model.getHistory().pop().undo(model);
 			break;
 		case SAVE:
 			break;
