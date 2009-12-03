@@ -6,7 +6,7 @@ Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
 News:
   The Business Requirements Document is due in two weeks (12/14).
 Discussion:
-  This is the first "offical" meeting that has occured for about 3 weeks. Even though meetings have not been as frequent there has still been many code changes submitted.
+  This is the first "offical" meeting that has occured for about 3 weeks, due to thanksgiving & work schedules. Even though meetings have not been as frequent there has still been many code changes submitted.
   We began the meeting discussing the current progress of the project.  After some deliberation it was agreed that we would not meet our orignal deliverable of December 1st for database connections & multiple views.  Now this should not be misinterpreted as "falling behind".  We understood that the technology is already in place, we have just been exploring the feasibility of other options in the meantime.
 
 *Database Connections*
@@ -31,6 +31,7 @@ Discussion:
 *Business Requirements Document*
   To end our meeting Jon agreed that he was the most apt to do some work on our Business Requirements Document.  Andrew had already begun work upon a BRD based off a similar one used at his current job and added that to subversion.  He also forwarded Jon a snippet of that BRD from his work so that he could possibly continue ours in the same format.
 
-
+*Future Meetings:* 
+  * Thursday(12/3) - most likely not feasible since Professor Bolker hasn't had a chance to lecture in a few classes.
 
     
