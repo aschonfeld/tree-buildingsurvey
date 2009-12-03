@@ -2,6 +2,12 @@
 
 = Comments and questions from the professor = 
 
+=== December 2 ===
+
+The last meeting seems to have been very productive. Please update the schedule to reflect the conclusions you reached there.
+
+You might want to move the database connection discussion and resolution to separate page where a curious future developer cam find out why you did it as you did.
+
 === November 18 ===
 
 Good start on the one step build. What's there now are developer instructions. 
