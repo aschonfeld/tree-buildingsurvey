@@ -1,4 +1,3 @@
-//TBS version 0.4
 //TBSApplet: the runnable frame class of TBS
 
 package tbs;
@@ -49,7 +48,7 @@ public class TBSApplet extends JApplet {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
  			model = new TBSModel(app, getGraphics(), 
-					loadOrganismsFromDirectory("images"));
+					loadOrganismsFromDirectory());
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
@@ -68,8 +67,7 @@ public class TBSApplet extends JApplet {
 	* populate the ModelElements list with the organisms the student is
 	* to use in building his or her tree.
 	*/
- 	public TreeMap<String, BufferedImage> 
-			loadOrganismsFromDirectory(String directoryName) 
+ 	public TreeMap<String, BufferedImage> loadOrganismsFromDirectory() 
 	{
 		TreeMap<String, BufferedImage> organismNameToImage = 
 			new TreeMap<String, BufferedImage>();
@@ -156,5 +154,15 @@ public class TBSApplet extends JApplet {
 	return lines;
 	}//end loadTreeFile
 	
+	public String getTree(){ return model.exportTree(); }
+	
+	public void setTree(String tree){
+		/*if(tree != null && tree.length() > 0){
+			model.loadTree(tree);
+			model.getView().setScreenString("Tree Loaded");
+			model.getView().paintComponent();
+		}
+		add(model.getView());*/
+	}
 }
 

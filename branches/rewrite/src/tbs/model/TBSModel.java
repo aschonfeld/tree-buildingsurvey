@@ -9,13 +9,15 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.TBSController;
 import tbs.model.history.Add;
@@ -26,7 +28,6 @@ import tbs.model.history.Link;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
-import tbs.TBSApplet;
 
 public class TBSModel 
 {
@@ -158,7 +159,7 @@ public class TBSModel
 	{
 		ModelElement me;
 		int checknum = sn;
-		List <ModelElement> model = getElements();
+		List <ModelElement> model = modelElements;
 		do 
 		{
 			 me = (ModelElement)model.get(checknum);
@@ -427,94 +428,94 @@ public class TBSModel
 	* Applet.loadTreeFile(), and recreate the stored tree.
 	* Two passes: first pass recreates nodes, second makes connections. 
 	*/
-   public void loadTree()
-   {
-		List<String> list=applet.loadTreeFile("testfile.tbs");
-      ArrayList <ModelElement> newList=new ArrayList<ModelElement>();
-      Iterator<String> it = list.iterator();
-      while (it.hasNext())
-      {
-         String data[] = it.next().split(":");
-         if (data[0].equals("O"))
-            newList.add(loadOrganismNode(data));
-         else if (data[0].equals("E"))
-            newList.add(loadEmptyNode(data));
-         else
-         {
-            System.out.println("Problem in loadTree");
-            break;
-         }
-			System.out.println("loadTree: end of while loop");
-      }
-      setModelElements(newList);
-		it = list.iterator();
-		while (it.hasNext())
+	public void loadTree(String tree)
+	{
+		List<ModelElement> savedTree = new LinkedList<ModelElement>();
+		String[] treeItems = tree.split("\n");
+		for(String item : treeItems)
 		{
-			String data[] = it.next().split(":");
-			Node node = (Node)getElementBySN(Integer.parseInt(data[1]));
-			String cList[]=data[6].split("[(,)]");
-			if (cList.length>0)
-      	{
-      	   for (String s:cList)
-      	   {
-					if (s.equals("")) continue;
-					else 
-					{
-      	      	Node cNode = (Node)getElementBySN(Integer.parseInt(s));
-      	      	addConnection(node,cNode);
-  					}
-				}
-      	}
+			String data[] = item.split(":");
+			if (data[0].equals("O"))
+				savedTree.add(loadOrganismNode(data));
+			else if (data[0].equals("E"))
+				savedTree.add(loadEmptyNode(data));
+			else if (data[0].equals("C"))
+				savedTree.add(loadConnection(data));
+			else
+			{
+				System.out.println("Problem in loadTree");
+				break;
+			}
 		}
+		Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
+			public int compare( ModelElement o1, ModelElement o2 ) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		};
+
+		// Sort the local list
+		Collections.sort(savedTree, elementIdComparator);
+		modelElements = savedTree;
 		System.out.println("loadTree: end");
-   }
+	}
 
 	/**
-	* Load an OrganismNode. Might be possible to combine this with
-	* loadEmptyNode(). 
-	* This does not create any new OrganismNodes; it simply resets the
-	* old ones and sets their values where we want them. This saves
-	* reloading the image files, but it means we have to always use the
-	* same set of organisms. 
-	*/
-   public ModelElement loadOrganismNode(String[] data)
-   {
-      ModelElement me;
-      int id = Integer.parseInt(data[1]);
-		System.out.println(data[0]);
-      me = getElementBySN(id);
-      OrganismNode node = (OrganismNode) me;
-      node.reset();
-      int x = Integer.parseInt(data[3]);
-      int y = Integer.parseInt(data[4]);
-      Point pt = new Point(x,y);
-      node.setAnchorPoint(pt);
-      node.setInTree((data[5].equals("true")?true:false));
-      me = (ModelElement)node;
-		System.out.println ("End of LoadOrganismNode");
-      return me;
-   }
+	 * Load an OrganismNode. Might be possible to combine this with
+	 * loadEmptyNode(). 
+	 * This does not create any new OrganismNodes; it simply resets the
+	 * old ones and sets their values where we want them. This saves
+	 * reloading the image files, but it means we have to always use the
+	 * same set of organisms. 
+	 */
+	public ModelElement loadOrganismNode(String[] data)
+	{
+		int id = Integer.parseInt(data[1]);
+		ModelElement me = getElementBySN(id);
+		OrganismNode node = (OrganismNode) me;
+		int x = Integer.parseInt(data[3]);
+		int y = Integer.parseInt(data[4]);
+		Point pt = new Point(x,y);
+		node.setAnchorPoint(pt);
+		node.setInTree(Boolean.parseBoolean(data[5]));
+		return (ModelElement) node;
+	}
 
 	/**
-	* Load an EmptyNode. Might be possible to combine this with
-	* loadOrganismNode().
-	*/
-   public ModelElement loadEmptyNode(String[] data)
-   {
-      ModelElement me;
-		System.out.println(data[1]);
-      int id = Integer.parseInt(data[1]);
-      String name = data[2];
-      int x = Integer.parseInt(data[3]);
-      int y = Integer.parseInt(data[4]);
-      Point pt = new Point(x,y);
-      Boolean in = (data[5].equals("true")?true:false);
-      EmptyNode node = new EmptyNode(id, pt);
-      node.rename(name);
-      node.setInTree(in);
-      me = (ModelElement)node;
-      return me;
-	}	
+	 * Load an EmptyNode. Might be possible to combine this with
+	 * loadOrganismNode().
+	 */
+	public ModelElement loadEmptyNode(String[] data)
+	{
+		int id = Integer.parseInt(data[1]);
+		String name = data[2];
+		int x = Integer.parseInt(data[3]);
+		int y = Integer.parseInt(data[4]);
+		Point pt = new Point(x,y);
+		Boolean in = (data[5].equals("true")?true:false);
+		EmptyNode node = new EmptyNode(id, pt);
+		node.rename(name);
+		node.setInTree(in);
+		return (ModelElement) node;
+	}
+
+	public ModelElement loadConnection(String[] data)
+	{
+		int id = Integer.parseInt(data[1]);
+		int from = Integer.parseInt(data[2]);
+		int to = Integer.parseInt(data[3]);
+		Node fromNode = (Node) getElementBySN(from);
+		Node toNode = (Node) getElementBySN(to);
+		Connection conn = new Connection(id, fromNode, toNode);
+		return (ModelElement) conn;
+	}
+
+	public String exportTree(){
+		StringBuilder export = new StringBuilder();
+		for(ModelElement m : modelElements)
+			export.append(m.dump() + "\n");
+		return export.toString();
+
+	}
    
    
 }

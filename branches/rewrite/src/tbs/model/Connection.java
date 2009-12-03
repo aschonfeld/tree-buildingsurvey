@@ -63,4 +63,10 @@ public class Connection extends ModelElement implements Cloneable
 		copy.setFrom((Node) from.clone());
 		return copy;
 	}
+
+	@Override
+	public String dump() {
+		String ret = "C:%d:%d:%d";
+		return String.format(ret, this.getId(), this.from.getId(), this.to.getId());
+	}
 }

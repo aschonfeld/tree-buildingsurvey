@@ -392,8 +392,10 @@ public class TBSController
 			}
 			break;
 		case PRINT:
-			//model.loadTree();
-			readFromURL();
+			String export = model.exportTree();
+			model.resetModel();
+			model.loadTree(export);
+			//readFromURL();
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
@@ -403,15 +405,8 @@ public class TBSController
 						//This should not happen in a release unless it is
 						//explicitly highlighted as a temporary demonstration
 						//of the save format
-			/*for (ModelElement me : model.getElements())
-			{
-				if (me instanceof Node)
-				{
-					Node n = (Node)me;
-					System.out.println(n.dump());
-				}
-			} */
-			writeToURL();
+			System.out.println(model.exportTree());
+			//writeToURL();
 			break;
 		case CLEAR:
 			model.resetModel();
@@ -543,8 +538,7 @@ public class TBSController
       
       public void SendData(String data) throws Exception {
       	// calling the URL should append the data, but it doesn't work
-          URL url = new URL(model.getApplet().getCodeBase(),
-          "/cgi-bin/query.cgi?" + data);
+          URL url = new URL(model.getApplet().getCodeBase(),"cgi-bin/query.cgi?" + data);
           view.setScreenString("Current Month-Day_Hour:Minute:Second = " + data + "\nCalling:\n" + url.toString() + "\n");
           URLConnection con = url.openConnection();
           con.setDoOutput(true);

@@ -94,4 +94,10 @@ public class TBSButton extends ModelElement
 				break;
 		}
 	}
+
+	@Override
+	public String dump() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

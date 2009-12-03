@@ -25,6 +25,8 @@ public abstract class ModelElement {
 	*/ 
 	public abstract boolean contains(int x, int y);
 	
+	public abstract String dump();
+	
 	@Override
 	public boolean equals( Object o ) {
 		if ( this == o )
