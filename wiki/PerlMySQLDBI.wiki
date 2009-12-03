@@ -2,9 +2,9 @@
 
 = Setup =
 
-  # Download & Install ActivePerl
+  # Download & Install `ActivePerl`
   # Open up the command-line
-  # Type `perl -version` to make sure ActivePerl has been installed correctly, you should see the following:
+  # Type `perl -version` to make sure `ActivePerl` has been installed correctly, you should see the following:
 {{{
 C:\>perl -version
 
@@ -26,6 +26,6 @@ Internet, point your browser at http://www.perl.org/, the Perl Home Page.
 
 C:\>
 }}}
-  # type `pppm`, this may take a little while to start running
+  # type `ppm`, this may take a little while to start running
   # go to `View upgradable packages` and select DBD-mysql
   # click `Mark for install` and then `Run marked actions`
