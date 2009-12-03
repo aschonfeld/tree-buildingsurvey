@@ -15,9 +15,9 @@ Discussion:
   # When the script is first called upon from a browser it will render a login screen complete with a dropdown of usernames (retrieved from a perl DB query running in the background)
   # once the user enters their password and clicks "Login" the perl script goes to work again and validates the login information
   # once validation is complete the perl script tells the browser either to stay on the same screen(invalid login) or to call another perl DB for this user's saved Tree
-  # if the user is valid, the perl script renders a new HTML page that has a javascript function that is called onLoad() of the page that calls a method within the jarfile specified within an <Applet> tag with the saved Tree retrieved from the DB
+  # if the user is valid, the perl script renders a new HTML page that has a javascript function that is called onLoad() of the page that calls a method within the jarfile specified within an `<Applet>` tag with the saved Tree retrieved from the DB
   # this method within the jarfile parses the Tree retrieved from the DB and turns that into a Model that is rendered in the applet, otherwise the applet starts with a new Tree
-  # once the user has finished their Tree they will click the  "Save" button on the website (not the applet) which will fire another javascript method that will set a variable to the string representation of the user's current Tree by calling a getter method within the <Applet> tag jarfile
+  # once the user has finished their Tree they will click the  "Save" button on the website (not the applet) which will fire another javascript method that will set a variable to the string representation of the user's current Tree by calling a getter method within the `<Applet>` tag jarfile
   # lastly the perl script calls the DB with an update query containing the user's updated Tree
 
   Our original goals for this project were to keep everything within the applet code (including database calls), but unfortunately due to the java's applet security this is impossible.  The only other suggestion would be to ask Professor White to upgrade the software on his server so that servlet programming would be possible, but we agreed that we are already too far along and too close to our late January deliverable that this is not possible.
