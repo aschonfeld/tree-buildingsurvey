@@ -10,7 +10,7 @@
 	
 
 	<target name="clean">
-			<delete dir="${build.home}" description="Deletes the build directory"/>
+			<delete dir="${build.dir}" description="Deletes the build directory"/>
 	</target>
 	
 	<target name="clean-javadoc">
