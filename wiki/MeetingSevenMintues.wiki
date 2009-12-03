@@ -1,0 +1,10 @@
+#summary Meeting 7 - 12/1/2009
+= Meeting 7 - 12/1/2009 =
+
+Attendance: Jon Kiparsky, Glenn Thelen, Andrew Schonfeld
+
+News:
+  The Business Requirements Document is due in two weeks (12/14).
+Discussion:
+  This is the first "offical" meeting that has occured for about 3 weeks. 
+    
