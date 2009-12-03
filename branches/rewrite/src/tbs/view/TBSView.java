@@ -40,7 +40,7 @@ public class TBSView extends JComponent {
 	
 	// This connection follows the mouse
 	private Line2D connInProgress;
-	private String statusString;
+	private String screenString;
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
 
@@ -49,7 +49,7 @@ public class TBSView extends JComponent {
 	public TBSView(TBSModel m) {
         model = m;
         connInProgress = null;
-    	statusString = null;
+    	screenString = null;
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
@@ -117,8 +117,6 @@ public class TBSView extends JComponent {
 			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			leftX += TBSGraphics.buttonsWidth;
 		}
-		int stringStartX = leftX + 20;
-		renderStatusString(g2, stringStartX);
 	}
 	
 	public void renderButtonBackground(Graphics2D g2, int leftX, Color start, Color end) {
@@ -299,18 +297,25 @@ public class TBSView extends JComponent {
 	/**
 	* Set status string.
 	*/
-	public void setStatusString(String s) {
-		statusString = s;
+	public void setScreenString(String s) {
+		screenString = s;
 	}
 
 	/**
 	* Draw the statusString. 	
 	*/
-	public void renderStatusString(Graphics2D g2, int leftX) {
-		if(statusString == null) return;
-		int upperY = 0;
-		int height = TBSGraphics.buttonsHeight;
-		TBSGraphics.drawCenteredString(g2, statusString, leftX, upperY, 0, height);
+	public void renderScreenString(Graphics2D g2) {
+        int xVal = TBSGraphics.LINE_OF_DEATH + 20;
+        int yVal = TBSGraphics.buttonsHeight * 2;
+        int yStep = TBSGraphics.buttonsHeight;
+		if(screenString == null) return;
+		String[] tokens = screenString.split("\n");
+		for(int index = 0; index < tokens.length; index++) {
+			if(tokens[index].length() == 0) continue;
+			TBSGraphics.drawCenteredString(g2, tokens[index], xVal, yVal, 0, yStep, Color.CYAN);
+			yVal += yStep;
+		}
+		TBSGraphics.drawCenteredString(g2, "(Click SELECT to clear this message)", xVal, yVal, 0, yStep, Color.WHITE);
 	}
 
 	/**
@@ -352,6 +357,6 @@ public class TBSView extends JComponent {
 		}
 		g2.setStroke(new BasicStroke());
 		renderButtons(g2);
-		
+		renderScreenString(g2);
 	}	
 }

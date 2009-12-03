@@ -78,6 +78,13 @@ public class TBSModel
 	*/
 	public TBSController getController() {
 		return controller;
+	}
+	
+	/**
+	* Returns a handle for the Applet.
+	*/
+	public TBSApplet getApplet() {
+		return applet;
 	}	
 	
 	/**
@@ -508,4 +515,6 @@ public class TBSModel
       me = (ModelElement)node;
       return me;
 	}	
+   
+   
 }

@@ -12,6 +12,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -346,6 +355,7 @@ public class TBSController
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case SELECT:
+			view.setScreenString(null);
 			break;
 		case ADD:
 			break;
@@ -382,7 +392,8 @@ public class TBSController
 			}
 			break;
 		case PRINT:
-			model.loadTree();
+			//model.loadTree();
+			readFromURL();
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
@@ -392,16 +403,16 @@ public class TBSController
 						//This should not happen in a release unless it is
 						//explicitly highlighted as a temporary demonstration
 						//of the save format
-			for (ModelElement me : model.getElements())
+			/*for (ModelElement me : model.getElements())
 			{
 				if (me instanceof Node)
 				{
 					Node n = (Node)me;
 					System.out.println(n.dump());
 				}
-			}
+			} */
+			writeToURL();
 			break;
-			
 		case CLEAR:
 			model.resetModel();
 			break;
@@ -486,6 +497,66 @@ public class TBSController
     		setSelectedElement(clickedElement);	
 	}			
 
+    public void readFromURL () {
+        String screenString = "";
+        try
+        {
+          URL url; 
+          URLConnection urlConn; 
+          InputStream is;
+          //url = new URL("http://cluster.bio.whe.umb.edu/cgi-bin/text.pl");
+          url = new URL(model.getApplet().getCodeBase().toString() + "read.txt");
+          urlConn = url.openConnection(); 
+          urlConn.setDoInput(true); 
+          urlConn.setUseCaches(false);
+          is = urlConn.getInputStream(); 
+          String s; 
+          BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        
+          while ((s = reader.readLine()) != null)
+          { 
+            screenString += s + "\n";
+          } 
+            is.close(); 
+          }
+          catch (MalformedURLException mue) {} 
+          catch (IOException ioe) {}
+          view.setScreenString(screenString);
+          view.paintComponent();
+      }
+      
+      public void writeToURL () {
+      	Calendar c = Calendar.getInstance();
+      	int month = c.get(Calendar.MONTH) + 1;
+          String currentTime = month + "-"
+          + c.get(Calendar.DAY_OF_MONTH) + "_"
+          + c.get(Calendar.HOUR) + ":"
+          + c.get(Calendar.MINUTE) + ":"
+          + c.get(Calendar.SECOND);
+          String s = currentTime;
+          try
+          { 
+          	SendData(s);
+          }
+          catch (Exception e) {} 
+        }
+      
+      public void SendData(String data) throws Exception {
+      	// calling the URL should append the data, but it doesn't work
+          URL url = new URL(model.getApplet().getCodeBase(),
+          "/cgi-bin/query.cgi?" + data);
+          view.setScreenString("Current Month-Day_Hour:Minute:Second = " + data + "\nCalling:\n" + url.toString() + "\n");
+          URLConnection con = url.openConnection();
+          con.setDoOutput(true);
+          con.setDoInput(true);
+          con.setUseCaches(false);
+          con.setRequestProperty("Content-type", "text/plain");
+          con.setRequestProperty("Content-length", data.length()+"");
+          PrintStream out = new PrintStream(con.getOutputStream());
+          out.print(data);
+          out.flush();
+          out.close();
+      }
 
 
 
