@@ -41,12 +41,15 @@ public class TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;	
 
-	public TBSModel(TBSApplet app, Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
+	public TBSModel(TBSApplet app, String savedTree, Graphics g,
+			TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new LinkedList<ModelElement>();
 		selectedModelElement = null;
 		selectedTwoWay = null;
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
+		if(savedTree != null && savedTree.length() > 0)
+			loadTree(savedTree);
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();

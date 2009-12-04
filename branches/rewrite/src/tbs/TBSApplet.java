@@ -47,8 +47,8 @@ public class TBSApplet extends JApplet {
  		public void run() {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
- 			model = new TBSModel(app, getGraphics(), 
-					loadOrganismsFromDirectory());
+ 			String savedTree = getParameter("SavedTree");
+ 			model = new TBSModel(app, savedTree, getGraphics(), loadOrganismsFromDirectory());
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
