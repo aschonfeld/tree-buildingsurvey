@@ -2,6 +2,14 @@
 
 = Comments and questions from the professor = 
 
+=== December 8 ===
+
+I see Version 1 posted - but what's there is clearly not finished. There are still bugs - probably more than have been entered as Issues since I don't believe you've tested thoroughly. The instructions on the page don't match the behavior of the program. If that's because the instructions are for Prof. White's old version, they must be edited to be correct before you can declare yourselves done.
+
+This should have been called Release 0.7, or at most Release 1.0alpha.
+
+When do you propose to have a real production release, thoroughly tested by you, by Professor White and by people in the hallway (see Joel's test)?
+
 === December 2 ===
 
 The last meeting seems to have been very productive. Please update the schedule to reflect the conclusions you reached there.
