@@ -4,11 +4,16 @@
 
 === December 8 ===
 
-I see Version 1 posted - but what's there is clearly not finished. There are still bugs - probably more than have been entered as Issues since I don't believe you've tested thoroughly. The instructions on the page don't match the behavior of the program. If that's because the instructions are for Prof. White's old version, they must be edited to be correct before you can declare yourselves done.
+Your schedule contains just three items for December and January: 12/01, 12/31 and 1/30.
+I guess you met the 12/01 deliverable, since there is something called "Version 1" posted. But there is nothing on the wiki that tells me what functionality it is supposed to have, so you could have posted just about anything.
+
+In any case what's there is clearly not finished. There are still bugs - probably more than have been entered as Issues since I don't believe you've tested thoroughly. The instructions on the page don't match the behavior of the program. If that's because the instructions are for Prof. White's old version, they must be edited to be correct before you can declare yourselves done.
 
 This should have been called Release 0.7, or at most Release 1.0alpha.
 
 When do you propose to have a real production release, thoroughly tested by you, by Professor White and by people in the hallway (see Joel's test)?
+
+What are your plans for now until the end of January? Please write them down in enough detail so that they can really be checked for completion.
 
 === December 2 ===
 
