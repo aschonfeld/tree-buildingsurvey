@@ -19,6 +19,7 @@ import java.util.TreeMap;
 
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
+import tbs.TBSPrompt;
 import tbs.controller.TBSController;
 import tbs.model.history.Add;
 import tbs.model.history.Command;
@@ -39,7 +40,8 @@ public class TBSModel
 	private EmptyNode immortalEmptyNode;
 	private Stack<Command> history;
 	private int MESerialNumber=0;
-	private TBSApplet applet;	
+	private TBSApplet applet;
+	private TBSPrompt prompt;
 
 	public TBSModel(TBSApplet app, String savedTree, Graphics g,
 			TreeMap<String, BufferedImage> organismNameToImage) {
@@ -519,6 +521,18 @@ public class TBSModel
 		return export.toString();
 
 	}
-   
+	
+	public TBSPrompt getPrompt() {
+		return prompt;
+	}
+	
+	public void clearPrompt() {
+		this.prompt = null;
+	}
+	
+	public void promptUser(TBSPrompt prompt) {
+		this.prompt = prompt;
+		view.refreshGraphics();
+	}
    
 }

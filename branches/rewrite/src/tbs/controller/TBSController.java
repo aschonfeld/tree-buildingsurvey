@@ -12,19 +12,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import tbs.TBSGraphics;
+import tbs.TBSPrompt;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
@@ -54,6 +47,7 @@ public class TBSController
 	private Point lastPosition = null;
 	private String statusString = null;
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
+	private ArrayList<String> promptButtons;
 	
 	private boolean labelingInProgress = false;
 	
@@ -69,6 +63,10 @@ public class TBSController
 	}
     
 	public void keyPressed(KeyEvent e) {
+		if(model.getPrompt() != null) {
+			model.getPrompt().keyPressed(e);
+			return;
+		}
 		if(statusString == null) statusString = new String();
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
 			if(!labelingInProgress){
@@ -90,6 +88,10 @@ public class TBSController
 	}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {
+		if(model.getPrompt() != null) {
+			model.getPrompt().keyTyped(e);
+			return;
+		}
 		char c = e.getKeyChar();
 		if(selectedElement == null) return;
 		if(labelingInProgress) {
@@ -109,6 +111,7 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
+		if(model.getPrompt() != null) return;
 		if(selectedElement == null)
 			return;
 		if(selectedElement instanceof Node) {
@@ -121,21 +124,33 @@ public class TBSController
 	
 	// No need to use since mousePressed is used instead
 	public void mouseClicked(MouseEvent e) {
+		if(model.getPrompt() != null) return;
 		if(buttonClicked != null && !buttonClicked.getIsMode())
 			buttonClicked = TBSButtonType.SELECT;
 	}
 	
 	/**
-	* Handle mousePressed events: if the mouse is over an object, select
-	* it.
+	* Handle mousePressed events: if the mouse is over an object, select it.
+	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
+		TBSPrompt prompt = model.getPrompt();
+		if(prompt != null) {
+			prompt.mousePressed(e);
+			if(model.getPrompt().isFinished()) {
+				// Get result of prompt here
+				String result = prompt.getUserInput();
+				view.setScreenString("Prompt return value: \n" + result);
+				model.clearPrompt();
+			}
+			return;
+		}
+		view.requestFocusInWindow();
         int x = e.getX();
         int y = e.getY();
         selectedIndex = indexMouseIsOver(x, y);
         previousX = x;
         previousY = y;
-		view.requestFocusInWindow();
 		// if mouse is in button bar
 		if(y < TBSGraphics.buttonsHeight)  {
 			handleMouseButtonPressed(x, y);
@@ -152,6 +167,7 @@ public class TBSController
 	* refresh screen image.
 	*/
 	public void mouseDragged(MouseEvent e){
+		if(model.getPrompt() != null) return;
 		int x = e.getX();
 		int y = e.getY();
 		int deltaX = x - previousX;
@@ -192,6 +208,7 @@ public class TBSController
 	*/	
 	public void mouseReleased(MouseEvent e) 
 	{
+		if(model.getPrompt() != null) return;
 		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
@@ -395,7 +412,8 @@ public class TBSController
 			String export = model.exportTree();
 			model.resetModel();
 			model.loadTree(export);
-			//readFromURL();
+			String textInputMessage= "Enter Some Text: ";
+			model.promptUser(new TBSPrompt(model, textInputMessage, null));
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
@@ -406,7 +424,14 @@ public class TBSController
 						//explicitly highlighted as a temporary demonstration
 						//of the save format
 			System.out.println(model.exportTree());
-			//writeToURL();
+			promptButtons = new ArrayList<String>();
+			promptButtons.add("Strongly Agree");
+			promptButtons.add("Agree");
+			promptButtons.add("Not Sure");			
+			promptButtons.add("Disagree");
+			promptButtons.add("Strongly Disagree");
+			String multipleChoiceMessage = "Multiple Choice Prompt Test, Select an Option:";
+			model.promptUser(new TBSPrompt(model, multipleChoiceMessage, promptButtons));
 			break;
 		case CLEAR:
 			model.resetModel();
@@ -491,67 +516,5 @@ public class TBSController
 		} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);	
 	}			
-
-    public void readFromURL () {
-        String screenString = "";
-        try
-        {
-          URL url; 
-          URLConnection urlConn; 
-          InputStream is;
-          //url = new URL("http://cluster.bio.whe.umb.edu/cgi-bin/text.pl");
-          url = new URL(model.getApplet().getCodeBase().toString() + "read.txt");
-          urlConn = url.openConnection(); 
-          urlConn.setDoInput(true); 
-          urlConn.setUseCaches(false);
-          is = urlConn.getInputStream(); 
-          String s; 
-          BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        
-          while ((s = reader.readLine()) != null)
-          { 
-            screenString += s + "\n";
-          } 
-            is.close(); 
-          }
-          catch (MalformedURLException mue) {} 
-          catch (IOException ioe) {}
-          view.setScreenString(screenString);
-          view.paintComponent();
-      }
-      
-      public void writeToURL () {
-      	Calendar c = Calendar.getInstance();
-      	int month = c.get(Calendar.MONTH) + 1;
-          String currentTime = month + "-"
-          + c.get(Calendar.DAY_OF_MONTH) + "_"
-          + c.get(Calendar.HOUR) + ":"
-          + c.get(Calendar.MINUTE) + ":"
-          + c.get(Calendar.SECOND);
-          String s = currentTime;
-          try
-          { 
-          	SendData(s);
-          }
-          catch (Exception e) {} 
-        }
-      
-      public void SendData(String data) throws Exception {
-      	// calling the URL should append the data, but it doesn't work
-          URL url = new URL(model.getApplet().getCodeBase(),"cgi-bin/query.cgi?" + data);
-          view.setScreenString("Current Month-Day_Hour:Minute:Second = " + data + "\nCalling:\n" + url.toString() + "\n");
-          URLConnection con = url.openConnection();
-          con.setDoOutput(true);
-          con.setDoInput(true);
-          con.setUseCaches(false);
-          con.setRequestProperty("Content-type", "text/plain");
-          con.setRequestProperty("Content-length", data.length()+"");
-          PrintStream out = new PrintStream(con.getOutputStream());
-          out.print(data);
-          out.flush();
-          out.close();
-      }
-
-
-
+    
 }

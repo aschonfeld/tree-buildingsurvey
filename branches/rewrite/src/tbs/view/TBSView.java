@@ -358,5 +358,6 @@ public class TBSView extends JComponent {
 		g2.setStroke(new BasicStroke());
 		renderButtons(g2);
 		renderScreenString(g2);
+		if(model.getPrompt() != null) model.getPrompt().paintComponent(g2);
 	}	
 }
