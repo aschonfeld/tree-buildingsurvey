@@ -443,7 +443,7 @@ public class TBSModel
 	public void loadTree(String tree)
 	{
 		List<ModelElement> savedTree = new LinkedList<ModelElement>();
-		String[] treeItems = tree.split("\n");
+		String[] treeItems = tree.split("#");
 		for(String item : treeItems)
 		{
 			String data[] = item.split(":");
@@ -524,7 +524,7 @@ public class TBSModel
 	public String exportTree(){
 		StringBuilder export = new StringBuilder();
 		for(ModelElement m : modelElements)
-			export.append(m.dump() + "\n");
+			export.append(m.dump() + "#");
 		return export.toString();
 
 	}
