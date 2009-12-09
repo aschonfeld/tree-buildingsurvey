@@ -291,6 +291,13 @@ public class TBSModel
 		}
 	}
 
+	public boolean hasConnections(){
+		for(int i=TBSGraphics.numOfOrganisms;i<modelElements.size(); i++){
+			if(modelElements.get(i) instanceof Connection)
+				return true;
+		}
+		return false;
+	}
 	/**
 	* Returns the list of active elements
 	*/	

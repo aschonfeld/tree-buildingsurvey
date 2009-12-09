@@ -142,8 +142,8 @@ public class TBSPrompt{
 		} else {
 			promptHeight = textHeight * (2 + numLines) + paddingHeight * (3 + numLines);
 		}
-		int centerX = TBSGraphics.appletWidth / 2;
-		int centerY = TBSGraphics.appletHeight / 2;
+		int centerX = model.getApplet().getWidth() / 2;
+		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - promptWidth / 2, centerY - promptHeight / 2);
 		questionStringY = anchorPoint.y;
 		buttonsStringY = anchorPoint.y + promptHeight - textHeight - paddingHeight;

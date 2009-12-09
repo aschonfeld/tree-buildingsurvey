@@ -125,8 +125,13 @@ public class TBSController
 	// No need to use since mousePressed is used instead
 	public void mouseClicked(MouseEvent e) {
 		if(model.getPrompt() != null) return;
-		if(buttonClicked != null && !buttonClicked.getIsMode())
-			buttonClicked = TBSButtonType.SELECT;
+		if(buttonClicked != null){
+			if(!buttonClicked.getIsMode())
+				buttonClicked = TBSButtonType.SELECT;
+			if(buttonClicked == TBSButtonType.UNLINK && !model.hasConnections())
+				buttonClicked = TBSButtonType.SELECT;
+		}
+		
 	}
 	
 	/**
