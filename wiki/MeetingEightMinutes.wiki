@@ -8,7 +8,7 @@ News:
   * There is now a version of the applet that has a database connection for saving a tree and answers to open response questions on Professor White's server, [http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl Current TBS Site]
 
 Discussion:
-===Eliminate Web Form Scrolling===
+  *Eliminate Web Form Scrolling*
   This meeting began by discussing the recent developments Andrew made to the website where saving is possible.  Our end goal was to move the open-response questions from the HTML form to the Applet.  The reasoning behind this move is that when a user scrolls down to enter answers to the open-response questions it tends mess with the rendering of the applet.  We don't have a solution for this other than moving the questions to the applet as well as the instructions on how to use the applet so that the only things inlcuded in the HTML form are information on who is logged in, the applet, & the button to "submit" the tree.  If these things are accomplished there will not be enough information on the form to allow for scrolling.
   One worry about moving the open-response questions to the applet would be verifying that the user has answered them before clicking the "submit" button.  Andrew, managed to come up with a solution to this problem using javascript.  Here it is:
   # Placing getters within the Applet class that retrieve the user's responses to the open-response questions so they can be called upon from javascript
@@ -18,7 +18,7 @@ Discussion:
   # This behavior will continue to happen until the user finshes all the questions
 
   _The only catch to this behavior, which was the same in Professor White's orignal version, is that when the user exits the form without clicking the "submit" button nothing will be saved to the database._
-===Future Features===
+  *Future Features*
   The next discussion was on what features we would possibly like to incorporate into the project before the Late January/Early February deliverable.  Here was the list that we came up with:
   # Creating Splash Instructions to be displayed in the Applet by use of a "Help" button
   # Placing open-response questions within the Applet
@@ -45,5 +45,6 @@ Discussion:
   We ended off the meeting with Jon volunteering to add an introduction/narrative on our project as well as information on these future features to the current version of the requirements document.  We also promised to submit our ranking of how hard the design of these features so that Jon could incorporate this information into the requirements document as well.  
   Andrew volunteered to add the open-response questions to the applet using the new code that Glenn had added for displaying a question in the applet.
 
-
+*Future Meetings:* 
+  * TBA
     
