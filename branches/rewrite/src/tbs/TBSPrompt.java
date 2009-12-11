@@ -182,7 +182,8 @@ public class TBSPrompt{
 		if(userInput == null)
 			return;
 		String[] lines = userInput.split("\n");
-		int upperY = (int) anchorPoint.getY() + buttonsHeight;
+		//int upperY = (int) anchorPoint.y + buttonsHeight;
+		int upperY = questionStringY + ((int) getStringBounds(heightString).getHeight());
 		for(int index = 0; index < lines.length; index++) {
 			if(lines[index].length() > 0) drawString(lines[index], anchorPoint.x + paddingWidth, upperY);
 			upperY += promptHeight / 10;
