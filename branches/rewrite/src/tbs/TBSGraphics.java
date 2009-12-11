@@ -195,6 +195,22 @@ public class TBSGraphics {
 	public static int buttonsWidth = 0;
 
 	/**
+	* Space between buttons and question buttons.
+	*/ 
+	public static int spaceBeforeQuestionButtons = 60;
+	
+	/**
+	* Width of question buttons. Set in [TBSModel.???]
+	*/ 
+	public static int questionButtonsWidth = 0;
+	
+	/**
+	* Starting x-coordinate of question buttons. Set in [TBSModel.???]
+	*/ 
+	public static int questionButtonsStart = 0;
+	
+
+	/**
 	* Returns correct Font for TBS text.
 	*/
 	public static Font getFont(Graphics2D g2) {

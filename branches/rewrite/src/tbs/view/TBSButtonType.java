@@ -11,7 +11,8 @@ public enum TBSButtonType {
 	PRINT("Print", false), 
 	UNDO("Undo", false), 
 	SAVE("Save", false),
-	CLEAR("Clear", false);
+	CLEAR("Clear", false),
+	HELP("Help",false);
 	
 	private String text;
 	

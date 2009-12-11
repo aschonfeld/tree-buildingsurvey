@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Stack;
 import java.util.TreeMap;
 
@@ -28,6 +29,7 @@ import tbs.model.history.Drag;
 import tbs.model.history.Link;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
+import tbs.view.TBSQuestionButtonType;
 import tbs.view.TBSView;
 
 public class TBSModel 
@@ -42,6 +44,10 @@ public class TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private TBSPrompt prompt;
+	private Properties questionProperties;
+	private String questionOne;
+	private String questionTwo;
+	private String questionThree;
 
 	public TBSModel(TBSApplet app, String savedTree, Graphics g,
 			TreeMap<String, BufferedImage> organismNameToImage) {
@@ -228,6 +234,11 @@ public class TBSModel
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonBounds.y + 
 				TBSGraphics.buttonsYPadding * 2;
+		
+		buttonBounds = TBSGraphics.get2DStringBounds(g2,
+				Arrays.asList(TBSQuestionButtonType.values()));
+		TBSGraphics.questionButtonsWidth = buttonBounds.x + 
+				TBSGraphics.buttonsXPadding * 2;
 	}
 	
 	// called during setup to create organism nodes
@@ -348,6 +359,14 @@ public class TBSModel
 		}
 	}
 	
+	public Properties getQuestionProperties() {
+		return questionProperties;
+	}
+
+	public void setQuestionProperties(Properties questionProperties) {
+		this.questionProperties = questionProperties;
+	}
+
 	public List<Connection> getConnectionsByNode(Node n){
 		Unlink unlink = new Unlink();
 		unlink.setNode(n);
@@ -541,5 +560,33 @@ public class TBSModel
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
+
+	public String getQuestion(TBSQuestionButtonType question){
+		switch(question){
+		case ONE:
+			return questionOne;
+		case TWO:
+			return questionTwo;
+		case THREE:
+			return questionThree;
+		}
+		return "";
+	}
+	
+	public void setQuestion(String input, TBSQuestionButtonType question){
+		switch(question){
+		case ONE:
+			questionOne = input;
+			return;
+		case TWO:
+			questionTwo = input;
+			return;
+		case THREE:
+			questionThree = input;
+			return;
+		}
+	}
+	
+	
    
 }

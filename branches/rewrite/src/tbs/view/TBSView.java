@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 
 import tbs.TBSGraphics;
+import tbs.TBSPrompt;
 import tbs.TBSUtils;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
@@ -105,11 +106,11 @@ public class TBSView extends JComponent {
 					(!buttonClicked.getIsMode() && b.equals(TBSButtonType.SELECT))) {
 				Color start = new Color(0.2f, 0.8f, 0.2f);
 				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, start, end);
+				renderButtonBackground(g2, leftX, TBSGraphics.buttonsWidth, start, end);
 			} else {
 				Color start = new Color(0.45f, 0.55f, 0.65f);
 				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, start, end);
+				renderButtonBackground(g2, leftX, TBSGraphics.buttonsWidth, start, end);
 			}
 			g2.setColor(Color.BLACK);
 			TBSGraphics.drawCenteredString(g2, b.toString(), leftX, upperY, TBSGraphics.buttonsWidth, 0);
@@ -117,9 +118,30 @@ public class TBSView extends JComponent {
 			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			leftX += TBSGraphics.buttonsWidth;
 		}
+		
+		leftX += TBSGraphics.spaceBeforeQuestionButtons;
+		TBSGraphics.questionButtonsStart = leftX;
+		
+		TBSPrompt prompt = model.getPrompt();
+		for(TBSQuestionButtonType q: TBSQuestionButtonType.values()) {
+			if((prompt != null) &&  q.equals(prompt.getCurrentQuestion())) {
+				Color start = new Color(0.2f, 0.8f, 0.2f);
+				Color end = new Color(1.0f, 1.0f, 1.0f);
+				renderButtonBackground(g2, leftX, TBSGraphics.questionButtonsWidth, start, end);
+			} else {
+				Color start = new Color(0.45f, 0.55f, 0.65f);
+				Color end = new Color(1.0f, 1.0f, 1.0f);
+				renderButtonBackground(g2, leftX, TBSGraphics.questionButtonsWidth, start, end);
+			}
+			g2.setColor(Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, q.toString(), leftX, upperY, TBSGraphics.questionButtonsWidth, 0);
+			g2.setColor(Color.gray);
+			g2.drawRect(leftX, 0,TBSGraphics.questionButtonsWidth, TBSGraphics.buttonsHeight);
+			leftX += TBSGraphics.questionButtonsWidth;
+		}
 	}
 	
-	public void renderButtonBackground(Graphics2D g2, int leftX, Color start, Color end) {
+	public void renderButtonBackground(Graphics2D g2, int leftX, int width, Color start, Color end) {
 		float redDiff = end.getRed() - start.getRed();
 		float greenDiff = end.getGreen() - start.getGreen();
 		float blueDiff = end.getBlue() - start.getBlue();
@@ -134,7 +156,7 @@ public class TBSView extends JComponent {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(leftX, y , leftX + TBSGraphics.buttonsWidth, y);
+			g2.drawLine(leftX, y , leftX + width, y);
 		}
 		for(int y = TBSGraphics.buttonsHeight / 3; y < TBSGraphics.buttonsHeight; y++) {
 			float fy = (float) y - (TBSGraphics.buttonsHeight / 3);
@@ -147,7 +169,7 @@ public class TBSView extends JComponent {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(leftX, y , leftX + TBSGraphics.buttonsWidth, y);
+			g2.drawLine(leftX, y , leftX + width, y);
 		}
 	}
 
@@ -330,34 +352,37 @@ public class TBSView extends JComponent {
 	*/
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
+		TBSPrompt prompt = model.getPrompt();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.black);
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		refreshGraphics();
-		for(ModelElement m : model.getElements())
-			renderModelElement(g, m);
-		ModelElement selected = model.getSelectedModelElement();
-		List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
-		if(selected == null){
-			Node draggedNode = model.getController().getDraggedNode();
-			if(draggedNode != null)
-				selected = draggedNode;
-		}
-		if(selectedTwoWay != null){
-			for(ModelElement m : selectedTwoWay)
-				renderSelectedModelElement(g,m);
-		}else if(selected != null)
-			renderSelectedModelElement(g,selected);
-		if(connInProgress != null){
-			g2.setColor(TBSGraphics.connectionColor);
-			g2.setStroke(new BasicStroke(3));
-			g2.draw(scrollAdjust(connInProgress));
-			g2.draw(getArrowHead(scrollAdjust(connInProgress), 0.75 * Math.PI));
-			g2.draw(getArrowHead(scrollAdjust(connInProgress), 1.25 * Math.PI));
-		}
-		g2.setStroke(new BasicStroke());
+		if(prompt == null){
+			for(ModelElement m : model.getElements())
+				renderModelElement(g, m);
+			ModelElement selected = model.getSelectedModelElement();
+			List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
+			if(selected == null){
+				Node draggedNode = model.getController().getDraggedNode();
+				if(draggedNode != null)
+					selected = draggedNode;
+			}
+			if(selectedTwoWay != null){
+				for(ModelElement m : selectedTwoWay)
+					renderSelectedModelElement(g,m);
+			}else if(selected != null)
+				renderSelectedModelElement(g,selected);
+			if(connInProgress != null){
+				g2.setColor(TBSGraphics.connectionColor);
+				g2.setStroke(new BasicStroke(3));
+				g2.draw(scrollAdjust(connInProgress));
+				g2.draw(getArrowHead(scrollAdjust(connInProgress), 0.75 * Math.PI));
+				g2.draw(getArrowHead(scrollAdjust(connInProgress), 1.25 * Math.PI));
+			}
+			g2.setStroke(new BasicStroke());
+		}else
+			prompt.paintComponent(g2);
 		renderButtons(g2);
 		renderScreenString(g2);
-		if(model.getPrompt() != null) model.getPrompt().paintComponent(g2);
 	}	
 }

@@ -3,6 +3,7 @@
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="images.dir" value="*/images/*.*"/>
+	<property name="properties.dir" value="*/*.properties"/>
 	<property name="javadoc.dir" value="${basedir}/javadoc/"/>
 	<property name="deploy.dir" value="${basedir}/deploy${version}/"/>
 	<property name="main.class" value="tbs.TBSApplet"/>
@@ -31,6 +32,7 @@
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
 	    	<fileset dir="${src.dir}" includes="${images.dir}" />
+	    	<fileset dir="${src.dir}" includes="${properties.dir}" />
 	    	<fileset dir="${build.dir}"/>
 	    	<fileset dir="${lib.dir}"/>
 	    </jar>

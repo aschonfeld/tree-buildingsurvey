@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
+import tbs.view.TBSQuestionButtonType;
 import tbs.view.TBSView;
 
 /**
@@ -47,8 +47,7 @@ public class TBSController
 	private Point lastPosition = null;
 	private String statusString = null;
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
-	private ArrayList<String> promptButtons;
-	
+	private TBSQuestionButtonType questionClicked = null;
 	private boolean labelingInProgress = false;
 	
 	public TBSController(TBSModel m, TBSView v) {
@@ -144,9 +143,11 @@ public class TBSController
 			prompt.mousePressed(e);
 			if(model.getPrompt().isFinished()) {
 				// Get result of prompt here
-				String result = prompt.getUserInput();
-				view.setScreenString("Prompt return value: \n" + result);
-				model.clearPrompt();
+				model.setQuestion(prompt.getUserInput(), prompt.getCurrentQuestion());
+				if(prompt.getCurrentQuestion().ordinal() < TBSQuestionButtonType.THREE.ordinal())
+					model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.values()[prompt.getCurrentQuestion().ordinal()+1]));
+				else
+					model.clearPrompt();
 			}
 			return;
 		}
@@ -158,6 +159,8 @@ public class TBSController
         previousY = y;
 		// if mouse is in button bar
 		if(y < TBSGraphics.buttonsHeight)  {
+			if(x >= TBSGraphics.questionButtonsStart)
+				handleMouseQuestionPressed(x, y);
 			handleMouseButtonPressed(x, y);
 		} else if (x > TBSGraphics.LINE_OF_DEATH) {
 			handleMousePressed(x, y);
@@ -417,29 +420,40 @@ public class TBSController
 			String export = model.exportTree();
 			model.resetModel();
 			model.loadTree(export);
-			String textInputMessage= "Enter Some Text: ";
-			model.promptUser(new TBSPrompt(model, textInputMessage, null));
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
 				model.getHistory().pop().undo(model);
 			break;
-		case SAVE: 	//Dumps tree data to console for testing
-						//This should not happen in a release unless it is
-						//explicitly highlighted as a temporary demonstration
-						//of the save format
+		case SAVE: 	
+			//Dumps tree data to console for testing
+			//This should not happen in a release unless it is
+			//explicitly highlighted as a temporary demonstration
+			//of the save format
 			System.out.println(model.exportTree());
-			promptButtons = new ArrayList<String>();
-			promptButtons.add("Strongly Agree");
-			promptButtons.add("Agree");
-			promptButtons.add("Not Sure");			
-			promptButtons.add("Disagree");
-			promptButtons.add("Strongly Disagree");
-			String multipleChoiceMessage = "Multiple Choice Prompt Test, Select an Option:";
-			model.promptUser(new TBSPrompt(model, multipleChoiceMessage, promptButtons));
 			break;
 		case CLEAR:
 			model.resetModel();
+			break;
+		}
+		setSelectedElement(null);
+    }
+    
+    private void handleMouseQuestionPressed(int x, int y) {
+    	String textInputMessage;
+		int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
+		if(buttonIndex >= TBSQuestionButtonType.values().length) return;
+		questionClicked = TBSQuestionButtonType.values()[buttonIndex];
+		System.out.println(questionClicked.toString());
+		switch (questionClicked) {
+		case ONE:
+			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.ONE));
+			break;
+		case TWO:
+			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.TWO));
+			break;
+		case THREE:
+			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.THREE));
 			break;
 		}
 		setSelectedElement(null);
@@ -520,6 +534,6 @@ public class TBSController
     			unselectPrevious();
 		} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);	
-	}			
+	}		
     
 }

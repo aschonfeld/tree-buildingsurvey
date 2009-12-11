@@ -12,12 +12,16 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import tbs.model.TBSModel;
+import tbs.view.TBSQuestionButtonType;
 
 public class TBSPrompt{
 	
 	TBSModel model;
+	TBSQuestionButtonType currentQuestion = null;
+	Properties questionProps;
 	String question = null;
 	ArrayList<String> buttons = null;
 	String userInput = null;
@@ -44,23 +48,25 @@ public class TBSPrompt{
 	
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
-	public TBSPrompt(TBSModel model, String question, ArrayList<String> buttons) {
+	public TBSPrompt(TBSModel model, TBSQuestionButtonType currentQuestion) {
 		this.model = model;
-		this.question = question;
-		this.buttons = buttons;
-		userInput = "";
-		getTextInput = false;
-		if(buttons == null) {
-			setNullButtons();
+		this.currentQuestion = currentQuestion;
+		questionProps = model.getQuestionProperties();
+		this.question = questionProps.getProperty(currentQuestion.getQuestionKey());
+		buttons = new ArrayList<String>();
+		if(currentQuestion.equals(TBSQuestionButtonType.THREE)){
+			buttons.add("Strongly Agree");
+			buttons.add("Agree");
+			buttons.add("Not Sure");			
+			buttons.add("Disagree");
+			buttons.add("Strongly Disagree");
+			getTextInput = false;
+		}else{
+			buttons.add("Submit");
 			getTextInput = true;
 		}
+		userInput = model.getQuestion(currentQuestion);
 		finished = false;
-	}
-	
-	// used for user text input where "Submit" is the only button
-	public void setNullButtons() {
-		buttons = new ArrayList<String>();
-		buttons.add("Submit");
 	}
 	
 	public boolean isFinished() {
@@ -133,7 +139,13 @@ public class TBSPrompt{
 	public void calculateValues() {
 		int minWidth = (int) getStringBounds(minString).getWidth();
 		if(buttons.size() == 5) minWidth = 750;
-		int questionWidth = (int) getStringBounds(question).getWidth();
+		int questionWidth = 0;
+		int temp;
+		for(String line : question.split("\n")){
+			temp = (int) getStringBounds(line).getWidth();
+			if(temp > questionWidth)
+				questionWidth = temp;
+		}
 		if(questionWidth < minWidth) questionWidth = minWidth;
 		promptWidth = questionWidth + paddingWidth * 2;
 		int textHeight = (int) getStringBounds(heightString).getHeight();
@@ -153,9 +165,13 @@ public class TBSPrompt{
 	
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
+		int textHeight = (int) getStringBounds(heightString).getHeight();
 		calculateValues();
 		drawBox();
-		drawString(question, anchorPoint.x + paddingWidth, questionStringY);
+		for(String line : question.split("\n")){
+			drawString(line, anchorPoint.x + paddingWidth, questionStringY);
+			questionStringY += textHeight;
+		}
 		if(getTextInput) {
 			drawTextInput();
 		}
@@ -163,6 +179,8 @@ public class TBSPrompt{
 	}
 	
 	public void drawTextInput() {
+		if(userInput == null)
+			return;
 		String[] lines = userInput.split("\n");
 		int upperY = (int) anchorPoint.getY() + buttonsHeight;
 		for(int index = 0; index < lines.length; index++) {
@@ -247,6 +265,10 @@ public class TBSPrompt{
 			g2.setColor(new Color(red, green, blue));
 			g2.drawLine(leftX, y , leftX + buttonsWidth, y);
 		}
+	}
+	
+	public TBSQuestionButtonType getCurrentQuestion() {
+		return currentQuestion;
 	}
 	
 }

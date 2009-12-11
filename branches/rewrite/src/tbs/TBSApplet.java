@@ -11,14 +11,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.TreeMap;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 
 import tbs.model.TBSModel;
+import tbs.view.TBSQuestionButtonType;
 
 /**
 * TBSApplet is the frame in which the Tree-Building System runs. Its
@@ -48,11 +50,18 @@ public class TBSApplet extends JApplet {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
  			String savedTree = getParameter("SavedTree");
+ 			String q1 = getParameter("quest1");
+ 			String q2 = getParameter("quest2");
+ 			String q3 = getParameter("quest3");
  			model = new TBSModel(app, savedTree, getGraphics(), loadOrganismsFromDirectory());
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
+ 			loadQuestions();
+ 			model.setQuestion(q1, TBSQuestionButtonType.ONE);
+ 			model.setQuestion(q2, TBSQuestionButtonType.TWO);
+ 			model.setQuestion(q3, TBSQuestionButtonType.THREE);
  		}});
  	}
  
@@ -156,13 +165,23 @@ public class TBSApplet extends JApplet {
 	
 	public String getTree(){ return model.exportTree(); }
 	
-	public void setTree(String tree){
-		/*if(tree != null && tree.length() > 0){
-			model.loadTree(tree);
-			model.getView().setScreenString("Tree Loaded");
-			model.getView().paintComponent();
+	public String getQ1(){return model.getQuestion(TBSQuestionButtonType.ONE);}
+	
+	public String getQ2(){return model.getQuestion(TBSQuestionButtonType.TWO);}
+	
+	public String getQ3(){
+		return "1,2,2,2,3,4,5,5,5,4,3,3,1";
+		//return model.getQuestion(TBSQuestionButtonType.THREE);
+	}
+	
+	public void loadQuestions(){
+		Properties props = new Properties();
+		try{
+			props.load(this.getClass().getResource("questions.properties").openStream());
+			model.setQuestionProperties(props);
+		}catch(Exception e){
+			System.out.println("Unable to load question properties: " + e);
 		}
-		add(model.getView());*/
 	}
 }
 
