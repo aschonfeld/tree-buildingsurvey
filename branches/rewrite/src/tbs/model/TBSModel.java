@@ -574,15 +574,16 @@ public class TBSModel
 	}
 	
 	public void setQuestion(String input, TBSQuestionButtonType question){
+		String formattedInput = input == null ? "" : input;
 		switch(question){
 		case ONE:
-			questionOne = input;
+			questionOne = formattedInput;
 			return;
 		case TWO:
-			questionTwo = input;
+			questionTwo = formattedInput;
 			return;
 		case THREE:
-			questionThree = input;
+			questionThree = formattedInput;
 			return;
 		}
 	}

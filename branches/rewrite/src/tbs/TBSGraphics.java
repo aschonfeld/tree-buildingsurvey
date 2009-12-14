@@ -295,11 +295,16 @@ public class TBSGraphics {
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();
-		float y = upperY + height - (height - stringHeight) / 2;
-   		float x = leftX + (width - stringWidth) / 2;
+		float x,y;
+		if(width == 0)
+			x = leftX;
+		else
+			x = leftX + (width - stringWidth) / 2;
+		if(height == 0)
+			y = upperY;
+		else
+			y = upperY + height - (height - stringHeight) / 2;
    		// if width or height is 0, do not center along that axis
-   		if(width == 0) x = leftX;
-   		if(height == 0) y = upperY;
    		layout.draw(g2, x, y);
 	}
 
