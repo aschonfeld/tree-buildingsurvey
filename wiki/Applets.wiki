@@ -1,6 +1,6 @@
 Here are links to different versions of Applets:
 
-     * [http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl Version 1.1] <br> Current State of version is r500. <br>
+     * [http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl Version 1.1] <br> Current State of version is r523. <br>
 
     * [http://cluster.bio.whe.umb.edu/cgi-bin/Test120809/TBSTestSurvey.pl Version 1.0] <br> Current State of version is r500. <br>
 
