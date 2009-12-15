@@ -2,6 +2,10 @@
 
 = Comments and questions from the professor = 
 
+=== December 14 ===
+
+Still nothing on your schedule about the requirements specification document (due tomorrow - I know you've done it but I should see it scheduled!) or about steps toward the significant production release you need for Professor White at the end of January.
+
 === December 8 ===
 
 Your schedule contains just three items for December and January: 12/01, 12/31 and 1/30.
