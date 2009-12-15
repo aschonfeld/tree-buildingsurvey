@@ -26,6 +26,7 @@ Dates in *bold* are firm, and scheduled, with features locked and tasks assigned
   * *0.5*: Connections selectable, can be deleted. Some buttons functional: link, unlink, remove, rename. (*11/12*)
   * *0.6*: Fix mouse semantics of connection. Must determine what they are before fixing! Still room for other issues in this release.(11/15?)
   * *1.0*: Menu allows users to select options for UI display and mouse behavior. Trees can be saved to database and loaded from database. Responsibility areas: Multi-GUI - Glenn / Save structure - Jon / Database connection - Andrew (12/01)
+  * *1.1*: Menu allows users to select options mouse behavior. Trees can be saved to database and loaded from database. Open-response questions have been moved from html display to the applet.(12/14)
   * 1.x*: "Scoring" (graph analysis) enabled,  pop-up help (tooltip and help window), undo, front screen ("Hello, please select your name from this list"), back screen (multiple-choice and free-entry tests). (1/31/10) *These will be divided into smaller iterations by 12/01). 1/31 is release date for the version to be tested on the spring biology class*
 
 
