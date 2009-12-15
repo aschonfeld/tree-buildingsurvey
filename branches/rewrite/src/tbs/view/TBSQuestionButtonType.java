@@ -4,7 +4,7 @@ public enum TBSQuestionButtonType {
 
 	ONE("1","questionOne",false),
 	TWO("2", "questionTwo",false),
-	THREE("3", "questionThree.one",true);
+	THREE("3", "questionThree",true);
 	
 	private String text;
 	
