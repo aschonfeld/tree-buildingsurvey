@@ -22,7 +22,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||10/13/09||All members of team have local builds||team||build||Completed||
 ||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
 ||10/15/09||[VisionStatement Vision statement approved by client]||team||main||10/15/09||
-||10/15/09||architecture of redesigned code||Glenn||[main]||10/15/09||
+||10/15/09||architecture of redesigned code||Glenn||main||10/15/09||
 ||10/18/09||develop build system||Andrew||main||10/17/09||
 ||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
 ||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
