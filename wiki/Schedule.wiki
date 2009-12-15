@@ -36,6 +36,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||11/15/09||First draft of javadoc||Jon||main||11/15/09||
 ||11/15/09||Applet Version 0.6||team||[Versioning Versions]||11/23/09||
 ||12/01/09||Applet Version 1.0||team||[Versioning Versions]||||
+||12/15/09||Requirements Document Due||team||||||
 ||11/20/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
 ||1/30/10||Functioning program with full feature set||team||main||||
