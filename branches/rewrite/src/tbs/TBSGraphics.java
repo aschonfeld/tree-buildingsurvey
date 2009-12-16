@@ -11,7 +11,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -97,6 +96,17 @@ public class TBSGraphics {
 	 * Label for inTree empty nodes
 	 */
 	public static String emptyNodeLabel = "#%d";
+	
+	/**
+	 * Label for immortal empty node
+	 */
+	public static String immortalNodeLabel = "Empty Node";
+	
+	
+	/**
+	 * Width of immortal empty node label
+	 */
+	public static int immortalNodeLabelWidth = 0;
 	
 	/**
 	* The fixed width of all EmptyNodes. 
@@ -233,46 +243,31 @@ public class TBSGraphics {
    		return layout.getBounds();
 	}
 	
-	public static Point getMaxBounds(ArrayList<Point> points) {
-		Point max = new Point(0,0);
-		for(Point p: points) {
-			int width = (int) p.x;
-			int height = (int) p.y;
-			if(width > max.x) max.x = width;
-			if(height > max.y) max.y = height;
-		}
-		return max;	
-	}
-	
-	public static Point get2DStringBounds(Graphics2D g2, 
-			Collection<?> strings) 
+	public static Point get2DStringBounds(Graphics2D g2, Collection<?> strings) 
 	{
-		ArrayList<Point> points = new ArrayList<Point>();
+		Point max = new Point(0,0);
 		for(Object s: strings) 
 		{
 			Rectangle2D bounds = getStringBounds(g2, s.toString());
-			points.add(new Point((int) bounds.getWidth(), 
-				(int) bounds.getHeight()));
+			if(bounds.getWidth() > max.x) 
+				max.x = (int) bounds.getWidth();
+			if(bounds.getHeight() > max.y) 
+				max.y = (int) bounds.getHeight();
 		}
-		return getMaxBounds(points);
+		return max;
 	}
 	
-	public static Point get2DImageBounds(Graphics2D g2, 
-			Collection<BufferedImage> images) 
+	public static Point get2DImageBounds(Graphics2D g2, Collection<BufferedImage> images) 
 	{
-		ArrayList<Point> points = new ArrayList<Point>();
+		Point max = new Point(0,0);
 		for(BufferedImage i: images) 
 		{
-			points.add(new Point(i.getWidth(), i.getHeight()));
+			if(i.getWidth() > max.x) 
+				max.x = i.getWidth();
+			if(i.getHeight() > max.y) 
+				max.y = i.getHeight();
 		}
-		return getMaxBounds(points);
-	}
-	
-	public static Point get2DBounds(Point p0, Point p1) 
-	{
-		if(p1.x > p0.x) p0.x = p1.x;
-		if(p1.y > p0.y) p0.y = p1.y;
-		return p0;
+		return max;
 	}
 	
 	public static void drawCenteredString(Graphics2D g2, String s, 

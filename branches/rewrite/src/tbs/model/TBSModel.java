@@ -8,12 +8,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -246,36 +245,30 @@ public class TBSModel
 				TreeMap<String, BufferedImage> organismNameToImage) {
 		Graphics2D g2 = (Graphics2D) g;
 		EmptyNode.g2 = g2;
-		BufferedImage img = null;
-		int currentX = 0;
 		int currentY = TBSGraphics.buttonsHeight + 10;
-		String organismName = "";
-		Collection<String> organismNames = organismNameToImage.keySet();
-		Collection<BufferedImage> organismImages = organismNameToImage.values();
-		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNames);
-		Point imageBounds = TBSGraphics.get2DImageBounds(g2, organismImages);
+		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
+		Point imageBounds = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
 		TBSGraphics.organismNodeWidth = stringBounds.x + imageBounds.x + 
 				TBSGraphics.paddingWidth * 2;
-		TBSGraphics.organismNodeHeight = imageBounds.y;
-		int y0 = stringBounds.y;
-		int y1 = imageBounds.y;
-		if(y0 > y1) {
-			TBSGraphics.organismNodeHeight = y0;
-		} else {
-			TBSGraphics.organismNodeHeight = y1;
-		}
-		Iterator<String> itr = organismNames.iterator();
-		while(itr.hasNext()) {
-			organismName = itr.next();
-			img = organismNameToImage.get(organismName);
-			addElement(new OrganismNode( getSerial(), organismName, 
-				new Point(currentX, currentY), img));
+		if(stringBounds.y > imageBounds.y)
+			TBSGraphics.organismNodeHeight = stringBounds.y;
+		else
+			TBSGraphics.organismNodeHeight = imageBounds.y;
+		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
+			addElement(new OrganismNode( getSerial(), e.getKey(), 
+				new Point(0, currentY), e.getValue()));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 
 		//create left-side empty node
-		TBSGraphics.emptyNodeLeftX = TBSGraphics.organismNodeWidth / 2;
+		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
+		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.organismNodeHeight / 2;
+		/*
+		 * If you use this line it will make the positioning of the immortal node
+		 * like the default positioning of an organism node
+		 */		
+		//TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.ySpacing;
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
 	}	

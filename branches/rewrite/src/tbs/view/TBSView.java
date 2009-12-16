@@ -191,7 +191,16 @@ public class TBSView extends JComponent {
 			g2.setColor(TBSGraphics.emptyNodeColor);
 			Rectangle2D r = en.getRectangle();
 			Rectangle2D yAdjust = new Rectangle2D.Double(r.getX(), r.getY() - yOffset, r.getWidth(), r.getHeight()); 
-			if(me != model.getImmortalEmptyNode()) g2.fill(yAdjust); else g2.fill(r);
+			if(me != model.getImmortalEmptyNode()) 
+				g2.fill(yAdjust);
+			else{
+				int stringAreaLeftX = TBSGraphics.emptyNodeLeftX + TBSGraphics.emptyNodeWidth + TBSGraphics.paddingWidth;
+				TBSGraphics.drawCenteredString(g2, TBSGraphics.immortalNodeLabel,
+						stringAreaLeftX, TBSGraphics.emptyNodeUpperY,
+						TBSGraphics.immortalNodeLabelWidth, TBSGraphics.emptyNodeHeight,
+						TBSGraphics.emptyNodeColor);
+				g2.fill(r);
+			}
 			// make bold for greater visibility;
 	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
 	   		g2.setFont(f);
