@@ -57,7 +57,7 @@ public class TBSModel
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
 		if(savedTree != null && savedTree.length() > 0)
-			loadTree(savedTree);
+			loadTree(savedTree.trim());
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();
@@ -574,7 +574,7 @@ public class TBSModel
 	}
 	
 	public void setQuestion(String input, TBSQuestionButtonType question){
-		String formattedInput = input == null ? "" : input;
+		String formattedInput = input == null ? "" : input.trim();
 		switch(question){
 		case ONE:
 			questionOne = formattedInput;

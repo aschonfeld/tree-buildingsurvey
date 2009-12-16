@@ -53,15 +53,15 @@ public class TBSApplet extends JApplet {
  			String q1 = getParameter("quest1");
  			String q2 = getParameter("quest2");
  			String q3 = getParameter("quest3");
- 			model = new TBSModel(app, savedTree.trim(), getGraphics(), loadOrganismsFromDirectory());
+ 			model = new TBSModel(app, savedTree, getGraphics(), loadOrganismsFromDirectory());
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
  			loadQuestions();
- 			model.setQuestion(q1.trim(), TBSQuestionButtonType.ONE);
- 			model.setQuestion(q2.trim(), TBSQuestionButtonType.TWO);
- 			model.setQuestion(q3.trim(), TBSQuestionButtonType.THREE);
+ 			model.setQuestion(q1, TBSQuestionButtonType.ONE);
+ 			model.setQuestion(q2, TBSQuestionButtonType.TWO);
+ 			model.setQuestion(q3, TBSQuestionButtonType.THREE);
  		}});
  	}
  
