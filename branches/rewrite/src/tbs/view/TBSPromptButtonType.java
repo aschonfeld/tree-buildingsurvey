@@ -5,20 +5,20 @@ import java.util.List;
 
 public enum TBSPromptButtonType {
 
-	SUBMIT("Submit", false, 0),
-	STRONGLY_AGREE("Strongly Agree", true, 1),
-	AGREE("Agree", true, 2),
-	NOT_SURE("Not Sure", true, 3),
-	DISAGREE("Disagree", true, 4),
-	STRONGLY_DISAGREE("Strongly Disagree", true, 5);
+	SUBMIT("Submit", false, "0"),
+	STRONGLY_AGREE("Strongly Agree", true, "1"),
+	AGREE("Agree", true, "2"),
+	NOT_SURE("Not Sure", true, "3"),
+	DISAGREE("Disagree", true, "4"),
+	STRONGLY_DISAGREE("Strongly Disagree", true, "5");
 	
 	private String text;
 	
 	private boolean radio;
 	
-	private int value;
+	private String value;
 	
-	private TBSPromptButtonType(String text, boolean radio, int value){
+	private TBSPromptButtonType(String text, boolean radio, String value){
 		this.text = text;
 		this.radio = radio;
 		this.value = value;
@@ -32,7 +32,7 @@ public enum TBSPromptButtonType {
 		return radio;	
 	}
 	
-	public int getValue(){
+	public String getValue(){
 		return value;
 	}
 	
@@ -50,9 +50,9 @@ public enum TBSPromptButtonType {
 		return buttons;
 	}
 	
-	public static String getRadioText(int value){
+	public static String getRadioText(String value){
 		for(TBSPromptButtonType button : values()){
-			if(button.getValue() == value)
+			if(button.getValue().equals(value))
 				return button.toString();
 		}
 		return "";
