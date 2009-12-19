@@ -68,6 +68,11 @@ public class TBSPrompt{
 				userInput = "0,0,0,0,0,0,0,0,0,0,0,0,0";
 			for(String answer : userInput.split(","))
 					radioAnswers.add(answer);
+			int numRadios = Integer.parseInt(questionProps.getProperty("questionThree.numQuestions"));
+			if(radioAnswers.size() < numRadios){
+				for(int i=radioAnswers.size();i<=numRadios;i++)
+					radioAnswers.add("0");
+			}
 		}
 		finished = false;
 	}
@@ -138,9 +143,8 @@ public class TBSPrompt{
 		if(c == '\b'){
 			if(userInput.length() > 0)
 				userInput = userInput.substring(0 , userInput.length() - 1);
-		} else {
+		} else
 			userInput += c;
-		}
 		// check if max number of lines exceeded
 		lines = userInput.split("\n");
 		if(lines.length >= numLines) 

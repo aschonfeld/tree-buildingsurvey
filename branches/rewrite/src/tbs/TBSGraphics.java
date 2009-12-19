@@ -12,6 +12,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 /**
 * This class encapsulates the constants used in graphics handling for
@@ -96,6 +97,12 @@ public class TBSGraphics {
 	 * Label for inTree empty nodes
 	 */
 	public static String emptyNodeLabel = "#%d";
+	
+	/*
+	 * Regex patten checking for non-alphanumeric characters being 
+	 * entered when labeling an empty node
+	 */
+	public static Pattern emptyNodePattern = Pattern.compile("[0-9a-zA-Z' ']");
 	
 	/**
 	 * Label for immortal empty node

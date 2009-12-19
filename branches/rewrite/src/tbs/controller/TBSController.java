@@ -14,6 +14,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import tbs.TBSGraphics;
 import tbs.TBSPrompt;
@@ -100,8 +101,11 @@ public class TBSController
 				if(c == '\b'){
 					if(name.length() > 0)
 						en.rename(name.substring(0,name.length()-1));
-				}else
-					en.rename(name + c);
+				}else{
+					Matcher m = TBSGraphics.emptyNodePattern.matcher("" + c);
+					if(m.find())
+						en.rename(name + c);
+				}
 			}
 		}
 	}
@@ -440,8 +444,7 @@ public class TBSController
     }
     
     private void handleMouseQuestionPressed(int x, int y) {
-    	String textInputMessage;
-		int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
+    	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 		if(buttonIndex >= TBSQuestionButtonType.values().length) return;
 		questionClicked = TBSQuestionButtonType.values()[buttonIndex];
 		System.out.println(questionClicked.toString());
