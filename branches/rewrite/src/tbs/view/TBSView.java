@@ -6,9 +6,11 @@ package tbs.view;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -92,56 +94,45 @@ public class TBSView extends JComponent {
 	public void renderButtons(Graphics g)
 	{
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
-		if(buttonClicked == null) buttonClicked = TBSButtonType.SELECT;
-		int width = TBSGraphics.appletWidth;
-		int minWidth = TBSGraphics.buttonsWidth * TBSButtonType.values().length;
-		if(width < minWidth) width = minWidth;
+		if(buttonClicked == null)
+			buttonClicked = TBSButtonType.SELECT;
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setColor(Color.WHITE);
-		g2.fillRect(0, 0, width, TBSGraphics.buttonsHeight);
-		int leftX = 0;
+		Rectangle buttonRect = new Rectangle(0,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: TBSButtonType.values()) {
 			if(b.equals(buttonClicked) ||
-					(!buttonClicked.getIsMode() && b.equals(TBSButtonType.SELECT))) {
-				Color start = new Color(0.2f, 0.8f, 0.2f);
-				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, TBSGraphics.buttonsWidth, start, end);
-			} else {
-				Color start = new Color(0.45f, 0.55f, 0.65f);
-				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, TBSGraphics.buttonsWidth, start, end);
-			}
-			g2.setColor(Color.BLACK);
-			TBSGraphics.drawCenteredString(g2, b.toString(), leftX, upperY, TBSGraphics.buttonsWidth, 0);
+					(!buttonClicked.getIsMode() && b.equals(TBSButtonType.SELECT)))
+				renderButtonBackground(g2, buttonRect, true);
+			else
+				renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
-			g2.drawRect(leftX, 0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
-			leftX += TBSGraphics.buttonsWidth;
+			g2.draw(buttonRect);
+			TBSGraphics.drawCenteredString(g2, b.toString(),
+					buttonRect.x, upperY, buttonRect.width, 0);
+			buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 		}
 		
-		leftX += TBSGraphics.spaceBeforeQuestionButtons;
-		TBSGraphics.questionButtonsStart = leftX;
+		buttonRect.setLocation(buttonRect.x + TBSGraphics.spaceBeforeQuestionButtons, buttonRect.y);
+		TBSGraphics.questionButtonsStart = buttonRect.x;
+		buttonRect.setSize(new Dimension(TBSGraphics.questionButtonsWidth, buttonRect.height));
 		
 		TBSPrompt prompt = model.getPrompt();
 		for(TBSQuestionButtonType q: TBSQuestionButtonType.values()) {
-			if((prompt != null) &&  q.equals(prompt.getCurrentQuestion())) {
-				Color start = new Color(0.2f, 0.8f, 0.2f);
-				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, TBSGraphics.questionButtonsWidth, start, end);
-			} else {
-				Color start = new Color(0.45f, 0.55f, 0.65f);
-				Color end = new Color(1.0f, 1.0f, 1.0f);
-				renderButtonBackground(g2, leftX, TBSGraphics.questionButtonsWidth, start, end);
-			}
-			g2.setColor(Color.BLACK);
-			TBSGraphics.drawCenteredString(g2, q.toString(), leftX, upperY, TBSGraphics.questionButtonsWidth, 0);
+			if((prompt != null) &&  q.equals(prompt.getCurrentQuestion()))
+				renderButtonBackground(g2, buttonRect, true);
+			else
+				renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
-			g2.drawRect(leftX, 0,TBSGraphics.questionButtonsWidth, TBSGraphics.buttonsHeight);
-			leftX += TBSGraphics.questionButtonsWidth;
+			g2.draw(buttonRect);
+			TBSGraphics.drawCenteredString(g2, q.toString(),
+					buttonRect.x, upperY, buttonRect.width, 0);
+			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
 		}
 	}
 	
-	public void renderButtonBackground(Graphics2D g2, int leftX, int width, Color start, Color end) {
+	public void renderButtonBackground(Graphics2D g2, Rectangle button, boolean selected) {
+		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
+		Color end = TBSGraphics.buttonEnd;
 		float redDiff = end.getRed() - start.getRed();
 		float greenDiff = end.getGreen() - start.getGreen();
 		float blueDiff = end.getBlue() - start.getBlue();
@@ -156,7 +147,7 @@ public class TBSView extends JComponent {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(leftX, y , leftX + width, y);
+			g2.drawLine(button.x, y , button.x + button.width, y);
 		}
 		for(int y = TBSGraphics.buttonsHeight / 3; y < TBSGraphics.buttonsHeight; y++) {
 			float fy = (float) y - (TBSGraphics.buttonsHeight / 3);
@@ -169,7 +160,7 @@ public class TBSView extends JComponent {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(leftX, y , leftX + width, y);
+			g2.drawLine(button.x, y , button.x + button.width, y);
 		}
 	}
 
@@ -179,14 +170,13 @@ public class TBSView extends JComponent {
 	public void renderModelElement(Graphics g, ModelElement me) {
 		Graphics2D g2 = (Graphics2D) g;
 		if(me instanceof OrganismNode) 
-		{
 			renderOrganismNode(g2, (OrganismNode) me);
-		}
 		else if (me instanceof EmptyNode)
 		{
 			EmptyNode en = (EmptyNode) me;
 			String name = en.getName();
-			if(name == null) name = "";
+			if(name == null)
+				name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
 			g2.setColor(TBSGraphics.emptyNodeColor);
 			Rectangle2D r = en.getRectangle();
@@ -226,7 +216,6 @@ public class TBSView extends JComponent {
 	
 	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
 		Color stringColor = TBSGraphics.organismStringColor;
-		Color boxColor = TBSGraphics.organismBoxColor;
 		int stringWidth = 0;
 		int imageWidth = 0;
 		int imageStartX = 0;
@@ -237,7 +226,6 @@ public class TBSView extends JComponent {
 		imageStartX = on.getDefaultPoint().x + imageXOffset;
 		if(on.isInTree()) {
 			stringColor = TBSGraphics.organismBoxColor;
-			boxColor = TBSGraphics.organismStringColor;
 			g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
 		} else {
 			// organism is being dragged for possible addition to tree
@@ -250,7 +238,7 @@ public class TBSView extends JComponent {
 		int stringAreaWidth = stringWidth;
 		int stringAreaUpperY = on.getDefaultPoint().y;
 		int stringAreaHeight = TBSGraphics.organismNodeHeight;
-		g2.setColor(boxColor);
+		g2.setColor(on.isInTree() ? TBSGraphics.organismStringColor : TBSGraphics.organismBoxColor);
 		g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getDefaultWidth(), on.getDefaultHeight());
 		TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight, stringColor);
 		g2.drawImage(on.getImage(), imageStartX, on.getDefaultPoint().y, null);

@@ -210,6 +210,14 @@ public class TBSGraphics {
 	* Width of buttons. Set in [TBSModel.???]
 	*/ 
 	public static int buttonsWidth = 0;
+	
+	/**
+	 * Button Colors
+	 */
+	public static Color buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
+	public static Color buttonSelected = new Color(0.2f, 0.8f, 0.2f);
+	public static Color buttonEnd = new Color(1.0f, 1.0f, 1.0f);
+	
 
 	/**
 	* Space between buttons and question buttons.

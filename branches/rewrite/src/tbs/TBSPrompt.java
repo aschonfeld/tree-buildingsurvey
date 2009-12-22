@@ -245,10 +245,8 @@ public class TBSPrompt{
 	{
 		Rectangle buttonRect = new Rectangle(buttonsArea.x, buttonsArea.y,
 				buttonsArea.width/buttons.size(), buttonsArea.height);
-		Color start = new Color(0.45f, 0.55f, 0.65f);
-		Color end = new Color(1.0f, 1.0f, 1.0f);
 		for(TBSPromptButtonType button: buttons) {
-			renderButtonBackground(buttonRect, start, end);
+			renderButtonBackground(buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
 			TBSGraphics.drawCenteredString(g2, button.toString(), buttonRect.x,
@@ -259,7 +257,7 @@ public class TBSPrompt{
 			buttonRect = new Rectangle(radioQuestionSelection.x, radioQuestionSelection.y,
 					radioQuestionSelection.width, radioQuestionSelection.height/radioAnswers.size());
 			for(int i=1;i<=radioAnswers.size();i++){
-				renderButtonBackground(buttonRect, start, end);
+				renderButtonBackground(buttonRect, false);
 				g2.setColor(Color.gray);
 				g2.draw(buttonRect);
 				TBSGraphics.drawCenteredString(g2, "" + i, buttonRect.x,
@@ -269,7 +267,10 @@ public class TBSPrompt{
 		}
 	}
 	
-	public void renderButtonBackground(Rectangle button, Color start, Color end) {
+	public void renderButtonBackground(Rectangle button, boolean selected) {
+		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
+		Color end = TBSGraphics.buttonEnd;
+		
 		float redDiff = end.getRed() - start.getRed();
 		float greenDiff = end.getGreen() - start.getGreen();
 		float blueDiff = end.getBlue() - start.getBlue();
