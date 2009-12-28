@@ -133,7 +133,7 @@ public class TBSPrompt{
 		String[] lines = userInput.split("\n");
 		String currentLine = lines[lines.length - 1];
 		if(currentLine.length() > 0) {
-			lineWidth = getStringBounds(currentLine).width;
+			lineWidth = TBSGraphics.getStringBounds(g2,currentLine).width;
 		} else {
 			lineWidth = 0;
 		}
@@ -159,7 +159,7 @@ public class TBSPrompt{
 	
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
-		textHeight = getStringBounds("QOgj").height;
+		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		promptSize.setSize(750 + padding.width * 2, 0);
 		lineBrokenQuestion = new LinkedList<String>();
 		int questionLength = 0;
@@ -222,7 +222,7 @@ public class TBSPrompt{
 					TBSGraphics.questionButtonsWidth, radioAnswers.size() * (textHeight + 4));
 			for(int i=0;i<radioAnswers.size();i++){
 				String answerText = TBSPromptButtonType.getRadioText(radioAnswers.get(i));
-				int answerWidth = getStringBounds(answerText).width + 4;
+				int answerWidth = TBSGraphics.getStringBounds(g2,answerText).width + 4;
 				if(currentRadioQuestion==(i+1) && buttons.size() > 1)
 					drawString(answerText, startX-answerWidth, startY, true);
 				else
@@ -246,7 +246,7 @@ public class TBSPrompt{
 		Rectangle buttonRect = new Rectangle(buttonsArea.x, buttonsArea.y,
 				buttonsArea.width/buttons.size(), buttonsArea.height);
 		for(TBSPromptButtonType button: buttons) {
-			renderButtonBackground(buttonRect, false);
+			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
 			TBSGraphics.drawCenteredString(g2, button.toString(), buttonRect.x,
@@ -257,48 +257,13 @@ public class TBSPrompt{
 			buttonRect = new Rectangle(radioQuestionSelection.x, radioQuestionSelection.y,
 					radioQuestionSelection.width, radioQuestionSelection.height/radioAnswers.size());
 			for(int i=1;i<=radioAnswers.size();i++){
-				renderButtonBackground(buttonRect, false);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 				g2.setColor(Color.gray);
 				g2.draw(buttonRect);
 				TBSGraphics.drawCenteredString(g2, "" + i, buttonRect.x,
 						buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
 				buttonRect.setLocation(buttonRect.x, buttonRect.y + (textHeight + 4));
 			}
-		}
-	}
-	
-	public void renderButtonBackground(Rectangle button, boolean selected) {
-		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
-		Color end = TBSGraphics.buttonEnd;
-		
-		float redDiff = end.getRed() - start.getRed();
-		float greenDiff = end.getGreen() - start.getGreen();
-		float blueDiff = end.getBlue() - start.getBlue();
-		for(int y = button.y; y <= button.y + button.height / 3; y++) {
-			float fy = (float) (y - button.y);
-			float fh = (float) button.height / 3;
-			float fdiff = 0.6f + 0.4f * fy / fh;
-			float red = start.getRed() + redDiff * fdiff;
-			float green = start.getGreen() + greenDiff * fdiff;
-			float blue = start.getBlue() + blueDiff * fdiff;
-			red /= 255.0f;
-			green /= 255.0f;
-			blue /= 255.0f;
-			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
-		}
-		for(int y = button.y + button.height / 3; y < button.y + button.height; y++) {
-			float fy = (float) y - (button.height / 3) - button.y;
-			float fh = (float) 2.0f * (button.height / 3);
-			float fdiff = fy / fh;
-			float red = end.getRed() - redDiff * fdiff;
-			float green = end.getGreen() - greenDiff * fdiff;
-			float blue = end.getBlue() - blueDiff * fdiff;
-			red /= 255.0f;
-			green /= 255.0f;
-			blue /= 255.0f;
-			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
 		}
 	}
 	
@@ -309,7 +274,7 @@ public class TBSPrompt{
 	public void breakQuestionByLine(){
 		String currentLine = "";
 		for(String token : question.split(" ")){
-			if(getStringBounds(currentLine + token).width > (promptSize.width - padding.width * 2)){
+			if(TBSGraphics.getStringBounds(g2, currentLine + token).width > (promptSize.width - padding.width * 2)){
 				lineBrokenQuestion.add(currentLine);
 				currentLine = token + " ";
 			}else{
@@ -323,17 +288,6 @@ public class TBSPrompt{
 	public void constructRadioQuestions(){
 		for(int i=1;i<=radioAnswers.size(); i++)
 			lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
-	}
-	
-	public Dimension getStringBounds(String s) 
-	{
-		if(s == null || s == "")
-			return new Dimension();
-		Font f = new Font(null, TBSGraphics.fontStyle, TBSGraphics.fontSize);
-		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, f, frc);
-		Rectangle2D bounds = layout.getBounds();
-		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 	
 }

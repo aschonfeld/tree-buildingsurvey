@@ -1,6 +1,7 @@
 package tbs.model;
 //Non-Swing button class, based on OrganismNode
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import tbs.view.TBSButtonType;
@@ -17,7 +18,7 @@ public class TBSButton extends ModelElement
 	private int upperY;
 	private int width;
 	private int height;
-	private Rectangle2D stringBounds;
+	private Rectangle stringBounds;
 	private TBSButtonType action;
 
 	public boolean collidesWith(ModelElement e)
@@ -25,7 +26,7 @@ public class TBSButton extends ModelElement
 		return false;
 	}
 
-	public TBSButton(int id, String name, Rectangle2D sb, TBSButtonType a,
+	public TBSButton(int id, String name, Rectangle sb, TBSButtonType a,
  			int x, int y, int h, int w)
 	{
 		super(id);
@@ -38,7 +39,7 @@ public class TBSButton extends ModelElement
 		height=h;
 	}
 
-	public Rectangle2D getStringBounds()
+	public Rectangle getStringBounds()
 	{
 		return stringBounds;
 	}

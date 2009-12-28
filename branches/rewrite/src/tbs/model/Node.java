@@ -4,7 +4,7 @@
 package tbs.model;
 
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,12 +45,12 @@ public abstract class Node extends ModelElement implements Cloneable
 		return anchorPoint;	
 	}
 	
-	public Rectangle2D getRectangle(){
-		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+	public Rectangle getRectangle(){
+		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 	
-	public Rectangle2D getPaddedRectangle(){
-		return new Rectangle2D.Double(getX()-4, getY()-4, getWidth()+8, getHeight()+8);
+	public Rectangle getPaddedRectangle(){
+		return new Rectangle(getX()-4, getY()-4, getWidth()+8, getHeight()+8);
 	}
 	
 	/**

@@ -3,9 +3,9 @@
 
 package tbs.model;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 
 import tbs.TBSGraphics;
 
@@ -65,9 +65,9 @@ public class EmptyNode extends Node
 		int width = TBSGraphics.emptyNodeWidth;
 		int height = TBSGraphics.emptyNodeHeight;
 		int padding = TBSGraphics.emptyNodePadding;
-		Rectangle2D stringBounds = TBSGraphics.getStringBounds(g2, name);
-		int testWidth = (int) stringBounds.getWidth() + 2 * padding;
-		int testHeight = (int) stringBounds.getHeight() + 2 * padding;
+		Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
+		int testWidth = stringBounds.width + 2 * padding;
+		int testHeight = stringBounds.height + 2 * padding;
 		if (testWidth > TBSGraphics.emptyNodeWidth) width = testWidth;
 		if (testHeight > TBSGraphics.emptyNodeHeight) height = testHeight;
 		setName(name);

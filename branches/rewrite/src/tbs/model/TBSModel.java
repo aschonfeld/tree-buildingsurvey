@@ -226,7 +226,7 @@ public class TBSModel
 	public void createButtons(Graphics g)
 	{
 		Graphics2D g2 = (Graphics2D) g;
-		TBSGraphics.getFont(g2);
+		TBSGraphics.setFont(g2);
 		Point buttonBounds = TBSGraphics.get2DStringBounds(g2,
 				Arrays.asList(TBSButtonType.values()));
 		TBSGraphics.buttonsWidth = buttonBounds.x + 

@@ -102,9 +102,9 @@ public class TBSView extends JComponent {
 		for(TBSButtonType b: TBSButtonType.values()) {
 			if(b.equals(buttonClicked) ||
 					(!buttonClicked.getIsMode() && b.equals(TBSButtonType.SELECT)))
-				renderButtonBackground(g2, buttonRect, true);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
-				renderButtonBackground(g2, buttonRect, false);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
 			TBSGraphics.drawCenteredString(g2, b.toString(),
@@ -119,48 +119,14 @@ public class TBSView extends JComponent {
 		TBSPrompt prompt = model.getPrompt();
 		for(TBSQuestionButtonType q: TBSQuestionButtonType.values()) {
 			if((prompt != null) &&  q.equals(prompt.getCurrentQuestion()))
-				renderButtonBackground(g2, buttonRect, true);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
-				renderButtonBackground(g2, buttonRect, false);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
 			TBSGraphics.drawCenteredString(g2, q.toString(),
 					buttonRect.x, upperY, buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
-		}
-	}
-	
-	public void renderButtonBackground(Graphics2D g2, Rectangle button, boolean selected) {
-		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
-		Color end = TBSGraphics.buttonEnd;
-		float redDiff = end.getRed() - start.getRed();
-		float greenDiff = end.getGreen() - start.getGreen();
-		float blueDiff = end.getBlue() - start.getBlue();
-		for(int y = 0; y <= TBSGraphics.buttonsHeight / 3; y++) {
-			float fy = (float) y;
-			float fh = (float) TBSGraphics.buttonsHeight / 3;
-			float fdiff = 0.6f + 0.4f * fy / fh;
-			float red = start.getRed() + redDiff * fdiff;
-			float green = start.getGreen() + greenDiff * fdiff;
-			float blue = start.getBlue() + blueDiff * fdiff;
-			red /= 255.0f;
-			green /= 255.0f;
-			blue /= 255.0f;
-			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
-		}
-		for(int y = TBSGraphics.buttonsHeight / 3; y < TBSGraphics.buttonsHeight; y++) {
-			float fy = (float) y - (TBSGraphics.buttonsHeight / 3);
-			float fh = (float) 2.0f * (TBSGraphics.buttonsHeight / 3);
-			float fdiff = fy / fh;
-			float red = end.getRed() - redDiff * fdiff;
-			float green = end.getGreen() - greenDiff * fdiff;
-			float blue = end.getBlue() - blueDiff * fdiff;
-			red /= 255.0f;
-			green /= 255.0f;
-			blue /= 255.0f;
-			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
 		}
 	}
 
@@ -179,8 +145,8 @@ public class TBSView extends JComponent {
 				name = "";
 			// make empty nodes light purple (like Prof. White's node.gif)
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			Rectangle2D r = en.getRectangle();
-			Rectangle2D yAdjust = new Rectangle2D.Double(r.getX(), r.getY() - yOffset, r.getWidth(), r.getHeight()); 
+			Rectangle yAdjust = en.getRectangle();
+			yAdjust.setLocation(yAdjust.x, yAdjust.y - yOffset);
 			if(me != model.getImmortalEmptyNode()) 
 				g2.fill(yAdjust);
 			else{
@@ -189,24 +155,16 @@ public class TBSView extends JComponent {
 						stringAreaLeftX, TBSGraphics.emptyNodeUpperY,
 						TBSGraphics.immortalNodeLabelWidth, TBSGraphics.emptyNodeHeight,
 						TBSGraphics.emptyNodeColor);
-				g2.fill(r);
+				g2.fill(en.getRectangle());
 			}
-			// make bold for greater visibility;
-	  		Font f = new Font(TBSGraphics.fontName, TBSGraphics.fontStyle, TBSGraphics.fontSize);
-	   		g2.setFont(f);
-			if(name.length() > 0) {
-				// zero length string gives an error
-				int h = (int) en.getHeight();
-				int w = (int) en.getWidth();
-				int y = en.getY() - yOffset;
-				TBSGraphics.drawCenteredString(g2, name, en.getX(), y, w, h, Color.black);
-			}
+			TBSGraphics.drawCenteredString(g2, name, en.getX(),
+					en.getY() - yOffset, en.getWidth(), en.getHeight());
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
 					c.getTo());
 				conn = scrollAdjust(conn);
-				g2.setColor(me.equals(model.getSelectedModelElement()) ? TBSGraphics.connectionSelectedColor : TBSGraphics.connectionColor);
+				g2.setColor(TBSGraphics.connectionColor);
 				g2.setStroke(new BasicStroke(3));
 				g2.draw(conn);
 				g2.draw(getArrowHead(conn, 0.75 * Math.PI));

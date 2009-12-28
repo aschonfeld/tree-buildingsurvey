@@ -3,9 +3,11 @@
 package tbs;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -156,20 +158,8 @@ public class TBSGraphics {
 	public static int ySpacing = 1;
 	
 	// Font Properties
-	/**
-	* Value used for font throught the applet. Currently set to "default"
-	*/
-	public static String fontName = "default"; // Use default font
-
-	/**
-	* Value used for font style throught the applet. Currently set to
-	* "bold"
-	*/
-	public static int fontStyle = Font.BOLD;
-	/**
-	* Value used for font size throught the applet. Currently set to 16.
-	*/
-	public static int fontSize = 16;
+	public static Font font = new Font("default", Font.BOLD, 16);
+	public static Font testFont = new Font(null, Font.BOLD, 16);
 	
 	/**
 	* Color of text strings labeling OrganismNodes. Currently set to
@@ -238,24 +228,24 @@ public class TBSGraphics {
 	/**
 	* Returns correct Font for TBS text.
 	*/
-	public static Font getFont(Graphics2D g2) {
+	public static void setFont(Graphics2D g2) {
 		RenderingHints rh = new RenderingHints(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
-		Font f = new Font(fontName, fontStyle, fontSize);
-		g2.setFont(f);
-		return f;
+		g2.setFont(font);
 	}
 	
 	/**
 	* Returns the @Rectangle2D surrounding a piece of text
 	*/
-	public static Rectangle2D getStringBounds(Graphics2D g2, String name) {
-		Font f = TBSGraphics.getFont(g2);
-   		FontRenderContext frc = g2.getFontRenderContext();
-   		TextLayout layout = new TextLayout(name, f, frc);
-   		return layout.getBounds();
+	public static Dimension getStringBounds(Graphics2D g2, String s) {
+		if(s == null || s == "")
+			return new Dimension();
+		FontRenderContext frc = g2.getFontRenderContext();
+		TextLayout layout = new TextLayout(s, testFont, frc);
+		Rectangle2D bounds = layout.getBounds();
+		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 	
 	public static Point get2DStringBounds(Graphics2D g2, Collection<?> strings) 
@@ -263,10 +253,10 @@ public class TBSGraphics {
 		Point max = new Point(0,0);
 		for(Object s: strings) 
 		{
-			Rectangle2D bounds = getStringBounds(g2, s.toString());
-			if(bounds.getWidth() > max.x) 
+			Dimension bounds = getStringBounds(g2, s.toString());
+			if(bounds.width > max.x) 
 				max.x = (int) bounds.getWidth();
-			if(bounds.getHeight() > max.y) 
+			if(bounds.height > max.y) 
 				max.y = (int) bounds.getHeight();
 		}
 		return max;
@@ -297,11 +287,13 @@ public class TBSGraphics {
 	public static void drawCenteredString(Graphics2D g2, String s, 
 				int leftX, int upperY, int width, int height, Color c) 
 	{
+		if(s == null || s.length() == 0)
+			return;
 		// RenderingHints tell
 		g2.setColor(c);
-   		Font f = TBSGraphics.getFont(g2);
+   		setFont(g2);
    		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, f, frc);
+		TextLayout layout = new TextLayout(s, font, frc);
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();
@@ -316,6 +308,41 @@ public class TBSGraphics {
 			y = upperY + height - (height - stringHeight) / 2;
    		// if width or height is 0, do not center along that axis
    		layout.draw(g2, x, y);
+	}
+	
+	public static void renderButtonBackground(Graphics2D g2, Rectangle button, boolean selected) {
+		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
+		Color end = TBSGraphics.buttonEnd;
+		
+		float redDiff = end.getRed() - start.getRed();
+		float greenDiff = end.getGreen() - start.getGreen();
+		float blueDiff = end.getBlue() - start.getBlue();
+		for(int y = button.y; y <= button.y + button.height / 3; y++) {
+			float fy = (float) (y - button.y);
+			float fh = (float) button.height / 3;
+			float fdiff = 0.6f + 0.4f * fy / fh;
+			float red = start.getRed() + redDiff * fdiff;
+			float green = start.getGreen() + greenDiff * fdiff;
+			float blue = start.getBlue() + blueDiff * fdiff;
+			red /= 255.0f;
+			green /= 255.0f;
+			blue /= 255.0f;
+			g2.setColor(new Color(red, green, blue));
+			g2.drawLine(button.x, y , button.x + button.width, y);
+		}
+		for(int y = button.y + button.height / 3; y < button.y + button.height; y++) {
+			float fy = (float) y - (button.height / 3) - button.y;
+			float fh = (float) 2.0f * (button.height / 3);
+			float fdiff = fy / fh;
+			float red = end.getRed() - redDiff * fdiff;
+			float green = end.getGreen() - greenDiff * fdiff;
+			float blue = end.getBlue() - blueDiff * fdiff;
+			red /= 255.0f;
+			green /= 255.0f;
+			blue /= 255.0f;
+			g2.setColor(new Color(red, green, blue));
+			g2.drawLine(button.x, y , button.x + button.width, y);
+		}
 	}
 
 	
