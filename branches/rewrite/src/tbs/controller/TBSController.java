@@ -356,7 +356,8 @@ public class TBSController
     // unselect previously selected element, otherwise will keep green box
     private void unselectPrevious(){
     	model.setSelectedModelElement(null);
-        selectedElement = null;
+    	model.setSelectedTwoWay(null);
+    	selectedElement = null;
     }
  
     public void handleDelete() {
