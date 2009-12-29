@@ -248,11 +248,6 @@ public abstract class Node extends ModelElement implements Cloneable
 		connectedFrom.remove(n);
 	}
 
-	public void unlink(){
-		this.connectedTo.clear();
-		this.connectedFrom.clear();
-	}
-	
 	/**
 	* Returns true if this Node overlaps another ModelElement. Should be
 	* able to deal with Connections, but I haven't checked. 

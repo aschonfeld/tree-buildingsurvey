@@ -6,6 +6,7 @@ import java.util.List;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
+import tbs.model.Node;
 import tbs.model.TBSModel;
 
 public class Delete extends Command{
@@ -13,9 +14,12 @@ public class Delete extends Command{
 	private ModelElement modelElement = null;
 	
 	private List<ModelElement> twoWayConnection = null;
+	
+	private List<Connection> elementConnections = null;
  	
 	public Delete(){
 		twoWayConnection = new LinkedList<ModelElement>();
+		elementConnections = new LinkedList<Connection>();
 	}
 	
 	public Delete(ModelElement modelElement){
@@ -28,6 +32,14 @@ public class Delete extends Command{
 
 	public void addConnection(ModelElement conn){
 		twoWayConnection.add(conn);
+	}
+
+	public List<Connection> getElementConnections() {
+		return elementConnections;
+	}
+
+	public void setElementConnections(List<Connection> elementConnections) {
+		this.elementConnections = elementConnections;
 	}
 
 	@Override
@@ -57,12 +69,22 @@ public class Delete extends Command{
 				Connection c = (Connection) modelElement;
 				model.setElement(model.findIndexByElement(c.getFrom()), c.getFrom());
 				model.setElement(model.findIndexByElement(c.getTo()), c.getTo());
-			}else if(modelElement instanceof EmptyNode){
-				System.out.println("Undoing empty node delete command.");
-				model.addElement(modelElement);
 			}else{
-				System.out.println("Undoing organism node delete command.");
-				model.setElement(modelElement.getId(), modelElement);
+				if(modelElement instanceof EmptyNode){
+					System.out.println("Undoing empty node delete command.");
+					model.getElements().add(modelElement.getId(), modelElement);
+				}else{
+					System.out.println("Undoing organism node delete command.");
+					model.setElement(modelElement.getId(), modelElement);
+				}
+				for(Connection c : elementConnections){
+					int id;
+					id = c.getFrom() == null ? modelElement.getId() : c.getFrom().getId();
+					Node from = (Node) model.getElementBySN(id);
+					id = c.getTo() == null ? modelElement.getId() : c.getTo().getId();
+					Node to = (Node) model.getElementBySN(id);
+					model.addConnection(from,to);
+				}
 			}
 		}
 	}

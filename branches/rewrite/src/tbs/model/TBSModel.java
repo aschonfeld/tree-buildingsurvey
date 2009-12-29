@@ -107,7 +107,7 @@ public class TBSModel
 	{
 		int sn = MESerialNumber;
 		System.out.println(MESerialNumber);
-		MESerialNumber ++;
+		MESerialNumber++;
 		return sn;
 	}
 
@@ -169,7 +169,7 @@ public class TBSModel
 	{
 		ModelElement me;
 		int checknum = sn;
-		List <ModelElement> model = modelElements;
+		List<ModelElement> model = modelElements;
 		do 
 		{
 			 me = (ModelElement)model.get(checknum);
@@ -177,7 +177,6 @@ public class TBSModel
 				return me;
 			checknum--;
 		} while (checknum >= me.getId());
-
 		return null;
 	}
 	
@@ -338,17 +337,26 @@ public class TBSModel
 		}
 	}
 	
-	public void addConnection(Node from, Node to)
+	public void addConnection(Node from, Node to){
+		addConnection(from, to, -1);
+	}
+	
+	public void addConnection(Node from, Node to, int id)
 	{
-		Connection newConn = new Connection(getSerial(), from, to);
-		modelElements.add(newConn);
+		Connection newConn = new Connection(id == -1 ? getSerial() : id, from, to);
+		if(id == -1)
+			modelElements.add(newConn);
+		else
+			modelElements.add(id, newConn);
 		from.addConnectionTo(to);
 		to.addConnectionFrom(from);
-		try{
-			history.push(new Link((Connection) newConn.clone()));
-			System.out.println("Added action(link) to history.");
-		}catch(CloneNotSupportedException c){
-			System.out.println("Unable to add action to history.");
+		if(!controller.getButtonClicked().equals(TBSButtonType.UNDO)){
+			try{
+				history.push(new Link((Connection) newConn.clone()));
+				System.out.println("Added action(link) to history.");
+			}catch(CloneNotSupportedException c){
+				System.out.println("Unable to add action to history.");
+			}
 		}
 	}
 	
@@ -392,8 +400,17 @@ public class TBSModel
 	*/
 	public void unlink(Node n)
 	{
-		modelElements.removeAll(getConnectionsByNode(n));
-		n.unlink();
+		List<Connection> connections = getConnectionsByNode(n);
+		if(!history.isEmpty()){
+		Command comm = history.peek();
+		if(comm instanceof Delete)
+			((Delete) comm).setElementConnections(connections);
+		}
+		for(Connection c : connections){
+			c.getFrom().getConnectedTo().remove(c.getTo());
+			c.getTo().getConnectedFrom().remove(c.getFrom());
+			modelElements.remove(c);
+		}
 	}
 	
 	public void removeFromTree(ModelElement m){

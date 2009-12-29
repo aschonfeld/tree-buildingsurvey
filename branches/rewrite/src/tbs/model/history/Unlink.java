@@ -51,8 +51,11 @@ public class Unlink extends Command{
 	@Override
 	public void execute(TBSModel model) {
 		if(node != null){
-			model.getElements().removeAll(connections);
-			node.unlink();
+			for(Connection c : connections){
+				c.getFrom().getConnectedTo().remove(c.getTo());
+				c.getTo().getConnectedFrom().remove(c.getFrom());
+				model.getElements().remove(c);
+			} 
 		}else{
 			Connection c = connections.get(0);
 			c.getFrom().getConnectedTo().remove(c.getTo());
