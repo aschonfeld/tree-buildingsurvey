@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class TBSModel
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
+	private Map<TBSButtonType, Boolean> buttonStates;
 
 	public TBSModel(TBSApplet app, String savedTree, Graphics g,
 			TreeMap<String, BufferedImage> organismNameToImage) {
@@ -61,6 +63,9 @@ public class TBSModel
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();
 		applet = app;
+		buttonStates = new HashMap<TBSButtonType, Boolean>();
+		for(TBSButtonType b : TBSButtonType.values())
+			buttonStates.put(b, b.isActiveWhenCreated());		
 	}
 
 	public void setModelElements(List<ModelElement> newList)
@@ -156,8 +161,7 @@ public class TBSModel
 				return i;
 		}
 		return -1;
-	}
-	
+	}	
 
 	/**
 	* Returns the ModelElement with a given serial number
@@ -220,6 +224,19 @@ public class TBSModel
 
 	public void setHistory(Stack<Command> history) {
 		this.history = history;
+	}
+	
+	public void addActionToHistory(Command c){
+		if(history.isEmpty())
+			buttonStates.put(TBSButtonType.UNDO, true);
+		history.push(c);
+	}
+	
+	public Command removeActionFromHistory(){
+		Command c = history.pop();
+		if(history.isEmpty())
+			buttonStates.put(TBSButtonType.UNDO, false);
+		return c;
 	}
 	
 	public void createButtons(Graphics g)
@@ -301,6 +318,15 @@ public class TBSModel
 		}
 		return false;
 	}
+	
+	public boolean hasEmptyNodes(){
+		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
+			if(modelElements.get(i) instanceof EmptyNode)
+				return true;
+		}
+		return false;
+	}
+	
 	/**
 	* Returns the list of active elements
 	*/	
@@ -323,18 +349,23 @@ public class TBSModel
 			newNode = new EmptyNode(getSerial(), n.getAnchorPoint());
 			modelElements.add(newNode);
 			n.setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY));
+			buttonStates.put(TBSButtonType.LABEL, true);
 		} else {
 			n.setInTree(true);
 			newNode = n;
 		}
 		if(history.peek() instanceof Drag)
-			history.pop();
+			removeActionFromHistory();
 		try{
-			history.push(new Add((Node) newNode.clone()));
+			addActionToHistory(new Add((Node) newNode.clone()));
 			System.out.println("Added action(add) to history.");
 		}catch(CloneNotSupportedException c){
 			System.out.println("Unable to add action to history.");
 		}
+		buttonStates.put(TBSButtonType.DELETE, true);
+		if(inTreeElements().size() > 1)
+			buttonStates.put(TBSButtonType.LINK, true);
+		buttonStates.put(TBSButtonType.CLEAR, true);
 	}
 	
 	public void addConnection(Node from, Node to){
@@ -352,12 +383,13 @@ public class TBSModel
 		to.addConnectionFrom(from);
 		if(!controller.getButtonClicked().equals(TBSButtonType.UNDO)){
 			try{
-				history.push(new Link((Connection) newConn.clone()));
+				addActionToHistory(new Link((Connection) newConn.clone()));
 				System.out.println("Added action(link) to history.");
 			}catch(CloneNotSupportedException c){
 				System.out.println("Unable to add action to history.");
 			}
 		}
+		buttonStates.put(TBSButtonType.UNLINK, true);
 	}
 	
 	public Properties getQuestionProperties() {
@@ -388,7 +420,7 @@ public class TBSModel
 			}
 		}
 		if(controller.getButtonClicked().equals(TBSButtonType.UNLINK)){
-			history.push(unlink);
+			addActionToHistory(unlink);
 			System.out.println("Added action(unlink) to history.");
 		}
 		return connections;
@@ -425,7 +457,7 @@ public class TBSModel
 			Node n = (Node) m;
 			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
-					history.push(new Delete((Node) n.clone()));
+					addActionToHistory(new Delete((Node) n.clone()));
 					System.out.println("Added action(node delete) to history.");
 				}catch(CloneNotSupportedException e){
 					System.out.println("Unable to add action to history.");
@@ -435,6 +467,7 @@ public class TBSModel
 			if(n instanceof OrganismNode){
 				n.setInTree(false);
 				((OrganismNode) n).resetPosition();
+				updateButtonStatesAfterRemove();
 				return;
 			}
 		}else{
@@ -448,12 +481,12 @@ public class TBSModel
 						if(command instanceof Delete && ((Delete) command).getTwoWayConnection() != null)
 							((Delete) command).addConnection((Connection) c.clone());
 						else{
-							history.push(new Delete());
+							addActionToHistory(new Delete());
 							((Delete) history.peek()).addConnection((Connection) c.clone());
 							System.out.println("Added action(two-way connection delete) to history.");
 						}
 					}else{
-						history.push(new Delete((Connection) c.clone()));
+						addActionToHistory(new Delete((Connection) c.clone()));
 						System.out.println("Added action(connection delete) to history.");
 					}
 				}catch(CloneNotSupportedException e){
@@ -462,6 +495,22 @@ public class TBSModel
 			}
 		}
 		modelElements.remove(m);
+		updateButtonStatesAfterRemove();
+	}
+	
+	public void updateButtonStatesAfterRemove(){
+		if(!hasConnections())
+			buttonStates.put(TBSButtonType.UNLINK, false);
+		List<Node> inTree = inTreeElements();
+		if(inTree.size() == 0){
+			buttonStates.put(TBSButtonType.LINK, false);
+			buttonStates.put(TBSButtonType.DELETE, false);
+			buttonStates.put(TBSButtonType.LABEL, false);
+			buttonStates.put(TBSButtonType.CLEAR, false);
+		}else if(inTree.size() < 2)
+			buttonStates.put(TBSButtonType.LINK, false);
+		else if(!hasEmptyNodes())
+			buttonStates.put(TBSButtonType.LABEL, false);
 	}
 
 	/**
@@ -597,7 +646,12 @@ public class TBSModel
 			return;
 		}
 	}
+
+	public Map<TBSButtonType, Boolean> getButtonStates() {
+		return buttonStates;
+	}
 	
-	
-   
+	public Boolean isButtonActive(TBSButtonType button){
+		return buttonStates.get(button);
+	}
 }

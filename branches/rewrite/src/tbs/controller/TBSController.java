@@ -129,9 +129,9 @@ public class TBSController
 	public void mouseClicked(MouseEvent e) {
 		if(model.getPrompt() != null) return;
 		if(buttonClicked != null){
-			if(!buttonClicked.getIsMode())
+			if(!buttonClicked.isMode())
 				buttonClicked = TBSButtonType.SELECT;
-			if(buttonClicked == TBSButtonType.UNLINK && !model.hasConnections())
+			if(!model.isButtonActive(buttonClicked))
 				buttonClicked = TBSButtonType.SELECT;
 		}
 		
@@ -192,7 +192,7 @@ public class TBSController
 			Node node = (Node) selected;
 			if(lastPosition == null){
 				lastPosition = new Point(node.getX(), node.getY());
-				model.getHistory().push(new Drag(node.getId(), node.getAnchorPoint()));
+				model.addActionToHistory(new Drag(node.getId(), node.getAnchorPoint()));
 				System.out.println("Added action(drag) to history.");
 			}
 			draggedNode = node;
@@ -238,7 +238,7 @@ public class TBSController
 			
 			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH ){
 				if(lastPosition.x < TBSGraphics.LINE_OF_DEATH && (model.getHistory().peek() instanceof Drag)){
-					model.getHistory().pop();
+					model.removeActionFromHistory();
 					System.out.println("Invalid drag move removed from history.");
 				}
 				model.removeFromTree(draggedNode);
@@ -341,7 +341,7 @@ public class TBSController
     public void creatingLabel(EmptyNode en) {
     	if(!labelingInProgress) {
     		labelingInProgress = true;
-    		model.getHistory().push(new Label(en.getId(), en.getName()));
+    		model.addActionToHistory(new Label(en.getId(), en.getName()));
     		en.rename(en.getName());
     		selectedElement = en;
     	}
@@ -407,7 +407,7 @@ public class TBSController
 					model.unlink((Node) selectedElement);
 				}else{
 					Connection c = (Connection) selectedElement;
-					model.getHistory().push(new Unlink((Connection) c.clone()));
+					model.addActionToHistory(new Unlink((Connection) c.clone()));
 					System.out.println("Added action(unlink) to history.");
 					model.removeFromTree(c);
 				}
@@ -428,7 +428,7 @@ public class TBSController
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty())
-				model.getHistory().pop().undo(model);
+				model.removeActionFromHistory().undo(model);
 			break;
 		case SAVE: 	
 			//Dumps tree data to console for testing
@@ -492,7 +492,7 @@ public class TBSController
 				if(newNode != null){
 					model.addElement(newNode);
 					try{
-						model.getHistory().push(new Add((Node) newNode.clone()));
+						model.addActionToHistory(new Add((Node) newNode.clone()));
 						System.out.println("Added action(add) to history.");
 					}catch(CloneNotSupportedException c){
 						System.out.println("Unable to add action to history.");

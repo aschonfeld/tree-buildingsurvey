@@ -100,14 +100,18 @@ public class TBSView extends JComponent {
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: TBSButtonType.values()) {
 			if(b.equals(buttonClicked) ||
-					(!buttonClicked.getIsMode() && b.equals(TBSButtonType.SELECT)))
+					(!buttonClicked.isMode() && b.equals(TBSButtonType.SELECT)))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, b.toString(),
-					buttonRect.x, upperY, buttonRect.width, 0);
+			if(model.isButtonActive(b))
+				TBSGraphics.drawCenteredString(g2, b.toString(),
+						buttonRect.x, upperY, buttonRect.width, 0);
+			else
+				TBSGraphics.drawCenteredString(g2, b.toString(),
+						buttonRect.x, upperY, buttonRect.width, 0, Color.GRAY);
 			buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 		}
 		
