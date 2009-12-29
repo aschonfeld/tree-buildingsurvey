@@ -2,7 +2,6 @@ package tbs.model;
 //Non-Swing button class, based on OrganismNode
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 import tbs.view.TBSButtonType;
 

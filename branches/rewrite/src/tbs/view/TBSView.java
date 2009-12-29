@@ -7,7 +7,6 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -163,12 +162,12 @@ public class TBSView extends JComponent {
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
 					c.getTo());
-				conn = scrollAdjust(conn);
-				g2.setColor(TBSGraphics.connectionColor);
-				g2.setStroke(new BasicStroke(3));
-				g2.draw(conn);
-				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
-				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+			conn = scrollAdjust(conn);
+			g2.setColor(TBSGraphics.connectionColor);
+			g2.setStroke(new BasicStroke(3));
+			g2.draw(conn);
+			g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+			g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 		}
 	}
 	
