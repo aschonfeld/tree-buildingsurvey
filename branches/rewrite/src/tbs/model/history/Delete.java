@@ -47,11 +47,6 @@ public class Delete extends Command{
 		model.removeFromTree(modelElement);
 	}
 	
-	/*
-	 * This method may require maintaining the integrity of connections to the
-	 * node that has been deleted so that when the user clicks "Undo" the 
-	 * connections reappear.  This will be decided by professor bolker/white.
-	 */
 	@Override
 	public void undo(TBSModel model) {
 		if(twoWayConnection != null){
