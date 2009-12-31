@@ -3,7 +3,9 @@
 
 package tbs.controller;
 
+import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.dnd.DragSource;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -117,7 +119,8 @@ public class TBSController
 	
 	public void mouseMoved(MouseEvent e){
 		if(model.getPrompt() != null){
-			view.setOverButton(model.getPrompt().isOverButton(e));
+			if(model.getPrompt().isOverButton(e))
+				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			return;
 		}
 		int x,y,buttonIndex;
@@ -135,21 +138,24 @@ public class TBSController
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 				if(buttonIndex >= TBSQuestionButtonType.values().length)
-					view.setOverButton(false);
+					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				else
-					view.setOverButton(true);
+					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}else{
 				buttonIndex = x / TBSGraphics.buttonsWidth;
 				if(buttonIndex >= TBSButtonType.values().length)
-					view.setOverButton(false);
+					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				else{
 					TBSButtonType temp = TBSButtonType.values()[buttonIndex];
-					view.setOverButton(model.isButtonActive(temp));
+					if(model.isButtonActive(temp))
+						view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+					else
+						view.setAppletCursor(DragSource.DefaultMoveNoDrop);
 				}
 			}
 		}
 		else
-			view.setOverButton(false);
+			view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		if(selectedElement == null)
 			return;
 		if(selectedElement instanceof Node) {

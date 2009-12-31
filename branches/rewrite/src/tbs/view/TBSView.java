@@ -53,7 +53,7 @@ public class TBSView extends JComponent {
 	private String screenString;
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
-	private boolean overButton;
+	private Cursor cursor;
 	
 	//Tooltip information
 	private PopupFactory popupFactory = PopupFactory.getSharedInstance();
@@ -72,7 +72,7 @@ public class TBSView extends JComponent {
         model = m;
         connInProgress = null;
     	screenString = null;
-    	overButton = false;
+    	cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
@@ -92,8 +92,8 @@ public class TBSView extends JComponent {
 		yOffset = yo;
 	}
 	
-	public void setOverButton(boolean overButton) {
-		this.overButton = overButton;
+	public void setAppletCursor(Cursor cursor) {
+		this.cursor = cursor;
 	}
 	
 	public void clearTooltip(){
@@ -383,10 +383,7 @@ public class TBSView extends JComponent {
 			prompt.paintComponent(g2);
 		renderButtons(g2);
 		renderScreenString(g2);
-		if(overButton)
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		else
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		setCursor(cursor);
 		if(popup != null && !timer.isRunning()){
 			popup.show();
 			// Hide popup in 3 seconds
