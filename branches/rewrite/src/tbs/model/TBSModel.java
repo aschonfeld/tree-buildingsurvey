@@ -57,8 +57,8 @@ public class TBSModel
 		selectedTwoWay = null;
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
-		if(savedTree != null && savedTree.length() > 0)
-			loadTree(savedTree.trim());
+		if(!"".equals(savedTree))
+			loadTree(savedTree);
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();

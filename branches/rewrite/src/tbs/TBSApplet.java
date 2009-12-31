@@ -51,6 +51,10 @@ public class TBSApplet extends JApplet {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
  			String savedTree = getParameter("SavedTree");
+ 			if(savedTree == null)
+ 				savedTree = "";
+ 			else
+ 				savedTree = savedTree.trim();
  			String q1 = getParameter("quest1");
  			String q2 = getParameter("quest2");
  			String q3 = getParameter("quest3");
