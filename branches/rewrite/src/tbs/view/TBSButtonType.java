@@ -2,17 +2,17 @@ package tbs.view;
 
 public enum TBSButtonType {
 
-	SELECT("Select", true, true),
-	ADD("Add", true, true),
-	DELETE("Delete", false, false),
-	LINK("Link", true, false),
-	UNLINK("Unlink", true, false),
-	LABEL("Label", true, false),
-	PRINT("Print", false, true), 
-	UNDO("Undo", false, false), 
-	SAVE("Save", false, true),
-	CLEAR("Clear", false, false),
-	HELP("Help",false, true);
+	SELECT("Select", true, true, false),
+	ADD("Add", true, true, false),
+	DELETE("Delete", false, false, false),
+	LINK("Link", true, false, true),
+	UNLINK("Unlink", true, false, false),
+	LABEL("Label", true, false, false),
+	PRINT("Print", false, true, false), 
+	UNDO("Undo", false, false, false), 
+	SAVE("Save", false, true, false),
+	CLEAR("Clear", false, false, false),
+	HELP("Help",false, true, false);
 	
 	private String text;
 	
@@ -30,10 +30,14 @@ public enum TBSButtonType {
 	 */
 	private Boolean activeWhenCreated;
 	
-	private TBSButtonType(String text, Boolean mode, Boolean activeWhenCreated){
+	private Boolean itemSelectionBased;
+	
+	private TBSButtonType(String text, Boolean mode,
+			Boolean activeWhenCreated, Boolean itemSelectionBased){
 		this.text = text;
 		this.mode = mode;
 		this.activeWhenCreated = activeWhenCreated;
+		this.itemSelectionBased = itemSelectionBased;
 	}
 	
 	public String getText(){
@@ -46,6 +50,10 @@ public enum TBSButtonType {
 	
 	public Boolean isActiveWhenCreated(){
 		return activeWhenCreated;
+	}
+	
+	public Boolean isItemSelectionBased(){
+		return itemSelectionBased;
 	}
 	
 	@Override
