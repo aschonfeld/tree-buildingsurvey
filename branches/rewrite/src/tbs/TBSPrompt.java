@@ -287,4 +287,12 @@ public class TBSPrompt{
 			lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
 	}
 	
+	public boolean isOverButton(MouseEvent e){
+		if(buttonsArea.contains(e.getPoint()))
+			return true;
+		if(currentQuestion.isRadio())
+			return radioQuestionSelection.contains(e.getPoint());
+		return false;
+	}
+	
 }

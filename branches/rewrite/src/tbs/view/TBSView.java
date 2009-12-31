@@ -6,17 +6,25 @@ package tbs.view;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSPrompt;
@@ -45,16 +53,30 @@ public class TBSView extends JComponent {
 	private String screenString;
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
-
+	private boolean overButton;
+	
+	//Tooltip information
+	private PopupFactory popupFactory = PopupFactory.getSharedInstance();
+	private Popup popup;
+	private Timer timer;
+	private ActionListener hider = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			popup.hide();
+			timer.stop();
+			popup = null;
+		}
+	};
 	
 	private TBSModel model;
 	public TBSView(TBSModel m) {
         model = m;
         connInProgress = null;
     	screenString = null;
+    	overButton = false;
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
+ 		timer = new Timer(2000, hider);
 	}
 	
 	public JScrollBar getVerticalBar() {
@@ -68,6 +90,23 @@ public class TBSView extends JComponent {
 	// sets the start of viewable tree area
 	public void setYOffset(int yo) {
 		yOffset = yo;
+	}
+	
+	public void setOverButton(boolean overButton) {
+		this.overButton = overButton;
+	}
+	
+	public void clearTooltip(){
+		popup = null;
+	}
+	
+	public void updateTooltip(String name, Point location){
+		JLabel label = new JLabel(name);
+		popup = popupFactory.getPopup(this, label, location.x, location.y);
+	}
+	
+	public boolean isTooltipRunning(){
+		return timer.isRunning();
 	}
 	
 	/**
@@ -286,7 +325,8 @@ public class TBSView extends JComponent {
 	*/
 	public void renderScreenString(Graphics2D g2) {
         int xVal = TBSGraphics.LINE_OF_DEATH + 20;
-        int yVal = TBSGraphics.buttonsHeight * 2;
+        //int yVal = TBSGraphics.buttonsHeight * 2;
+        int yVal = model.getApplet().getHeight() - TBSGraphics.buttonsHeight;
         int yStep = TBSGraphics.buttonsHeight;
 		if(screenString == null) return;
 		String[] tokens = screenString.split("\n");
@@ -295,7 +335,7 @@ public class TBSView extends JComponent {
 			TBSGraphics.drawCenteredString(g2, tokens[index], xVal, yVal, 0, yStep, Color.CYAN);
 			yVal += yStep;
 		}
-		TBSGraphics.drawCenteredString(g2, "(Click SELECT to clear this message)", xVal, yVal, 0, yStep, Color.WHITE);
+		//TBSGraphics.drawCenteredString(g2, "(Click SELECT to clear this message)", xVal, yVal, 0, yStep, Color.WHITE);
 	}
 
 	/**
@@ -342,5 +382,14 @@ public class TBSView extends JComponent {
 			prompt.paintComponent(g2);
 		renderButtons(g2);
 		renderScreenString(g2);
+		if(overButton)
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		else
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		if(popup != null && !timer.isRunning()){
+			popup.show();
+			// Hide popup in 3 seconds
+			timer.start();
+		}
 	}	
 }

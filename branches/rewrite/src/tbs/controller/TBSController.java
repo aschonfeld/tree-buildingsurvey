@@ -22,6 +22,7 @@ import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
+import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.model.history.Add;
 import tbs.model.history.Drag;
@@ -50,6 +51,7 @@ public class TBSController
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
 	private TBSQuestionButtonType questionClicked = null;
 	private boolean labelingInProgress = false;
+	
 	
 	public TBSController(TBSModel m, TBSView v) {
     	model = m;
@@ -114,7 +116,40 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(model.getPrompt() != null) return;
+		if(model.getPrompt() != null){
+			view.setOverButton(model.getPrompt().isOverButton(e));
+			return;
+		}
+		int x,y,buttonIndex;
+		x = e.getX();
+		y = e.getY();
+		if(!view.isTooltipRunning()){
+			ModelElement m = elementMouseIsOver(x,y);
+			if(m != null && m instanceof OrganismNode){
+				OrganismNode o = (OrganismNode) m;
+				if(o.isInTree())
+					view.updateTooltip(o.getName(), e.getPoint());
+			}
+		}
+		if(y < TBSGraphics.buttonsHeight)  {
+			if(x >= TBSGraphics.questionButtonsStart){
+				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
+				if(buttonIndex >= TBSQuestionButtonType.values().length)
+					view.setOverButton(false);
+				else
+					view.setOverButton(true);
+			}else{
+				buttonIndex = x / TBSGraphics.buttonsWidth;
+				if(buttonIndex >= TBSButtonType.values().length)
+					view.setOverButton(false);
+				else{
+					TBSButtonType temp = TBSButtonType.values()[buttonIndex];
+					view.setOverButton(model.isButtonActive(temp));
+				}
+			}
+		}
+		else
+			view.setOverButton(false);
 		if(selectedElement == null)
 			return;
 		if(selectedElement instanceof Node) {
@@ -385,7 +420,7 @@ public class TBSController
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case SELECT:
-			view.setScreenString(null);
+			view.setScreenString("Yo!");
 			break;
 		case ADD:
 			break;
