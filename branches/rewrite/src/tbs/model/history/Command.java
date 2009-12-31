@@ -9,4 +9,5 @@ public abstract class Command {
 
 	public abstract void undo(TBSModel model);
 
+	public abstract String toString();
 }

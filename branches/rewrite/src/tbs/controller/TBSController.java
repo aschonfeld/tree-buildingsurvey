@@ -228,7 +228,6 @@ public class TBSController
 			if(lastPosition == null){
 				lastPosition = new Point(node.getX(), node.getY());
 				model.addActionToHistory(new Drag(node.getId(), node.getAnchorPoint()));
-				System.out.println("Added action(drag) to history.");
 			}
 			draggedNode = node;
 			if(node.isInTree()) {
@@ -435,7 +434,7 @@ public class TBSController
 			else
 				break;
 		case UNLINK:
-			if(selectedElement == null) 
+			if(selectedElement == null)
 				break;
 			try{
 				if(selectedElement instanceof Node){
@@ -443,7 +442,6 @@ public class TBSController
 				}else{
 					Connection c = (Connection) selectedElement;
 					model.addActionToHistory(new Unlink((Connection) c.clone()));
-					System.out.println("Added action(unlink) to history.");
 					model.removeFromTree(c);
 				}
 			}catch(CloneNotSupportedException c){
@@ -528,7 +526,6 @@ public class TBSController
 					model.addElement(newNode);
 					try{
 						model.addActionToHistory(new Add((Node) newNode.clone()));
-						System.out.println("Added action(add) to history.");
 					}catch(CloneNotSupportedException c){
 						System.out.println("Unable to add action to history.");
 					}
@@ -551,8 +548,16 @@ public class TBSController
 				break;
 			if(clickedElement instanceof Node)
 				model.unlink((Node) clickedElement);
-			else
+			else{
+				try{
+					Connection c = (Connection) clickedElement;
+					model.addActionToHistory(new Unlink((Connection) c.clone()));
+				}catch(CloneNotSupportedException c){
+					System.out.println("Unable to add action to history.");
+				}
 				model.removeFromTree(clickedElement);
+				return;
+			}
 			break;
 		case LABEL:
 			if(clickedElement == null)

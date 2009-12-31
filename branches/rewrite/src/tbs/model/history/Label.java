@@ -49,6 +49,11 @@ public class Label extends Command{
 				((EmptyNode) selection).rename(labelBefore);	
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Label";
+	}
 	
 	
 }

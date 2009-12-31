@@ -38,6 +38,11 @@ public class Drag extends Command{
 		if(index >= 0)
 			((Node) model.getElement(index)).setAnchorPoint(pointBefore);		
 	}
+
+	@Override
+	public String toString() {
+		return "Drag";
+	}
 	
 	
 }

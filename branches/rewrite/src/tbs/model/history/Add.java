@@ -23,6 +23,11 @@ public class Add extends Command{
 		if(index >= 0)
 			model.removeFromTree(model.getElement(index));		
 	}
+
+	@Override
+	public String toString() {
+		return "Add";
+	}
 	
 	
 }

@@ -45,6 +45,7 @@ public class TBSModel
 	private TBSApplet applet;
 	private TBSPrompt prompt;
 	private Properties questionProperties;
+	private Properties statusProperties;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
@@ -230,6 +231,7 @@ public class TBSModel
 		if(history.isEmpty())
 			buttonStates.put(TBSButtonType.UNDO, true);
 		history.push(c);
+		System.out.println("Added action(" + c.toString() + ") to history.");
 	}
 	
 	public Command removeActionFromHistory(){
@@ -358,7 +360,6 @@ public class TBSModel
 			removeActionFromHistory();
 		try{
 			addActionToHistory(new Add((Node) newNode.clone()));
-			System.out.println("Added action(add) to history.");
 		}catch(CloneNotSupportedException c){
 			System.out.println("Unable to add action to history.");
 		}
@@ -384,7 +385,6 @@ public class TBSModel
 		if(!controller.getButtonClicked().equals(TBSButtonType.UNDO)){
 			try{
 				addActionToHistory(new Link((Connection) newConn.clone()));
-				System.out.println("Added action(link) to history.");
 			}catch(CloneNotSupportedException c){
 				System.out.println("Unable to add action to history.");
 			}
@@ -398,6 +398,14 @@ public class TBSModel
 
 	public void setQuestionProperties(Properties questionProperties) {
 		this.questionProperties = questionProperties;
+	}
+	
+	public Properties getStatusProperties() {
+		return statusProperties;
+	}
+
+	public void setStatusProperties(Properties statusProperties) {
+		this.statusProperties = statusProperties;
 	}
 
 	public List<Connection> getConnectionsByNode(Node n){
@@ -421,7 +429,6 @@ public class TBSModel
 		}
 		if(controller.getButtonClicked().equals(TBSButtonType.UNLINK)){
 			addActionToHistory(unlink);
-			System.out.println("Added action(unlink) to history.");
 		}
 		return connections;
 	}
@@ -458,7 +465,6 @@ public class TBSModel
 			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
 				try{
 					addActionToHistory(new Delete((Node) n.clone()));
-					System.out.println("Added action(node delete) to history.");
 				}catch(CloneNotSupportedException e){
 					System.out.println("Unable to add action to history.");
 				}
@@ -483,11 +489,9 @@ public class TBSModel
 						else{
 							addActionToHistory(new Delete());
 							((Delete) history.peek()).addConnection((Connection) c.clone());
-							System.out.println("Added action(two-way connection delete) to history.");
 						}
 					}else{
 						addActionToHistory(new Delete((Connection) c.clone()));
-						System.out.println("Added action(connection delete) to history.");
 					}
 				}catch(CloneNotSupportedException e){
 					System.out.println("Unable to add action to history.");

@@ -30,4 +30,9 @@ public class Link extends Command{
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Link";
+	}
+
 }

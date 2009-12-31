@@ -83,6 +83,22 @@ public class Delete extends Command{
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		if(twoWayConnection != null)
+			return "Two-way Connection Delete";
+		else{
+			if(modelElement instanceof Connection)
+				return "Connection Delete";
+			else if(modelElement instanceof EmptyNode)
+				return "Empty Node Delete";
+			else
+				return "Organism Node Delete";
+		}
+	}
+	
+	
 	
 	
 }

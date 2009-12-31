@@ -83,4 +83,12 @@ public class Unlink extends Command{
 		}
 	}
 
+	@Override
+	public String toString() {
+		if(node != null)
+			return "Node Unlink";
+		else
+			return "Connection Unlink";
+	}
+
 }
