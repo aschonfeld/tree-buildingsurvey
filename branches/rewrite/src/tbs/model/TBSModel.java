@@ -515,7 +515,7 @@ public class TBSModel
 
 	/**
 	* Take a list of strings extracted from a file by
-	* Applet.loadTreeFile(), and recreate the stored tree.
+	* the perl script contained within the website, and recreate the stored tree.
 	* Two passes: first pass recreates nodes, second makes connections. 
 	*/
 	public void loadTree(String tree)
