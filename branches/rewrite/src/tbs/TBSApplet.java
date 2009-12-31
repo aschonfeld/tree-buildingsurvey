@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -58,7 +59,7 @@ public class TBSApplet extends JApplet {
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
- 			loadQuestions();
+ 			model.setQuestionProperties(loadPropertyFile("questions.properties"));
  			model.setQuestion(q1, TBSQuestionButtonType.ONE);
  			model.setQuestion(q2, TBSQuestionButtonType.TWO);
  			model.setQuestion(q3, TBSQuestionButtonType.THREE);
@@ -80,48 +81,36 @@ public class TBSApplet extends JApplet {
 	{
 		TreeMap<String, BufferedImage> organismNameToImage = 
 			new TreeMap<String, BufferedImage>();
+		Properties props;
+		String imageFilename = "";
 		try 
 		{
-	// read names of organisms and image file names from list.txt in "/images"
-			//URL fileURL=new URL(getCodeBase(),"images/list.txt"); 
-			URL fileURL = this.getClass().getResource("images/list.txt");
-			URLConnection conn=(URLConnection) fileURL.openConnection(); 
-			conn.setRequestProperty("REFERER",getDocumentBase().toString()); 
-			InputStream is=conn.getInputStream();
-			BufferedReader reader = 
-				new BufferedReader(new InputStreamReader(is));
-			String line = null;
-			String[] parseLine = null;
-			String organismName = null;
-			String organismImageFilename = null;
+			props = loadPropertyFile("organisms.properties");
+			if(props.size() == 0)
+				return new TreeMap<String, BufferedImage>();
+			TBSGraphics.numOfOrganisms = props.size();
 			BufferedImage img = null;
- 			while ((line = reader.readLine()) != null) 
-			{
- 	//load image from files, and map organism name to image
- 				parseLine = line.split(",");
- 				organismName = parseLine[0];
- 				organismImageFilename = parseLine[1];
- 				if(organismImageFilename != null)
-				{
-	//URL imageURL=new URL(getCodeBase(), "images/" + organismImageFilename);
-					URL imageURL = this.getClass().getResource("images/" + 
-						organismImageFilename);
- 					URLConnection imageconn=
-						(URLConnection) imageURL.openConnection(); 
- 					imageconn.setRequestProperty("REFERER",
-					getDocumentBase().toString()); 
- 					InputStream imageis=imageconn.getInputStream();
- 					img = ImageIO.read(imageis);
- 					organismNameToImage.put(organismName, img);
- 					imageis.close();
- 				}
- 			}
- 			is.close();
- 		} catch (Exception e) 
-		{
- 			e.printStackTrace();
+			String name, value;
+			String[] splitValue;
+			for(Map.Entry<Object,Object> entry : props.entrySet()){
+				name = entry.getKey().toString().replace("_", " ");
+				value = entry.getValue().toString();
+				splitValue = value.split(",");
+				imageFilename = "images/" + splitValue[0];
+				URL imageURL = this.getClass().getResource(imageFilename);
+				URLConnection imageconn=
+					(URLConnection) imageURL.openConnection(); 
+				imageconn.setRequestProperty("REFERER",
+						getDocumentBase().toString()); 
+				InputStream imageis=imageconn.getInputStream();
+				img = ImageIO.read(imageis);
+				organismNameToImage.put(name, img);
+				imageis.close();
+			}
+ 		} catch (Exception e){
+ 			System.out.println("Error loading image " + imageFilename + ": " + e);
+ 			return organismNameToImage;
  		} 
- 		TBSGraphics.numOfOrganisms = organismNameToImage.size();
  		return organismNameToImage;
 	}
 
@@ -173,13 +162,14 @@ public class TBSApplet extends JApplet {
 		return model.getQuestion(TBSQuestionButtonType.THREE);
 	}
 	
-	public void loadQuestions(){
+	public Properties loadPropertyFile(String fileName){
 		Properties props = new Properties();
 		try{
-			props.load(this.getClass().getResource("questions.properties").openStream());
-			model.setQuestionProperties(props);
+			props.load(this.getClass().getResource(fileName).openStream());
+			return props;
 		}catch(Exception e){
-			System.out.println("Unable to load question properties: " + e);
+			System.out.println("Unable to load " + fileName + ": " + e);
+			return new Properties();
 		}
 	}
 }
