@@ -14,6 +14,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -240,7 +242,7 @@ public class TBSGraphics {
 	* Returns the @Rectangle2D surrounding a piece of text
 	*/
 	public static Dimension getStringBounds(Graphics2D g2, String s) {
-		if(s == null || s == "")
+		if(s == null || s == "" || s.length() == 0)
 			return new Dimension();
 		FontRenderContext frc = g2.getFontRenderContext();
 		TextLayout layout = new TextLayout(s, testFont, frc);
@@ -345,6 +347,21 @@ public class TBSGraphics {
 		}
 	}
 
+	public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
+		String currentLine = "";
+		List<String> widthBrokenString = new LinkedList<String>();
+		for(String token : s.split(" ")){
+			if(TBSGraphics.getStringBounds(g2, currentLine + token).width > width){
+				widthBrokenString.add(currentLine);
+				currentLine = token + " ";
+			}else{
+				currentLine += token + " ";
+			}
+		}
+		if(currentLine.length() > 0)
+			widthBrokenString.add(currentLine);
+		return widthBrokenString;
+	}
 	
 	
 }

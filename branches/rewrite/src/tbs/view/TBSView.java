@@ -325,14 +325,15 @@ public class TBSView extends JComponent {
 	*/
 	public void renderScreenString(Graphics2D g2) {
         int xVal = TBSGraphics.LINE_OF_DEATH + 20;
-        //int yVal = TBSGraphics.buttonsHeight * 2;
-        int yVal = model.getApplet().getHeight() - TBSGraphics.buttonsHeight;
+        int yVal = TBSGraphics.buttonsHeight;
+        //int yVal = model.getApplet().getHeight() - TBSGraphics.buttonsHeight;
         int yStep = TBSGraphics.buttonsHeight;
-		if(screenString == null) return;
-		String[] tokens = screenString.split("\n");
-		for(int index = 0; index < tokens.length; index++) {
-			if(tokens[index].length() == 0) continue;
-			TBSGraphics.drawCenteredString(g2, tokens[index], xVal, yVal, 0, yStep, Color.CYAN);
+		if(screenString == null) 
+			return;
+		int width = model.getApplet().getWidth() - xVal;
+		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
+		for(String line : lines) {
+			TBSGraphics.drawCenteredString(g2, line, xVal, yVal, 0, yStep, Color.CYAN);
 			yVal += yStep;
 		}
 		//TBSGraphics.drawCenteredString(g2, "(Click SELECT to clear this message)", xVal, yVal, 0, yStep, Color.WHITE);

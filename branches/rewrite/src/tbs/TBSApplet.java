@@ -64,6 +64,7 @@ public class TBSApplet extends JApplet {
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
  			model.setQuestionProperties(loadPropertyFile("questions.properties"));
+ 			model.setStatusProperties(loadPropertyFile("status.properties"));
  			model.setQuestion(q1, TBSQuestionButtonType.ONE);
  			model.setQuestion(q2, TBSQuestionButtonType.TWO);
  			model.setQuestion(q3, TBSQuestionButtonType.THREE);

@@ -161,11 +161,13 @@ public class TBSPrompt{
 		lineBrokenQuestion = new LinkedList<String>();
 		int questionLength = 0;
 		if(currentQuestion.isRadio()){
-			breakQuestionByLine();
+			lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
+					question, promptSize.width - padding.width * 2));
 			questionLength = lineBrokenQuestion.size();
 			constructRadioQuestions();
 		}else
-			breakQuestionByLine();
+			lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
+					question, promptSize.width - padding.width * 2));
 		calculateValues();
 		drawBox();
 		drawText(lineBrokenQuestion, questionLength);
@@ -266,20 +268,6 @@ public class TBSPrompt{
 	
 	public TBSQuestionButtonType getCurrentQuestion() {
 		return currentQuestion;
-	}
-	
-	public void breakQuestionByLine(){
-		String currentLine = "";
-		for(String token : question.split(" ")){
-			if(TBSGraphics.getStringBounds(g2, currentLine + token).width > (promptSize.width - padding.width * 2)){
-				lineBrokenQuestion.add(currentLine);
-				currentLine = token + " ";
-			}else{
-				currentLine += token + " ";
-			}
-		}
-		if(currentLine.length() > 0)
-			lineBrokenQuestion.add(currentLine); 
 	}
 	
 	public void constructRadioQuestions(){

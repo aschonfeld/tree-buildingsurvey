@@ -417,9 +417,19 @@ public class TBSController
 		if(buttonIndex >= TBSButtonType.values().length) return;
 		buttonClicked = TBSButtonType.values()[buttonIndex];
 		System.out.println(buttonClicked.toString());
+		StringBuffer statusKey = new StringBuffer(buttonClicked.name());
+		if(buttonClicked.isItemSelectionBased()){
+			if(selectedElement == null)
+				statusKey.append("1");
+			else
+				statusKey.append("2");
+		}
+		statusKey.append("_");
+		Boolean buttonState = model.getButtonStates().get(buttonClicked);
+		statusKey.append(buttonState.toString());
+		view.setScreenString(model.getStatusProperties().getProperty(statusKey.toString()));
 		switch (buttonClicked) {
 		case SELECT:
-			view.setScreenString("Yo!");
 			break;
 		case ADD:
 			break;
@@ -524,6 +534,11 @@ public class TBSController
 				}
 				if(newNode != null){
 					model.addElement(newNode);
+					model.getButtonStates().put(TBSButtonType.LABEL, true);
+					model.getButtonStates().put(TBSButtonType.DELETE, true);
+					if(model.inTreeElements().size() > 1)
+						model.getButtonStates().put(TBSButtonType.LINK, true);
+					model.getButtonStates().put(TBSButtonType.CLEAR, true);
 					try{
 						model.addActionToHistory(new Add((Node) newNode.clone()));
 					}catch(CloneNotSupportedException c){
