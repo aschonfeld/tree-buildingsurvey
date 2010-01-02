@@ -50,6 +50,8 @@ public class TBSApplet extends JApplet {
  		public void run() {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
+ 			String hasArrows = getParameter("Arrows");
+ 			boolean arrows = Boolean.parseBoolean(hasArrows);
  			String savedTree = getParameter("SavedTree");
  			if(savedTree == null)
  				savedTree = "";
@@ -59,6 +61,7 @@ public class TBSApplet extends JApplet {
  			String q2 = getParameter("quest2");
  			String q3 = getParameter("quest3");
  			model = new TBSModel(app, savedTree, getGraphics(), loadOrganismsFromDirectory());
+ 			model.getView().setHasArrows(arrows);
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());

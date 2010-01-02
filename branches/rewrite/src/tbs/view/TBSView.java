@@ -54,6 +54,7 @@ public class TBSView extends JComponent {
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
 	private Cursor cursor;
+	private Boolean hasArrows;
 	
 	//Tooltip information
 	private PopupFactory popupFactory = PopupFactory.getSharedInstance();
@@ -70,6 +71,7 @@ public class TBSView extends JComponent {
 	private TBSModel model;
 	public TBSView(TBSModel m) {
         model = m;
+        hasArrows = true;
         connInProgress = null;
     	screenString = null;
     	cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
@@ -209,8 +211,10 @@ public class TBSView extends JComponent {
 			g2.setColor(TBSGraphics.connectionColor);
 			g2.setStroke(new BasicStroke(3));
 			g2.draw(conn);
-			g2.draw(getArrowHead(conn, 0.75 * Math.PI));
-			g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+			if(hasArrows){
+				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+			}
 		}
 	}
 	
@@ -266,8 +270,10 @@ public class TBSView extends JComponent {
 			selectedGraphics.setColor(TBSGraphics.connectionSelectedColor);
 			selectedGraphics.setStroke(new BasicStroke(3));
 			selectedGraphics.draw(conn);
-			selectedGraphics.draw(getArrowHead(conn, 0.75 * Math.PI));
-			selectedGraphics.draw(getArrowHead(conn, 1.25 * Math.PI));
+			if(hasArrows){
+				selectedGraphics.draw(getArrowHead(conn, 0.75 * Math.PI));
+				selectedGraphics.draw(getArrowHead(conn, 1.25 * Math.PI));
+			}
 		}
 			
 	}
@@ -375,8 +381,10 @@ public class TBSView extends JComponent {
 				g2.setColor(TBSGraphics.connectionColor);
 				g2.setStroke(new BasicStroke(3));
 				g2.draw(scrollAdjust(connInProgress));
-				g2.draw(getArrowHead(scrollAdjust(connInProgress), 0.75 * Math.PI));
-				g2.draw(getArrowHead(scrollAdjust(connInProgress), 1.25 * Math.PI));
+				if(hasArrows){
+					g2.draw(getArrowHead(scrollAdjust(connInProgress), 0.75 * Math.PI));
+					g2.draw(getArrowHead(scrollAdjust(connInProgress), 1.25 * Math.PI));
+				}
 			}
 			g2.setStroke(new BasicStroke());
 		}else
@@ -390,4 +398,8 @@ public class TBSView extends JComponent {
 			timer.start();
 		}
 	}	
+	
+	public void setHasArrows(Boolean hasArrows) {
+		this.hasArrows = hasArrows;
+	}
 }
