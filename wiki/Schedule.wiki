@@ -39,7 +39,7 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||12/10/09||Finalized List of Features Scheduled for Spring Semester Deliverable||team||[MeetingEightMinutes Meeting 8]||12/10/09||
 ||12/14/09||Applet Version 1.1||team||[Versioning Versions]||12/14/09||
 ||12/15/09||Finalized Requirements Document Due||team||[http://code.google.com/p/tree-buildingsurvey/downloads/list TBS_BRD-1.doc]||12/15/09||
-||1/15/10||Applet Version Including [MeetingEightMinutes New Features] Ready For Testing||team||||||
+||1/15/10||Applet Version Including [MeetingEightMinutes New Features] Ready For Testing||team||Feature Progress||||
 ||11/20/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
 ||1/30/10||Functioning program with full feature set||team||main||||
