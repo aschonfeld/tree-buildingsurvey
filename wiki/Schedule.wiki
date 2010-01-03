@@ -38,8 +38,8 @@ Dates are guesses in some instances, or ???? if I don't have enough data to usef
 ||12/01/09||Applet Version 1.0||team||[Versioning Versions]||12/08/09||
 ||12/10/09||Finalized List of Features Scheduled for Spring Semester Deliverable||team||[MeetingEightMinutes Meeting 8]||12/10/09||
 ||12/14/09||Applet Version 1.1||team||[Versioning Versions]||12/14/09||
-||12/15/09||Finalized Requirements Document Due||team||||||12/15/09||
-||1/15/10||Applet Version Including [MeetingEight Minutes New Features] Ready For Testing||team||||||
+||12/15/09||Finalized Requirements Document Due||team||||12/15/09||
+||1/15/10||Applet Version Including [MeetingEightMinutes New Features] Ready For Testing||team||||||
 ||11/20/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
 ||12/31/09||Add front (login) and back (post-test) screens||team||main||||
 ||1/30/10||Functioning program with full feature set||team||main||||
