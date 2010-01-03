@@ -1,1 +1,39 @@
 #summary Spring Version Progress
+
+*Features*
+
+Here was the list features we would possibly like to incorporate into the project before the Late January/Early February deliverable:
+  # Creating Splash Instructions to be displayed in the Applet by use of a "Help" button
+    * *In Progress* (Jon)
+  # Placing open-response questions within the Applet
+    * *Completed* (Andrew)
+  # Consulting Professor White when creating Applet instructions
+    * *In Progress* (Team needs to schedule meeting to discuss with Professor White)
+  # Status message display upon certain tree-creation-actions
+    * *Completed First Release* (Andrew)
+  # Adding label to empty node in reservoir
+    * *Completed* (Andrew)
+  # Adding a minimum width to organism nodes once they are dragged into the tree
+    * Human node in particular has a small image so it is hard to click on once the text is hidden
+    * *In Progress* (Glenn)
+  # Adding tooltips to organism nodes dragged into tree for name display
+    * *Completed First Release* (Andrew)
+  # Labeling of empty nodes
+    * Cursor usage when labeling empty nodes to mimic behavior of text input fields
+      * *In Progress* (Glenn)
+    * Restriction of Alpha-numeric characters
+      * *Completed* (Andrew)
+  # Gray-out buttons that cannot be used in current state of tree
+    * _Unlink cannot be used when there are no connections present_
+    * *Completed* (Andrew)
+  # Tree scoring based Professor White's original scoring rubric
+    * *In Progress* (Andrew)
+
+Other features that will need Professor White's collaboration.  These may not be instuted in time for our deliverable:
+  # Which buttons will be considered modes(ex: link button stay selected until user clicks empty space)
+    * *Completed First Release* (Team)
+  # Accurate name for empty node (suggestions: editable, free, generic, anonymous, labelable, blank)
+    * _One suggestion for this question is that whichever name we decide upon it should be related to the name of the button for labeling.  So, "labelable" would go with what we are using now "label", but if we used "editable" the button would be changed to "edit"_
+      * *In Progress* (Team)
+    * We would also like to add when user hovers over organism node in "label" mode it will change the mouse cursor to an 'X' or a red circle with a line through it.
+      * *Completed First Release* (Andrew)
