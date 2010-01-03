@@ -2,6 +2,14 @@
 
 = Comments and questions from the professor = 
 
+=== January 3 ===
+
+I see nothing on the schedule between now and January 30, which is when you say you will have a "Functioning program with full feature set". What is that feature set? Does Professor White know what he will have then, and that he will be able to use it with his students? Is that the right date for him (since the semester will already have begun by then.)
+
+I note from the update history on google code that only Andrew has done any work since the 15th of December. Was that part of the plan? Is there a plan? The latest version on the test applets page is R533, December 15, so there is no way for me - or anyone else - to test what Andrew has produced since then. There are no new bugs entered either.
+
+You will have noted the grade I submitted for the fall semester. Now I expect you to earn it.
+
 === December 14 ===
 
 Still nothing on your schedule about the requirements specification document (due tomorrow - I know you've done it but I should see it scheduled!) or about steps toward the significant production release you need for Professor White at the end of January.
