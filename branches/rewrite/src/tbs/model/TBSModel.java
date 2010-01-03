@@ -58,15 +58,23 @@ public class TBSModel
 		selectedTwoWay = null;
 		createButtons(g); // call before creating model elements
 		createModelElements(g, organismNameToImage);
-		if(!"".equals(savedTree))
+		buttonStates = new HashMap<TBSButtonType, Boolean>();
+		for(TBSButtonType b : TBSButtonType.values())
+			buttonStates.put(b, b.isActiveWhenCreated());
+		if(!"".equals(savedTree)){
 			loadTree(savedTree);
+			if(inTreeElements().size() > 1){
+				buttonStates.put(TBSButtonType.LINK, true);
+				buttonStates.put(TBSButtonType.DELETE, true);
+				buttonStates.put(TBSButtonType.CLEAR, true);
+				if(hasEmptyNodes())
+					buttonStates.put(TBSButtonType.LABEL, false);
+			}
+		}
 		view = new TBSView(this);
 		controller = new TBSController(this, view);
 		history = new Stack<Command>();
-		applet = app;
-		buttonStates = new HashMap<TBSButtonType, Boolean>();
-		for(TBSButtonType b : TBSButtonType.values())
-			buttonStates.put(b, b.isActiveWhenCreated());		
+		applet = app;		
 	}
 
 	public void setModelElements(List<ModelElement> newList)
@@ -525,15 +533,19 @@ public class TBSModel
 	public void loadTree(String tree)
 	{
 		List<ModelElement> savedTree = new LinkedList<ModelElement>();
+		EmptyNode savedImmortalEmptyNode = null;
 		String[] treeItems = tree.split("#");
 		for(String item : treeItems)
 		{
 			String data[] = item.split(":");
 			if (data[0].equals("O"))
 				savedTree.add(loadOrganismNode(data));
-			else if (data[0].equals("E"))
-				savedTree.add(loadEmptyNode(data));
-			else if (data[0].equals("C"))
+			else if (data[0].equals("E")){
+				ModelElement temp = loadEmptyNode(data);
+				if(!((EmptyNode) temp).isInTree())
+					savedImmortalEmptyNode = (EmptyNode) temp;
+				savedTree.add(temp);
+			}else if (data[0].equals("C"))
 				savedTree.add(loadConnection(data));
 			else
 			{
@@ -550,6 +562,7 @@ public class TBSModel
 		// Sort the local list
 		Collections.sort(savedTree, elementIdComparator);
 		modelElements = savedTree;
+		immortalEmptyNode = savedImmortalEmptyNode;
 		System.out.println("loadTree: end");
 	}
 
@@ -586,6 +599,8 @@ public class TBSModel
 		int y = Integer.parseInt(data[4]);
 		Point pt = new Point(x,y);
 		Boolean in = (data[5].equals("true")?true:false);
+		if(!in)
+			pt = new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY);
 		EmptyNode node = new EmptyNode(id, pt);
 		node.rename(name);
 		node.setInTree(in);
