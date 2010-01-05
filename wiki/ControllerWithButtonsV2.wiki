@@ -1,4 +1,4 @@
-#summary Proposed Behavior Of Controller With Buttons (Second Draft)
+#summary Proposed Behavior Of Controller With Buttons (Third Draft)
 
 ==Proposed Behavior Of Controller With Buttons (Second Draft)==
 <br>
@@ -6,7 +6,7 @@
 <br>
 selectedElement = previously selected element OR null<br>
 clickedElement = element user most recently clicked on OR null if empty space clicked on<br>
-ANY (STATE) = {SELECT, ADD, DELETE, LINK, UNLINK}<br>
+ANY (STATE) = {SELECT, ADD, LABEL, LINK}<br>
 DEFAULT STATE = SELECT<br>
 ANY (ELEMENT) = {CONNECTION, EMPTYNODE, ORGANISMNODE}<br>
 NODE = {EMPTYNODE, ORGANISMNODE}<br>
@@ -16,15 +16,12 @@ NODE = {EMPTYNODE, ORGANISMNODE}<br>
 ||SELECT||null||ANY|| selectedElement=clickedElement||
 ||ADD||ANY or null||null||model.add(new `EmptyNode`)||
 ||ADD||ANY or null||ANY||NONE||
-||DELETE||ANY||ANY or null||ERROR 1||
-||DELETE||null||null||NONE||
-||DELETE||null||ANY||model.remove(clickedElement)||
-||LINK||CONNECTION or null||CONNECTION or null||NONE||
 ||LINK||NODE||null||cancelConnection()||
 ||LINK||null||NODE||createConnection(x, y), NOTE 1||
 ||LINK||NODE||NODE||createConnection(x, y), NOTE 1||
-||UNLINK||ANY or null||NODE||clickedElement.unlink()||
-||UNLINK||ANY or null||CONNECTION||deleteConnection(selectedElement)||
+||LABEL||null||null||NONE||
+||LABEL||ANY||null||rename(selectedElement)||
+||LABEL||null||ANY||rename(clickedElement)||
 
 NOTES:<br>
 1. createConnection(x, y) behavior is based on selectedElement<br>
@@ -38,15 +35,16 @@ ERRORS:<br>
 <br>
 *BUTTON BEHAVIOR:*<br>
 
-currentState = BUTTON PRESSED
-<br>
 ||BUTTON PRESSED||selectedElement||ACTION||
-||SELECT||ANY or NULL||NONE||
+||SELECT||ANY or null||NONE||
 ||ADD||ANY or null||NONE||
-||DELETE||null||NONE||
-||DELETE||ANY||selectedElement.removeFromTree()||
+||DELETE||null||STATE = SELECT||
+||DELETE||ANY||selectedElement.removeFromTree(), STATE = SELECT||
 ||LINK||CONNECTION or null||NONE||
 ||LINK||NODE||createConnection(x, y), NOTE 1||
-||UNLINK||null||NONE||
-||UNLINK||NODE||selectedElement.unlink()||
-||UNLINK||CONNECTION||deleteConnection(selectedElement)||
+||LABEL||NONE||STATE = LABEL||
+||LABEL||ANY||rename(selectedElement)||
+||UNLINK||null||STATE = SELECT||
+||UNLINK||NODE||selectedElement.unlink(), STATE = SELECT||
+||UNLINK||CONNECTION||deleteConnection(selectedElement), STATE = SELECT||
+||CLEAR||ANY or null||delete all tree elements||
