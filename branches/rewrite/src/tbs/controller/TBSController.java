@@ -131,7 +131,7 @@ public class TBSController
 			if(m != null && m instanceof OrganismNode){
 				OrganismNode o = (OrganismNode) m;
 				if(o.isInTree())
-					view.updateTooltip(o.getName(), e.getPoint());
+					view.updateTooltip(o.getName(), new Point(x,y+view.getYOffset()));
 			}
 		}
 		if(y < TBSGraphics.buttonsHeight)  {
