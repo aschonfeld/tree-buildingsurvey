@@ -161,7 +161,7 @@ public class TBSGraphics {
 	
 	// Font Properties
 	public static Font font = new Font("default", Font.BOLD, 16);
-	public static Font testFont = new Font(null, Font.BOLD, 16);
+	public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
 	
 	/**
 	* Color of text strings labeling OrganismNodes. Currently set to
@@ -228,15 +228,18 @@ public class TBSGraphics {
 	
 
 	/**
-	* Returns correct Font for TBS text.
-	*/
-	public static void setFont(Graphics2D g2) {
+	 * Returns correct Font for TBS text.
+	 */
+	public static void setFont(Graphics2D g2) {setFont(g2, font);}
+
+	public static void setFont(Graphics2D g2, Font f){
 		RenderingHints rh = new RenderingHints(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
-		g2.setFont(font);
+		g2.setFont(f);
 	}
+
 	
 	/**
 	* Returns the @Rectangle2D surrounding a piece of text
@@ -245,7 +248,7 @@ public class TBSGraphics {
 		if(s == null || s == "" || s.length() == 0)
 			return new Dimension();
 		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, testFont, frc);
+		TextLayout layout = new TextLayout(s, g2.getFont(), frc);
 		Rectangle2D bounds = layout.getBounds();
 		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
@@ -287,15 +290,20 @@ public class TBSGraphics {
 	* Paints a string centered in the rectangle defined.
 	*/	
 	public static void drawCenteredString(Graphics2D g2, String s, 
-				int leftX, int upperY, int width, int height, Color c) 
+			int leftX, int upperY, int width, int height, Color c){
+		drawCenteredString(g2, s, leftX, upperY, width, height, c, font);
+	}
+	
+	public static void drawCenteredString(Graphics2D g2, String s, 
+				int leftX, int upperY, int width, int height, Color c, Font f) 
 	{
 		if(s == null || s.length() == 0)
 			return;
 		// RenderingHints tell
 		g2.setColor(c);
-   		setFont(g2);
+   		setFont(g2, f);
    		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, font, frc);
+		TextLayout layout = new TextLayout(s, f, frc);
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();

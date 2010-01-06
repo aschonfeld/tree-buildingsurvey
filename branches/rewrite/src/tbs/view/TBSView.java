@@ -19,11 +19,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
 import javax.swing.Timer;
 
 import tbs.TBSGraphics;
@@ -57,14 +54,13 @@ public class TBSView extends JComponent {
 	private Boolean hasArrows;
 	
 	//Tooltip information
-	private PopupFactory popupFactory = PopupFactory.getSharedInstance();
-	private Popup popup;
+	private String tooltipString;
+	private Point tooltipLocation;
 	private Timer timer;
 	private ActionListener hider = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			popup.hide();
 			timer.stop();
-			popup = null;
+			tooltipString = null;
 		}
 	};
 	
@@ -78,7 +74,7 @@ public class TBSView extends JComponent {
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
- 		timer = new Timer(2000, hider);
+ 		timer = new Timer(1000, hider);
 	}
 	
 	public JScrollBar getVerticalBar() {
@@ -98,13 +94,9 @@ public class TBSView extends JComponent {
 		this.cursor = cursor;
 	}
 	
-	public void clearTooltip(){
-		popup = null;
-	}
-	
 	public void updateTooltip(String name, Point location){
-		JLabel label = new JLabel(name);
-		popup = popupFactory.getPopup(this, label, location.x, location.y);
+		tooltipString = name;
+		tooltipLocation = location;
 	}
 	
 	public boolean isTooltipRunning(){
@@ -332,7 +324,6 @@ public class TBSView extends JComponent {
 	public void renderScreenString(Graphics2D g2) {
         int xVal = TBSGraphics.LINE_OF_DEATH + 20;
         int yVal = TBSGraphics.buttonsHeight;
-        //int yVal = model.getApplet().getHeight() - TBSGraphics.buttonsHeight;
         int yStep = TBSGraphics.buttonsHeight;
 		if(screenString == null) 
 			return;
@@ -342,7 +333,18 @@ public class TBSView extends JComponent {
 			TBSGraphics.drawCenteredString(g2, line, xVal, yVal, 0, yStep, Color.CYAN);
 			yVal += yStep;
 		}
-		//TBSGraphics.drawCenteredString(g2, "(Click SELECT to clear this message)", xVal, yVal, 0, yStep, Color.WHITE);
+	}
+	
+	public void renderTooltip(Graphics2D g2){
+		int xVal = tooltipLocation.x;
+        int yVal = tooltipLocation.y;
+        yVal += yOffset;
+        yVal -= TBSGraphics.organismNodeHeight;
+        TBSGraphics.setFont(g2, TBSGraphics.tooltipFont);
+        xVal -= TBSGraphics.getStringBounds(g2, tooltipString).width/2;
+		TBSGraphics.drawCenteredString(g2, tooltipString, xVal, yVal, 0,
+				TBSGraphics.buttonsHeight, Color.CYAN, TBSGraphics.tooltipFont);
+		TBSGraphics.setFont(g2);
 	}
 
 	/**
@@ -392,10 +394,10 @@ public class TBSView extends JComponent {
 		renderButtons(g2);
 		renderScreenString(g2);
 		setCursor(cursor);
-		if(popup != null && !timer.isRunning()){
-			popup.show();
-			// Hide popup in 3 seconds
-			timer.start();
+		if(tooltipString != null){
+			renderTooltip(g2);
+			if(!timer.isRunning())
+				timer.start();
 		}
 	}	
 	
