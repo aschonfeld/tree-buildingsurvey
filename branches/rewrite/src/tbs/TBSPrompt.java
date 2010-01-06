@@ -81,7 +81,7 @@ public class TBSPrompt{
 			String radioAnswersToString = "";
 			for(String answer : radioAnswers)
 				radioAnswersToString += answer+",";
-			return radioAnswersToString.substring(0, radioAnswersToString.length()-2);
+			return radioAnswersToString.substring(0, radioAnswersToString.length()-1);
 		}
 		return userInput;
 	}
@@ -156,6 +156,7 @@ public class TBSPrompt{
 	
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
+		TBSGraphics.setFont(g2);
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		promptSize.setSize(750 + padding.width * 2, 0);
 		lineBrokenQuestion = new LinkedList<String>();
