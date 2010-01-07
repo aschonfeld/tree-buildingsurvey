@@ -8,7 +8,7 @@ Here was the list features we would possibly like to incorporate into the projec
   # Placing open-response questions within the Applet
     * *Completed* (Andrew)
   # Consulting Professor White when creating Applet instructions
-    * *In Progress* (Team needs to schedule meeting to discuss with Professor White)
+    * *In Progress* (Team will try to schedule meeting to discuss with Professor White around 1/15/10)
   # Status message display upon certain tree-creation-actions
     * *Completed First Release* (Andrew)
   # Adding label to empty node in reservoir
@@ -17,7 +17,7 @@ Here was the list features we would possibly like to incorporate into the projec
     * Human node in particular has a small image so it is hard to click on once the text is hidden
     * *In Progress* (Glenn)
   # Adding tooltips to organism nodes dragged into tree for name display
-    * *Completed First Release* (Andrew)
+    * *Completed* (Andrew)
   # Labeling of empty nodes
     * Cursor usage when labeling empty nodes to mimic behavior of text input fields
       * *In Progress* (Glenn)
@@ -26,8 +26,12 @@ Here was the list features we would possibly like to incorporate into the projec
   # Gray-out buttons that cannot be used in current state of tree
     * _Unlink cannot be used when there are no connections present_
     * *Completed* (Andrew)
+  # Changing mouse cursor when hovering over buttons active & inactive
+    * *Completed* (Andrew)
   # Tree scoring based Professor White's original scoring rubric
-    * *In Progress* (Andrew)
+    * *In Progress* (Team)
+  # Yes/No confirmation pop-up when user clicks "Clear"
+    * *Completed* (Andrew)
 
 Other features that will need Professor White's collaboration.  These may not be instuted in time for our deliverable:
   # Which buttons will be considered modes(ex: link button stay selected until user clicks empty space)
