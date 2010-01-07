@@ -3,12 +3,11 @@
 
 Attendance: Jon Kiparsky, Glenn Thelen(via speakerphone), Andrew Schonfeld
 
-News:
+===News:===
 
-Our team has scheduled a deliverable of 1/15/10 for a working version of the applet ready for testing
-  * This version will basically the bare essentials needed for Professor White's students to login, create a tree, answer the open response questions, etc.  In total, it will have all of the basic functionality that the original version had.
+Our team has scheduled a deliverable of 1/15/10 for a working version of the applet ready for testing (This version will basically the bare essentials needed for Professor White's students to login, create a tree, answer the open response questions, etc.  In total, it will have all of the basic functionality that the original version had).
 
-Discussion:
+===Discussion:===
 
 *Scoring*
 
@@ -28,6 +27,6 @@ A new feature that Andrew recommended should be added was:
 
 *Admin Functionality*
 
-the last thing that we discussed was how the applet/website should behave when an Administrator(Professor White) has logged in. Here was what we came up with:
-
+The last thing that we discussed was how the applet/website should behave when an Administrator(Professor White) has logged in. Here was what we came up with:
+  
   
