@@ -40,4 +40,4 @@ Other features that will need Professor White's collaboration.  These may not be
     * _One suggestion for this question is that whichever name we decide upon it should be related to the name of the button for labeling.  So, "labelable" would go with what we are using now "label", but if we used "editable" the button would be changed to "edit"_
       * *In Progress* (Team)
     * We would also like to add when user hovers over organism node in "label" mode it will change the mouse cursor to an 'X' or a red circle with a line through it.
-      * *Completed First Release* (Andrew)
+      * *In Progress* (Andrew)
