@@ -1,9 +1,9 @@
-package tbs.view;
+package tbs.view.prompt.buttons;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public enum TBSPromptButtonType {
+public enum OpenQuestionPromptButtonType {
 
 	SUBMIT("Submit", false, "0"),
 	STRONGLY_AGREE("Strongly Agree", true, "1"),
@@ -18,7 +18,7 @@ public enum TBSPromptButtonType {
 	
 	private String value;
 	
-	private TBSPromptButtonType(String text, boolean radio, String value){
+	private OpenQuestionPromptButtonType(String text, boolean radio, String value){
 		this.text = text;
 		this.radio = radio;
 		this.value = value;
@@ -41,9 +41,9 @@ public enum TBSPromptButtonType {
 		return text;
 	}
 	
-	public static List<TBSPromptButtonType> getButtons(boolean isRadio){
-		List<TBSPromptButtonType> buttons = new LinkedList<TBSPromptButtonType>();
-		for(TBSPromptButtonType button : values()){
+	public static List<OpenQuestionPromptButtonType> getButtons(boolean isRadio){
+		List<OpenQuestionPromptButtonType> buttons = new LinkedList<OpenQuestionPromptButtonType>();
+		for(OpenQuestionPromptButtonType button : values()){
 			if(button.radio == isRadio)
 				buttons.add(button);
 		}
@@ -51,7 +51,7 @@ public enum TBSPromptButtonType {
 	}
 	
 	public static String getRadioText(String value){
-		for(TBSPromptButtonType button : values()){
+		for(OpenQuestionPromptButtonType button : values()){
 			if(button.getValue().equals(value))
 				return button.toString();
 		}

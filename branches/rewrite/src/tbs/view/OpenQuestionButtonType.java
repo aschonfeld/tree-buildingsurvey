@@ -1,6 +1,6 @@
 package tbs.view;
 
-public enum TBSQuestionButtonType {
+public enum OpenQuestionButtonType {
 
 	ONE("1","questionOne",false),
 	TWO("2", "questionTwo",false),
@@ -12,7 +12,7 @@ public enum TBSQuestionButtonType {
 	
 	private boolean radio;
 	
-	private TBSQuestionButtonType(String text, String questionKey, boolean radio){
+	private OpenQuestionButtonType(String text, String questionKey, boolean radio){
 		this.text = text;
 		this.questionKey = questionKey;
 		this.radio = radio;

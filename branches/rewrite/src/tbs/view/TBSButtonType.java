@@ -2,17 +2,17 @@ package tbs.view;
 
 public enum TBSButtonType {
 
-	SELECT("Select", true, true, false),
-	ADD("Add", true, true, false),
-	DELETE("Delete", false, false, false),
-	LINK("Link", true, false, true),
-	UNLINK("Unlink", true, false, false),
-	LABEL("Label", true, false, false),
-	PRINT("Print", false, true, false), 
-	UNDO("Undo", false, false, false), 
-	SAVE("Save", false, true, false),
-	CLEAR("Clear", false, false, false),
-	HELP("Help",false, true, false);
+	SELECT("Select", true, true, false, false),
+	ADD("Add", true, true, false, false),
+	DELETE("Delete", false, false, false, false),
+	LINK("Link", true, false, true, false),
+	UNLINK("Unlink", true, false, false, false),
+	LABEL("Label", true, false, false, false),
+	PRINT("Print", false, true, false, false), 
+	UNDO("Undo", false, false, false, false), 
+	SAVE("Save", false, true, false, false),
+	CLEAR("Clear", false, false, false, true),
+	HELP("Help",false, true, false, false);
 	
 	private String text;
 	
@@ -32,12 +32,16 @@ public enum TBSButtonType {
 	
 	private Boolean itemSelectionBased;
 	
+	private Boolean confirmation;
+	
 	private TBSButtonType(String text, Boolean mode,
-			Boolean activeWhenCreated, Boolean itemSelectionBased){
+			Boolean activeWhenCreated, Boolean itemSelectionBased,
+			Boolean confirmation){
 		this.text = text;
 		this.mode = mode;
 		this.activeWhenCreated = activeWhenCreated;
 		this.itemSelectionBased = itemSelectionBased;
+		this.confirmation = confirmation;
 	}
 	
 	public String getText(){
@@ -54,6 +58,10 @@ public enum TBSButtonType {
 	
 	public Boolean isItemSelectionBased(){
 		return itemSelectionBased;
+	}
+	
+	public Boolean isConfirmation(){
+		return confirmation;
 	}
 	
 	@Override

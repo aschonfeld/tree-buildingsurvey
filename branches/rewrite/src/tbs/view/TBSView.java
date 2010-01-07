@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
@@ -24,7 +25,6 @@ import javax.swing.JScrollBar;
 import javax.swing.Timer;
 
 import tbs.TBSGraphics;
-import tbs.TBSPrompt;
 import tbs.TBSUtils;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
@@ -32,6 +32,8 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
+import tbs.view.prompt.Prompt;
+import tbs.view.prompt.OpenQuestionPrompt;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -152,9 +154,10 @@ public class TBSView extends JComponent {
 		TBSGraphics.questionButtonsStart = buttonRect.x;
 		buttonRect.setSize(new Dimension(TBSGraphics.questionButtonsWidth, buttonRect.height));
 		
-		TBSPrompt prompt = model.getPrompt();
-		for(TBSQuestionButtonType q: TBSQuestionButtonType.values()) {
-			if((prompt != null) &&  q.equals(prompt.getCurrentQuestion()))
+		Prompt prompt = model.getPrompt();
+		for(OpenQuestionButtonType q: OpenQuestionButtonType.values()) {
+			if((prompt != null) && (prompt instanceof OpenQuestionPrompt)
+					&&  q.equals(((OpenQuestionPrompt)prompt).getCurrentQuestion()))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
@@ -169,8 +172,7 @@ public class TBSView extends JComponent {
 	/**
 	* draws a modelElement
 	*/
-	public void renderModelElement(Graphics g, ModelElement me) {
-		Graphics2D g2 = (Graphics2D) g;
+	public void renderModelElement(Graphics2D g2, ModelElement me) {
 		if(me instanceof OrganismNode) 
 			renderOrganismNode(g2, (OrganismNode) me);
 		else if (me instanceof EmptyNode)
@@ -240,17 +242,16 @@ public class TBSView extends JComponent {
 		g2.drawImage(on.getImage(), imageStartX, on.getDefaultPoint().y, null);
 	}
 	
-	public void renderSelectedModelElement(Graphics g, ModelElement me){
+	public void renderSelectedModelElement(Graphics2D g2, ModelElement me){
 		if(me == null)
 			return;
-		Graphics2D selectedGraphics = (Graphics2D) g;
 		if(me instanceof Node){
 			Node n = (Node) me;
 			double y = n.getY() - 1.5;
 			if(n.isInTree()) y -= yOffset;
-			selectedGraphics.setColor(TBSGraphics.selectedNodeBorderColor);
-			selectedGraphics.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
-			selectedGraphics.draw(new Rectangle2D.Double(n.getX()-1.5,
+			g2.setColor(TBSGraphics.selectedNodeBorderColor);
+			g2.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
+			g2.draw(new Rectangle2D.Double(n.getX()-1.5,
 					y,
 					n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
 					n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
@@ -259,12 +260,12 @@ public class TBSView extends JComponent {
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
 					c.getTo());
 			conn = scrollAdjust(conn);
-			selectedGraphics.setColor(TBSGraphics.connectionSelectedColor);
-			selectedGraphics.setStroke(new BasicStroke(3));
-			selectedGraphics.draw(conn);
+			g2.setColor(TBSGraphics.connectionSelectedColor);
+			g2.setStroke(new BasicStroke(3));
+			g2.draw(conn);
 			if(hasArrows){
-				selectedGraphics.draw(getArrowHead(conn, 0.75 * Math.PI));
-				selectedGraphics.draw(getArrowHead(conn, 1.25 * Math.PI));
+				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 			}
 		}
 			
@@ -340,11 +341,11 @@ public class TBSView extends JComponent {
         int yVal = tooltipLocation.y;
         yVal += yOffset;
         yVal -= TBSGraphics.organismNodeHeight;
-        TBSGraphics.setFont(g2, TBSGraphics.tooltipFont);
+        g2.setFont(TBSGraphics.tooltipFont);
         xVal -= TBSGraphics.getStringBounds(g2, tooltipString).width/2;
 		TBSGraphics.drawCenteredString(g2, tooltipString, xVal, yVal, 0,
 				TBSGraphics.buttonsHeight, Color.CYAN, TBSGraphics.tooltipFont);
-		TBSGraphics.setFont(g2);
+		g2.setFont(TBSGraphics.font);
 	}
 
 	/**
@@ -359,14 +360,19 @@ public class TBSView extends JComponent {
 	*/
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
-		TBSPrompt prompt = model.getPrompt();
 		Graphics2D g2 = (Graphics2D) g;
+		RenderingHints rh = new RenderingHints(
+		RenderingHints.KEY_TEXT_ANTIALIASING,
+		RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHints(rh);
+		g2.setFont(TBSGraphics.font);
+		Prompt prompt = model.getPrompt();
 		g2.setColor(Color.black);
 		g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
 		refreshGraphics();
 		if(prompt == null){
 			for(ModelElement m : model.getElements())
-				renderModelElement(g, m);
+				renderModelElement(g2, m);
 			ModelElement selected = model.getSelectedModelElement();
 			List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
 			if(selected == null){
@@ -376,9 +382,9 @@ public class TBSView extends JComponent {
 			}
 			if(selectedTwoWay != null){
 				for(ModelElement m : selectedTwoWay)
-					renderSelectedModelElement(g,m);
+					renderSelectedModelElement(g2,m);
 			}else if(selected != null)
-				renderSelectedModelElement(g,selected);
+				renderSelectedModelElement(g2,selected);
 			if(connInProgress != null){
 				g2.setColor(TBSGraphics.connectionColor);
 				g2.setStroke(new BasicStroke(3));

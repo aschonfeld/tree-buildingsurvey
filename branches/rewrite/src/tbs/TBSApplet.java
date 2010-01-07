@@ -5,6 +5,8 @@ package tbs;
 
 
 import java.awt.EventQueue;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -21,7 +23,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 
 import tbs.model.TBSModel;
-import tbs.view.TBSQuestionButtonType;
+import tbs.view.OpenQuestionButtonType;
 
 /**
 * TBSApplet is the frame in which the Tree-Building System runs. Its
@@ -60,7 +62,13 @@ public class TBSApplet extends JApplet {
  			String q1 = getParameter("quest1");
  			String q2 = getParameter("quest2");
  			String q3 = getParameter("quest3");
- 			model = new TBSModel(app, savedTree, getGraphics(), loadOrganismsFromDirectory());
+ 			Graphics2D g2 = (Graphics2D) getGraphics();
+ 			RenderingHints rh = new RenderingHints(
+ 			RenderingHints.KEY_TEXT_ANTIALIASING,
+ 			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+ 			g2.setRenderingHints(rh);
+ 			g2.setFont(TBSGraphics.font);
+ 			model = new TBSModel(app, savedTree, g2, loadOrganismsFromDirectory());
  			model.getView().setHasArrows(arrows);
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
@@ -68,9 +76,9 @@ public class TBSApplet extends JApplet {
  			model.getView().addKeyListener(model.getController());
  			model.setQuestionProperties(loadPropertyFile("questions.properties"));
  			model.setStatusProperties(loadPropertyFile("status.properties"));
- 			model.setQuestion(q1, TBSQuestionButtonType.ONE);
- 			model.setQuestion(q2, TBSQuestionButtonType.TWO);
- 			model.setQuestion(q3, TBSQuestionButtonType.THREE);
+ 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
+ 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
+ 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
  		}});
  	}
  
@@ -162,12 +170,12 @@ public class TBSApplet extends JApplet {
 	
 	public String getTree(){ return model.exportTree(); }
 	
-	public String getQ1(){return model.getQuestion(TBSQuestionButtonType.ONE);}
+	public String getQ1(){return model.getQuestion(OpenQuestionButtonType.ONE);}
 	
-	public String getQ2(){return model.getQuestion(TBSQuestionButtonType.TWO);}
+	public String getQ2(){return model.getQuestion(OpenQuestionButtonType.TWO);}
 	
 	public String getQ3(){
-		return model.getQuestion(TBSQuestionButtonType.THREE);
+		return model.getQuestion(OpenQuestionButtonType.THREE);
 	}
 	
 	public Properties loadPropertyFile(String fileName){

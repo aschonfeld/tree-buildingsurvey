@@ -3,7 +3,6 @@
 
 package tbs.model;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -20,7 +19,6 @@ import java.util.TreeMap;
 
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
-import tbs.TBSPrompt;
 import tbs.controller.TBSController;
 import tbs.model.history.Add;
 import tbs.model.history.Command;
@@ -29,8 +27,9 @@ import tbs.model.history.Drag;
 import tbs.model.history.Link;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
-import tbs.view.TBSQuestionButtonType;
+import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSView;
+import tbs.view.prompt.Prompt;
 
 public class TBSModel 
 {
@@ -43,7 +42,7 @@ public class TBSModel
 	private Stack<Command> history;
 	private int MESerialNumber=0;
 	private TBSApplet applet;
-	private TBSPrompt prompt;
+	private Prompt prompt;
 	private Properties questionProperties;
 	private Properties statusProperties;
 	private String questionOne;
@@ -51,13 +50,13 @@ public class TBSModel
 	private String questionThree;
 	private Map<TBSButtonType, Boolean> buttonStates;
 
-	public TBSModel(TBSApplet app, String savedTree, Graphics g,
+	public TBSModel(TBSApplet app, String savedTree, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage) {
 		modelElements = new LinkedList<ModelElement>();
 		selectedModelElement = null;
 		selectedTwoWay = null;
-		createButtons(g); // call before creating model elements
-		createModelElements(g, organismNameToImage);
+		createButtons(g2); // call before creating model elements
+		createModelElements(g2, organismNameToImage);
 		buttonStates = new HashMap<TBSButtonType, Boolean>();
 		for(TBSButtonType b : TBSButtonType.values())
 			buttonStates.put(b, b.isActiveWhenCreated());
@@ -249,10 +248,8 @@ public class TBSModel
 		return c;
 	}
 	
-	public void createButtons(Graphics g)
+	public void createButtons(Graphics2D g2)
 	{
-		Graphics2D g2 = (Graphics2D) g;
-		TBSGraphics.setFont(g2);
 		Point buttonBounds = TBSGraphics.get2DStringBounds(g2,
 				Arrays.asList(TBSButtonType.values()));
 		TBSGraphics.buttonsWidth = buttonBounds.x + 
@@ -261,15 +258,14 @@ public class TBSModel
 				TBSGraphics.buttonsYPadding * 2;
 		
 		buttonBounds = TBSGraphics.get2DStringBounds(g2,
-				Arrays.asList(TBSQuestionButtonType.values()));
+				Arrays.asList(OpenQuestionButtonType.values()));
 		TBSGraphics.questionButtonsWidth = buttonBounds.x + 
 				TBSGraphics.buttonsXPadding * 2;
 	}
 	
 	// called during setup to create organism nodes
-	protected void createModelElements(Graphics g, 
+	protected void createModelElements(Graphics2D g2, 
 				TreeMap<String, BufferedImage> organismNameToImage) {
-		Graphics2D g2 = (Graphics2D) g;
 		EmptyNode.g2 = g2;
 		int currentY = TBSGraphics.buttonsHeight + 10;
 		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
@@ -626,7 +622,7 @@ public class TBSModel
 
 	}
 	
-	public TBSPrompt getPrompt() {
+	public Prompt getPrompt() {
 		return prompt;
 	}
 	
@@ -634,12 +630,12 @@ public class TBSModel
 		this.prompt = null;
 	}
 	
-	public void promptUser(TBSPrompt prompt) {
+	public void promptUser(Prompt prompt) {
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
 
-	public String getQuestion(TBSQuestionButtonType question){
+	public String getQuestion(OpenQuestionButtonType question){
 		switch(question){
 		case ONE:
 			return questionOne;
@@ -651,7 +647,7 @@ public class TBSModel
 		return "";
 	}
 	
-	public void setQuestion(String input, TBSQuestionButtonType question){
+	public void setQuestion(String input, OpenQuestionButtonType question){
 		String formattedInput = input == null ? "" : input.trim();
 		switch(question){
 		case ONE:

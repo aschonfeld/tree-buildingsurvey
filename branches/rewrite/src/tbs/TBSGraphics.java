@@ -8,7 +8,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
@@ -226,21 +225,6 @@ public class TBSGraphics {
 	*/ 
 	public static int questionButtonsStart = 0;
 	
-
-	/**
-	 * Returns correct Font for TBS text.
-	 */
-	public static void setFont(Graphics2D g2) {setFont(g2, font);}
-
-	public static void setFont(Graphics2D g2, Font f){
-		RenderingHints rh = new RenderingHints(
-				RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2.setRenderingHints(rh);
-		g2.setFont(f);
-	}
-
-	
 	/**
 	* Returns the @Rectangle2D surrounding a piece of text
 	*/
@@ -299,11 +283,9 @@ public class TBSGraphics {
 	{
 		if(s == null || s.length() == 0)
 			return;
-		// RenderingHints tell
 		g2.setColor(c);
-   		setFont(g2, f);
    		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, f, frc);
+		TextLayout layout = new TextLayout(s, g2.getFont(), frc);
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();

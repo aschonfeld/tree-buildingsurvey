@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import tbs.TBSGraphics;
-import tbs.TBSPrompt;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
@@ -31,8 +30,11 @@ import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
-import tbs.view.TBSQuestionButtonType;
+import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSView;
+import tbs.view.prompt.Prompt;
+import tbs.view.prompt.OpenQuestionPrompt;
+import tbs.view.prompt.YesNoPrompt;
 
 /**
 * TBSController contains the methods allowing the user to manipulate the
@@ -51,7 +53,7 @@ public class TBSController
 	private Point lastPosition = null;
 	private String statusString = null;
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
-	private TBSQuestionButtonType questionClicked = null;
+	private OpenQuestionButtonType questionClicked = null;
 	private boolean labelingInProgress = false;
 	
 	
@@ -118,9 +120,12 @@ public class TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
-		if(model.getPrompt() != null){
-			if(model.getPrompt().isOverButton(e))
+		Prompt prompt = model.getPrompt();
+		if(prompt != null){
+			if(prompt.isOverButton(e))
 				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			else
+				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			return;
 		}
 		int x,y,buttonIndex;
@@ -138,7 +143,7 @@ public class TBSController
 		if(y < TBSGraphics.buttonsHeight)  {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
-				if(buttonIndex >= TBSQuestionButtonType.values().length)
+				if(buttonIndex >= OpenQuestionButtonType.values().length)
 					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				else
 					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -184,16 +189,32 @@ public class TBSController
 	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
-		TBSPrompt prompt = model.getPrompt();
+		Prompt prompt = model.getPrompt();
 		if(prompt != null) {
 			prompt.mousePressed(e);
-			if(model.getPrompt().isFinished()) {
+			if(prompt.isFinished()) {
 				// Get result of prompt here
-				model.setQuestion(prompt.getUserInput(), prompt.getCurrentQuestion());
-				if(prompt.getCurrentQuestion().ordinal() < TBSQuestionButtonType.THREE.ordinal())
-					model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.values()[prompt.getCurrentQuestion().ordinal()+1]));
-				else
+				if(prompt instanceof OpenQuestionPrompt){
+					OpenQuestionPrompt temp = (OpenQuestionPrompt) prompt;
+					String input = temp.getUserInput();
+					OpenQuestionButtonType q = temp.getCurrentQuestion();
+					model.setQuestion(input, q);
+					if(q.ordinal() < OpenQuestionButtonType.THREE.ordinal())
+						model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.values()[q.ordinal()+1]));
+					else
+						model.clearPrompt();
+				}else if(prompt instanceof YesNoPrompt){
+					YesNoPrompt temp = (YesNoPrompt) prompt;
+					switch(temp.getPromptType()){
+						case CLEAR:
+							if(temp.getResponse().getValue()){
+								view.setScreenString(getStatus(temp.getPromptType()));
+								model.resetModel();
+							}
+							break;
+					}
 					model.clearPrompt();
+				}
 			}
 			return;
 		}
@@ -424,17 +445,8 @@ public class TBSController
 		if(buttonIndex >= TBSButtonType.values().length) return;
 		buttonClicked = TBSButtonType.values()[buttonIndex];
 		System.out.println(buttonClicked.toString());
-		StringBuffer statusKey = new StringBuffer(buttonClicked.name());
-		if(buttonClicked.isItemSelectionBased()){
-			if(selectedElement == null)
-				statusKey.append("1");
-			else
-				statusKey.append("2");
-		}
-		statusKey.append("_");
-		Boolean buttonState = model.getButtonStates().get(buttonClicked);
-		statusKey.append(buttonState.toString());
-		view.setScreenString(model.getStatusProperties().getProperty(statusKey.toString()));
+		if(!buttonClicked.isConfirmation())
+			view.setScreenString(getStatus(buttonClicked));
 		switch (buttonClicked) {
 		case SELECT:
 			break;
@@ -488,7 +500,7 @@ public class TBSController
 			System.out.println(model.exportTree());
 			break;
 		case CLEAR:
-			model.resetModel();
+			model.promptUser(new YesNoPrompt(model, TBSButtonType.CLEAR));
 			break;
 		}
 		setSelectedElement(null);
@@ -496,18 +508,18 @@ public class TBSController
     
     private void handleMouseQuestionPressed(int x, int y) {
     	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
-		if(buttonIndex >= TBSQuestionButtonType.values().length) return;
-		questionClicked = TBSQuestionButtonType.values()[buttonIndex];
+		if(buttonIndex >= OpenQuestionButtonType.values().length) return;
+		questionClicked = OpenQuestionButtonType.values()[buttonIndex];
 		System.out.println(questionClicked.toString());
 		switch (questionClicked) {
 		case ONE:
-			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.ONE));
+			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.ONE));
 			break;
 		case TWO:
-			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.TWO));
+			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.TWO));
 			break;
 		case THREE:
-			model.promptUser(new TBSPrompt(model, TBSQuestionButtonType.THREE));
+			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.THREE));
 			break;
 		}
 		setSelectedElement(null);
@@ -601,5 +613,19 @@ public class TBSController
 		} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);	
 	}		
+    
+    public String getStatus(TBSButtonType button){
+    	StringBuffer statusKey = new StringBuffer(buttonClicked.name());
+		if(buttonClicked.isItemSelectionBased()){
+			if(selectedElement == null)
+				statusKey.append("1");
+			else
+				statusKey.append("2");
+		}
+		statusKey.append("_");
+		Boolean buttonState = model.getButtonStates().get(buttonClicked);
+		statusKey.append(buttonState.toString());
+		return model.getStatusProperties().getProperty(statusKey.toString());
+    }
     
 }
