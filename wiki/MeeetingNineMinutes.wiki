@@ -1,0 +1,12 @@
+#summary Meeting 9 - 1/6/2010
+= Meeting 9 - 1/6/2010 =
+
+Attendance: Jon Kiparsky, Glenn Thelen(via speakerphone), Andrew Schonfeld
+
+News:
+  * Our team has scheduled a deliverable of 1/15/10 for a working version of the applet ready for testing
+    * This version will basically the bare essentials needed for Professor White's students to login, create a tree, answer the open response questions, etc.  In total, it will have all of the basic functionality that the original version had.
+
+Discussion:
+
+*Scoring*
