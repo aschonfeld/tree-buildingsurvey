@@ -24,6 +24,7 @@ Of the two things still to be completed, the splash instructions were of the mos
 
 A new feature that Andrew recommended should be added was:
   * Opening screen pop-up showing the user's name & whether they have completed the assignment or not
+http://upload.wikimedia.org/wikipedia/commons/9/96/Opening_Screen.gif
 
 *Admin Functionality*
 
