@@ -20,7 +20,7 @@
     * *Completed* (Andrew)
   # Labeling of empty nodes
     * Cursor usage when labeling empty nodes to mimic behavior of text input fields
-      * *In Progress* (Glenn)
+      * *Completed First Release* (Glenn)
     * Restriction of Alpha-numeric characters
       * *Completed* (Andrew)
   # Gray-out buttons that cannot be used in current state of tree
