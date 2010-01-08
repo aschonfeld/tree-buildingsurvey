@@ -131,37 +131,46 @@ public class TBSController
 		int x,y,buttonIndex;
 		x = e.getX();
 		y = e.getY();
-		if(!view.isTooltipRunning()){
-			ModelElement m = elementMouseIsOver(x,y);
-			if(m != null && m instanceof OrganismNode){
-				OrganismNode o = (OrganismNode) m;
-				if(o.isInTree())
-					view.updateTooltip(o.getName(),
-							new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
-			}
-		}
+		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		if(y < TBSGraphics.buttonsHeight)  {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
-				if(buttonIndex >= OpenQuestionButtonType.values().length)
-					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				else
-					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				if(buttonIndex < OpenQuestionButtonType.values().length)
+					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			}else{
 				buttonIndex = x / TBSGraphics.buttonsWidth;
-				if(buttonIndex >= TBSButtonType.values().length)
-					view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				else{
+				if(buttonIndex < TBSButtonType.values().length){
 					TBSButtonType temp = TBSButtonType.values()[buttonIndex];
 					if(model.isButtonActive(temp))
-						view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+						c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 					else
-						view.setAppletCursor(DragSource.DefaultMoveNoDrop);
+						c = DragSource.DefaultMoveNoDrop;
+				}
+			}
+		} else if(!view.isTooltipRunning() ||
+				TBSButtonType.LABEL.equals(buttonClicked) ||
+				TBSButtonType.UNLINK.equals(buttonClicked)){
+			ModelElement m = elementMouseIsOver(x,y);
+			if(m != null && m instanceof Node){
+				Node n = (Node) m;
+				if(n.isInTree()){
+					if(TBSButtonType.UNLINK.equals(buttonClicked)){
+						if(n.getConnectedTo().size() == 0 &&
+								n.getConnectedFrom().size() == 0)
+							c = DragSource.DefaultMoveNoDrop;
+					}
+					if(n instanceof OrganismNode){
+						if(TBSButtonType.LABEL.equals(buttonClicked))
+							c = DragSource.DefaultMoveNoDrop;
+						OrganismNode o = (OrganismNode) m;
+						view.updateTooltip(o.getName(),
+								new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
+					}
 				}
 			}
 		}
-		else
-			view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		view.setAppletCursor(c);
+		
 		if(selectedElement == null)
 			return;
 		if(selectedElement instanceof Node) {
