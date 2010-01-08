@@ -637,4 +637,10 @@ public class TBSController
 		return model.getStatusProperties().getProperty(statusKey.toString());
     }
     
+    // returns EmptyNode being labeled or null if no node is being lableled
+    public EmptyNode getNodeBeingLabeled() {
+		if((selectedElement != null) && labelingInProgress) return (EmptyNode) selectedElement;
+		return null;
+	}
+    
 }

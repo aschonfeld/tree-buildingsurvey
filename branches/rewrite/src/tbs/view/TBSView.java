@@ -34,6 +34,7 @@ import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.OpenQuestionPrompt;
+import tbs.view.TextEntryBox;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -53,6 +54,7 @@ public class TBSView extends JComponent {
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
 	private Cursor cursor;
+	private TextEntryBox textEntryBox;
 	private Boolean hasArrows;
 	
 	//Tooltip information
@@ -77,6 +79,7 @@ public class TBSView extends JComponent {
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
  		timer = new Timer(1000, hider);
+ 		textEntryBox = new TextEntryBox();
 	}
 	
 	public JScrollBar getVerticalBar() {
@@ -195,8 +198,12 @@ public class TBSView extends JComponent {
 						TBSGraphics.emptyNodeColor);
 				g2.fill(en.getRectangle());
 			}
-			TBSGraphics.drawCenteredString(g2, name, en.getX(),
+			if(en != model.getController().getNodeBeingLabeled()) {
+				TBSGraphics.drawCenteredString(g2, name, en.getX(),
 					en.getY() - yOffset, en.getWidth(), en.getHeight());
+			} else {
+				textEntryBox.renderTextEntryBox(g2, en, yOffset);
+			}
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
@@ -246,6 +253,7 @@ public class TBSView extends JComponent {
 		if(me == null)
 			return;
 		if(me instanceof Node){
+			if(me == model.getController().getNodeBeingLabeled()) return; // do not draw green box around node being labeled
 			Node n = (Node) me;
 			double y = n.getY() - 1.5;
 			if(n.isInTree()) y -= yOffset;
