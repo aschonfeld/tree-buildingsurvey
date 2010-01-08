@@ -35,7 +35,12 @@ The last thing that we discussed was how the applet/website should behave when a
     * Change the node resivoir to a selectable list of students
     * Removing all buttons & showing only three new buttons (Tree, Open Responses, Analysis)
     * Adding pop-up prompt with a smooth display of each Open-response question & its response
-    * Adding pop-up prompt with a smooth display of analysis from the scoring algorithm's assessment of the student's tree  
+    * Adding pop-up prompt with a smooth display of analysis from the scoring algorithm's assessment of the student's tree 
+
+*Admin mockups*
+
+http://upload.wikimedia.org/wikipedia/commons/1/1f/Logins.gif
+
 
 *Future Meetings:* 
   * (Sometime after 1/15 w/ Professor White) - Jon will be sending an e-mail to Professor White asking to schedule a meeting so we can go through the current state of the application and discuss testing strategies
