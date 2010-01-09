@@ -32,9 +32,8 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
-import tbs.view.prompt.Prompt;
 import tbs.view.prompt.OpenQuestionPrompt;
-import tbs.view.TextEntryBox;
+import tbs.view.prompt.Prompt;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -56,6 +55,7 @@ public class TBSView extends JComponent {
 	private Cursor cursor;
 	private TextEntryBox textEntryBox;
 	private Boolean hasArrows;
+	private Boolean isAdmin;
 	
 	//Tooltip information
 	private String tooltipString;
@@ -144,12 +144,17 @@ public class TBSView extends JComponent {
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			if(model.isButtonActive(b))
-				TBSGraphics.drawCenteredString(g2, b.toString(),
-						buttonRect.x, upperY, buttonRect.width, 0);
-			else
-				TBSGraphics.drawCenteredString(g2, b.toString(),
-						buttonRect.x, upperY, buttonRect.width, 0, Color.GRAY);
+			if(!model.isButtonActive(b)){
+				g2.setColor(Color.RED);
+				g2.setStroke(new BasicStroke(3));
+				g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y,
+						buttonRect.x + buttonRect.width, buttonRect.y + buttonRect.height));
+				g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y+buttonRect.height,
+						buttonRect.x + buttonRect.width, buttonRect.y));
+				g2.setStroke(new BasicStroke());
+			}
+			TBSGraphics.drawCenteredString(g2, b.toString(),
+					buttonRect.x, upperY, buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 		}
 		
@@ -336,7 +341,7 @@ public class TBSView extends JComponent {
         int yStep = TBSGraphics.buttonsHeight;
 		if(screenString == null) 
 			return;
-		int width = model.getApplet().getWidth() - xVal;
+		int width = model.getApplet().getWidth() - (xVal + TBSGraphics.buttonsWidth);
 		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
 		for(String line : lines) {
 			TBSGraphics.drawCenteredString(g2, line, xVal, yVal, 0, yStep, Color.CYAN);
@@ -417,5 +422,8 @@ public class TBSView extends JComponent {
 	
 	public void setHasArrows(Boolean hasArrows) {
 		this.hasArrows = hasArrows;
+	}
+	public void setIsAdmin(Boolean isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 }
