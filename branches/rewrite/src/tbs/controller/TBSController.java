@@ -147,9 +147,7 @@ public class TBSController
 						c = DragSource.DefaultMoveNoDrop;
 				}
 			}
-		} else if(!view.isTooltipRunning() ||
-				TBSButtonType.LABEL.equals(buttonClicked) ||
-				TBSButtonType.UNLINK.equals(buttonClicked)){
+		} else if(!view.isTooltipRunning() || buttonClicked.isCursorVariant()){
 			ModelElement m = elementMouseIsOver(x,y);
 			if(m != null && m instanceof Node){
 				Node n = (Node) m;
@@ -498,8 +496,10 @@ public class TBSController
 			model.loadTree(export);
 			break;
 		case UNDO:
-			if(!model.getHistory().isEmpty())
+			if(!model.getHistory().isEmpty()){
+				view.setScreenString(String.format(getStatus(TBSButtonType.UNDO), model.getHistory().peek().toString()));
 				model.removeActionFromHistory().undo(model);
+			}
 			break;
 		case SAVE: 	
 			//Dumps tree data to console for testing
