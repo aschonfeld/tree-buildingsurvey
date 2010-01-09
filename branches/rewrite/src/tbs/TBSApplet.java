@@ -54,6 +54,8 @@ public class TBSApplet extends JApplet {
  			TBSGraphics.appletHeight = getHeight();
  			String hasArrows = getParameter("Arrows");
  			boolean arrows = Boolean.parseBoolean(hasArrows);
+ 			String adminStr = getParameter("Admin");
+ 			boolean admin = Boolean.parseBoolean(adminStr);
  			String savedTree = getParameter("SavedTree");
  			if(savedTree == null)
  				savedTree = "";
@@ -70,6 +72,7 @@ public class TBSApplet extends JApplet {
  			g2.setFont(TBSGraphics.font);
  			model = new TBSModel(app, savedTree, g2, loadOrganismsFromDirectory());
  			model.getView().setHasArrows(arrows);
+ 			model.getView().setIsAdmin(admin);
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
@@ -187,6 +190,15 @@ public class TBSApplet extends JApplet {
 			System.out.println("Unable to load " + fileName + ": " + e);
 			return new Properties();
 		}
+	}
+	
+	public void updateStudent(String savedTree, String q1, String q2,
+			String q3, String hasArrows){
+		model.changeSavedTree(savedTree);
+		model.setQuestion(q1, OpenQuestionButtonType.ONE);
+		model.setQuestion(q2, OpenQuestionButtonType.TWO);
+		model.setQuestion(q3, OpenQuestionButtonType.THREE);
+		model.getView().refreshGraphics();
 	}
 }
 

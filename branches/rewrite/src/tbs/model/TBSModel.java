@@ -75,9 +75,22 @@ public class TBSModel
 		history = new Stack<Command>();
 		applet = app;		
 	}
+	
+	public void changeSavedTree(String savedTree){
+		if(!"".equals(savedTree)){
+			loadTree(savedTree);
+			if(inTreeElements().size() > 1){
+				buttonStates.put(TBSButtonType.LINK, true);
+				buttonStates.put(TBSButtonType.DELETE, true);
+				buttonStates.put(TBSButtonType.CLEAR, true);
+				if(hasEmptyNodes())
+					buttonStates.put(TBSButtonType.LABEL, false);
+			}
+		}
+		history = new Stack<Command>();		
+	}
 
-	public void setModelElements(List<ModelElement> newList)
-	{
+	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
 	}
 	
@@ -88,6 +101,8 @@ public class TBSModel
 		for(Node n : inTreeElements){
 			removeFromTree(n);
 		}
+		history = new Stack<Command>();
+		buttonStates.put(TBSButtonType.UNDO, false);
 	}
 	
 	/**
