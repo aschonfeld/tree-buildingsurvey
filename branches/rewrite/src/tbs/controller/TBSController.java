@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -493,9 +495,15 @@ public class TBSController
 			}
 			break;
 		case PRINT:
-			String export = model.exportTree();
-			model.resetModel();
-			model.loadTree(export);
+			PrinterJob printJob = PrinterJob.getPrinterJob();
+			printJob.setPrintable(view);
+			if (printJob.printDialog()){
+				try { 
+					printJob.print();
+				} catch(PrinterException pe) {
+					System.out.println("Error printing: " + pe);
+				}
+			}
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty()){
@@ -609,8 +617,6 @@ public class TBSController
 				break;
 			if(clickedElement instanceof EmptyNode)
 				creatingLabel((EmptyNode) clickedElement);
-			break;
-		case PRINT:
 			break;
 		case SAVE:
 			break;
