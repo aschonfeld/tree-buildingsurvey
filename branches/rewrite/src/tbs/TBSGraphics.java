@@ -8,7 +8,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -231,8 +230,7 @@ public class TBSGraphics {
 	public static Dimension getStringBounds(Graphics2D g2, String s) {
 		if(s == null || s == "" || s.length() == 0)
 			return new Dimension();
-		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, g2.getFont(), frc);
+		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
 		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
@@ -284,8 +282,7 @@ public class TBSGraphics {
 		if(s == null || s.length() == 0)
 			return;
 		g2.setColor(c);
-   		FontRenderContext frc = g2.getFontRenderContext();
-		TextLayout layout = new TextLayout(s, g2.getFont(), frc);
+   		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();

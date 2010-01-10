@@ -55,5 +55,11 @@ public class OrganismNode extends Node
 		setInTree(false);
 		resetPosition();
 	}
+
+	@Override
+	public boolean isBeingLabeled() {return false;}
+
+	@Override
+	public void setBeingLabeled(boolean beingLabeled) {}
 	
 }

@@ -2,19 +2,35 @@
 package tbs.view;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.util.regex.Matcher;
 
 import javax.swing.Timer;
+
+import tbs.TBSGraphics;
 import tbs.model.EmptyNode;
-import java.awt.Graphics2D;
 
-public class TextEntryBox implements ActionListener {
+public class TextEntryBox {
 
-	private Timer timer = null;
+	private Timer timer;
+	private ActionListener hider = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			cursorIsOn = !cursorIsOn;
+		}
+	};
+	private EmptyNode node;
+	private String name;
+	private int cursorIndex;
+	private int leftX;
+	private int width;
+	private int height;
 	private Color offColor = Color.white;
 	private Color onColor = Color.darkGray;
 	private Color stringColor = Color.black;
@@ -22,38 +38,84 @@ public class TextEntryBox implements ActionListener {
 	private Color borderColor = Color.yellow;
 	private int cursorWidth = 2;
 	private boolean cursorIsOn = true;
-	private int flashRateInHz = 2;
-
-	public TextEntryBox() {
-		timer = new Timer(1000 / flashRateInHz, this);
+	
+	public TextEntryBox(EmptyNode node) {
+		this.node = node;
+		name= node.getName();
+		if(name == null || name == "")
+			cursorIndex = 0;
+		else
+			cursorIndex = name.length()-1;	
+		leftX = node.getAnchorPoint().x;
+		width = node.getWidth();
+		height = node.getHeight();
+		timer = new Timer(500, hider);
  		timer.start();
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-		cursorIsOn = !cursorIsOn;
+	public void keyPressed(KeyEvent e) {
+		int len = name.length();
+		if(e.getKeyCode() == KeyEvent.VK_DELETE){
+			if(cursorIndex < (len-1)){
+				StringBuffer temp = new StringBuffer(name);
+				temp.deleteCharAt(cursorIndex);
+				name = temp.toString();
+			}
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT){
+			if(cursorIndex > 0)
+				cursorIndex--;
+		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+			if(cursorIndex < len)
+				cursorIndex++;
+		}
+			
+	}
+	
+	public void keyTyped(KeyEvent e) {
+		char c = e.getKeyChar();
+		StringBuffer temp = new StringBuffer(name);
+		if(c == '\b'){
+			if(cursorIndex > 0){
+				temp.deleteCharAt(cursorIndex-1);
+				cursorIndex--;
+			}
+		}else{
+			Matcher m = TBSGraphics.emptyNodePattern.matcher("" + c);
+			if(m.find()){
+				temp.insert(cursorIndex, c);
+				cursorIndex++;
+			}
+		}
+		name = temp.toString();
+	}
+	
+	public void finishLabeling(){
+		node.rename(name);
+		node.setBeingLabeled(false);
+		timer.stop();
 	}
 	
 	public void renderCursor(Graphics2D g2, Point upperLeft, Point size) {
-		if(cursorIsOn) {
+		if(cursorIsOn) 
 			g2.setColor(onColor);
-		} else {
+		else
 			g2.setColor(offColor);
-		}
 		g2.fillRect(upperLeft.x, upperLeft.y, size.x, size.y);
 	}
 	
-	public void renderTextEntryBox(Graphics2D g2, EmptyNode en, int yOffset) 
+	public void renderTextEntryBox(Graphics2D g2, int yOffset) 
 	{
-		int leftX = (int) en.getAnchorPoint().getX();
-		int upperY = (int) en.getAnchorPoint().getY() - yOffset;
-		int width = en.getWidth();
-		int height = en.getHeight();
-		String s = en.getName();
-		int x, y;
-		// calculate cursor dimensions
-		if(s == null || s.length() == 0) {
-			g2.setColor(backgroundColor);
-			g2.fillRect(leftX, upperY, width, height);
+		int upperY = node.getAnchorPoint().y - yOffset;
+		Dimension d;
+		TextLayout layout;
+		if(!(name == null || name == "")){
+			layout = new TextLayout(name, g2.getFont(), g2.getFontRenderContext());
+			Rectangle2D bounds = layout.getBounds();
+			d = new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
+			width = d.width + 2 * TBSGraphics.emptyNodePadding;
+			if(width < TBSGraphics.emptyNodeWidth)
+				width = TBSGraphics.emptyNodeWidth;
+		}else{
 			g2.setColor(backgroundColor);
 			g2.fillRect(leftX, upperY, width, height);
 			renderCursor(g2, new Point(leftX, upperY), new Point(cursorWidth, height));
@@ -61,30 +123,33 @@ public class TextEntryBox implements ActionListener {
 			g2.drawRect(leftX - 1, upperY, width, height);
 			return;
 		}
+			
+		int x, y;
 		// draw background
 		g2.setColor(backgroundColor);
 		g2.fillRect(leftX, upperY, width, height);
 		// draw string starts here
 		g2.setColor(stringColor);
 		// calculate dimensions of String s
-		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
-		Rectangle2D bounds = layout.getBounds();
-		int stringHeight = (int) bounds.getHeight();
-		int stringWidth = (int) bounds.getWidth();
-		if(width == 0)
-			x = leftX;
-		else
-			x = leftX + (width - stringWidth) / 2;
-		if(height == 0)
-			y = upperY;
-		else
-			y = upperY + height - (height - stringHeight) / 2;
+		x = leftX + TBSGraphics.emptyNodePadding;
+		y = upperY + height - TBSGraphics.emptyNodePadding;
 		// if width or height is 0, do not center along that axis
+		String beforeCursor = name.substring(0, cursorIndex);
+		layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
 		layout.draw(g2, x, y);
-		renderCursor(g2, new Point(x + stringWidth + 2, upperY), new Point(cursorWidth, height));
+		int cursorX = x + ((int) layout.getBounds().getWidth()) + 2;
+		if(cursorIndex < name.length()){
+			String afterCursor = name.substring(cursorIndex);
+			layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
+			layout.draw(g2, cursorX + cursorWidth, y);
+		}
+		
+		renderCursor(g2, new Point(cursorX, upperY), new Point(cursorWidth, height));
+		
 		g2.setColor(borderColor);
-		int boxWidth = (x + stringWidth + 2 + cursorWidth) - leftX;
-		if(width > boxWidth) boxWidth = width;
+		int boxWidth = (x + d.width + 2 + cursorWidth) - leftX;
+		if(width > boxWidth)
+			boxWidth = width;
 		g2.drawRect(leftX, upperY, boxWidth, height);
 	}
 	

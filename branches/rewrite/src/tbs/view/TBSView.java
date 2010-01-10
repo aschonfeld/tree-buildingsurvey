@@ -53,7 +53,6 @@ public class TBSView extends JComponent {
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
 	private Cursor cursor;
-	private TextEntryBox textEntryBox;
 	private Boolean hasArrows;
 	private Boolean isAdmin;
 	
@@ -79,7 +78,6 @@ public class TBSView extends JComponent {
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
  		timer = new Timer(1000, hider);
- 		textEntryBox = new TextEntryBox();
 	}
 	
 	public JScrollBar getVerticalBar() {
@@ -203,12 +201,12 @@ public class TBSView extends JComponent {
 						TBSGraphics.emptyNodeColor);
 				g2.fill(en.getRectangle());
 			}
-			if(en != model.getController().getNodeBeingLabeled()) {
-				TBSGraphics.drawCenteredString(g2, name, en.getX(),
-					en.getY() - yOffset, en.getWidth(), en.getHeight());
-			} else {
-				textEntryBox.renderTextEntryBox(g2, en, yOffset);
-			}
+			if(en.isBeingLabeled())
+					model.getTextEntryBox().renderTextEntryBox(g2, yOffset);
+			else
+					TBSGraphics.drawCenteredString(g2, name, en.getX(),
+						en.getY() - yOffset, en.getWidth(), en.getHeight());
+			
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
@@ -258,7 +256,8 @@ public class TBSView extends JComponent {
 		if(me == null)
 			return;
 		if(me instanceof Node){
-			if(me == model.getController().getNodeBeingLabeled()) return; // do not draw green box around node being labeled
+			if(((Node) me).isBeingLabeled())
+				return; // do not draw green box around node being labeled
 			Node n = (Node) me;
 			double y = n.getY() - 1.5;
 			if(n.isInTree()) y -= yOffset;

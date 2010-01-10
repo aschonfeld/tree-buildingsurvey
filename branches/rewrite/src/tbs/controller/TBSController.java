@@ -4,6 +4,7 @@
 package tbs.controller;
 
 import java.awt.Cursor;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
 import java.awt.event.AdjustmentEvent;
@@ -16,7 +17,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import tbs.TBSGraphics;
 import tbs.model.Connection;
@@ -29,11 +29,12 @@ import tbs.model.history.Add;
 import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
-import tbs.view.TBSButtonType;
 import tbs.view.OpenQuestionButtonType;
+import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
-import tbs.view.prompt.Prompt;
+import tbs.view.TextEntryBox;
 import tbs.view.prompt.OpenQuestionPrompt;
+import tbs.view.prompt.Prompt;
 import tbs.view.prompt.YesNoPrompt;
 
 /**
@@ -73,7 +74,10 @@ public class TBSController
 			model.getPrompt().keyPressed(e);
 			return;
 		}
-		if(statusString == null) statusString = new String();
+		
+		if(statusString == null)
+			statusString = new String();
+		
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
 			if(!labelingInProgress){
 				buttonClicked = TBSButtonType.DELETE;
@@ -81,39 +85,32 @@ public class TBSController
 				buttonClicked = TBSButtonType.SELECT;
 			}
 		}
-		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			if(labelingInProgress) {
+
+		if(labelingInProgress) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+				model.getTextEntryBox().finishLabeling();
 				cancelLabel();
 				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
 				System.out.println("Added command(label) to history.");
 				setSelectedElement(null);
 				buttonClicked = TBSButtonType.SELECT;
-			}
+			}else
+				model.getTextEntryBox().keyPressed(e);
 		}
-		
 	}
+		
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {
 		if(model.getPrompt() != null) {
 			model.getPrompt().keyTyped(e);
 			return;
 		}
-		char c = e.getKeyChar();
-		if(selectedElement == null) return;
-		if(labelingInProgress) {
-			if(selectedElement instanceof EmptyNode) {
-				EmptyNode en = (EmptyNode) selectedElement;
-				String name =en.getName();
-				if(c == '\b'){
-					if(name.length() > 0)
-						en.rename(name.substring(0,name.length()-1));
-				}else{
-					Matcher m = TBSGraphics.emptyNodePattern.matcher("" + c);
-					if(m.find())
-						en.rename(name + c);
-				}
-			}
-		}
+		
+		if(selectedElement == null)
+			return;
+		
+		if(labelingInProgress)
+			model.getTextEntryBox().keyTyped(e);
 	}
 		
 	public void mouseEntered(MouseEvent e){}
@@ -132,7 +129,9 @@ public class TBSController
 		x = e.getX();
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-		if(y < TBSGraphics.buttonsHeight)  {
+		if(labelingInProgress)
+			c = DragSource.DefaultMoveNoDrop;
+		else if(y < TBSGraphics.buttonsHeight)  {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 				if(buttonIndex < OpenQuestionButtonType.values().length)
@@ -405,11 +404,14 @@ public class TBSController
     
     public void cancelLabel() {
     	labelingInProgress = false;
+    	view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     
     public void creatingLabel(EmptyNode en) {
     	if(!labelingInProgress) {
     		labelingInProgress = true;
+    		en.setBeingLabeled(true);
+    		model.setTextEntryBox(new TextEntryBox(en));
     		model.addActionToHistory(new Label(en.getId(), en.getName()));
     		en.rename(en.getName());
     		selectedElement = en;
@@ -635,12 +637,5 @@ public class TBSController
 		Boolean buttonState = model.getButtonStates().get(buttonClicked);
 		statusKey.append(buttonState.toString());
 		return model.getStatusProperties().getProperty(statusKey.toString());
-    }
-    
-    // returns EmptyNode being labeled or null if no node is being lableled
-    public EmptyNode getNodeBeingLabeled() {
-		if((selectedElement != null) && labelingInProgress) return (EmptyNode) selectedElement;
-		return null;
-	}
-    
+    }    
 }

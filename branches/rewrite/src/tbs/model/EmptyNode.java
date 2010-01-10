@@ -18,6 +18,7 @@ public class EmptyNode extends Node
 	// need this for calculating EmptyNode size
 	public static Graphics2D g2 = null;
 	
+	private boolean beingLabeled;
 	/**
 	* EmptyNode's fully-specified constructor sets position and name
 	* explicitly. This is never called. 
@@ -25,6 +26,7 @@ public class EmptyNode extends Node
 	public EmptyNode(int id, Point anchorPoint) {
 		super(id, "", anchorPoint,
 				TBSGraphics.emptyNodeHeight, TBSGraphics.emptyNodeWidth);
+		beingLabeled = false;
 		setInTree(true);
 		initName();
 		System.out.println("Added EmptyNode #" +id);
@@ -59,21 +61,27 @@ public class EmptyNode extends Node
 		if(name.length()==0){
 			setName("");
 			setWidth(TBSGraphics.emptyNodeWidth);
-			setHeight(TBSGraphics.emptyNodeHeight);
+			//setHeight(TBSGraphics.emptyNodeHeight);
 			return;
 		}
 		int width = TBSGraphics.emptyNodeWidth;
-		int height = TBSGraphics.emptyNodeHeight;
+		//int height = TBSGraphics.emptyNodeHeight;
 		int padding = TBSGraphics.emptyNodePadding;
 		Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
 		int testWidth = stringBounds.width + 2 * padding;
-		int testHeight = stringBounds.height + 2 * padding;
-		if (testWidth > TBSGraphics.emptyNodeWidth) width = testWidth;
-		if (testHeight > TBSGraphics.emptyNodeHeight) height = testHeight;
+		//int testHeight = stringBounds.height + 2 * padding;
+		if (testWidth > TBSGraphics.emptyNodeWidth)
+			width = testWidth;
+		//if (testHeight > TBSGraphics.emptyNodeHeight)
+		//	height = testHeight;
 		setName(name);
 		setWidth(width);
-		setHeight(height);		
+		//setHeight(height);		
 	}
-	
-	
+
+	@Override
+	public boolean isBeingLabeled() {return beingLabeled;}
+
+	@Override
+	public void setBeingLabeled(boolean beingLabeled) {this.beingLabeled = beingLabeled;}	
 }

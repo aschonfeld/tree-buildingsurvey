@@ -281,4 +281,7 @@ public abstract class Node extends ModelElement implements Cloneable
 		copy.setWidth(width);
 		return copy;
 	}
+	
+	public abstract boolean isBeingLabeled();
+	public abstract void setBeingLabeled(boolean beingLabeled);
 }	

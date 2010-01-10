@@ -26,9 +26,10 @@ import tbs.model.history.Delete;
 import tbs.model.history.Drag;
 import tbs.model.history.Link;
 import tbs.model.history.Unlink;
-import tbs.view.TBSButtonType;
 import tbs.view.OpenQuestionButtonType;
+import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
+import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 
 public class TBSModel 
@@ -43,6 +44,7 @@ public class TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
+	private TextEntryBox textEntryBox;
 	private Properties questionProperties;
 	private Properties statusProperties;
 	private String questionOne;
@@ -683,5 +685,13 @@ public class TBSModel
 	
 	public Boolean isButtonActive(TBSButtonType button){
 		return buttonStates.get(button);
+	}
+
+	public TextEntryBox getTextEntryBox() {
+		return textEntryBox;
+	}
+
+	public void setTextEntryBox(TextEntryBox textEntryBox) {
+		this.textEntryBox = textEntryBox;
 	}
 }
