@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +23,8 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 
+import tbs.model.AdminModel;
+import tbs.model.StudentModel;
 import tbs.model.TBSModel;
 import tbs.view.OpenQuestionButtonType;
 
@@ -52,36 +55,60 @@ public class TBSApplet extends JApplet {
  		public void run() {
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
- 			String hasArrows = getParameter("Arrows");
- 			boolean arrows = Boolean.parseBoolean(hasArrows);
- 			String adminStr = getParameter("Admin");
- 			boolean admin = Boolean.parseBoolean(adminStr);
- 			String savedTree = getParameter("SavedTree");
- 			if(savedTree == null)
- 				savedTree = "";
- 			else
- 				savedTree = savedTree.trim();
- 			String q1 = getParameter("quest1");
- 			String q2 = getParameter("quest2");
- 			String q3 = getParameter("quest3");
  			Graphics2D g2 = (Graphics2D) getGraphics();
  			RenderingHints rh = new RenderingHints(
  			RenderingHints.KEY_TEXT_ANTIALIASING,
  			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
  			g2.setRenderingHints(rh);
  			g2.setFont(TBSGraphics.font);
- 			model = new TBSModel(app, savedTree, g2, loadOrganismsFromDirectory());
- 			model.getView().setHasArrows(arrows);
- 			model.getView().setIsAdmin(admin);
+ 			TreeMap<String, BufferedImage> organisms = loadOrganismsFromDirectory();
+ 			String adminStr = getParameter("Admin");
+ 			boolean admin = Boolean.parseBoolean(adminStr);
+ 			boolean arrows = true;
+ 			if(!admin){
+ 				String hasArrows = getParameter("Arrows");
+ 				if(hasArrows == null || hasArrows == "")
+ 					arrows = true;
+ 				else
+ 					arrows = Boolean.parseBoolean(hasArrows);
+ 				String savedTree = getParameter("SavedTree");
+ 				if(savedTree == null)
+ 					savedTree = "";
+ 				else
+ 					savedTree = savedTree.trim();
+ 				String q1 = getParameter("quest1");
+ 				String q2 = getParameter("quest2");
+ 				String q3 = getParameter("quest3");
+ 				model = new StudentModel(app, savedTree, g2, organisms, arrows);
+ 	 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
+ 	 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
+ 	 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
+ 			}else{
+ 				String numOfStudents = getParameter("StudentCount");
+ 				int studentCt = Integer.parseInt(numOfStudents);
+ 				List<String[]> students = new LinkedList<String[]>();
+ 				String student;
+ 				for(int i=1; i<=studentCt; i++){
+ 					student = getParameter("student"+i);
+ 					students.add(student.split("\\++"));
+ 				}
+ 				String[] firstStudent = students.get(0);
+ 				String hasArrows = firstStudent[6];
+ 				if(hasArrows == null || hasArrows == "")
+ 					arrows = true;
+ 				else
+ 					arrows = Boolean.parseBoolean(hasArrows);
+ 				model = new AdminModel(app, firstStudent[2].trim(), g2, organisms, arrows);
+ 				model.setQuestion(firstStudent[3], OpenQuestionButtonType.ONE);
+ 	 			model.setQuestion(firstStudent[4], OpenQuestionButtonType.TWO);
+ 	 			model.setQuestion(firstStudent[5], OpenQuestionButtonType.THREE);
+ 			}
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
  			model.setQuestionProperties(loadPropertyFile("questions.properties"));
  			model.setStatusProperties(loadPropertyFile("status.properties"));
- 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
- 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
- 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
  		}});
  	}
  
@@ -190,15 +217,6 @@ public class TBSApplet extends JApplet {
 			System.out.println("Unable to load " + fileName + ": " + e);
 			return new Properties();
 		}
-	}
-	
-	public void updateStudent(String savedTree, String q1, String q2,
-			String q3, String hasArrows){
-		model.changeSavedTree(savedTree);
-		model.setQuestion(q1, OpenQuestionButtonType.ONE);
-		model.setQuestion(q2, OpenQuestionButtonType.TWO);
-		model.setQuestion(q3, OpenQuestionButtonType.THREE);
-		model.getView().refreshGraphics();
 	}
 }
 

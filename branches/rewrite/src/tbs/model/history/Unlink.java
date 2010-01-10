@@ -5,7 +5,7 @@ import java.util.List;
 
 import tbs.model.Connection;
 import tbs.model.Node;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Unlink extends Command{
 
@@ -49,7 +49,7 @@ public class Unlink extends Command{
 	}
 
 	@Override
-	public void execute(TBSModel model) {
+	public void execute(StudentModel model) {
 		if(node != null){
 			for(Connection c : connections){
 				c.getFrom().getConnectedTo().remove(c.getTo());
@@ -65,7 +65,7 @@ public class Unlink extends Command{
 	}
 
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		System.out.println("Undoing unlink command.");
 		int index;
 		if(node != null){

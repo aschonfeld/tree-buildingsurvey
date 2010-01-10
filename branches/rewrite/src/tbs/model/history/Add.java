@@ -1,7 +1,7 @@
 package tbs.model.history;
 
 import tbs.model.Node;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Add extends Command{
 
@@ -12,12 +12,12 @@ public class Add extends Command{
 	}
 
 	@Override
-	public void execute(TBSModel model){
+	public void execute(StudentModel model){
 		model.addToTree(node);	
 	}
 	
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		System.out.println("Undoing add command.");
 		int index = model.findIndexByElement(node);
 		if(index >= 0)

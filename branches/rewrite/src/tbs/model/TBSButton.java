@@ -90,8 +90,6 @@ public class TBSButton extends ModelElement
 				break;
 			case UNDO:
 				break;
-			case SAVE:
-				break;
 		}
 	}
 

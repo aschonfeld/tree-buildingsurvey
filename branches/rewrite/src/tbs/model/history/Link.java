@@ -2,7 +2,7 @@ package tbs.model.history;
 
 import tbs.model.Connection;
 import tbs.model.Node;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Link extends Command{
 
@@ -13,12 +13,12 @@ public class Link extends Command{
 	}
 	
 	@Override
-	public void execute(TBSModel model) {
+	public void execute(StudentModel model) {
 		
 	}
 
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		System.out.println("Undoing link command.");
 		int index = model.findIndexByElement(connection);
 		if(index >= 0){

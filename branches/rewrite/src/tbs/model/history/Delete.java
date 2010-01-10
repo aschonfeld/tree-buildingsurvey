@@ -7,7 +7,7 @@ import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Delete extends Command{
 
@@ -43,12 +43,12 @@ public class Delete extends Command{
 	}
 
 	@Override
-	public void execute(TBSModel model){
+	public void execute(StudentModel model){
 		model.removeFromTree(modelElement);
 	}
 	
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		if(twoWayConnection != null){
 			System.out.println("Undoing two-way connection delete command.");
 			for(ModelElement m : twoWayConnection){

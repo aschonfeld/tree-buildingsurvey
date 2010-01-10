@@ -12,7 +12,10 @@ public enum TBSButtonType {
 	UNDO("Undo", false, false, false, true, false), 
 	SAVE("Save", false, true, false, false, false),
 	CLEAR("Clear", false, false, false, true, false),
-	HELP("Help",false, true, false, false, false);
+	HELP("Help",false, true, false, false, false),
+	TREE("Tree",false, true, false, false, false),
+	OPEN_RESPONSE("Open Responses",false, true, false, false, false),
+	ANALYSIS("Analysis",false, true, false, false, false);
 	
 	private String text;
 	
@@ -74,5 +77,18 @@ public enum TBSButtonType {
 	@Override
 	public String toString(){
 		return text;
+	}
+	
+	public static TBSButtonType[] getButtons(boolean admin){
+		TBSButtonType[] buttons = TBSButtonType.values();
+		TBSButtonType[] buttonsSublist = admin ? new TBSButtonType[3] : new TBSButtonType[11];
+		int index = 0;
+		int startIndex = admin ? 11 : 0;
+		int endIndex = admin ? buttons.length : 11;
+		for(int i=startIndex;i<endIndex;i++){
+				buttonsSublist[index] = buttons[i];
+				index++;
+		}
+		return buttonsSublist;
 	}
 }

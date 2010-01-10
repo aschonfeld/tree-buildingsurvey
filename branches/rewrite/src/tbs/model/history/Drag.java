@@ -3,7 +3,7 @@ package tbs.model.history;
 import java.awt.Point;
 
 import tbs.model.Node;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Drag extends Command{
 	
@@ -25,14 +25,14 @@ public class Drag extends Command{
 	public void setPointAfter(Point pointAfter) {this.pointAfter = pointAfter;}
 
 	@Override
-	public void execute(TBSModel model){
+	public void execute(StudentModel model){
 		int index = model.findIndexById(nodeId);
 		if(index >= 0)
 			((Node) model.getElement(index)).setAnchorPoint(pointAfter);
 	}
 	
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		System.out.println("Undoing drag command.");
 		int index = model.findIndexById(nodeId);
 		if(index >= 0)

@@ -2,7 +2,7 @@ package tbs.model.history;
 
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
-import tbs.model.TBSModel;
+import tbs.model.StudentModel;
 
 public class Label extends Command{
 
@@ -30,7 +30,7 @@ public class Label extends Command{
 	}
 
 	@Override
-	public void execute(TBSModel model){
+	public void execute(StudentModel model){
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
 			ModelElement selection = model.getElement(index);
@@ -40,7 +40,7 @@ public class Label extends Command{
 	}
 	
 	@Override
-	public void undo(TBSModel model) {
+	public void undo(StudentModel model) {
 		System.out.println("Undoing label command.");
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
