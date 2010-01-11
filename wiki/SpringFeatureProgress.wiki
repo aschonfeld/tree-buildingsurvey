@@ -49,7 +49,7 @@
     * Removing all buttons & showing only three new buttons (Tree, Open Responses, Analysis)
       * *Completed* (Andrew)
     * Adding pop-up prompt with a smooth display of each Open-response question & its response
-      * *Unassigned*
+      * *In Progress* (Andrew)
     * Adding pop-up prompt with a smooth display of analysis from the scoring algorithm's assessment of the student's tree
       * *Unassigned*
 
