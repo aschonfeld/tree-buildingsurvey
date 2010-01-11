@@ -100,6 +100,7 @@ public class TBSApplet extends JApplet {
  			model.getView().addKeyListener(model.getController());
  			model.setQuestionProperties(loadPropertyFile("questions.properties"));
  			model.setStatusProperties(loadPropertyFile("status.properties"));
+			model.setInstrProperties(loadPropertyFile("instructions.properties"));
  		}});
  	}
  

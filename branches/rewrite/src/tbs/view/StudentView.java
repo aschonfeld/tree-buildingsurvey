@@ -38,6 +38,7 @@ import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 import tbs.view.prompt.OpenQuestionPrompt;
 import tbs.view.prompt.Prompt;
+import tbs.TBSSplash;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -50,6 +51,7 @@ public class StudentView extends TBSView implements Printable {
 	 * https://www.fourmilab.ch/hotbits/secure_generate.html
 	 */
 	private static final long serialVersionUID = 0xBB7D0BF0A83E3AF6L; 
+	private TBSSplash splash;
 	
 	// This connection follows the mouse
 	private Line2D connInProgress;
@@ -74,12 +76,13 @@ public class StudentView extends TBSView implements Printable {
 	public StudentView(StudentModel m) {
         model = m;
         connInProgress = null;
-    	screenString = null;
+    	screenString = null; 
     	cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
  		add(verticalBar, BorderLayout.EAST);
  		timer = new Timer(1000, hider);
+		splash=new TBSSplash(model);
 	}
 	
 	public JScrollBar getVerticalBar() {
@@ -106,23 +109,6 @@ public class StudentView extends TBSView implements Printable {
 	
 	public boolean isTooltipRunning(){
 		return timer.isRunning();
-	}
-	
-	/**
-	* Calls up a Swing-based string text entry box and returns the
-	* submitted String. 
-	* Avoiding Swing, so we're not using this. 
-	*/
-	public String promptUserForString(String message) {
-		return (String) JOptionPane.showInputDialog(message);
-	}
-	
-	/**
-	* Calls up a Swing-based yes/no/cancel dialog box, returns the user's
-	* selection. Avoiding this, since it's Swing. 
-	*/
-	public int promptUserForYesNoCancel(String message) {
-		return JOptionPane.showConfirmDialog(null, message);
 	}
 	
 	/**
@@ -384,6 +370,10 @@ public class StudentView extends TBSView implements Printable {
 		g2.setColor(Color.black);
 		g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
 		refreshGraphics();
+		if (model.showSplash==true)
+		{
+			splash.paintComponent(g2);
+		}
 		if(prompt == null){
 			for(ModelElement m : model.getElements())
 				renderModelElement(g2, m);
@@ -421,7 +411,7 @@ public class StudentView extends TBSView implements Printable {
 		}
 	}	
 	
-	@Override
+	//@Override
 	public int print(Graphics g, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
 		if (pageIndex > 0) {

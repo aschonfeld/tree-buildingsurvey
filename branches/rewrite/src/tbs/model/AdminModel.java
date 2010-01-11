@@ -520,12 +520,12 @@ public class AdminModel implements TBSModel
 		this.admin = admin;
 	}
 
-	@Override
+	//@Override
 	public TBSButtonType[] getButtons() {
 		return buttons;
 	}
 
-	@Override
+//	@Override
 	public Boolean isButtonActive(TBSButtonType b) {return false;}
 	
 	public Boolean hasArrows() {
@@ -539,4 +539,10 @@ public class AdminModel implements TBSModel
 	public String getCurrentStudentName() {
 		return currentStudentName;
 	}
+   public Properties getInstructionProperties()  {
+		return null;
+	}
+
+   public void setInstrProperties(Properties p) {}
+
 }

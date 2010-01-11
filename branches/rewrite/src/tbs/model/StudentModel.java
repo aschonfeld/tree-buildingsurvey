@@ -51,12 +51,13 @@ public class StudentModel implements TBSModel
 	private TextEntryBox textEntryBox;
 	private Properties questionProperties;
 	private Properties statusProperties;
+	private Properties instrProperties;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
 	private Map<TBSButtonType, Boolean> buttonStates;
 	private Boolean hasArrows;
-
+	public boolean showSplash;
 	public StudentModel(TBSApplet app, String savedTree, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage, Boolean hasArrows) {
 		applet = app;
@@ -78,6 +79,10 @@ public class StudentModel implements TBSModel
 				if(hasEmptyNodes())
 					buttonStates.put(TBSButtonType.LABEL, false);
 			}
+		}
+		else
+		{
+			showSplash=true;
 		}
 		view = new StudentView(this);
 		this.admin = false;
@@ -349,7 +354,7 @@ public class StudentModel implements TBSModel
 		}
 		return false;
 	}
-	
+
 	public boolean hasEmptyNodes(){
 		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
 			if(modelElements.get(i) instanceof EmptyNode)
@@ -431,6 +436,18 @@ public class StudentModel implements TBSModel
 	
 	public Properties getStatusProperties() {
 		return statusProperties;
+	}
+   
+	public void setInstrProperties(Properties instProps)	
+ 	{
+		instrProperties = instProps;
+	}
+	public Properties getInstructionProperties() {
+        return instrProperties;
+	}
+
+	public void setInstrProperties() {
+		this.instrProperties=instrProperties;
 	}
 
 	public void setStatusProperties(Properties statusProperties) {
@@ -711,7 +728,7 @@ public class StudentModel implements TBSModel
 		this.admin = admin;
 	}
 
-	@Override
+//	@Override
 	public TBSButtonType[] getButtons() {
 		return buttons;
 	}

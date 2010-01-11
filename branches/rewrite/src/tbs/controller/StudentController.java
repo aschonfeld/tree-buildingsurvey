@@ -193,6 +193,12 @@ public class StudentController extends TBSController
 	*/
 	public void mousePressed(MouseEvent e){
 		Prompt prompt = model.getPrompt();
+
+		if (model.showSplash)
+		{
+			model.showSplash=false;
+			view.paintComponent();
+		}
 		if(prompt != null) {
 			prompt.mousePressed(e);
 			if(prompt.isFinished()) {
@@ -340,7 +346,7 @@ public class StudentController extends TBSController
 		return maxIndex;
 	}
     
-    @Override
+ //   @Override
     public ModelElement elementMouseIsOver(int x, int y) {
     	ModelElement topElement = null;
 	    List<ModelElement> selectedTwoWay = new LinkedList<ModelElement>();
@@ -446,7 +452,7 @@ public class StudentController extends TBSController
 		cancelLabel();
     }
     
-    @Override
+    //@Override
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
@@ -534,7 +540,7 @@ public class StudentController extends TBSController
 		setSelectedElement(null);
     }
     
-    @Override
+    //@Override
     public void handleMousePressed(int x, int y) {
     	ModelElement clickedElement = elementMouseIsOver(x, y);
     	// clicking on empty space always cancels connection

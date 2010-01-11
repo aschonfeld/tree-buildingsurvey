@@ -50,6 +50,11 @@ public interface TBSModel
 	Properties getQuestionProperties();
 	
 	void setQuestionProperties(Properties p);
+
+	public Properties getInstructionProperties();
+
+	void setInstrProperties(Properties p);
+
 	
 	void setStatusProperties(Properties p);
 }

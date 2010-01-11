@@ -50,18 +50,18 @@ public class AdminController extends TBSController
  		});
     }
 	
-	@Override
+//	@Override
 	public void handleMousePressed(int x, int y) {
 		handleStudentPressed(x, y);		
 	}
 
-	@Override
+//	@Override
 	public void keyPressed(KeyEvent arg0) {}
 
-	@Override
+//	@Override
 	public void keyReleased(KeyEvent arg0) {}
 
-	@Override
+//	@Override
 	public void keyTyped(KeyEvent arg0) {}
 		
 	public void mouseEntered(MouseEvent e){}
