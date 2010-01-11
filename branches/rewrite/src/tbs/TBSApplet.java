@@ -92,16 +92,7 @@ public class TBSApplet extends JApplet {
  					student = getParameter("student"+i);
  					students.add(student.split("\\++"));
  				}
- 				String[] firstStudent = students.get(0);
- 				String hasArrows = firstStudent[6];
- 				if(hasArrows == null || hasArrows == "")
- 					arrows = true;
- 				else
- 					arrows = Boolean.parseBoolean(hasArrows);
- 				model = new AdminModel(app, firstStudent[2].trim(), g2, organisms, arrows);
- 				model.setQuestion(firstStudent[3], OpenQuestionButtonType.ONE);
- 	 			model.setQuestion(firstStudent[4], OpenQuestionButtonType.TWO);
- 	 			model.setQuestion(firstStudent[5], OpenQuestionButtonType.THREE);
+ 				model = new AdminModel(app, g2, organisms, students);
  			}
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());

@@ -23,12 +23,14 @@ import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
+import tbs.model.AdminModel;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
+import tbs.model.admin.Student;
 import tbs.view.prompt.Prompt;
 
 /**
@@ -47,6 +49,8 @@ public class AdminView extends TBSView {
 	private String screenString;
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
+	private JScrollBar studentBar;
+	private int studentYOffset;
 	private Cursor cursor;
 	
 	//Tooltip information
@@ -61,12 +65,15 @@ public class AdminView extends TBSView {
 	};
 	
 	private TBSModel model;
+	
 	public AdminView(TBSModel m) {
         model = m;
         screenString = null;
     	cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
+    	studentBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
 		setLayout(new BorderLayout());
+		add(studentBar, BorderLayout.WEST);
  		add(verticalBar, BorderLayout.EAST);
  		timer = new Timer(1000, hider);
 	}
@@ -82,6 +89,19 @@ public class AdminView extends TBSView {
 	// sets the start of viewable tree area
 	public void setYOffset(int yo) {
 		yOffset = yo;
+	}
+	
+	public JScrollBar getStudentBar() {
+		return studentBar;
+	}
+	
+	public int getStudentYOffset() {
+		return studentYOffset;
+	}
+	
+	// sets the start of viewable tree area
+	public void setStudentYOffset(int yo) {
+		studentYOffset = yo;
 	}
 	
 	public void setAppletCursor(Cursor cursor) {
@@ -189,6 +209,25 @@ public class AdminView extends TBSView {
 		g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
 	}
 	
+	public void renderStudents(Graphics2D g2){
+		AdminModel adminModel = (AdminModel) model;
+		int x,y;
+		for(Student student : adminModel.getStudents()){
+			if(student.getName().equals(adminModel.getCurrentStudentName()))
+				g2.setColor(Color.GREEN);
+			else
+				g2.setColor(Color.WHITE);
+			x = student.getAnchorPoint().x + studentBar.getWidth();
+			y = student.getAnchorPoint().y - studentYOffset;
+			g2.fillRect(x, y,
+					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight);
+			TBSGraphics.drawCenteredString(g2, student.getName(),
+					x, y,
+					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight,
+					Color.BLACK);
+		}
+	}
+	
 	/**
 	* Redraw the screen.
 	*/
@@ -290,6 +329,7 @@ public class AdminView extends TBSView {
 		}else
 			prompt.paintComponent(g2);
 		renderButtons(g2);
+		renderStudents(g2);
 		renderScreenString(g2);
 		setCursor(cursor);
 		if(tooltipString != null){

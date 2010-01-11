@@ -96,6 +96,30 @@ public class TBSGraphics {
 	public static int maxOrganismImageHeight = 0;
 	
 	/**
+	* The fixed width of all OrganismNodes. Value is calculated in
+	* TBSModel.createModelElements (CHECK THIS)
+	*/ 
+	public static int studentNodeWidth = 0;
+
+	/**
+	* The fixed height of all OrganismNodes. Value is calculated in
+	* TBSModel.createModelElements (CHECK THIS)
+	*/ 
+	public static int studentNodeHeight = 0;
+
+	/**
+	* The fixed width of all OrganismNode label strings. Value is calculated in
+	* TBSModel.createModelElements (CHECK THIS)
+	*/ 
+	public static int maxStudentStringWidth = 0;
+
+	/**
+	* The fixed height of all OrganismNode label strings. Value is calculated in
+	* TBSModel.createModelElements (CHECK THIS)
+	*/ 
+	public static int maxStudentStringHeight = 0;
+	
+	/**
 	 * Label for inTree empty nodes
 	 */
 	public static String emptyNodeLabel = "#%d";

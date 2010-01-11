@@ -19,6 +19,7 @@ import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.AdminController;
 import tbs.controller.TBSController;
+import tbs.model.admin.Student;
 import tbs.model.history.Unlink;
 import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
@@ -45,29 +46,48 @@ public class AdminModel implements TBSModel
 	private String questionTwo;
 	private String questionThree;
 	private Boolean hasArrows;
+	private List<Student> students;
+	private String currentStudentName;
 	
-	public AdminModel(TBSApplet app, String savedTree, Graphics2D g2,
-			TreeMap<String, BufferedImage> organismNameToImage, Boolean hasArrows) {
+	public AdminModel(TBSApplet app, Graphics2D g2,
+			TreeMap<String, BufferedImage> organismNameToImage,
+			List<String[]> students) {
 		applet = app;
 		buttons = TBSButtonType.getButtons(true);
 		modelElements = new LinkedList<ModelElement>();
 		createButtons(g2); // call before creating model elements
 		createModelElements(g2, organismNameToImage);
-		if(!"".equals(savedTree))
-			loadTree(savedTree);
+		createStudents(g2, students);
+		Student firstStudent = this.students.get(0);
+		currentStudentName = firstStudent.getName();
+		hasArrows = firstStudent.getHasArrows();
+		if(!"".equals(firstStudent.getTree()))
+			loadTree(firstStudent.getTree());
+		setQuestion(firstStudent.getQ1(), OpenQuestionButtonType.ONE);
+		setQuestion(firstStudent.getQ2(), OpenQuestionButtonType.TWO);
+		setQuestion(firstStudent.getQ3(), OpenQuestionButtonType.THREE);
 		view = new AdminView(this);
 		this.admin = true;
-		this.hasArrows = hasArrows;
-		controller = new AdminController(this, view);		
+		controller = new AdminController(this, view);
 	}
 	
-	public void changeSavedTree(String savedTree){
-		if(!"".equals(savedTree))
-			loadTree(savedTree);	
+	public void changeSavedTree(int studentIndex){
+		Student selectedStudent = students.get(studentIndex);
+		currentStudentName = selectedStudent.getName();
+		hasArrows = selectedStudent.getHasArrows();
+		if(!"".equals(selectedStudent.getTree()))
+			loadTree(selectedStudent.getTree());
+		setQuestion(selectedStudent.getQ1(), OpenQuestionButtonType.ONE);
+		setQuestion(selectedStudent.getQ2(), OpenQuestionButtonType.TWO);
+		setQuestion(selectedStudent.getQ3(), OpenQuestionButtonType.THREE);
 	}
 
 	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
+	}
+	
+	public List<Student> getStudents(){
+		return students;
 	}
 	
 	/**
@@ -231,6 +251,25 @@ public class AdminModel implements TBSModel
 		//TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.ySpacing;
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
+	}
+	
+	protected void createStudents(Graphics2D g2, List<String[]>  studentStringArrays) {
+		int currentY = 0;
+		students = new LinkedList<Student>();
+		for(String[] studentStringSrray : studentStringArrays){
+			Student temp = new Student(g2, studentStringSrray);
+			students.add(temp);
+			if(temp.getWidth() > TBSGraphics.studentNodeWidth) 
+				TBSGraphics.studentNodeWidth = temp.getWidth();
+			if(temp.getHeight() > TBSGraphics.studentNodeHeight) 
+				TBSGraphics.studentNodeHeight = temp.getHeight();
+		}
+		TBSGraphics.studentNodeWidth += TBSGraphics.paddingWidth * 2;
+		TBSGraphics.studentNodeHeight += TBSGraphics.paddingWidth * 2;
+		for(Student s : students) {
+			s.setAnchorPoint(new Point(0, currentY));
+			currentY += TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing;
+		}
 	}	
 
 	/**
@@ -495,5 +534,9 @@ public class AdminModel implements TBSModel
 
 	public void setHasArrows(Boolean hasArrows) {
 		this.hasArrows = hasArrows;
+	}
+
+	public String getCurrentStudentName() {
+		return currentStudentName;
 	}
 }

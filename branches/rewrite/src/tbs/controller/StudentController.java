@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
 import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -57,14 +58,14 @@ public class StudentController extends TBSController
 	public StudentController(StudentModel m, StudentView v) {
     	model = m;
     	view = v;
- 		view.getVerticalBar().addAdjustmentListener(this);
-		draggedNode=null;
+    	view.getVerticalBar().addAdjustmentListener(new AdjustmentListener() {
+ 			public void adjustmentValueChanged(AdjustmentEvent e) {
+ 				view.setYOffset((e.getValue() * view.getHeight()) / 100);
+ 			}
+ 		});
+ 		draggedNode=null;
     }
 	
-	public void adjustmentValueChanged(AdjustmentEvent e) {
-		view.setYOffset((e.getValue() * view.getHeight()) / 100);
-	}
-    
 	public void keyPressed(KeyEvent e) {
 		if(model.getPrompt() != null) {
 			model.getPrompt().keyPressed(e);
@@ -127,14 +128,14 @@ public class StudentController extends TBSController
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		if(labelingInProgress)
 			c = DragSource.DefaultMoveNoDrop;
-		else if(y < TBSGraphics.buttonsHeight)  {
+		else if(y < TBSGraphics.buttonsHeight) {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 				if(buttonIndex < OpenQuestionButtonType.values().length)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-			}else{
+			} else {
 				buttonIndex = x / TBSGraphics.buttonsWidth;
-				if(buttonIndex < model.getButtons().length){
+				if(buttonIndex < model.getButtons().length) {
 					TBSButtonType temp = model.getButtons()[buttonIndex];
 					if(model.isButtonActive(temp))
 						c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -142,7 +143,7 @@ public class StudentController extends TBSController
 						c = DragSource.DefaultMoveNoDrop;
 				}
 			}
-		} else if(!view.isTooltipRunning() || buttonClicked.isCursorVariant()){
+		} else if(!view.isTooltipRunning() || buttonClicked.isCursorVariant()) {
 			ModelElement m = elementMouseIsOver(x,y);
 			if(m != null && m instanceof Node){
 				Node n = (Node) m;

@@ -6,6 +6,7 @@ package tbs.controller;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
@@ -37,12 +38,17 @@ public class AdminController extends TBSController
 	public AdminController(AdminModel m, AdminView v) {
     	model = m;
     	view = v;
- 		view.getVerticalBar().addAdjustmentListener(this);
+ 		view.getVerticalBar().addAdjustmentListener(new AdjustmentListener() {
+ 			public void adjustmentValueChanged(AdjustmentEvent e) {
+ 				view.setYOffset((e.getValue() * view.getHeight()) / 100);
+ 			}
+ 		});
+ 		view.getStudentBar().addAdjustmentListener(new AdjustmentListener() {
+ 			public void adjustmentValueChanged(AdjustmentEvent e) {
+ 				view.setStudentYOffset((e.getValue() * view.getHeight()) / 100);
+ 			}
+ 		});
     }
-	
-	public void adjustmentValueChanged(AdjustmentEvent e) {
-		view.setYOffset((e.getValue() * view.getHeight()) / 100);
-	}
 	
 	@Override
 	public void handleMousePressed(int x, int y) {
@@ -74,7 +80,11 @@ public class AdminController extends TBSController
 		x = e.getX();
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-		if(y < TBSGraphics.buttonsHeight)  {
+		if (x > view.getStudentBar().getWidth() && x < TBSGraphics.studentNodeWidth){
+			int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
+			if(studentIndex < model.getStudents().size())
+				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+		} else if(y < TBSGraphics.buttonsHeight)  {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
 				if(buttonIndex < OpenQuestionButtonType.values().length)
@@ -121,11 +131,11 @@ public class AdminController extends TBSController
         int x = e.getX();
         int y = e.getY();
         // if mouse is in button bar
-		if(y < TBSGraphics.buttonsHeight)  {
+        if (x > view.getStudentBar().getWidth() && x < TBSGraphics.studentNodeWidth)
+			handleStudentPressed(x, y);
+		else if(y < TBSGraphics.buttonsHeight) {
 			if(x >= TBSGraphics.questionButtonsStart)
 				handleMouseButtonPressed(x, y);
-		}else if (x < TBSGraphics.LINE_OF_DEATH) {
-			handleStudentPressed(x, y);
 		}
 	}
 	
@@ -181,5 +191,11 @@ public class AdminController extends TBSController
 		}
     }	
     
-    private void handleStudentPressed(int x, int y) {}
+    private void handleStudentPressed(int x, int y) {
+    	int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
+		if(studentIndex >= model.getStudents().size())
+			return;
+		model.changeSavedTree(studentIndex);
+		view.refreshGraphics();
+    }
 }
