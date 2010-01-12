@@ -4,7 +4,7 @@
 
 *Here was the list features we would possibly like to incorporate into the project before the Late January/Early February deliverable:*
   # Creating Splash Instructions to be displayed in the Applet by use of a "Help" button
-    * *In Progress* (Jon)
+    * *Completed First Release* (Jon)
   # Placing open-response questions within the Applet
     * *Completed* (Andrew)
   # Consulting Professor White when creating Applet instructions
