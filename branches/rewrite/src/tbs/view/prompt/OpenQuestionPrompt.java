@@ -17,6 +17,7 @@ import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
+import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
@@ -53,7 +54,7 @@ public class OpenQuestionPrompt extends Prompt{
 		super();
 		this.model = model;
 		this.currentQuestion = currentQuestion;
-		questionProps = model.getQuestionProperties();
+		questionProps = model.getProperties(PropertyType.QUESTIONS);
 		this.question = questionProps.getProperty(currentQuestion.getQuestionKey());
 		buttons = OpenQuestionPromptButtonType.getButtons(currentQuestion.isRadio());
 		userInput = model.getQuestion(currentQuestion);

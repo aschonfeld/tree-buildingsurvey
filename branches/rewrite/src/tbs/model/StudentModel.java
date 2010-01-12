@@ -27,12 +27,14 @@ import tbs.model.history.Delete;
 import tbs.model.history.Drag;
 import tbs.model.history.Link;
 import tbs.model.history.Unlink;
+import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.SplashPrompt;
 
 public class StudentModel implements TBSModel
 {
@@ -48,19 +50,19 @@ public class StudentModel implements TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
+	private SplashPrompt splashPrompt;
 	private TextEntryBox textEntryBox;
-	private Properties questionProperties;
-	private Properties statusProperties;
-	private Properties instrProperties;
+	private Map<PropertyType,Properties> propertiesMap;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
 	private Map<TBSButtonType, Boolean> buttonStates;
 	private Boolean hasArrows;
-	public boolean showSplash;
 	public StudentModel(TBSApplet app, String savedTree, Graphics2D g2,
-			TreeMap<String, BufferedImage> organismNameToImage, Boolean hasArrows) {
+			TreeMap<String, BufferedImage> organismNameToImage,
+			Boolean hasArrows, Map<PropertyType, Properties> propertiesMap) {
 		applet = app;
+		this.propertiesMap = propertiesMap;
 		buttons = TBSButtonType.getButtons(false);
 		modelElements = new LinkedList<ModelElement>();
 		selectedModelElement = null;
@@ -80,15 +82,13 @@ public class StudentModel implements TBSModel
 					buttonStates.put(TBSButtonType.LABEL, false);
 			}
 		}
-		else
-		{
-			showSplash=true;
-		}
 		view = new StudentView(this);
 		this.admin = false;
 		this.hasArrows = hasArrows;
 		controller = new StudentController(this, view);
-		history = new Stack<Command>();		
+		history = new Stack<Command>();
+		splashPrompt = new SplashPrompt(this);
+		prompt = splashPrompt;
 	}
 	
 	public void changeSavedTree(String savedTree){
@@ -426,32 +426,8 @@ public class StudentModel implements TBSModel
 		buttonStates.put(TBSButtonType.UNLINK, true);
 	}
 	
-	public Properties getQuestionProperties() {
-		return questionProperties;
-	}
-
-	public void setQuestionProperties(Properties questionProperties) {
-		this.questionProperties = questionProperties;
-	}
-	
-	public Properties getStatusProperties() {
-		return statusProperties;
-	}
-   
-	public void setInstrProperties(Properties instProps)	
- 	{
-		instrProperties = instProps;
-	}
-	public Properties getInstructionProperties() {
-        return instrProperties;
-	}
-
-	public void setInstrProperties() {
-		this.instrProperties=instrProperties;
-	}
-
-	public void setStatusProperties(Properties statusProperties) {
-		this.statusProperties = statusProperties;
+	public Properties getProperties(PropertyType pt) {
+		return propertiesMap.get(pt);
 	}
 
 	public List<Connection> getConnectionsByNode(Node n){
@@ -674,6 +650,11 @@ public class StudentModel implements TBSModel
 	
 	public void promptUser(Prompt prompt) {
 		this.prompt = prompt;
+		view.refreshGraphics();
+	}
+	
+	public void helpUser() {
+		this.prompt = splashPrompt;
 		view.refreshGraphics();
 	}
 

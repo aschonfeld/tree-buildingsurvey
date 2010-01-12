@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import javax.swing.JApplet;
 import tbs.model.AdminModel;
 import tbs.model.StudentModel;
 import tbs.model.TBSModel;
+import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 
 /**
@@ -61,6 +63,11 @@ public class TBSApplet extends JApplet {
  			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
  			g2.setRenderingHints(rh);
  			g2.setFont(TBSGraphics.font);
+ 			Map<PropertyType, Properties> propertiesMap = new HashMap<PropertyType, Properties>();
+ 			for(PropertyType pt : PropertyType.values()){
+ 				if(pt.isLoadedToModel())
+ 					propertiesMap.put(pt, loadPropertyFile(pt));
+ 			}
  			TreeMap<String, BufferedImage> organisms = loadOrganismsFromDirectory();
  			String adminStr = getParameter("Admin");
  			boolean admin = Boolean.parseBoolean(adminStr);
@@ -79,7 +86,7 @@ public class TBSApplet extends JApplet {
  				String q1 = getParameter("quest1");
  				String q2 = getParameter("quest2");
  				String q3 = getParameter("quest3");
- 				model = new StudentModel(app, savedTree, g2, organisms, arrows);
+ 				model = new StudentModel(app, savedTree, g2, organisms, arrows, propertiesMap);
  	 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
  	 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
  	 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
@@ -92,15 +99,12 @@ public class TBSApplet extends JApplet {
  					student = getParameter("student"+i);
  					students.add(student.split("\\++"));
  				}
- 				model = new AdminModel(app, g2, organisms, students);
+ 				model = new AdminModel(app, g2, organisms, students, propertiesMap);
  			}
  			add(model.getView());
  			model.getView().addMouseListener(model.getController());
  			model.getView().addMouseMotionListener(model.getController());
  			model.getView().addKeyListener(model.getController());
- 			model.setQuestionProperties(loadPropertyFile("questions.properties"));
- 			model.setStatusProperties(loadPropertyFile("status.properties"));
-			model.setInstrProperties(loadPropertyFile("instructions.properties"));
  		}});
  	}
  
@@ -123,7 +127,7 @@ public class TBSApplet extends JApplet {
 		String imageFilename = "";
 		try 
 		{
-			props = loadPropertyFile("organisms.properties");
+			props = loadPropertyFile(PropertyType.ORGANISMS);
 			if(props.size() == 0)
 				return new TreeMap<String, BufferedImage>();
 			TBSGraphics.numOfOrganisms = props.size();
@@ -200,13 +204,14 @@ public class TBSApplet extends JApplet {
 		return model.getQuestion(OpenQuestionButtonType.THREE);
 	}
 	
-	public Properties loadPropertyFile(String fileName){
+	public Properties loadPropertyFile(PropertyType pt){
 		Properties props = new Properties();
+		String filename = "/tbs/properties/"+pt.getFilename();
 		try{
-			props.load(this.getClass().getResource(fileName).openStream());
+			props.load(this.getClass().getResource(filename).openStream());
 			return props;
 		}catch(Exception e){
-			System.out.println("Unable to load " + fileName + ": " + e);
+			System.out.println("Unable to load " + filename + ": " + e);
 			return new Properties();
 		}
 	}

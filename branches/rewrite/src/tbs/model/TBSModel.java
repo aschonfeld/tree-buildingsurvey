@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import tbs.TBSApplet;
 import tbs.controller.TBSController;
+import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
@@ -47,14 +48,5 @@ public interface TBSModel
 	
 	String exportTree();
 	
-	Properties getQuestionProperties();
-	
-	void setQuestionProperties(Properties p);
-
-	public Properties getInstructionProperties();
-
-	void setInstrProperties(Properties p);
-
-	
-	void setStatusProperties(Properties p);
+	Properties getProperties(PropertyType pt);
 }

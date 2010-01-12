@@ -27,6 +27,7 @@ import tbs.model.history.Add;
 import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
+import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
@@ -177,7 +178,8 @@ public class StudentController extends TBSController
 	
 	// No need to use since mousePressed is used instead
 	public void mouseClicked(MouseEvent e) {
-		if(model.getPrompt() != null) return;
+		if(model.getPrompt() != null)
+			return;
 		if(buttonClicked != null){
 			if(!buttonClicked.isMode())
 				buttonClicked = TBSButtonType.SELECT;
@@ -194,11 +196,6 @@ public class StudentController extends TBSController
 	public void mousePressed(MouseEvent e){
 		Prompt prompt = model.getPrompt();
 
-		if (model.showSplash)
-		{
-			model.showSplash=false;
-			view.paintComponent();
-		}
 		if(prompt != null) {
 			prompt.mousePressed(e);
 			if(prompt.isFinished()) {
@@ -223,7 +220,8 @@ public class StudentController extends TBSController
 							break;
 					}
 					model.clearPrompt();
-				}
+				}else
+					model.clearPrompt();
 			}
 			return;
 		}
@@ -517,6 +515,9 @@ public class StudentController extends TBSController
 		case CLEAR:
 			model.promptUser(new YesNoPrompt(model, TBSButtonType.CLEAR));
 			break;
+		case HELP:
+			model.helpUser();
+			break;
 		}
 		setSelectedElement(null);
     }
@@ -637,6 +638,6 @@ public class StudentController extends TBSController
 		statusKey.append("_");
 		Boolean buttonState = model.getButtonStates().get(buttonClicked);
 		statusKey.append(buttonState.toString());
-		return model.getStatusProperties().getProperty(statusKey.toString());
+		return model.getProperties(PropertyType.STATUS).getProperty(statusKey.toString());
     }    
 }

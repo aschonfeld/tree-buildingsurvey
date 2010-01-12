@@ -21,6 +21,7 @@ import tbs.controller.AdminController;
 import tbs.controller.TBSController;
 import tbs.model.admin.Student;
 import tbs.model.history.Unlink;
+import tbs.properties.PropertyType;
 import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
@@ -40,8 +41,7 @@ public class AdminModel implements TBSModel
 	private TBSApplet applet;
 	private Prompt prompt;
 	private TextEntryBox textEntryBox;
-	private Properties questionProperties;
-	private Properties statusProperties;
+	private Map<PropertyType, Properties> propertiesMap;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
@@ -51,8 +51,9 @@ public class AdminModel implements TBSModel
 	
 	public AdminModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
-			List<String[]> students) {
+			List<String[]> students, Map<PropertyType, Properties> propertiesMap) {
 		applet = app;
+		this.propertiesMap = propertiesMap;
 		buttons = TBSButtonType.getButtons(true);
 		modelElements = new LinkedList<ModelElement>();
 		createButtons(g2); // call before creating model elements
@@ -325,20 +326,8 @@ public class AdminModel implements TBSModel
 		return inTreeElements;
 	}
 	
-	public Properties getQuestionProperties() {
-		return questionProperties;
-	}
-
-	public void setQuestionProperties(Properties questionProperties) {
-		this.questionProperties = questionProperties;
-	}
-	
-	public Properties getStatusProperties() {
-		return statusProperties;
-	}
-
-	public void setStatusProperties(Properties statusProperties) {
-		this.statusProperties = statusProperties;
+	public Properties getProperties(PropertyType pt) {
+		return propertiesMap.get(pt);
 	}
 
 	public List<Connection> getConnectionsByNode(Node n){
@@ -539,10 +528,5 @@ public class AdminModel implements TBSModel
 	public String getCurrentStudentName() {
 		return currentStudentName;
 	}
-   public Properties getInstructionProperties()  {
-		return null;
-	}
-
-   public void setInstrProperties(Properties p) {}
 
 }
