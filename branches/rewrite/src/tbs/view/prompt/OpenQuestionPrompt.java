@@ -268,8 +268,17 @@ public class OpenQuestionPrompt extends Prompt{
 	}
 	
 	public void constructRadioQuestions(){
-		for(int i=1;i<=radioAnswers.size(); i++)
-			lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
+		/*
+		 * Students with arrows get the questions in descending order, while
+		 * students without get them in ascending order.  Pretty tricky!!!
+		 */
+		if(model.hasArrows()){
+			for(int i=1;i<=radioAnswers.size(); i++)
+				lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
+		}else{
+			for(int i=radioAnswers.size();i>=1; i--)
+				lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
+		}
 	}
 	
 	public boolean isOverButton(MouseEvent e){

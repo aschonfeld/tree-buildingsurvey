@@ -18,6 +18,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
+import tbs.view.TBSButtonType;
 
 public class SplashPrompt extends Prompt
 {
@@ -25,11 +26,11 @@ public class SplashPrompt extends Prompt
 	//Information to be used by all prompt types
 	TBSModel model;
 	Graphics2D g2 = null;
-	Properties instrProps = null;
+	Properties instrProps;
+	Properties helpProps; 
 	boolean seenIntro = false;
 
 	//Prompt sizing information
-	List<String> instructions;
 	Dimension padding = new Dimension(10,5);
 	Dimension promptSize = new Dimension();
 	Point anchorPoint = null;
@@ -46,6 +47,7 @@ public class SplashPrompt extends Prompt
 		super();
 		this.model = model;
 		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
+		helpProps = model.getProperties(PropertyType.HELP);
 		renderStart = true;
 	}
 
@@ -69,20 +71,41 @@ public class SplashPrompt extends Prompt
 		this.g2 = g2;
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		promptSize.setSize(750 + padding.width * 2, 0);
-		instructions = new LinkedList<String>();
-		for(int i=1;i<=instrProps.size();i++)
-			instructions.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					instrProps.getProperty("instr"+i),
+		if(renderStart){
+			List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,
+					instrProps.getProperty("instrIntro"),
+					promptSize.width - padding.width * 2);
+			List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
+					instrProps.getProperty("instrDir"),
+					promptSize.width - padding.width * 2);
+
+			calculateValues(introduction.size() + directions.size() + 5);
+			drawBox();
+			drawButtons();
+			drawText(introduction);
+			instructionStringY += textHeight + padding.height;
+			TBSGraphics.drawCenteredString(g2, instrProps.getProperty("instrHeader"),
+					anchorPoint.x + padding.width, instructionStringY,
+					promptSize.width - padding.width * 2,
+					textHeight,TBSGraphics.emptyNodeColor);
+			instructionStringY += (textHeight + padding.height) * 2;
+			drawText(directions);
+		}else{
+			List<String> helpText = new LinkedList<String>();
+			for(TBSButtonType bt : model.getButtons()){
+				helpText.addAll(TBSGraphics.breakStringByLineWidth(g2,
+					helpProps.getProperty("help_" + bt.getText()),
 					promptSize.width - padding.width * 2));
-		calculateValues();
-		drawBox();
-		drawButtons();
-		drawText(instructions);
-		instructionStringY += ((textHeight+4) * instructions.size());
+			}
+			calculateValues(helpText.size() + 2);
+			drawBox();
+			drawButtons();
+			drawText(helpText);
+		}
 	}
 
-	public void calculateValues() {
-		int lineCount = 2 + instructions.size();
+	public void calculateValues(int lineCount) {
+		instructionStringY = 0;
 		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)));
 		int centerX = model.getApplet().getWidth() / 2;
@@ -111,12 +134,10 @@ public class SplashPrompt extends Prompt
 	}
 
 	public void drawText(List<String> lines) {
-		int startY = instructionStringY;
 		int startX = anchorPoint.x + padding.width;
-		for(int i=0;i<lines.size();i++)
-		{
-			drawString(lines.get(i), startX, startY);
-			startY += textHeight + 4;
+		for(String line : lines){
+			drawString(line, startX, instructionStringY);
+			instructionStringY += textHeight + padding.height;
 		}
 	}
 
@@ -126,7 +147,7 @@ public class SplashPrompt extends Prompt
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight + 4, 
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight, 
 					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 
