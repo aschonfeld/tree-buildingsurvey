@@ -11,8 +11,8 @@ use CGI;
 #use GradeDB;
 use treeDB;
 
-$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
-#$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
+#$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
+$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
 
 @date = localtime(time);
 $too_late = 0;
@@ -290,8 +290,8 @@ sub load_student_survey {
   	print "name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
-	#print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
+	#print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
+	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
 	print "width=1175 height=590 name=\"TreeApplet\"> \n";
 	print "<param name=\"StudentName\" value=\"$name\"> \n";
 	print "<param name=\"Arrows\" value=\"$arrows\"> \n";
@@ -357,13 +357,16 @@ sub load_admin_survey {
 	print "<form name=\"form\" style=\"border: 0;padding-bottom: 0;margin-bottom: 0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding-bottom: 0;margin-bottom: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
-	#print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
+	#print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
+	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
 	print "width=1175 height=590 name=\"TreeApplet\"> \n";
 	#$dbh = GradeDB::connect();
 	$dbh = treeDB::connect();
 	#$sth = $dbh->prepare("SELECT * FROM students ORDER BY name");
-	$sth = $dbh->prepare("SELECT * FROM student_data WHERE name in (\"White,Brian\",\"GUEST\",\"Schonfeld,Andrew\",\"Kiparsky,Jon\",\"Thelen,Glenn\",\"Bolker,Ethan\") ORDER BY name");
+	$sth = $dbh->prepare("SELECT * FROM student_data WHERE name in 
+	(\"White,Brian\",\"GUEST\",\"Schonfeld,Andrew\",\"Kiparsky,Jon\",
+	\"Thelen,Glenn\",\"Bolker,Ethan\",\"Young,Aimee\",\"Skurtu,Tara\",
+	\"Nassali,Vivian\",\"Makosky,Amanda\") ORDER BY name");
     $sth->execute();
     $count = 0;
 	while (@data = $sth->fetchrow_array()) {
