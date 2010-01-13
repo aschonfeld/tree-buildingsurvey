@@ -35,5 +35,4 @@ public abstract class ModelElement {
 			return false;
 		return ((ModelElement) o).getId().equals(id);
 	}
-
 }

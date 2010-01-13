@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class TBSApplet extends JApplet {
  			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
  			g2.setRenderingHints(rh);
  			g2.setFont(TBSGraphics.font);
- 			Map<PropertyType, Properties> propertiesMap = new HashMap<PropertyType, Properties>();
+ 			Map<PropertyType, Properties> propertiesMap = new TreeMap<PropertyType, Properties>();
  			for(PropertyType pt : PropertyType.values()){
  				if(pt.isLoadedToModel())
  					propertiesMap.put(pt, loadPropertyFile(pt));
@@ -86,18 +85,20 @@ public class TBSApplet extends JApplet {
  				String q1 = getParameter("quest1");
  				String q2 = getParameter("quest2");
  				String q3 = getParameter("quest3");
+ 				String name = getParameter("StudentName");
  				model = new StudentModel(app, savedTree, g2, organisms, arrows, propertiesMap);
  	 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
  	 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
  	 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
+ 	 			model.setName(name);
  			}else{
  				String numOfStudents = getParameter("StudentCount");
  				int studentCt = Integer.parseInt(numOfStudents);
- 				List<String[]> students = new LinkedList<String[]>();
+ 				List<String> students = new LinkedList<String>();
  				String student;
  				for(int i=1; i<=studentCt; i++){
  					student = getParameter("student"+i);
- 					students.add(student.split("\\++"));
+ 					students.add(student);
  				}
  				model = new AdminModel(app, g2, organisms, students, propertiesMap);
  			}

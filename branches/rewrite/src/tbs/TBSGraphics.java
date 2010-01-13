@@ -259,7 +259,7 @@ public class TBSGraphics {
 		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 	
-	public static Point get2DStringBounds(Graphics2D g2, Collection<?> strings) 
+	public static Dimension get2DStringBounds(Graphics2D g2, Collection<?> strings) 
 	{
 		Point max = new Point(0,0);
 		for(Object s: strings) 
@@ -270,10 +270,10 @@ public class TBSGraphics {
 			if(bounds.height > max.y) 
 				max.y = (int) bounds.getHeight();
 		}
-		return max;
+		return new Dimension(max.x, max.y);
 	}
 	
-	public static Point get2DImageBounds(Graphics2D g2, Collection<BufferedImage> images) 
+	public static Dimension get2DImageBounds(Graphics2D g2, Collection<BufferedImage> images) 
 	{
 		Point max = new Point(0,0);
 		for(BufferedImage i: images) 
@@ -283,7 +283,7 @@ public class TBSGraphics {
 			if(i.getHeight() > max.y) 
 				max.y = i.getHeight();
 		}
-		return max;
+		return new Dimension(max.x, max.y);
 	}
 	
 	public static void drawCenteredString(Graphics2D g2, String s, 

@@ -19,7 +19,8 @@ public class Student {
 	private int width;
 	private Point anchorPoint;
 	
-	public Student(Graphics2D g2, String[] studentData){
+	public Student(Graphics2D g2, String studentDataString){
+		String[] studentData = studentDataString.split("\\+=");
 		name = studentData[0];
 		lastUpdate = studentData[1];
 		tree = studentData[2];

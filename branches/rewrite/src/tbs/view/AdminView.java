@@ -202,6 +202,7 @@ public class AdminView extends TBSView {
 				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
 				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 			}
+			g2.setStroke(new BasicStroke());
 		}
 	}
 	
@@ -213,7 +214,7 @@ public class AdminView extends TBSView {
 		AdminModel adminModel = (AdminModel) model;
 		int x,y;
 		for(Student student : adminModel.getStudents()){
-			if(student.getName().equals(adminModel.getCurrentStudentName()))
+			if(student.getName().equals(adminModel.getName()))
 				g2.setColor(Color.GREEN);
 			else
 				g2.setColor(Color.WHITE);

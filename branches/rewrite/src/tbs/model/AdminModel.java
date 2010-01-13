@@ -3,6 +3,7 @@
 
 package tbs.model;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -42,16 +43,16 @@ public class AdminModel implements TBSModel
 	private Prompt prompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType, Properties> propertiesMap;
+	private String name;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
 	private Boolean hasArrows;
 	private List<Student> students;
-	private String currentStudentName;
 	
 	public AdminModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
-			List<String[]> students, Map<PropertyType, Properties> propertiesMap) {
+			List<String> students, Map<PropertyType, Properties> propertiesMap) {
 		applet = app;
 		this.propertiesMap = propertiesMap;
 		buttons = TBSButtonType.getButtons(true);
@@ -60,7 +61,7 @@ public class AdminModel implements TBSModel
 		createModelElements(g2, organismNameToImage);
 		createStudents(g2, students);
 		Student firstStudent = this.students.get(0);
-		currentStudentName = firstStudent.getName();
+		name = firstStudent.getName();
 		hasArrows = firstStudent.getHasArrows();
 		if(!"".equals(firstStudent.getTree()))
 			loadTree(firstStudent.getTree());
@@ -74,15 +75,64 @@ public class AdminModel implements TBSModel
 	
 	public void changeSavedTree(int studentIndex){
 		Student selectedStudent = students.get(studentIndex);
-		currentStudentName = selectedStudent.getName();
+		name = selectedStudent.getName();
 		hasArrows = selectedStudent.getHasArrows();
 		if(!"".equals(selectedStudent.getTree()))
 			loadTree(selectedStudent.getTree());
+		else
+			resetModel();
 		setQuestion(selectedStudent.getQ1(), OpenQuestionButtonType.ONE);
 		setQuestion(selectedStudent.getQ2(), OpenQuestionButtonType.TWO);
 		setQuestion(selectedStudent.getQ3(), OpenQuestionButtonType.THREE);
 	}
-
+	
+	public void resetModel(){
+		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
+			removeFromTree(modelElements.get(modelElements.size()-1));
+		List<Node> inTreeElements = inTreeElements();
+		for(Node n : inTreeElements){
+			removeFromTree(n);
+		}
+	}
+	
+	public void removeFromTree(ModelElement m){
+		if(m == null)
+			return;
+		if(m.equals(immortalEmptyNode)){
+			immortalEmptyNode.setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX,
+					TBSGraphics.emptyNodeUpperY));
+			return;
+		}
+		if(m instanceof Node){
+			Node n = (Node) m;
+			unlink(n);
+			if(n instanceof OrganismNode){
+				n.setInTree(false);
+				((OrganismNode) n).resetPosition();
+				return;
+			}
+		}else{
+			Connection c = (Connection) m;
+			c.getFrom().getConnectedTo().remove(c.getTo());
+			c.getTo().getConnectedFrom().remove(c.getFrom());
+		}
+		modelElements.remove(m);
+	}
+	
+	/**
+	* Unlink had to live in Model when connections were
+	* one-way. Now, this simply calls the Node-based two-way unlink.
+	*/
+	public void unlink(Node n)
+	{
+		List<Connection> connections = getConnectionsByNode(n);
+		for(Connection c : connections){
+			c.getFrom().getConnectedTo().remove(c.getTo());
+			c.getTo().getConnectedFrom().remove(c.getFrom());
+			modelElements.remove(c);
+		}
+	}
+	
 	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
 	}
@@ -213,11 +263,11 @@ public class AdminModel implements TBSModel
 	
 	public void createButtons(Graphics2D g2)
 	{
-		Point buttonBounds = TBSGraphics.get2DStringBounds(g2,
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,
 				Arrays.asList(buttons));
-		TBSGraphics.buttonsWidth = buttonBounds.x + 
+		TBSGraphics.buttonsWidth = buttonDimensions.width + 
 				TBSGraphics.buttonsXPadding * 2;
-		TBSGraphics.buttonsHeight = buttonBounds.y + 
+		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
 		TBSGraphics.questionButtonsStart = (applet.getWidth()/2) - (TBSGraphics.buttonsWidth/2);
 	}
@@ -227,14 +277,14 @@ public class AdminModel implements TBSModel
 				TreeMap<String, BufferedImage> organismNameToImage) {
 		EmptyNode.g2 = g2;
 		int currentY = TBSGraphics.buttonsHeight + 10;
-		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
-		Point imageBounds = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
-		TBSGraphics.organismNodeWidth = stringBounds.x + imageBounds.x + 
+		Dimension stringDimensions = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
+		Dimension imageDimensions = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
+		TBSGraphics.organismNodeWidth = stringDimensions.width + imageDimensions.width + 
 				TBSGraphics.paddingWidth * 2;
-		if(stringBounds.y > imageBounds.y)
-			TBSGraphics.organismNodeHeight = stringBounds.y;
+		if(stringDimensions.height > imageDimensions.height)
+			TBSGraphics.organismNodeHeight = stringDimensions.height;
 		else
-			TBSGraphics.organismNodeHeight = imageBounds.y;
+			TBSGraphics.organismNodeHeight = imageDimensions.height;
 		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
 			addElement(new OrganismNode( getSerial(), e.getKey(), 
 				new Point(0, currentY), e.getValue()));
@@ -254,10 +304,10 @@ public class AdminModel implements TBSModel
 		addElement(immortalEmptyNode);
 	}
 	
-	protected void createStudents(Graphics2D g2, List<String[]>  studentStringArrays) {
+	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
 		int currentY = 0;
 		students = new LinkedList<Student>();
-		for(String[] studentStringSrray : studentStringArrays){
+		for(String studentStringSrray : studentStringArrays){
 			Student temp = new Student(g2, studentStringSrray);
 			students.add(temp);
 			if(temp.getWidth() > TBSGraphics.studentNodeWidth) 
@@ -493,6 +543,9 @@ public class AdminModel implements TBSModel
 		}
 	}
 
+	public String getName(){ return name;}
+	public void setName(String name){this.name = name;}
+	
 	public TextEntryBox getTextEntryBox() {
 		return textEntryBox;
 	}
@@ -523,10 +576,6 @@ public class AdminModel implements TBSModel
 
 	public void setHasArrows(Boolean hasArrows) {
 		this.hasArrows = hasArrows;
-	}
-
-	public String getCurrentStudentName() {
-		return currentStudentName;
 	}
 
 }

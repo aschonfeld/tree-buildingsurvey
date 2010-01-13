@@ -3,6 +3,7 @@
 
 package tbs.model;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -53,10 +54,11 @@ public class StudentModel implements TBSModel
 	private SplashPrompt splashPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType,Properties> propertiesMap;
+	private Map<TBSButtonType, Boolean> buttonStates;
+	private String name;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
-	private Map<TBSButtonType, Boolean> buttonStates;
 	private Boolean hasArrows;
 	public StudentModel(TBSApplet app, String savedTree, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
@@ -280,16 +282,16 @@ public class StudentModel implements TBSModel
 	
 	public void createButtons(Graphics2D g2)
 	{
-		Point buttonBounds = TBSGraphics.get2DStringBounds(g2,
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,
 				Arrays.asList(buttons));
-		TBSGraphics.buttonsWidth = buttonBounds.x + 
+		TBSGraphics.buttonsWidth = buttonDimensions.width + 
 				TBSGraphics.buttonsXPadding * 2;
-		TBSGraphics.buttonsHeight = buttonBounds.y + 
+		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
 		
-		buttonBounds = TBSGraphics.get2DStringBounds(g2,
+		buttonDimensions = TBSGraphics.get2DStringBounds(g2,
 				Arrays.asList(OpenQuestionButtonType.values()));
-		TBSGraphics.questionButtonsWidth = buttonBounds.x + 
+		TBSGraphics.questionButtonsWidth = buttonDimensions.width + 
 				TBSGraphics.buttonsXPadding * 2;
 	}
 	
@@ -298,14 +300,14 @@ public class StudentModel implements TBSModel
 				TreeMap<String, BufferedImage> organismNameToImage) {
 		EmptyNode.g2 = g2;
 		int currentY = TBSGraphics.buttonsHeight + 10;
-		Point stringBounds = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
-		Point imageBounds = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
-		TBSGraphics.organismNodeWidth = stringBounds.x + imageBounds.x + 
+		Dimension stringDimensions = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
+		Dimension imageDimensions = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
+		TBSGraphics.organismNodeWidth = stringDimensions.width + imageDimensions.width + 
 				TBSGraphics.paddingWidth * 2;
-		if(stringBounds.y > imageBounds.y)
-			TBSGraphics.organismNodeHeight = stringBounds.y;
+		if(stringDimensions.height > imageDimensions.height)
+			TBSGraphics.organismNodeHeight = stringDimensions.height;
 		else
-			TBSGraphics.organismNodeHeight = imageBounds.y;
+			TBSGraphics.organismNodeHeight = imageDimensions.height;
 		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
 			addElement(new OrganismNode( getSerial(), e.getKey(), 
 				new Point(0, currentY), e.getValue()));
@@ -684,6 +686,9 @@ public class StudentModel implements TBSModel
 			return;
 		}
 	}
+	
+	public String getName(){ return name;}
+	public void setName(String name){this.name = name;}
 
 	public Map<TBSButtonType, Boolean> getButtonStates() {
 		return buttonStates;

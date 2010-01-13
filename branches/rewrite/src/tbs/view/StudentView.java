@@ -37,6 +37,7 @@ import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 import tbs.view.prompt.OpenQuestionPrompt;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.SplashPrompt;
 
 /**
 * TBSView contains the logic for rendering the information contained in
@@ -393,8 +394,10 @@ public class StudentView extends TBSView implements Printable {
 			g2.setStroke(new BasicStroke());
 		}else
 			prompt.paintComponent(g2);
-		renderButtons(g2);
-		renderScreenString(g2);
+		if(!(prompt instanceof SplashPrompt)){
+			renderButtons(g2);
+			renderScreenString(g2);
+		}
 		setCursor(cursor);
 		if(tooltipString != null){
 			renderTooltip(g2);

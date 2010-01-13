@@ -196,6 +196,5 @@ public class AdminController extends TBSController
 		if(studentIndex >= model.getStudents().size())
 			return;
 		model.changeSavedTree(studentIndex);
-		view.refreshGraphics();
     }
 }

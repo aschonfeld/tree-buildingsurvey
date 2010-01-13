@@ -46,6 +46,10 @@ public interface TBSModel
 	
 	void setQuestion(String s, OpenQuestionButtonType b);
 	
+	String getName();
+	
+	void setName(String name);
+	
 	String exportTree();
 	
 	Properties getProperties(PropertyType pt);
