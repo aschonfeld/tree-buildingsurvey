@@ -543,8 +543,20 @@ public class AdminModel implements TBSModel
 		}
 	}
 
-	public String getName(){ return name;}
-	public void setName(String name){this.name = name;}
+	public String getName(){
+		if(name != null && name != ""){
+			String[] splitName = name.split(",");
+			StringBuffer nameBuffer = new StringBuffer();
+			for(int i=(splitName.length-1);i>=0;i--)
+				nameBuffer.append(splitName[i]).append(" ");
+			return nameBuffer.toString().trim();
+		}else
+			return "";
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
 	
 	public TextEntryBox getTextEntryBox() {
 		return textEntryBox;

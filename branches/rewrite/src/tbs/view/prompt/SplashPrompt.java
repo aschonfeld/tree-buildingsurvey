@@ -75,12 +75,8 @@ public class SplashPrompt extends Prompt
 		int width = renderStart ? 750 : 800;
 		promptSize.setSize(width + padding.width * 2, 0);
 		if(renderStart){
-			String[] splitName = model.getName().split(",");
-			StringBuffer name = new StringBuffer();
-			for(int i=(splitName.length-1);i>=0;i--)
-				name.append(splitName[i]).append(" ");
 			List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,
-					String.format(instrProps.getProperty("instrIntro"),name.toString().trim()),
+					String.format(instrProps.getProperty("instrIntro"),model.getName()),
 					promptSize.width - padding.width * 2);
 			List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
 					instrProps.getProperty("instrDir"),
