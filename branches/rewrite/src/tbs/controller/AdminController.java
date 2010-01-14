@@ -189,6 +189,7 @@ public class AdminController extends TBSController
 			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.ONE));
 			break;
 		}
+		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }	
     
     private void handleStudentPressed(int x, int y) {
@@ -196,5 +197,6 @@ public class AdminController extends TBSController
 		if(studentIndex >= model.getStudents().size())
 			return;
 		model.changeSavedTree(studentIndex);
+		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

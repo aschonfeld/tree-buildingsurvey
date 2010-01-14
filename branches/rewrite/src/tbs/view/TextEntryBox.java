@@ -108,7 +108,7 @@ public class TextEntryBox {
 		int upperY = node.getAnchorPoint().y - yOffset;
 		Dimension d;
 		TextLayout layout;
-		if(!(name == null || name == "")){
+		if(ableToBeLayout(name)){
 			layout = new TextLayout(name, g2.getFont(), g2.getFontRenderContext());
 			Rectangle2D bounds = layout.getBounds();
 			d = new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
@@ -133,15 +133,22 @@ public class TextEntryBox {
 		// calculate dimensions of String s
 		x = leftX + TBSGraphics.emptyNodePadding;
 		y = upperY + height - TBSGraphics.emptyNodePadding;
-		// if width or height is 0, do not center along that axis
-		String beforeCursor = name.substring(0, cursorIndex);
-		layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
-		layout.draw(g2, x, y);
-		int cursorX = x + ((int) layout.getBounds().getWidth()) + 2;
-		if(cursorIndex < name.length()){
+		boolean cursorWithinName = cursorIndex < name.length()-1;
+		String beforeCursor = cursorWithinName ? name.substring(0, cursorIndex) : name;
+		int cursorX = x;
+		if(ableToBeLayout(beforeCursor)){
+			layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
+			layout.draw(g2, x, y);
+			cursorX += ((int) layout.getBounds().getWidth() + 2);
+		}
+		else
+			cursorX += 2;
+		if(cursorWithinName){
 			String afterCursor = name.substring(cursorIndex);
-			layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
-			layout.draw(g2, cursorX + cursorWidth, y);
+			if(ableToBeLayout(afterCursor)){
+				layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
+				layout.draw(g2, cursorX + cursorWidth, y);
+			}
 		}
 		
 		renderCursor(g2, new Point(cursorX, upperY), new Point(cursorWidth, height));
@@ -153,8 +160,8 @@ public class TextEntryBox {
 		g2.drawRect(leftX, upperY, boxWidth, height);
 	}
 	
-	public void drawBorder(int x, int y, int width, int height) {
-		
+	public boolean ableToBeLayout(String s){
+		return (s != null && s != "" && s.length() != 0);
 	}
 	
 }

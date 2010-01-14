@@ -520,6 +520,7 @@ public class StudentController extends TBSController
 			break;
 		}
 		setSelectedElement(null);
+		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
     private void handleMouseQuestionPressed(int x, int y) {
@@ -539,6 +540,7 @@ public class StudentController extends TBSController
 			break;
 		}
 		setSelectedElement(null);
+		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
     //@Override

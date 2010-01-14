@@ -176,21 +176,22 @@ public class StudentView extends TBSView implements Printable {
 			g2.setColor(TBSGraphics.emptyNodeColor);
 			Rectangle yAdjust = en.getRectangle();
 			yAdjust.setLocation(yAdjust.x, yAdjust.y - yOffset);
-			if(me != model.getImmortalEmptyNode()) 
-				g2.fill(yAdjust);
-			else{
-				int stringAreaLeftX = TBSGraphics.emptyNodeLeftX + TBSGraphics.emptyNodeWidth + TBSGraphics.paddingWidth;
-				TBSGraphics.drawCenteredString(g2, TBSGraphics.immortalNodeLabel,
-						stringAreaLeftX, TBSGraphics.emptyNodeUpperY,
-						TBSGraphics.immortalNodeLabelWidth, TBSGraphics.emptyNodeHeight,
-						TBSGraphics.emptyNodeColor);
-				g2.fill(en.getRectangle());
-			}
 			if(en.isBeingLabeled())
-					model.getTextEntryBox().renderTextEntryBox(g2, yOffset);
-			else
+				model.getTextEntryBox().renderTextEntryBox(g2, yOffset);
+			else{
+				if(me != model.getImmortalEmptyNode()){
+					g2.fill(yAdjust);
 					TBSGraphics.drawCenteredString(g2, name, en.getX(),
-						en.getY() - yOffset, en.getWidth(), en.getHeight());
+							en.getY() - yOffset, en.getWidth(), en.getHeight());
+				}else{
+					int stringAreaLeftX = TBSGraphics.emptyNodeLeftX + TBSGraphics.emptyNodeWidth + TBSGraphics.paddingWidth;
+					TBSGraphics.drawCenteredString(g2, TBSGraphics.immortalNodeLabel,
+							stringAreaLeftX, TBSGraphics.emptyNodeUpperY,
+							TBSGraphics.immortalNodeLabelWidth, TBSGraphics.emptyNodeHeight,
+							TBSGraphics.emptyNodeColor);
+					g2.fill(en.getRectangle());
+				}
+			}
 			
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
@@ -208,7 +209,7 @@ public class StudentView extends TBSView implements Printable {
 	}
 	
 	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
-		Color stringColor = TBSGraphics.organismStringColor;
+		Color stringColor = on.isInTree() ? TBSGraphics.organismBoxColor : TBSGraphics.organismStringColor;
 		int stringWidth = 0;
 		int imageWidth = 0;
 		int imageStartX = 0;
@@ -217,24 +218,24 @@ public class StudentView extends TBSView implements Printable {
 		// center image and text
 		int imageXOffset = (TBSGraphics.organismNodeWidth - imageWidth - stringWidth) / 2;
 		imageStartX = on.getDefaultPoint().x + imageXOffset;
-		if(on.isInTree()) {
-			stringColor = TBSGraphics.organismBoxColor;
+		int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
+		int stringAreaWidth = stringWidth;
+		int stringAreaUpperY = on.getDefaultPoint().y;
+		int stringAreaHeight = TBSGraphics.organismNodeHeight;
+		g2.setColor(on.isInTree() ? TBSGraphics.organismStringColor : TBSGraphics.organismBoxColor);
+		if(!on.isInTree())
+			g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getDefaultWidth(), on.getDefaultHeight());
+		TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight, stringColor);
+		g2.drawImage(on.getImage(), imageStartX, on.getDefaultPoint().y, null);
+		if(on.isInTree())
 			g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
-		} else {
+		else {
 			// organism is being dragged for possible addition to tree
 			if(on.getX() > 0) {
 				g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
 				return;
 			}
 		}
-		int stringAreaLeftX = imageStartX + imageWidth + TBSGraphics.paddingWidth;
-		int stringAreaWidth = stringWidth;
-		int stringAreaUpperY = on.getDefaultPoint().y;
-		int stringAreaHeight = TBSGraphics.organismNodeHeight;
-		g2.setColor(on.isInTree() ? TBSGraphics.organismStringColor : TBSGraphics.organismBoxColor);
-		g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getDefaultWidth(), on.getDefaultHeight());
-		TBSGraphics.drawCenteredString(g2, on.getName(), stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight, stringColor);
-		g2.drawImage(on.getImage(), imageStartX, on.getDefaultPoint().y, null);
 	}
 	
 	public void renderSelectedModelElement(Graphics2D g2, ModelElement me){
