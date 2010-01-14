@@ -63,3 +63,15 @@ Andrew, if you agree that you're the lead on "develop build system", please eras
 
 
 10/08 - I'm checking off two of the items for today as done. We have finite schedule items under "client meeting" (develop user stories) and "build" (local builds by Tuesday), and a terminal date for the refactor track (11/05). As for the vision statement, we have one. It's probably not one that will be signed off on, so it still needs work, but it's there. Next step is to make it approvable by next Thursday. <br>
+
+1/14/09 - (From Brian White) Here are the deadlines for the survey:
+<ul>
+  <li>I will get you a list of student names and ID#s (to use as passwords) by Feb 1</li>
+  <li>Students will start doing the survey on Friday Feb 5</li>
+  <li>Students must complete the survey by noon on monday feb 8</li>
+  <li>On mon feb 8, I will need to be able to:</li>
+    <ul>
+      <li>view any survey I like and print it as a pdf</li>
+      <li>get a list of which students completed the survey</li>
+    </ul>
+</ul>
