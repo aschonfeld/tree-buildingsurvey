@@ -36,7 +36,6 @@ public enum OpenQuestionPromptButtonType {
 		return value;
 	}
 	
-	@Override
 	public String toString(){
 		return text;
 	}

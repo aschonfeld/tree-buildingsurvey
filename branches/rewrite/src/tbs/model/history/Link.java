@@ -12,12 +12,10 @@ public class Link extends Command{
 		this.connection = connection;
 	}
 	
-	@Override
 	public void execute(StudentModel model) {
 		
 	}
 
-	@Override
 	public void undo(StudentModel model) {
 		System.out.println("Undoing link command.");
 		int index = model.findIndexByElement(connection);
@@ -30,7 +28,6 @@ public class Link extends Command{
 		}
 	}
 
-	@Override
 	public String toString() {
 		return "Link";
 	}

@@ -168,7 +168,6 @@ public abstract class Node extends ModelElement implements Cloneable
 	*	improved.
 	*	Make suggestions. 
 	*/
-	@Override
 	public String dump()
 	{
 		String ret;
@@ -252,7 +251,6 @@ public abstract class Node extends ModelElement implements Cloneable
 	* Returns true if this Node overlaps another ModelElement. Should be
 	* able to deal with Connections, but I haven't checked. 
 	*/	
-	@Override
 	public boolean collidesWith(ModelElement m) {		
 		if(m instanceof Node)
 			return ((Node) m).getPaddedRectangle().intersects(getRectangle()); 
@@ -263,7 +261,6 @@ public abstract class Node extends ModelElement implements Cloneable
 	* Returns true if the point indicated is within the object's
 	* boundaries. 
 	*/
-	@Override
 	public boolean contains(int x, int y) {
 		return this.getRectangle().contains(new Point(x,y));
 	}
@@ -272,7 +269,6 @@ public abstract class Node extends ModelElement implements Cloneable
 		return new Point(anchorPoint.x + (getWidth()/2),anchorPoint.y + (getHeight()/2));	
 	}
 	
-	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Node copy = (Node) super.clone();
 		copy.setName(getName());

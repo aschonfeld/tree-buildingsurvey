@@ -426,7 +426,6 @@ public class StudentView extends TBSView implements Printable {
 		setCursor(cursor);
 	}	
 	
-	//@Override
 	public int print(Graphics g, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
 		if (pageIndex > 0) {

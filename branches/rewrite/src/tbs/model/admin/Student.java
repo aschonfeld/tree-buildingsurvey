@@ -37,7 +37,6 @@ public class Student {
 		height = d.height;
 	}
 	
-	@Override
 	public String toString(){
 		return name;
 	}

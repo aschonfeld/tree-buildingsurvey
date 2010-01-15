@@ -50,18 +50,14 @@ public class AdminController extends TBSController
  		});
     }
 	
-//	@Override
 	public void handleMousePressed(int x, int y) {
 		handleStudentPressed(x, y);		
 	}
 
-//	@Override
 	public void keyPressed(KeyEvent arg0) {}
 
-//	@Override
 	public void keyReleased(KeyEvent arg0) {}
 
-//	@Override
 	public void keyTyped(KeyEvent arg0) {}
 		
 	public void mouseEntered(MouseEvent e){}
@@ -172,7 +168,6 @@ public class AdminController extends TBSController
 	    return topElement;
 	}   
 
-	@Override
     public void handleMouseButtonPressed(int x, int y) {
     	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
 		if(buttonIndex >= model.getButtons().length)

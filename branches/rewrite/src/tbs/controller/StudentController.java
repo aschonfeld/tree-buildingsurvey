@@ -457,7 +457,6 @@ public class StudentController extends TBSController
 		cancelLabel();
     }
     
-    //@Override
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
@@ -549,7 +548,6 @@ public class StudentController extends TBSController
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
-    //@Override
     public void handleMousePressed(int x, int y) {
     	ModelElement clickedElement = elementMouseIsOver(x, y);
     	// clicking on empty space always cancels connection

@@ -11,12 +11,10 @@ public class Add extends Command{
 		this.node = node;
 	}
 
-	@Override
 	public void execute(StudentModel model){
 		model.addToTree(node);	
 	}
 	
-	@Override
 	public void undo(StudentModel model) {
 		System.out.println("Undoing add command.");
 		int index = model.findIndexByElement(node);
@@ -24,7 +22,6 @@ public class Add extends Command{
 			model.removeFromTree(model.getElement(index));		
 	}
 
-	@Override
 	public String toString() {
 		return "Add";
 	}

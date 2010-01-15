@@ -726,7 +726,6 @@ public class StudentModel implements TBSModel
 		this.admin = admin;
 	}
 
-//	@Override
 	public TBSButtonType[] getButtons() {
 		return buttons;
 	}

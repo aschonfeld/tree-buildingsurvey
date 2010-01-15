@@ -24,14 +24,12 @@ public class Drag extends Command{
 
 	public void setPointAfter(Point pointAfter) {this.pointAfter = pointAfter;}
 
-	@Override
 	public void execute(StudentModel model){
 		int index = model.findIndexById(nodeId);
 		if(index >= 0)
 			((Node) model.getElement(index)).setAnchorPoint(pointAfter);
 	}
 	
-	@Override
 	public void undo(StudentModel model) {
 		System.out.println("Undoing drag command.");
 		int index = model.findIndexById(nodeId);
@@ -39,7 +37,6 @@ public class Drag extends Command{
 			((Node) model.getElement(index)).setAnchorPoint(pointBefore);		
 	}
 
-	@Override
 	public String toString() {
 		return "Drag";
 	}

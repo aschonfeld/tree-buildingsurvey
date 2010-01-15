@@ -30,7 +30,6 @@ public enum OpenQuestionButtonType {
 		return radio;
 	}
 	
-	@Override
 	public String toString(){
 		return text;
 	}

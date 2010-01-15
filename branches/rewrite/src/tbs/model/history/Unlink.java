@@ -48,7 +48,6 @@ public class Unlink extends Command{
 		this.node = node;
 	}
 
-	@Override
 	public void execute(StudentModel model) {
 		if(node != null){
 			for(Connection c : connections){
@@ -64,7 +63,6 @@ public class Unlink extends Command{
 		}
 	}
 
-	@Override
 	public void undo(StudentModel model) {
 		System.out.println("Undoing unlink command.");
 		int index;
@@ -83,7 +81,6 @@ public class Unlink extends Command{
 		}
 	}
 
-	@Override
 	public String toString() {
 		if(node != null)
 			return "Node Unlink";

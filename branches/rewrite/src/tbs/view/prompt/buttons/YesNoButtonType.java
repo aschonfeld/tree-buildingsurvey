@@ -22,7 +22,6 @@ public enum YesNoButtonType {
 		return value;
 	}
 	
-	@Override
 	public String toString(){
 		return text;
 	}

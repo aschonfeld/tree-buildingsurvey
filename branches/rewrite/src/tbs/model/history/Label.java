@@ -29,7 +29,6 @@ public class Label extends Command{
 		return labelBefore;
 	}
 
-	@Override
 	public void execute(StudentModel model){
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
@@ -39,7 +38,6 @@ public class Label extends Command{
 		}
 	}
 	
-	@Override
 	public void undo(StudentModel model) {
 		System.out.println("Undoing label command.");
 		int index = model.findIndexById(nodeId);
@@ -50,7 +48,6 @@ public class Label extends Command{
 		}
 	}
 
-	@Override
 	public String toString() {
 		return "Label";
 	}

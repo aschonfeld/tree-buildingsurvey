@@ -74,7 +74,6 @@ public enum TBSButtonType {
 		return cursorVariant;
 	}
 	
-	@Override
 	public String toString(){
 		return text;
 	}

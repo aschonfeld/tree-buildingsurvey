@@ -45,7 +45,6 @@ public class Connection extends ModelElement implements Cloneable
 	/**
 	* Returns true for a point on the line, as determined algebraically
 	*/
-	@Override
 	public boolean contains(int x, int y)
 	{
 		double dist = Math.abs(TBSUtils.getConnectionBounds(from, to).ptSegDist(new Point(x, y)));
@@ -53,10 +52,8 @@ public class Connection extends ModelElement implements Cloneable
 
 	}
 
-	@Override
 	public boolean collidesWith(ModelElement e) {return false;}
 	
-	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Connection copy = (Connection) super.clone();
 		copy.setTo((Node) to.clone());
@@ -64,7 +61,6 @@ public class Connection extends ModelElement implements Cloneable
 		return copy;
 	}
 
-	@Override
 	public String dump() {
 		String ret = "C:%d:%d:%d";
 		return String.format(ret, this.getId(), this.from.getId(), this.to.getId());

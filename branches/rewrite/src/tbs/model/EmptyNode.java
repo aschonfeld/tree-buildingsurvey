@@ -79,9 +79,7 @@ public class EmptyNode extends Node
 		//setHeight(height);		
 	}
 
-	@Override
 	public boolean isBeingLabeled() {return beingLabeled;}
 
-	@Override
 	public void setBeingLabeled(boolean beingLabeled) {this.beingLabeled = beingLabeled;}	
 }

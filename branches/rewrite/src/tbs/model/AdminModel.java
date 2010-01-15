@@ -574,12 +574,10 @@ public class AdminModel implements TBSModel
 		this.admin = admin;
 	}
 
-	//@Override
 	public TBSButtonType[] getButtons() {
 		return buttons;
 	}
 
-//	@Override
 	public Boolean isButtonActive(TBSButtonType b) {return false;}
 	
 	public Boolean hasArrows() {

@@ -42,12 +42,10 @@ public class Delete extends Command{
 		this.elementConnections = elementConnections;
 	}
 
-	@Override
 	public void execute(StudentModel model){
 		model.removeFromTree(modelElement);
 	}
 	
-	@Override
 	public void undo(StudentModel model) {
 		if(twoWayConnection != null){
 			System.out.println("Undoing two-way connection delete command.");
@@ -84,7 +82,6 @@ public class Delete extends Command{
 		}
 	}
 
-	@Override
 	public String toString() {
 		if(twoWayConnection != null)
 			return "Two-way Connection Delete";
