@@ -90,7 +90,7 @@ public class StudentController extends TBSController
 				cancelLabel();
 				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
 				System.out.println("Added command(label) to history.");
-				setSelectedElement(null);
+				unselectPrevious();
 				buttonClicked = TBSButtonType.SELECT;
 			}else
 				model.getTextEntryBox().keyPressed(e);
@@ -145,22 +145,19 @@ public class StudentController extends TBSController
 				}
 			}
 		} else if(!view.isTooltipRunning() || buttonClicked.isCursorVariant()) {
-			ModelElement m = elementMouseIsOver(x,y);
-			if(m != null && m instanceof Node){
-				Node n = (Node) m;
-				if(n.isInTree()){
-					if(TBSButtonType.UNLINK.equals(buttonClicked)){
-						if(n.getConnectedTo().size() == 0 &&
-								n.getConnectedFrom().size() == 0)
-							c = DragSource.DefaultMoveNoDrop;
-					}
-					if(n instanceof OrganismNode){
-						if(TBSButtonType.LABEL.equals(buttonClicked))
-							c = DragSource.DefaultMoveNoDrop;
-						OrganismNode o = (OrganismNode) m;
-						view.updateTooltip(o.getName(),
-								new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
-					}
+			Node n = elementMouseIsHoveringOver(x,y);
+			if(n != null){
+				if(TBSButtonType.UNLINK.equals(buttonClicked)){
+					if(n.getConnectedTo().size() == 0 &&
+							n.getConnectedFrom().size() == 0)
+						c = DragSource.DefaultMoveNoDrop;
+				}
+				if(n instanceof OrganismNode){
+					if(TBSButtonType.LABEL.equals(buttonClicked))
+						c = DragSource.DefaultMoveNoDrop;
+					OrganismNode o = (OrganismNode) n;
+					view.updateTooltip(o.getName(),
+							new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
 				}
 			}
 		}
@@ -240,7 +237,7 @@ public class StudentController extends TBSController
 			handleMousePressed(x, y);
 		} else {
 			clearCurrentActions();
-			setSelectedElement(null);
+			unselectPrevious();
 		}
 	}
 	
@@ -296,7 +293,8 @@ public class StudentController extends TBSController
 			//Node dragged to point out of bounds
 			modifyOutOfBounds(draggedNode);
 			List<Node> inTreeElements = model.inTreeElements();
-			if(!draggedNode.isInTree()) draggedNode.setY(draggedNode.getY() + view.getYOffset());
+			if(!draggedNode.isInTree())
+				draggedNode.setY(draggedNode.getY() + view.getYOffset());
 			for(Node n : inTreeElements){
 				if(!n.equals(draggedNode) && draggedNode.collidesWith(n)){
 					draggedNode.setX(lastPosition.x);
@@ -304,16 +302,14 @@ public class StudentController extends TBSController
 					break;
 				}
 			}
-			
-			if (draggedNode.getX() < TBSGraphics.LINE_OF_DEATH ){
-				if(lastPosition.x < TBSGraphics.LINE_OF_DEATH && (model.getHistory().peek() instanceof Drag)){
+			if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH ){
+				if((lastPosition.x-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH && (model.getHistory().peek() instanceof Drag)){
 					model.removeActionFromHistory();
 					System.out.println("Invalid drag move removed from history.");
 				}
 				model.removeFromTree(draggedNode);
 			}else{
-				if (!draggedNode.isInTree() && draggedNode.getX() > TBSGraphics.LINE_OF_DEATH ) {
-					//draggedNode.setY(draggedNode.getY() + view.getYOffset());
+				if (!draggedNode.isInTree() && (draggedNode.getX()-draggedNode.getWidth()) > TBSGraphics.LINE_OF_DEATH ) {
 					model.addToTree(draggedNode); 
 				} else {
 					((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
@@ -344,14 +340,27 @@ public class StudentController extends TBSController
 		return maxIndex;
 	}
     
- //   @Override
+    public Node elementMouseIsHoveringOver(int x, int y){
+    	Node nodeHovered = null;
+	    int yOffset = 0;
+	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
+	    for (Node n : model.inTreeElements()) {
+		    if(n.contains(x, y + yOffset)){
+		    	nodeHovered = n;
+		    }
+		}
+	    
+	    return nodeHovered;
+    }
+    
     public ModelElement elementMouseIsOver(int x, int y) {
     	ModelElement topElement = null;
 	    List<ModelElement> selectedTwoWay = new LinkedList<ModelElement>();
 	    int yOffset = 0;
-	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
+	    if(x > TBSGraphics.LINE_OF_DEATH) 
+	    	yOffset = view.getYOffset(); 	    
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y + yOffset)){
+		    if(me.contains(x, y - yOffset)){
 		    	topElement = me;
 		    	if(me instanceof Connection)
 		    		selectedTwoWay.add(me);
@@ -365,19 +374,18 @@ public class StudentController extends TBSController
     
     
     private void modifyOutOfBounds(Node n){
-    	if(n.getX() < 0 )
-    		n.setX(0);
     	if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
     		n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
     	if(n.isInTree()) {
     		if(n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
     			n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    		if((n.getY()) > view.getHeight() + view.getYOffset())
+    		if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
     			n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
+    		
     	} else {
     		if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
     			n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    		if((n.getY()) > view.getHeight())
+    		if((n.getY() + n.getHeight()) > view.getHeight())
     			n.setY(view.getHeight()-n.getHeight());   		
     	}
     }
@@ -421,7 +429,6 @@ public class StudentController extends TBSController
     }
     
     private void setSelectedElement(ModelElement me) {
-    	unselectPrevious();
     	model.setSelectedModelElement(me);
         selectedElement = me;
     }
@@ -507,6 +514,7 @@ public class StudentController extends TBSController
 			}
 			break;
 		case UNDO:
+			unselectPrevious();
 			if(!model.getHistory().isEmpty()){
 				view.setScreenString(String.format(getStatus(TBSButtonType.UNDO), model.getHistory().peek().toString()));
 				model.removeActionFromHistory().undo(model);
@@ -519,7 +527,6 @@ public class StudentController extends TBSController
 			model.helpUser();
 			break;
 		}
-		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
@@ -539,7 +546,6 @@ public class StudentController extends TBSController
 			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.THREE));
 			break;
 		}
-		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
@@ -555,6 +561,14 @@ public class StudentController extends TBSController
 		clearCurrentActions();
     	switch (buttonClicked) {
 		case SELECT:
+			// default action unless return
+	    	if(clickedElement instanceof Node) {
+	    		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
+	    			setSelectedElement(clickedElement);
+	    		//else // organism node is not in tree, just unselect previous
+	    		//	unselectPrevious();
+			} else // default set selectedElement = clickedElement
+	    		setSelectedElement(clickedElement);	
 			break;
 		case ADD:
 			if(clickedElement == null) {
@@ -619,14 +633,6 @@ public class StudentController extends TBSController
 				creatingLabel((EmptyNode) clickedElement);
 			break;
 		}
-    	// default action unless return
-    	if(clickedElement instanceof Node) {
-    		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
-    			setSelectedElement(clickedElement);
-    		else // organism node is not in tree, just unselect previous
-    			unselectPrevious();
-		} else // default set selectedElement = clickedElement
-    		setSelectedElement(clickedElement);	
 	}		
     
     public String getStatus(TBSButtonType button){
