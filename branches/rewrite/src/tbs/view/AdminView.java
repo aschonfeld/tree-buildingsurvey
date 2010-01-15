@@ -174,22 +174,9 @@ public class AdminView extends TBSView {
 			g2.setColor(TBSGraphics.emptyNodeColor);
 			Rectangle yAdjust = en.getRectangle();
 			yAdjust.setLocation(yAdjust.x, yAdjust.y - yOffset);
-			if(me != model.getImmortalEmptyNode()) 
-				g2.fill(yAdjust);
-			else{
-				int stringAreaLeftX = TBSGraphics.emptyNodeLeftX + TBSGraphics.emptyNodeWidth + TBSGraphics.paddingWidth;
-				TBSGraphics.drawCenteredString(g2, TBSGraphics.immortalNodeLabel,
-						stringAreaLeftX, TBSGraphics.emptyNodeUpperY,
-						TBSGraphics.immortalNodeLabelWidth, TBSGraphics.emptyNodeHeight,
-						TBSGraphics.emptyNodeColor);
-				g2.fill(en.getRectangle());
-			}
-			if(en.isBeingLabeled())
-					model.getTextEntryBox().renderTextEntryBox(g2, yOffset);
-			else
-					TBSGraphics.drawCenteredString(g2, name, en.getX(),
+			g2.fill(yAdjust);
+			TBSGraphics.drawCenteredString(g2, name, en.getX(),
 						en.getY() - yOffset, en.getWidth(), en.getHeight());
-			
 		}else if(me instanceof Connection){
 			Connection c = (Connection) me;
 			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 

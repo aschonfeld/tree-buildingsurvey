@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ public class AdminModel implements TBSModel
 	private TBSController controller;
 	private TBSButtonType[] buttons;
 	private List<ModelElement> modelElements;
-	private EmptyNode immortalEmptyNode;
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
@@ -98,11 +96,6 @@ public class AdminModel implements TBSModel
 	public void removeFromTree(ModelElement m){
 		if(m == null)
 			return;
-		if(m.equals(immortalEmptyNode)){
-			immortalEmptyNode.setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX,
-					TBSGraphics.emptyNodeUpperY));
-			return;
-		}
 		if(m instanceof Node){
 			Node n = (Node) m;
 			unlink(n);
@@ -257,10 +250,6 @@ public class AdminModel implements TBSModel
 		modelElements.set(i, me);
 	}
 
-	public EmptyNode getImmortalEmptyNode() {
-		return immortalEmptyNode;
-	}
-	
 	public void createButtons(Graphics2D g2)
 	{
 		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,
@@ -295,13 +284,6 @@ public class AdminModel implements TBSModel
 		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
 		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
-		/*
-		 * If you use this line it will make the positioning of the immortal node
-		 * like the default positioning of an organism node
-		 */		
-		//TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.ySpacing;
-		immortalEmptyNode = new EmptyNode(getSerial());
-		addElement(immortalEmptyNode);
 	}
 	
 	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
@@ -410,7 +392,6 @@ public class AdminModel implements TBSModel
 	public void loadTree(String tree)
 	{
 		List<ModelElement> savedTree = new LinkedList<ModelElement>();
-		EmptyNode savedImmortalEmptyNode = null;
 		String[] treeItems = tree.split("#");
 		for(String item : treeItems)
 		{
@@ -419,9 +400,8 @@ public class AdminModel implements TBSModel
 				savedTree.add(loadOrganismNode(data));
 			else if (data[0].equals("E")){
 				ModelElement temp = loadEmptyNode(data);
-				if(!((EmptyNode) temp).isInTree())
-					savedImmortalEmptyNode = (EmptyNode) temp;
-				savedTree.add(temp);
+				if(((EmptyNode) temp).isInTree())
+					savedTree.add(temp);
 			}else if (data[0].equals("C"))
 				savedTree.add(loadConnection(data));
 			else
@@ -430,16 +410,10 @@ public class AdminModel implements TBSModel
 				break;
 			}
 		}
-		Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
-			public int compare( ModelElement o1, ModelElement o2 ) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		};
 
 		// Sort the local list
-		Collections.sort(savedTree, elementIdComparator);
+		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
 		modelElements = savedTree;
-		immortalEmptyNode = savedImmortalEmptyNode;
 		System.out.println("loadTree: end");
 	}
 
@@ -544,14 +518,7 @@ public class AdminModel implements TBSModel
 	}
 
 	public String getName(){
-		if(name != null && name != ""){
-			String[] splitName = name.split(",");
-			StringBuffer nameBuffer = new StringBuffer();
-			for(int i=(splitName.length-1);i>=0;i--)
-				nameBuffer.append(splitName[i]).append(" ");
-			return nameBuffer.toString().trim();
-		}else
-			return "";
+		return name;
 	}
 	
 	public void setName(String name){

@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -569,14 +568,9 @@ public class StudentModel implements TBSModel
 				break;
 			}
 		}
-		Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
-			public int compare( ModelElement o1, ModelElement o2 ) {
-				return o1.getId().compareTo(o2.getId());
-			}
-		};
-
+	
 		// Sort the local list
-		Collections.sort(savedTree, elementIdComparator);
+		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
 		modelElements = savedTree;
 		immortalEmptyNode = savedImmortalEmptyNode;
 		System.out.println("loadTree: end");

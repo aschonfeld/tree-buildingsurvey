@@ -12,9 +12,12 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import tbs.model.ModelElement;
 
 /**
 * This class encapsulates the constants used in graphics handling for
@@ -247,6 +250,12 @@ public class TBSGraphics {
 	* Starting x-coordinate of question buttons. Set in [TBSModel.???]
 	*/ 
 	public static int questionButtonsStart = 0;
+	
+	public static Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
+		public int compare( ModelElement o1, ModelElement o2 ) {
+			return o1.getId().compareTo(o2.getId());
+		}
+	};
 	
 	/**
 	* Returns the @Rectangle2D surrounding a piece of text

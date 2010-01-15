@@ -21,7 +21,7 @@ public class Student {
 	
 	public Student(Graphics2D g2, String studentDataString){
 		String[] studentData = studentDataString.split("\\+=");
-		name = studentData[0];
+		setName(studentData[0]);
 		lastUpdate = studentData[1];
 		tree = studentData[2];
 		q1 = studentData[3];
@@ -39,6 +39,17 @@ public class Student {
 	
 	public String toString(){
 		return name;
+	}
+	
+	public void setName(String nameInput){
+		if(nameInput != null && nameInput != ""){
+			String[] splitName = nameInput.split(",");
+			StringBuffer nameBuffer = new StringBuffer();
+			for(int i=(splitName.length-1);i>=0;i--)
+				nameBuffer.append(splitName[i]).append(" ");
+			name = nameBuffer.toString().trim();
+		}else
+			name = "";
 	}
 
 	public String getName() {

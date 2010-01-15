@@ -30,8 +30,6 @@ public interface TBSModel
 	
 	Boolean isButtonActive(TBSButtonType b);
 	
-	ModelElement getImmortalEmptyNode();
-	
 	List<ModelElement> getElements();
 	
 	Boolean hasArrows();
