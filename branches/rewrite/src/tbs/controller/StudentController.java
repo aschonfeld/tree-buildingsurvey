@@ -90,7 +90,7 @@ public class StudentController extends TBSController
 				cancelLabel();
 				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
 				System.out.println("Added command(label) to history.");
-				unselectPrevious();
+				setSelectedElement(null);
 				buttonClicked = TBSButtonType.SELECT;
 			}else
 				model.getTextEntryBox().keyPressed(e);
@@ -237,7 +237,7 @@ public class StudentController extends TBSController
 			handleMousePressed(x, y);
 		} else {
 			clearCurrentActions();
-			unselectPrevious();
+			setSelectedElement(null);
 		}
 	}
 	
@@ -368,6 +368,8 @@ public class StudentController extends TBSController
 		}
 	    if(selectedTwoWay.size() > 1)
 	    	model.setSelectedTwoWay(selectedTwoWay);
+	    else
+	    	model.setSelectedTwoWay(null);
 	    	
 	    return topElement;
 	}   
@@ -429,6 +431,7 @@ public class StudentController extends TBSController
     }
     
     private void setSelectedElement(ModelElement me) {
+    	unselectPrevious();
     	model.setSelectedModelElement(me);
         selectedElement = me;
     }
@@ -436,7 +439,6 @@ public class StudentController extends TBSController
     // unselect previously selected element, otherwise will keep green box
     private void unselectPrevious(){
     	model.setSelectedModelElement(null);
-    	model.setSelectedTwoWay(null);
     	selectedElement = null;
     }
  
@@ -487,9 +489,20 @@ public class StudentController extends TBSController
 				if(selectedElement instanceof Node){
 					model.unlink((Node) selectedElement);
 				}else{
-					Connection c = (Connection) selectedElement;
-					model.addActionToHistory(new Unlink((Connection) c.clone()));
-					model.removeFromTree(c);
+					if(model.getSelectedTwoWay() != null){
+						Unlink u = new Unlink();
+						for(ModelElement tw : model.getSelectedTwoWay()){
+							Connection c = (Connection) tw;
+							u.addConnection((Connection) c.clone());
+							model.removeFromTree(c);
+						}
+						model.addActionToHistory(u);
+						model.setSelectedTwoWay(null);
+					}else{
+						Connection c = (Connection) selectedElement;
+						model.addActionToHistory(new Unlink((Connection) c.clone()));
+						model.removeFromTree(c);
+					}
 				}
 			}catch(CloneNotSupportedException c){
 				System.out.println("Unable to add action to history.");
@@ -513,7 +526,6 @@ public class StudentController extends TBSController
 			}
 			break;
 		case UNDO:
-			unselectPrevious();
 			if(!model.getHistory().isEmpty()){
 				view.setScreenString(String.format(getStatus(TBSButtonType.UNDO), model.getHistory().peek().toString()));
 				model.removeActionFromHistory().undo(model);
@@ -526,6 +538,7 @@ public class StudentController extends TBSController
 			model.helpUser();
 			break;
 		}
+		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
@@ -545,6 +558,7 @@ public class StudentController extends TBSController
 			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.THREE));
 			break;
 		}
+		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
@@ -558,15 +572,7 @@ public class StudentController extends TBSController
 		}
 		clearCurrentActions();
     	switch (buttonClicked) {
-		case SELECT:
-			// default action unless return
-	    	if(clickedElement instanceof Node) {
-	    		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
-	    			setSelectedElement(clickedElement);
-	    		//else // organism node is not in tree, just unselect previous
-	    		//	unselectPrevious();
-			} else // default set selectedElement = clickedElement
-	    		setSelectedElement(clickedElement);	
+		case SELECT:	
 			break;
 		case ADD:
 			if(clickedElement == null) {
@@ -631,6 +637,14 @@ public class StudentController extends TBSController
 				creatingLabel((EmptyNode) clickedElement);
 			break;
 		}
+    	// default action unless return
+    	if(clickedElement instanceof Node) {
+    		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
+    			setSelectedElement(clickedElement);
+    		//else // organism node is not in tree, just unselect previous
+    		//	unselectPrevious();
+		} else // default set selectedElement = clickedElement
+    		setSelectedElement(clickedElement);
 	}		
     
     public String getStatus(TBSButtonType button){

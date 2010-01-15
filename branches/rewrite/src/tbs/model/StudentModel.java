@@ -274,6 +274,8 @@ public class StudentModel implements TBSModel
 	
 	public Command removeActionFromHistory(){
 		Command c = history.pop();
+		if(c instanceof Unlink)
+			buttonStates.put(TBSButtonType.UNLINK, true);
 		if(history.isEmpty())
 			buttonStates.put(TBSButtonType.UNDO, false);
 		return c;

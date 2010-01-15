@@ -243,48 +243,45 @@ public class StudentView extends TBSView implements Printable {
 		}
 	}
 	
-	public void renderSelectedModelElements(Graphics2D g2, ModelElement...elements){
-		for( ModelElement me : elements ){
-			if(me instanceof Node){
-				if(((Node) me).isBeingLabeled())
-					return; // do not draw green box around node being labeled
-				Node n = (Node) me;
-				double y = n.getY() - 1.5;
-				if(n.isInTree()) y -= yOffset;
-				g2.setColor(TBSGraphics.selectedNodeBorderColor);
-				g2.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
-				g2.draw(new Rectangle2D.Double(n.getX()-1.5,
-						y,
-						n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
-						n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
-				if(n instanceof OrganismNode){
-					OrganismNode on = (OrganismNode) n;
-					if(on.isInTree())
-						g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
-					else {
-						// organism is being dragged for possible addition to tree
-						if(on.getX() > 0) {
-							g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
-							return;
-						}
+	public void renderSelectedModelElement(Graphics2D g2, ModelElement me){
+		if(me instanceof Node){
+			if(((Node) me).isBeingLabeled())
+				return; // do not draw green box around node being labeled
+			Node n = (Node) me;
+			double y = n.getY() - 1.5;
+			if(n.isInTree()) y -= yOffset;
+			g2.setColor(TBSGraphics.selectedNodeBorderColor);
+			g2.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
+			g2.draw(new Rectangle2D.Double(n.getX()-1.5,
+					y,
+					n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
+					n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
+			if(n instanceof OrganismNode){
+				OrganismNode on = (OrganismNode) n;
+				if(on.isInTree())
+					g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
+				else {
+					// organism is being dragged for possible addition to tree
+					if(on.getX() > 0) {
+						g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
+						return;
 					}
 				}
-			}else{
-				Connection c = (Connection) me;
-				Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
-						c.getTo());
-				conn = scrollAdjust(conn);
-				g2.setColor(TBSGraphics.connectionSelectedColor);
-				g2.setStroke(new BasicStroke(3));
-				g2.draw(conn);
-				if(model.hasArrows()){
-					g2.draw(getArrowHead(conn, 0.75 * Math.PI));
-					g2.draw(getArrowHead(conn, 1.25 * Math.PI));
-				}
-				g2.setStroke(new BasicStroke());
 			}
-		}
-			
+		}else{
+			Connection c = (Connection) me;
+			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
+					c.getTo());
+			conn = scrollAdjust(conn);
+			g2.setColor(TBSGraphics.connectionSelectedColor);
+			g2.setStroke(new BasicStroke(3));
+			g2.draw(conn);
+			if(model.hasArrows()){
+				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+			}
+			g2.setStroke(new BasicStroke());
+		}			
 	}
 	
 	/**
@@ -396,7 +393,8 @@ public class StudentView extends TBSView implements Printable {
 			
 			List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
 			if(selectedTwoWay != null)
-				renderSelectedModelElements(g2,selectedTwoWay.toArray(new ModelElement[2]));
+				for(ModelElement m : selectedTwoWay)
+				renderSelectedModelElement(g2,m);
 			else{
 				ModelElement selected = model.getSelectedModelElement();
 				if(selected == null){
@@ -404,7 +402,7 @@ public class StudentView extends TBSView implements Printable {
 						selected = draggedNode;
 				}
 				if(selected != null)
-					renderSelectedModelElements(g2,selected);
+					renderSelectedModelElement(g2,selected);
 			}
 			if(connInProgress != null){
 				g2.setColor(TBSGraphics.connectionColor);

@@ -72,12 +72,13 @@ public class Unlink extends Command{
 			if(index >= 0)
 				model.setElement(index, node);
 		}else{
-			Connection c = connections.get(0);
-			model.addElement(c);
-			index = model.findIndexByElement(c.getFrom());
-			((Node) model.getElement(index)).addConnectionTo(c.getTo());
-			index = model.findIndexByElement(c.getTo());
-			((Node) model.getElement(index)).addConnectionFrom(c.getFrom());
+			for(Connection c : connections){
+				model.addElement(c);
+				index = model.findIndexByElement(c.getFrom());
+				((Node) model.getElement(index)).addConnectionTo(c.getTo());
+				index = model.findIndexByElement(c.getTo());
+				((Node) model.getElement(index)).addConnectionFrom(c.getFrom());
+			}
 		}
 	}
 
