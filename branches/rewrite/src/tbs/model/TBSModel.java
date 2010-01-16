@@ -32,6 +32,8 @@ public interface TBSModel
 	
 	List<ModelElement> getElements();
 	
+	List<Node> inTreeElements();
+	
 	Boolean hasArrows();
 	
 	Prompt getPrompt();

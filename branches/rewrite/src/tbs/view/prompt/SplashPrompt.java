@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -19,6 +20,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
+import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
 
 public class SplashPrompt extends Prompt
@@ -43,6 +45,7 @@ public class SplashPrompt extends Prompt
 	int textHeight;
 
 	String instrString;
+	String welcomeMessage;
 
 	public SplashPrompt(TBSModel model) {
 		super();
@@ -75,8 +78,14 @@ public class SplashPrompt extends Prompt
 		int width = renderStart ? 750 : 800;
 		promptSize.setSize(width + padding.width * 2, 0);
 		if(renderStart){
-			List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,
-					String.format(instrProps.getProperty("instrIntro"),model.getName()),
+			List<String> incompletedItems = surveyStatus();
+			String introString = "";
+			if(incompletedItems.size() == 4)
+				introString = String.format(instrProps.getProperty("instrIntro"),
+					welcomeMessage(incompletedItems));
+			else
+				introString = welcomeMessage(incompletedItems);	
+			List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,introString,
 					promptSize.width - padding.width * 2);
 			List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
 					instrProps.getProperty("instrDir"),
@@ -201,6 +210,43 @@ public class SplashPrompt extends Prompt
 				return true;
 		}
 		return false;
+	}
+	
+	private String welcomeMessage(List<String> incompletedItems){
+		String name = model.getName();
+		StringBuffer welcome = new StringBuffer("Welcome");
+		if(incompletedItems.size() < 4)
+			welcome.append(" back");
+		if(name != "")
+			welcome.append(" "+name);
+		welcome.append(" to the Diversity Of Life Survey! ");
+		if(incompletedItems.isEmpty())
+			welcome.append("You have completed the survey and recieved 15 points. ");
+		else{
+			if(incompletedItems.size() < 4){
+				welcome.append("You still new to complete ");
+				welcome.append(incompletedItems.remove(0));
+				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
+				for(String s : incompletedItems)
+					welcome.append(", ").append(s);
+				welcome.append(" & " + statusEnd + ". ");
+			}
+		}
+		return welcome.toString();
+	}
+	
+	private List<String> surveyStatus(){
+		List<String> incompletedItems = new LinkedList<String>();
+		if(model.inTreeElements().isEmpty())
+			incompletedItems.add("the tree");
+		if("".equals(model.getQuestion(OpenQuestionButtonType.ONE)))
+			incompletedItems.add("question 1");
+		if("".equals(model.getQuestion(OpenQuestionButtonType.TWO)))
+			incompletedItems.add("question 2");
+		if("".equals(model.getQuestion(OpenQuestionButtonType.THREE)) 
+			|| "0,0,0,0,0,0,0,0,0,0,0,0,0".equals(model.getQuestion(OpenQuestionButtonType.THREE)))
+				incompletedItems.add("question 3");
+		return incompletedItems;
 	}
 
 }
