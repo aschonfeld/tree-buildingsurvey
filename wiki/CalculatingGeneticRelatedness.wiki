@@ -1,0 +1,92 @@
+#summary Calculating genetic relatedness of organisms from trees
+
+== Calculating Genetic Relatedness Using a Shortest Path Graph Algorithm ==
+
+Given the following 4 assumptions, I think the genetic relatedness of two organisms can be calculated independent of graph structure and directionality
+
+=== Assumption 1: Each link represents one unit of genetic difference ===
+
+I believe the genetic relatedness of two organisms can be defined as the number of links between two organisms in a tree
+
+In TBS edges are unweighted, for this reason I will assume all edges can be considered to be one unit of genetic difference
+
+=== Assumption 2: Directionality does not affect relatedness of two organisms ===
+
+For example, in the following graph:
+
+{{{
+A ---> B ---> C ---> D
+}}}
+
+A is 3 units of genetic difference from D
+
+If the directions are reversed:
+
+{{{
+A <--- B <--- C <--- D
+}}}
+
+A is still 3 units of genetic difference from D
+
+In an improperly constructed graph the following relation may occur:
+
+{{{
+A --> B <--- C --> D
+}}}
+
+In this case I believe the best guess for the genetic difference of A and D is still 3 units
+
+In the bidirectional case
+
+{{{
+A <--> B
+}}}
+
+The only possible physical explanation is that:
+
+1. a clone of B evolved from A<br>
+2. a clone of A evolved from B<br>
+
+This is absurd, but the genetic difference from `A --> B` and `B --> A` is still 1
+
+=== Assumption 3: If there are two or more separate paths between two organism, use shortest path for relatedness ===
+
+Given the following improperly constructed graph
+
+{{{
+A --> B --> C
+|     |
+D --> E
+}}}
+
+The distance between A and B is 1 and 3, however a best guess is that the difference between A and B is 1, and that
+the path `A --> D --> E --> B` includes backwards evolution
+
+=== Assumption 4: Define a finite number for distance between unconnected nodes ===
+
+This assumption is needed in order to calculate a meaningful average relatedness from a set of trees
+
+Generally if there is no path between two nodes, the distance between them is considered infinite. However, even if only one student
+has two unconnected nodes, then the average distance between those nodes will be infinite.  Therefore, I propose that the distance
+between two unconnected nodes in a tree be calculated as:
+
+maximum (non-infinite) path length + 1
+
+The same value can be used for the path between used and unused organism nodes.
+
+In the event that a student has no links at all, assign a distance of 1 between all nodes.
+
+=== Given these 4 assumptions: ===
+
+Given two nodes, Dijkstra's algorithm will calculate the minimum path distance between them.  This can be used to generate a relationship grid for each student tree. 
+
+For example:
+
+||Node||Cat||Spider||Mouse||Fish||Lizard||
+||Cat||0||3||1||4||1||
+||Spider||3||0||1||1||1||
+||Mouse||1||1||0||1||2||
+||Fish||4||1||1||0||1||
+||Lizard||1||1||2||1||0||
+
+Given that all trees use the same organism nodes, an average of multiple trees can be calculated
