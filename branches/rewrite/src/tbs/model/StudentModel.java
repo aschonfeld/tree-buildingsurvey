@@ -487,12 +487,21 @@ public class StudentModel implements TBSModel
 		}
 		if(m instanceof Node){
 			Node n = (Node) m;
-			if(controller.getButtonClicked().equals(TBSButtonType.DELETE)){
-				try{
+			Command c = history.peek();
+			try{
+			if(controller.getButtonClicked().equals(TBSButtonType.DELETE) 
+					|| c instanceof Drag){
+				if(c instanceof Drag){
+					Node copy = (Node) n.clone();
+					copy.setAnchorPoint(((Drag) c).getPointBefore());
+					removeActionFromHistory();
+					System.out.println("Invalid drag move removed from history.");
+					addActionToHistory(new Delete(copy));
+				}else
 					addActionToHistory(new Delete((Node) n.clone()));
-				}catch(CloneNotSupportedException e){
-					System.out.println("Unable to add action to history.");
-				}
+			}
+			}catch(CloneNotSupportedException e){
+				System.out.println("Unable to add action to history.");
 			}
 			unlink(n);
 			if(n instanceof OrganismNode){

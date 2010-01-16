@@ -302,13 +302,9 @@ public class StudentController extends TBSController
 					break;
 				}
 			}
-			if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH ){
-				if((lastPosition.x-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH && (model.getHistory().peek() instanceof Drag)){
-					model.removeActionFromHistory();
-					System.out.println("Invalid drag move removed from history.");
-				}
+			if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH )
 				model.removeFromTree(draggedNode);
-			}else{
+			else{
 				if (!draggedNode.isInTree() && (draggedNode.getX()-draggedNode.getWidth()) > TBSGraphics.LINE_OF_DEATH ) {
 					model.addToTree(draggedNode); 
 				} else {
@@ -617,17 +613,29 @@ public class StudentController extends TBSController
 		case UNLINK:
 			if(clickedElement == null)
 				break;
-			if(clickedElement instanceof Node)
-				model.unlink((Node) clickedElement);
-			else{
-				try{
-					Connection c = (Connection) clickedElement;
-					model.addActionToHistory(new Unlink((Connection) c.clone()));
-				}catch(CloneNotSupportedException c){
-					System.out.println("Unable to add action to history.");
+			try{
+				if(clickedElement instanceof Node){
+					model.unlink((Node) clickedElement);
+				}else{
+					if(model.getSelectedTwoWay() != null){
+						Unlink u = new Unlink();
+						for(ModelElement tw : model.getSelectedTwoWay()){
+							Connection c = (Connection) tw;
+							u.addConnection((Connection) c.clone());
+							model.removeFromTree(c);
+						}
+						model.addActionToHistory(u);
+						model.setSelectedTwoWay(null);
+						
+					}else{
+						Connection c = (Connection) clickedElement;
+						model.addActionToHistory(new Unlink((Connection) c.clone()));
+						model.removeFromTree(c);
+					}
+					clickedElement = null;
 				}
-				model.removeFromTree(clickedElement);
-				return;
+			}catch(CloneNotSupportedException c){
+				System.out.println("Unable to add action to history.");
 			}
 			break;
 		case LABEL:
@@ -641,8 +649,6 @@ public class StudentController extends TBSController
     	if(clickedElement instanceof Node) {
     		if(((Node) clickedElement).isInTree()) // organism node is in tree, selectable
     			setSelectedElement(clickedElement);
-    		//else // organism node is not in tree, just unselect previous
-    		//	unselectPrevious();
 		} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);
 	}		
