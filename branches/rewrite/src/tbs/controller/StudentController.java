@@ -32,9 +32,9 @@ import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
 import tbs.view.TextEntryBox;
-import tbs.view.prompt.OpenQuestionPrompt;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.YesNoPrompt;
+import tbs.view.prompt.student.OpenQuestionPrompt;
+import tbs.view.prompt.student.YesNoPrompt;
 
 /**
 * TBSController contains the methods allowing the user to manipulate the

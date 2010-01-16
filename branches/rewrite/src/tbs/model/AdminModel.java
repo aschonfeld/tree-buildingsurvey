@@ -28,6 +28,8 @@ import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.admin.AnalysisPrompt;
+import tbs.view.prompt.admin.OpenQuestionReviewPrompt;
 
 public class AdminModel implements TBSModel
 {
@@ -39,6 +41,8 @@ public class AdminModel implements TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
+	private OpenQuestionReviewPrompt openQuestionReviewPrompt;
+	private AnalysisPrompt analysisPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType, Properties> propertiesMap;
 	private String name;
@@ -66,6 +70,7 @@ public class AdminModel implements TBSModel
 		setQuestion(firstStudent.getQ1(), OpenQuestionButtonType.ONE);
 		setQuestion(firstStudent.getQ2(), OpenQuestionButtonType.TWO);
 		setQuestion(firstStudent.getQ3(), OpenQuestionButtonType.THREE);
+		openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
 		view = new AdminView(this);
 		this.admin = true;
 		controller = new AdminController(this, view);
@@ -82,6 +87,8 @@ public class AdminModel implements TBSModel
 		setQuestion(selectedStudent.getQ1(), OpenQuestionButtonType.ONE);
 		setQuestion(selectedStudent.getQ2(), OpenQuestionButtonType.TWO);
 		setQuestion(selectedStudent.getQ3(), OpenQuestionButtonType.THREE);
+		openQuestionReviewPrompt = null;
+		analysisPrompt = null;
 	}
 	
 	public void resetModel(){
@@ -487,6 +494,20 @@ public class AdminModel implements TBSModel
 	
 	public void promptUser(Prompt prompt) {
 		this.prompt = prompt;
+		view.refreshGraphics();
+	}
+	
+	public void questionReview() {
+		if(openQuestionReviewPrompt == null)
+			openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
+		this.prompt = openQuestionReviewPrompt;
+		view.refreshGraphics();
+	}
+	
+	public void analyze(){
+		if(analysisPrompt == null)
+			analysisPrompt = new AnalysisPrompt(this);
+		this.prompt = analysisPrompt;
 		view.refreshGraphics();
 	}
 

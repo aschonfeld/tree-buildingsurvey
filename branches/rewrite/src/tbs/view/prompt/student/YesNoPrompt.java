@@ -1,5 +1,5 @@
 
-package tbs.view.prompt;
+package tbs.view.prompt.student;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -16,6 +16,7 @@ import java.util.List;
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.view.TBSButtonType;
+import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.YesNoButtonType;
 
 public class YesNoPrompt extends Prompt{

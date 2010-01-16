@@ -1,5 +1,5 @@
 
-package tbs.view.prompt;
+package tbs.view.prompt.student;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -19,6 +19,7 @@ import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
+import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
 public class OpenQuestionPrompt extends Prompt{

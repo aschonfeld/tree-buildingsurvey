@@ -34,7 +34,7 @@ import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.SplashPrompt;
+import tbs.view.prompt.student.SplashPrompt;
 
 public class StudentModel implements TBSModel
 {

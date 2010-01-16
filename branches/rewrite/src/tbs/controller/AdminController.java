@@ -20,7 +20,6 @@ import tbs.model.OrganismNode;
 import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
-import tbs.view.prompt.OpenQuestionPrompt;
 import tbs.view.prompt.Prompt;
 
 /**
@@ -66,11 +65,10 @@ public class AdminController extends TBSController
 	public void mouseMoved(MouseEvent e){
 		Prompt prompt = model.getPrompt();
 		if(prompt != null){
-			if(prompt.isOverButton(e))
+			if(prompt.isOverButton(e)){
 				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			else
-				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			return;
+				return;
+			}
 		}
 		int x,y,buttonIndex;
 		x = e.getX();
@@ -86,7 +84,7 @@ public class AdminController extends TBSController
 				if(buttonIndex < OpenQuestionButtonType.values().length)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			}
-		} else if(!view.isTooltipRunning()){
+		} else if(buttonClicked.equals(TBSButtonType.TREE) && !view.isTooltipRunning()){
 			ModelElement m = elementMouseIsOver(x,y);
 			if(m != null && m instanceof OrganismNode){
 				OrganismNode o = (OrganismNode) m;
@@ -107,32 +105,26 @@ public class AdminController extends TBSController
 	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
+		int x = e.getX();
+        int y = e.getY();
+		if(y < TBSGraphics.buttonsHeight) {
+			if(x >= TBSGraphics.questionButtonsStart)
+				handleMouseButtonPressed(x, y);
+			return;
+		}
+		
 		Prompt prompt = model.getPrompt();
 		if(prompt != null) {
 			prompt.mousePressed(e);
-			if(prompt.isFinished()) {
-				// Get result of prompt here
-				OpenQuestionPrompt temp = (OpenQuestionPrompt) prompt;
-				String input = temp.getUserInput();
-				OpenQuestionButtonType q = temp.getCurrentQuestion();
-				model.setQuestion(input, q);
-				if(q.ordinal() < OpenQuestionButtonType.THREE.ordinal())
-					model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.values()[q.ordinal()+1]));
-				else
-					model.clearPrompt();
-			}
+			if(prompt.isFinished())
+				model.clearPrompt();
 			return;
 		}
+		
 		view.requestFocusInWindow();
-        int x = e.getX();
-        int y = e.getY();
         // if mouse is in button bar
         if (x > view.getStudentBar().getWidth() && x < TBSGraphics.studentNodeWidth)
 			handleStudentPressed(x, y);
-		else if(y < TBSGraphics.buttonsHeight) {
-			if(x >= TBSGraphics.questionButtonsStart)
-				handleMouseButtonPressed(x, y);
-		}
 	}
 	
 	/**
@@ -176,12 +168,13 @@ public class AdminController extends TBSController
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case TREE:
+			model.clearPrompt();
 			break;
 		case OPEN_RESPONSE:
-			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.ONE));
+			model.questionReview();
 			break;
 		case ANALYSIS:
-			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.ONE));
+			model.analyze();
 			break;
 		}
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

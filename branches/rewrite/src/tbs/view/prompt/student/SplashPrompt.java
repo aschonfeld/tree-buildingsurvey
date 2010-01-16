@@ -1,5 +1,5 @@
 
-package tbs.view.prompt;
+package tbs.view.prompt.student;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -11,17 +11,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
+import tbs.view.prompt.Prompt;
 
 public class SplashPrompt extends Prompt
 {
@@ -103,20 +104,26 @@ public class SplashPrompt extends Prompt
 			instructionStringY += (textHeight + padding.height) * 2;
 			drawText(directions);
 		}else{
-			Map<String, List<String>> actionsText = new HashMap<String, List<String>>();
+			Map<Integer, List<String>> actionsText = new TreeMap<Integer, List<String>>();
 			int totalLines = 0;
 			for(TBSButtonType bt : model.getButtons()){
 				List<String> temp = TBSGraphics.breakStringByLineWidth(g2,
 						helpProps.getProperty("help_" + bt.getText()),
 						promptSize.width - ((padding.width * 2) + TBSGraphics.buttonsWidth));
 				totalLines += temp.size();
-				actionsText.put(bt.getText(), temp);
+				actionsText.put(bt.ordinal(), temp);
 			}
+			List<String> orq = TBSGraphics.breakStringByLineWidth(g2,
+					helpProps.getProperty("help_123"),
+					promptSize.width - ((padding.width * 2) + TBSGraphics.buttonsWidth));
+			totalLines += orq.size();
 			calculateValues(totalLines);
 			drawBox();
 			drawButtons();
-			for(Map.Entry<String,List<String>> action : actionsText.entrySet())
-				drawText(action.getValue(), action.getKey());
+			TBSButtonType[] orderedButtons = TBSButtonType.values();
+			for(Map.Entry<Integer,List<String>> action : actionsText.entrySet())
+				drawText(action.getValue(), orderedButtons[action.getKey()].getText());
+			drawText(orq, "1,2,3");
 		}
 	}
 

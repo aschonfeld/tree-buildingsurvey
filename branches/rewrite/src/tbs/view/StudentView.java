@@ -35,9 +35,9 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
-import tbs.view.prompt.OpenQuestionPrompt;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.SplashPrompt;
+import tbs.view.prompt.student.OpenQuestionPrompt;
+import tbs.view.prompt.student.SplashPrompt;
 
 /**
 * TBSView contains the logic for rendering the information contained in

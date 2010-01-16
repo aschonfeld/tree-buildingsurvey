@@ -140,7 +140,7 @@ public class AdminView extends TBSView {
 	public void renderButtons(Graphics g)
 	{
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
-		if(buttonClicked == null)
+		if(buttonClicked == null || model.getPrompt() == null)
 			buttonClicked = TBSButtonType.TREE;
 		Graphics2D g2 = (Graphics2D) g;
 		Rectangle buttonRect = new Rectangle(TBSGraphics.questionButtonsStart,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
