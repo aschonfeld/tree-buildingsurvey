@@ -205,7 +205,12 @@ public class AdminModel implements TBSModel
 			return modelElements.indexOf(m);
 	}
 	
+	//findIndexById method that is called when a saved tree is not being loaded
 	public int findIndexById(Integer id){
+		return findIndexById(id, null);
+	}
+	
+	public int findIndexById(Integer id, List<ModelElement> parsedElements){
 		if(id <= TBSGraphics.numOfOrganisms)
 			return (id);
 		/*
@@ -214,8 +219,13 @@ public class AdminModel implements TBSModel
 		 * items (with the exception of the immortalEmptyNode can be removed
 		 * and thus have their serialId changed/out of order.
 		 */
-		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
-			if(modelElements.get(i).getId().equals(id))
+		List<ModelElement> elements;
+		if(parsedElements != null)
+			elements = parsedElements;
+		else
+			elements = modelElements;
+		for(int i=(TBSGraphics.numOfOrganisms-1);i<elements.size();i++){
+			if(elements.get(i).getId().equals(id))
 				return i;
 		}
 		return -1;
@@ -270,25 +280,13 @@ public class AdminModel implements TBSModel
 	protected void createModelElements(Graphics2D g2, 
 				TreeMap<String, BufferedImage> organismNameToImage) {
 		EmptyNode.g2 = g2;
-		int currentY = TBSGraphics.buttonsHeight + 10;
-		Dimension stringDimensions = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
-		Dimension imageDimensions = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
-		TBSGraphics.organismNodeWidth = stringDimensions.width + imageDimensions.width + 
-				TBSGraphics.paddingWidth * 2;
-		if(stringDimensions.height > imageDimensions.height)
-			TBSGraphics.organismNodeHeight = stringDimensions.height;
-		else
-			TBSGraphics.organismNodeHeight = imageDimensions.height;
 		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
 			addElement(new OrganismNode( getSerial(), e.getKey(), 
-				new Point(0, currentY), e.getValue()));
-			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
+				new Point(), e.getValue()));
 		}
 
-		//create left-side empty node
-		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
-		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
-		TBSGraphics.emptyNodeUpperY = currentY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
+		TBSGraphics.emptyNodeLeftX = 0;
+		TBSGraphics.emptyNodeUpperY = 0;
 	}
 	
 	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
@@ -408,17 +406,18 @@ public class AdminModel implements TBSModel
 				if(((EmptyNode) temp).isInTree())
 					savedTree.add(temp);
 			}else if (data[0].equals("C"))
-				savedTree.add(loadConnection(data));
+				savedTree.add(loadConnection(data, savedTree));
 			else
 			{
 				System.out.println("Problem in loadTree");
 				break;
 			}
 		}
-
+		
 		// Sort the local list
 		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
 		modelElements = savedTree;
+		MESerialNumber = savedTree.size()+1;
 		System.out.println("loadTree: end");
 	}
 
@@ -456,20 +455,23 @@ public class AdminModel implements TBSModel
 		Point pt = new Point(x,y);
 		Boolean in = (data[5].equals("true")?true:false);
 		if(!in)
-			pt = new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY);
+			pt = new Point();
 		EmptyNode node = new EmptyNode(id, pt);
 		node.rename(name);
 		node.setInTree(in);
 		return (ModelElement) node;
 	}
 
-	public ModelElement loadConnection(String[] data)
+	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements) 
 	{
 		int id = Integer.parseInt(data[1]);
 		int from = Integer.parseInt(data[2]);
+		int fromIndex = findIndexById(from, parsedElements);
 		int to = Integer.parseInt(data[3]);
-		Node fromNode = (Node) getElementBySN(from);
-		Node toNode = (Node) getElementBySN(to);
+		int toIndex = findIndexById(to, parsedElements);
+		
+		Node fromNode = (Node) parsedElements.get(fromIndex);
+		Node toNode = (Node) parsedElements.get(toIndex);
 		Connection conn = new Connection(id, fromNode, toNode);
 		return (ModelElement) conn;
 	}

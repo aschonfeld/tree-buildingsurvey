@@ -190,7 +190,12 @@ public class StudentModel implements TBSModel
 			return modelElements.indexOf(m);
 	}
 	
+	//findIndexById method that is called when a saved tree is not being loaded
 	public int findIndexById(Integer id){
+		return findIndexById(id, null);
+	}
+	
+	public int findIndexById(Integer id, List<ModelElement> parsedElements){
 		if(id <= TBSGraphics.numOfOrganisms)
 			return (id);
 		/*
@@ -199,8 +204,13 @@ public class StudentModel implements TBSModel
 		 * items (with the exception of the immortalEmptyNode can be removed
 		 * and thus have their serialId changed/out of order.
 		 */
-		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
-			if(modelElements.get(i).getId().equals(id))
+		List<ModelElement> elements;
+		if(parsedElements != null)
+			elements = parsedElements;
+		else
+			elements = modelElements;
+		for(int i=(TBSGraphics.numOfOrganisms-1);i<elements.size();i++){
+			if(elements.get(i).getId().equals(id))
 				return i;
 		}
 		return -1;
@@ -575,7 +585,7 @@ public class StudentModel implements TBSModel
 					savedImmortalEmptyNode = (EmptyNode) temp;
 				savedTree.add(temp);
 			}else if (data[0].equals("C"))
-				savedTree.add(loadConnection(data));
+				savedTree.add(loadConnection(data, savedTree));
 			else
 			{
 				System.out.println("Problem in loadTree");
@@ -587,6 +597,7 @@ public class StudentModel implements TBSModel
 		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
 		modelElements = savedTree;
 		immortalEmptyNode = savedImmortalEmptyNode;
+		MESerialNumber = savedTree.size()+1;
 		System.out.println("loadTree: end");
 	}
 
@@ -631,13 +642,16 @@ public class StudentModel implements TBSModel
 		return (ModelElement) node;
 	}
 
-	public ModelElement loadConnection(String[] data)
+	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements) 
 	{
 		int id = Integer.parseInt(data[1]);
 		int from = Integer.parseInt(data[2]);
+		int fromIndex = findIndexById(from, parsedElements);
 		int to = Integer.parseInt(data[3]);
-		Node fromNode = (Node) getElementBySN(from);
-		Node toNode = (Node) getElementBySN(to);
+		int toIndex = findIndexById(to, parsedElements);
+		
+		Node fromNode = (Node) parsedElements.get(fromIndex);
+		Node toNode = (Node) parsedElements.get(toIndex);
 		Connection conn = new Connection(id, fromNode, toNode);
 		return (ModelElement) conn;
 	}

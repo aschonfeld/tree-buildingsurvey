@@ -108,9 +108,10 @@ public class AdminController extends TBSController
 		int x = e.getX();
         int y = e.getY();
 		if(y < TBSGraphics.buttonsHeight) {
-			if(x >= TBSGraphics.questionButtonsStart)
+			if(x >= TBSGraphics.questionButtonsStart){
 				handleMouseButtonPressed(x, y);
-			return;
+				return;
+			}
 		}
 		
 		Prompt prompt = model.getPrompt();
