@@ -13,9 +13,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
@@ -48,10 +46,11 @@ public class HelpPrompt extends Prompt
 
 	List<String> introduction;
 	List<String> instructions;
-	List<TBSButtonType> buttons;
-	Map<String, String> buttonInfo;
+	
+	List<String[]> buttonInfo;
 	int buttonsLines = -1;
-	Map<String, List<String>> buttonsText;
+	List<String> buttonHeaders;
+	List<List<String>> buttonTexts;
 
 	public HelpPrompt(TBSModel model) {
 		super();
@@ -61,12 +60,14 @@ public class HelpPrompt extends Prompt
 		selectedOption = HelpPromptButtonType.BUTTON_INFO;
 		introduction = new LinkedList<String>();
 		instructions = new LinkedList<String>();
-		buttonInfo = new TreeMap<String, String>();
-		buttons = model.getButtons();
-		for(TBSButtonType bt : buttons)
-			buttonInfo.put(bt.getText(), helpProps.getProperty("help_" + bt.getText()));
-		buttonInfo.put("1,2,3", helpProps.getProperty("help_123"));
-		buttonsText = new TreeMap<String, List<String>>();
+		buttonInfo = new LinkedList<String[]>();
+		for(TBSButtonType bt : TBSButtonType.values()){
+			if(!bt.isAdmin() && !TBSButtonType.HELP.equals(bt))
+				buttonInfo.add(new String[]{bt.getText(), helpProps.getProperty("help_" + bt.getText())});
+		}
+		buttonInfo.add(new String[]{"1,2,3", helpProps.getProperty("help_123")});
+		buttonHeaders = new LinkedList<String>();
+		buttonTexts = new LinkedList<List<String>>();
 	}
 
 
@@ -117,11 +118,12 @@ public class HelpPrompt extends Prompt
 		}else{
 			if(buttonsLines == -1){
 				List<String> temp;
-				for(Map.Entry<String, String> button : buttonInfo.entrySet()){
-					temp = TBSGraphics.breakStringByLineWidth(g2,button.getValue(),
+				for(String[] button : buttonInfo){
+					temp = TBSGraphics.breakStringByLineWidth(g2,button[1],
 							promptSize.width - ((padding.width * 2) + TBSGraphics.buttonsWidth));
 					buttonsLines += temp.size();
-					buttonsText.put(button.getKey(), temp);
+					buttonHeaders.add(button[0]);
+					buttonTexts.add(temp);
 				}
 			}
 			totalLines = buttonsLines + 2;
@@ -137,8 +139,8 @@ public class HelpPrompt extends Prompt
 		helpStringY += buttonHeight;
 		
 		if(HelpPromptButtonType.BUTTON_INFO.equals(selectedOption)){
-			for(Map.Entry<String,List<String>> buttonText : buttonsText.entrySet())
-				drawText(buttonText.getValue(), buttonText.getKey());
+			for(int i=0;i<buttonTexts.size();i++)
+				drawText(buttonTexts.get(i), buttonHeaders.get(i));
 		}else
 			drawText(text);
 	}
@@ -249,7 +251,10 @@ public class HelpPrompt extends Prompt
 			statusString.append("Currently you have created a tree and entered responses to all the open-response questions. ");
 			statusString.append("You are ready to submit your survey.");
 		}else{
-			if(incompletedItems.size() <= 4){
+			if(incompletedItems.size() == 1){
+				statusString.append("Currently you still need to complete ");
+				statusString.append(incompletedItems.remove(0)).append(". ");
+			}else if(incompletedItems.size() <= 4){
 				statusString.append("Currently you still need to complete ");
 				statusString.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);

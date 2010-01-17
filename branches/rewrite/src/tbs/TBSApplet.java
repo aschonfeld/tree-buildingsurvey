@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 import tbs.model.AdminModel;
 import tbs.model.StudentModel;
@@ -55,6 +58,7 @@ public class TBSApplet extends JApplet {
 
  	EventQueue.invokeLater(new Runnable() {
  		public void run() {
+ 			getIcons();
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
  			Graphics2D g2 = (Graphics2D) getGraphics();
@@ -71,27 +75,10 @@ public class TBSApplet extends JApplet {
  			TreeMap<String, BufferedImage> organisms = loadOrganismsFromDirectory();
  			String adminStr = getParameter("Admin");
  			admin = Boolean.parseBoolean(adminStr);
- 			boolean arrows = true;
+ 			String student;
  			if(!admin){
- 				String hasArrows = getParameter("Arrows");
- 				if(hasArrows == null || hasArrows == "")
- 					arrows = true;
- 				else
- 					arrows = Boolean.parseBoolean(hasArrows);
- 				String savedTree = getParameter("SavedTree");
- 				if(savedTree == null)
- 					savedTree = "";
- 				else
- 					savedTree = savedTree.trim();
- 				String q1 = getParameter("quest1");
- 				String q2 = getParameter("quest2");
- 				String q3 = getParameter("quest3");
- 				String name = getParameter("StudentName");
- 				model = new StudentModel(app, savedTree, g2, organisms, arrows, propertiesMap);
- 	 			model.setQuestion(q1, OpenQuestionButtonType.ONE);
- 	 			model.setQuestion(q2, OpenQuestionButtonType.TWO);
- 	 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
- 	 			model.setName(name);
+ 				student = getParameter("student");
+ 				model = new StudentModel(app, g2, organisms, student, propertiesMap);
  			}else{
  				int studentCt = 0;//Default number of radio questions
  				String numOfStudents = getParameter("StudentCount");
@@ -101,7 +88,6 @@ public class TBSApplet extends JApplet {
  					System.out.println("TBSApplet:Error parsing student count(value-" + numOfStudents + ")");
  				}
  				List<String> students = new LinkedList<String>();
- 				String student;
  				for(int i=1; i<=studentCt; i++){
  					student = getParameter("student"+i);
  					students.add(student);
@@ -226,15 +212,9 @@ public class TBSApplet extends JApplet {
 			parameterInfo[1] = new String[]{"StudentCount", "Integer", "In admin mode this parameter tells the applet how many 'Student' parameters to get"};
 			parameterInfo[2] = new String[]{"Student(#)", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for each student"};
 		}else{
-			parameterInfo = new String[8][];
+			parameterInfo = new String[2][];
 			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
-			parameterInfo[1] = new String[]{"StudentName", "String", "The name of the student accessing the applet"};
-			parameterInfo[2] = new String[]{"LastUpdate", "Timestamp", "The date/time of this student's last update to the survey"};
-			parameterInfo[3] = new String[]{"Arrows", "Boolean", "Tells the applet whether to display connections with or without arrows for this student "};
-			parameterInfo[4] = new String[]{"SavedTree", "String", "The string representation of this student's saved tree"};
-			parameterInfo[5] = new String[]{"quest1", "String", "This student's response to the open-response question 1"};
-			parameterInfo[6] = new String[]{"quest2", "String", "This student's response to the open-response question 2"};
-			parameterInfo[7] = new String[]{"quest3", "String", "This student's response to the open-response question 3"};
+			parameterInfo[1] = new String[]{"Student", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for this student"};
 		}
 		return parameterInfo;
 	}
@@ -242,7 +222,16 @@ public class TBSApplet extends JApplet {
 	public String getAppletInfo(){
 		return "Diversity of Life Survey Applet, Version 1.3\n"
         + "Copyright Tree Building Survey Group,2010";
-  
+	}
+	
+	public static void getIcons(){
+		UIDefaults defaults = UIManager.getDefaults();
+		Enumeration<Object> newKeys = defaults.keys();
+		while (newKeys.hasMoreElements()) {
+			Object obj = newKeys.nextElement();
+			if(obj.toString().contains("Icon"))
+				System.out.println(obj.toString());
+		}
 	}
 }
 

@@ -81,6 +81,10 @@ public enum TBSButtonType {
 		return cursorVariant;
 	}
 	
+	public Boolean isAdmin(){
+		return admin;
+	}
+	
 	public String toString(){
 		return text;
 	}

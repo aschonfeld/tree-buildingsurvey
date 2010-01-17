@@ -194,7 +194,7 @@ public class WelcomePrompt extends Prompt
 				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0)).append(". ");
 			}
-			else if(incompletedItems.size() < 4){
+			else if(incompletedItems.size() <= 4){
 				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
