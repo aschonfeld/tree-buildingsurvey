@@ -9,10 +9,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
@@ -29,7 +32,6 @@ public class OpenQuestionPrompt extends Prompt{
 	Graphics2D g2 = null;
 	Properties questionProps;
 	OpenQuestionButtonType currentQuestion;
-	String question = null;
 	String userInput = null;
 	
 	//Prompt sizing information
@@ -37,13 +39,16 @@ public class OpenQuestionPrompt extends Prompt{
 	List<OpenQuestionPromptButtonType> buttons;
 	int numLines = 8; // number of lines of text input
 	Dimension padding = new Dimension(10,5);
-	Dimension promptSize = new Dimension();
+	Dimension promptSize = new Dimension(770,0);
 	Point anchorPoint = null;
 	int questionStringY;
 	Rectangle buttonsArea;
+	Rectangle closeButton;
 	int buttonHeight;
 	int textHeight;
 	
+	//Question Text
+	Map<OpenQuestionButtonType, List<String>> questionTexts;
 	//Question 3(Radio) Properties
 	List<String> radioAnswers;
 	int currentRadioQuestion;
@@ -51,27 +56,11 @@ public class OpenQuestionPrompt extends Prompt{
 	
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
-	public OpenQuestionPrompt(TBSModel model, OpenQuestionButtonType currentQuestion) {
+	public OpenQuestionPrompt(TBSModel model) {
 		super();
 		this.model = model;
-		this.currentQuestion = currentQuestion;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
-		this.question = questionProps.getProperty(currentQuestion.getQuestionKey());
-		buttons = OpenQuestionPromptButtonType.getButtons(currentQuestion.isRadio());
-		userInput = model.getQuestion(currentQuestion);
-		if(currentQuestion.isRadio()){
-			radioAnswers = new LinkedList<String>();
-			currentRadioQuestion = 1;
-			if(userInput == null || userInput == "")
-				userInput = "0,0,0,0,0,0,0,0,0,0,0,0,0";
-			for(String answer : userInput.split(","))
-					radioAnswers.add(answer);
-			int numRadios = Integer.parseInt(questionProps.getProperty("questionThree.numQuestions"));
-			if(radioAnswers.size() < numRadios){
-				for(int i=radioAnswers.size();i<=numRadios;i++)
-					radioAnswers.add("0");
-			}
-		}
+		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
 	}
 	
 	public String getUserInput() {
@@ -85,27 +74,27 @@ public class OpenQuestionPrompt extends Prompt{
 	}
 	
 	public void mousePressed(MouseEvent e){
-		calculateValues();
-        if(buttonsArea.contains(e.getPoint())){
+		if(buttonsArea.contains(e.getPoint())){
         	int index = (int) ((e.getX() - buttonsArea.getX()) * buttons.size()) / promptSize.width;
         	String buttonValue = buttons.get(index).getValue();
     		if("0".equals(buttonValue))
         		setFinished(true);
     		else{
     			if(currentQuestion.isRadio()){
-    				radioAnswers.set(currentRadioQuestion-1, buttonValue);
-    				if(currentRadioQuestion == radioAnswers.size())
+    				if(currentRadioQuestion == (radioAnswers.size()-1))
     					buttons = OpenQuestionPromptButtonType.getButtons(false);
-    				else
-    					currentRadioQuestion++;
+    				radioAnswers.set(currentRadioQuestion, buttonValue);
+    				currentRadioQuestion++;
     			}
     		}
-        }else{
+        }else if(closeButton.contains(e.getPoint()))
+        	setFinished(true);
+        else{
         	if(currentQuestion.isRadio()){
         		if(radioQuestionSelection.contains(e.getPoint())){
         			if(currentRadioQuestion == radioAnswers.size())
     					buttons = OpenQuestionPromptButtonType.getButtons(true);
-        			currentRadioQuestion = ((int) ((e.getY() - radioQuestionSelection.getY()) * radioAnswers.size()) / radioQuestionSelection.height) + 1;
+        			currentRadioQuestion = ((int) ((e.getY() - radioQuestionSelection.getY()) * radioAnswers.size()) / radioQuestionSelection.height);
         		}
         	}
         }
@@ -155,36 +144,77 @@ public class OpenQuestionPrompt extends Prompt{
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		promptSize.setSize(750 + padding.width * 2, 0);
 		lineBrokenQuestion = new LinkedList<String>();
-		int questionLength = 0;
-		if(currentQuestion.isRadio()){
-			lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					question, promptSize.width - padding.width * 2));
-			questionLength = lineBrokenQuestion.size();
-			constructRadioQuestions();
-		}else
-			lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					question, promptSize.width - padding.width * 2));
-		calculateValues();
+		List<String> text = new LinkedList<String>();
+		List<String[]> radioText = new LinkedList<String[]>();
+		int totalLines = 0;
+		if(!currentQuestion.isRadio()){
+			if(!questionTexts.containsKey(currentQuestion)){
+				text = TBSGraphics.breakStringByLineWidth(g2,
+						questionProps.getProperty(currentQuestion.getQuestionKey()),
+						promptSize.width - (padding.width * 2));
+				questionTexts.put(currentQuestion, text);
+			}else
+				text = questionTexts.get(currentQuestion);
+			totalLines = text.size() + 3 + numLines;
+		}else{
+			if(!questionTexts.containsKey(currentQuestion)){
+				text = TBSGraphics.breakStringByLineWidth(g2,
+						questionProps.getProperty(currentQuestion.getQuestionKey()),
+						promptSize.width - (padding.width * 2));
+				questionTexts.put(currentQuestion, text);
+			}else
+				text = questionTexts.get(currentQuestion);
+			totalLines = text.size() + 3;
+			radioText = new LinkedList<String[]>();
+			int index = model.hasArrows() ? 1 : radioAnswers.size()-1;
+			String[] radioPair;
+			for(String answer : radioAnswers){
+				radioPair = new String[2];
+				radioPair[0] = questionProps.getProperty("questionThree"+index);
+				radioPair[1] = convertRadioAnswerToText(answer);
+				radioText.add(radioPair);
+				if(model.hasArrows())
+					index++;
+				else
+					index--;
+			}
+			totalLines += radioText.size();
+		}		
+		calculateValues(totalLines);
 		drawBox();
-		drawText(lineBrokenQuestion, questionLength);
-		questionStringY += ((textHeight+4) * lineBrokenQuestion.size());
-		if(!currentQuestion.isRadio() && userInput != null)
-			drawText(Arrays.asList(userInput.split("\n")));
 		drawButtons();
+		
+		questionStringY = anchorPoint.y;
+		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentQuestion.getAdminText(),
+				anchorPoint.x + padding.width, questionStringY,
+				promptSize.width - padding.width * 2,
+				buttonHeight,TBSGraphics.emptyNodeColor);
+		questionStringY += buttonHeight;
+		
+		drawWritten(text);
+		questionStringY += textHeight + padding.height;
+		if(currentQuestion.isRadio()){
+			radioQuestionSelection = new Rectangle(anchorPoint.x + padding.width, questionStringY,
+					TBSGraphics.questionButtonsWidth, radioAnswers.size() * (textHeight + padding.height));
+			drawRadioSelectionButtons();
+			drawRadio(radioText);
+		}else{
+			if(userInput != null)
+				drawWritten(Arrays.asList(userInput.split("\n")));
+		}
 	}
 	
-	public void calculateValues() {
-		int lineCount = 2 + lineBrokenQuestion.size();
-		if(!currentQuestion.isRadio())
-			lineCount += numLines;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + (padding.height * (lineCount + 1)));
+	public void calculateValues(int lineCount) {
+		buttonHeight = textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (textHeight * lineCount) +
+				(padding.height * (lineCount + 1))  + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), centerY - (promptSize.height / 2));
-		questionStringY = anchorPoint.y;
 		buttonHeight = textHeight + padding.height;
+		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
+				buttonHeight, buttonHeight);
 		buttonsArea = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
 				promptSize.width, buttonHeight);
 	}
@@ -198,34 +228,27 @@ public class OpenQuestionPrompt extends Prompt{
 		g2.draw(new Rectangle2D.Double(box.x-1.5, box.y-1.5, box.width+3, box.getHeight()+3));
 		g2.setStroke(new BasicStroke());
 	}
-	public void drawText(List<String> lines){ drawText(lines, 1); }
 	
-	public void drawText(List<String> lines, int startAnswers) {
-		int startY = questionStringY;
+	public void drawWritten(List<String> lines) {
 		int startX = anchorPoint.x + padding.width;
-		for(int i=0;i<lines.size();i++){
-			if(currentQuestion.isRadio() && (currentRadioQuestion+startAnswers)==(i+1) && buttons.size() > 1)
-				drawString(lines.get(i), startX, startY, true);
-			else				
-				drawString(lines.get(i), startX, startY);
-			startY += textHeight + 4;
-			if(currentQuestion.isRadio() && (i+1) == startAnswers)
-				startX += TBSGraphics.questionButtonsWidth;
+		for(String line : lines){
+			drawString(line, startX, questionStringY);
+			questionStringY += textHeight + padding.height;
 		}
-		if(currentQuestion.isRadio()){
-			startY = questionStringY + ((textHeight + 4) * startAnswers);
-			startX = anchorPoint.x + promptSize.width;
-			radioQuestionSelection = new Rectangle(anchorPoint.x + padding.width, startY,
-					TBSGraphics.questionButtonsWidth, radioAnswers.size() * (textHeight + 4));
-			for(int i=0;i<radioAnswers.size();i++){
-				String answerText = OpenQuestionPromptButtonType.getRadioText(radioAnswers.get(i));
-				int answerWidth = TBSGraphics.getStringBounds(g2,answerText).width + 4;
-				if(currentRadioQuestion==(i+1) && buttons.size() > 1)
-					drawString(answerText, startX-answerWidth, startY, true);
-				else
-					drawString(answerText, startX-answerWidth, startY);
-				startY += textHeight + 4;
-			}
+	}
+	
+	public void drawRadio(List<String[]> lines) {
+		int questionX = anchorPoint.x + TBSGraphics.questionButtonsWidth + (padding.width*2);
+		int answerX = anchorPoint.x + promptSize.width;
+		boolean selected;
+		int i = 0;
+		for(String[] line : lines){
+			selected = currentRadioQuestion == i && buttons.size() > 1;
+			drawString(line[0], questionX, questionStringY, selected);
+			int answerWidth = TBSGraphics.getStringBounds(g2,line[1]).width + 4;
+			drawString(line[1], answerX-answerWidth, questionStringY, selected);
+			questionStringY += textHeight + padding.height;
+			i++;
 		}
 	}
 	
@@ -240,6 +263,19 @@ public class OpenQuestionPrompt extends Prompt{
 	
 	public void drawButtons()
 	{
+		TBSGraphics.renderButtonBackground(g2, closeButton, false);
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(3));
+		g2.draw(closeButton);
+		int x,y,w,h;
+		x = closeButton.x+1;
+		y = closeButton.y+1;
+		w = closeButton.width-1;
+		h = closeButton.height-1;
+		g2.draw(new Line2D.Double(x,y,x+w,y+h));
+		g2.draw(new Line2D.Double(x,y+h,x+w,y));
+		g2.setStroke(new BasicStroke());
+		
 		Rectangle buttonRect = new Rectangle(buttonsArea.x, buttonsArea.y,
 				buttonsArea.width/buttons.size(), buttonsArea.height);
 		for(OpenQuestionPromptButtonType button: buttons) {
@@ -250,17 +286,21 @@ public class OpenQuestionPrompt extends Prompt{
 					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
 		}
-		if(currentQuestion.isRadio()){
-			buttonRect = new Rectangle(radioQuestionSelection.x, radioQuestionSelection.y,
-					radioQuestionSelection.width, radioQuestionSelection.height/radioAnswers.size());
-			for(int i=1;i<=radioAnswers.size();i++){
+	}
+	
+	public void drawRadioSelectionButtons(){
+		Rectangle buttonRect = new Rectangle(radioQuestionSelection.x, radioQuestionSelection.y,
+				radioQuestionSelection.width, radioQuestionSelection.height/radioAnswers.size());
+		for(int i=0;i<radioAnswers.size();i++){
+			if(i == currentRadioQuestion) 
+				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
+			else
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-				g2.setColor(Color.gray);
-				g2.draw(buttonRect);
-				TBSGraphics.drawCenteredString(g2, "" + i, buttonRect.x,
-						buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
-				buttonRect.setLocation(buttonRect.x, buttonRect.y + (textHeight + 4));
-			}
+			g2.setColor(Color.gray);
+			g2.draw(buttonRect);
+			TBSGraphics.drawCenteredString(g2, "" + (i+1), buttonRect.x,
+					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
+			buttonRect.setLocation(buttonRect.x, buttonRect.y + (radioQuestionSelection.height/radioAnswers.size()));
 		}
 	}
 	
@@ -268,26 +308,52 @@ public class OpenQuestionPrompt extends Prompt{
 		return currentQuestion;
 	}
 	
-	public void constructRadioQuestions(){
-		/*
-		 * Students with arrows get the questions in descending order, while
-		 * students without get them in ascending order.  Pretty tricky!!!
-		 */
-		if(model.hasArrows()){
-			for(int i=1;i<=radioAnswers.size(); i++)
-				lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
-		}else{
-			for(int i=radioAnswers.size();i>=1; i--)
-				lineBrokenQuestion.add(" " + questionProps.getProperty("questionThree"+i));
+	public void setCurrentQuestion(OpenQuestionButtonType currentQuestion) {
+		this.currentQuestion = currentQuestion;
+		buttons = OpenQuestionPromptButtonType.getButtons(currentQuestion.isRadio());
+		userInput = model.getQuestion(currentQuestion);
+		if(currentQuestion.isRadio()){
+			currentRadioQuestion = 0;
+			constructRadioAnswers();
 		}
 	}
 	
 	public boolean isOverButton(MouseEvent e){
 		if(buttonsArea.contains(e.getPoint()))
 			return true;
+		if(closeButton.contains(e.getPoint()))
+			return true;
 		if(currentQuestion.isRadio())
 			return radioQuestionSelection.contains(e.getPoint());
 		return false;
+	}
+	
+	private void constructRadioAnswers(){
+		radioAnswers = new LinkedList<String>();
+		String answerText = model.getQuestion(OpenQuestionButtonType.THREE);
+		int numRadios = Integer.parseInt(questionProps.getProperty("questionThree.numQuestions"));
+		if(answerText == null || answerText == "")
+			answerText = "0,0,0,0,0,0,0,0,0,0,0,0,0";
+		for(String answer : answerText.split(","))
+			radioAnswers.add(answer);
+		if(radioAnswers.size() < numRadios){
+			for(int i=radioAnswers.size();i<=numRadios;i++)
+				radioAnswers.add("0");
+		}else if(radioAnswers.size() > numRadios){
+			while(radioAnswers.size() != numRadios)
+				radioAnswers.remove(radioAnswers.size()-1);
+		}
+	}
+	
+	public String convertRadioAnswerToText(String numberString){
+		OpenQuestionPromptButtonType[] radioButtons = OpenQuestionPromptButtonType.values();
+		int answerNum = 0;
+		try{
+			answerNum = Integer.parseInt(numberString);
+		}catch(NumberFormatException e){
+			System.out.println("Number format exception for answer text: " + numberString);
+		}
+		return radioButtons[answerNum].getText();
 	}
 	
 }

@@ -1,21 +1,24 @@
 package tbs.view;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public enum TBSButtonType {
 
-	SELECT("Select", true, true, false, false, false),
-	ADD("Add", true, true, false, false, false),
-	DELETE("Delete", false, false, false, false, false),
-	LINK("Link", true, false, true, false, false),
-	UNLINK("Unlink", true, false, false, false, true),
-	LABEL("Label", true, false, true, false, true),
-	PRINT("Print", false, true, false, false, false), 
-	UNDO("Undo", false, false, false, true, false), 
-	SAVE("Save", false, true, false, false, false),
-	CLEAR("Clear", false, false, false, true, false),
-	HELP("Help",false, true, false, false, false),
-	TREE("Tree",false, true, false, false, false),
-	OPEN_RESPONSE("Open Responses",false, true, false, false, false),
-	ANALYSIS("Analysis",false, true, false, false, false);
+	SELECT("Select", true, true, false, false, false, false),
+	ADD("Add", true, true, false, false, false, false),
+	DELETE("Delete", false, false, false, false, false, false),
+	LINK("Link", true, false, true, false, false, false),
+	UNLINK("Unlink", true, false, false, false, true, false),
+	LABEL("Label", true, false, true, false, true, false),
+	PRINT("Print", false, true, false, false, false, false), 
+	UNDO("Undo", false, false, false, true, false, false), 
+	SAVE("Save", false, true, false, false, false, false),
+	CLEAR("Clear", false, false, false, true, false, false),
+	HELP("Help",false, true, false, false, false, false),
+	TREE("Tree",false, true, false, false, false, true),
+	OPEN_RESPONSE("Open Responses",false, true, false, false, false, true),
+	ANALYSIS("Analysis",false, true, false, false, false, true);
 	
 	private String text;
 	
@@ -39,15 +42,19 @@ public enum TBSButtonType {
 	
 	private Boolean cursorVariant;
 	
+	private Boolean admin;
+	
 	private TBSButtonType(String text, Boolean mode,
 			Boolean activeWhenCreated, Boolean itemSelectionBased,
-			Boolean confirmation, Boolean cursorVariant){
+			Boolean confirmation, Boolean cursorVariant,
+			Boolean admin){
 		this.text = text;
 		this.mode = mode;
 		this.activeWhenCreated = activeWhenCreated;
 		this.itemSelectionBased = itemSelectionBased;
 		this.confirmation = confirmation;
 		this.cursorVariant = cursorVariant;
+		this.admin = admin;
 	}
 	
 	public String getText(){
@@ -78,15 +85,12 @@ public enum TBSButtonType {
 		return text;
 	}
 	
-	public static TBSButtonType[] getButtons(boolean admin){
+	public static List<TBSButtonType> getButtons(boolean admin){
 		TBSButtonType[] buttons = TBSButtonType.values();
-		TBSButtonType[] buttonsSublist = admin ? new TBSButtonType[3] : new TBSButtonType[11];
-		int index = 0;
-		int startIndex = admin ? 11 : 0;
-		int endIndex = admin ? buttons.length : 11;
-		for(int i=startIndex;i<endIndex;i++){
-				buttonsSublist[index] = buttons[i];
-				index++;
+		List<TBSButtonType> buttonsSublist = new LinkedList<TBSButtonType>();
+		for(TBSButtonType button : buttons){
+			if(button.admin == admin)
+				buttonsSublist.add(button);
 		}
 		return buttonsSublist;
 	}

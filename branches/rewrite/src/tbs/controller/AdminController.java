@@ -162,9 +162,9 @@ public class AdminController extends TBSController
 
     public void handleMouseButtonPressed(int x, int y) {
     	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= model.getButtons().length)
+		if(buttonIndex >= model.getButtons().size())
 			return;
-		buttonClicked = model.getButtons()[buttonIndex];
+		buttonClicked = model.getButtons().get(buttonIndex);
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case TREE:

@@ -34,14 +34,16 @@ import tbs.view.TBSButtonType;
 import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.student.SplashPrompt;
+import tbs.view.prompt.student.HelpPrompt;
+import tbs.view.prompt.student.OpenQuestionPrompt;
+import tbs.view.prompt.student.WelcomePrompt;
 
 public class StudentModel implements TBSModel
 {
 	private StudentView view;
 	private Boolean admin;
 	private StudentController controller;
-	private TBSButtonType[] buttons;
+	private List<TBSButtonType> buttons;
 	private List<ModelElement> modelElements;
 	private ModelElement selectedModelElement;
 	private List<ModelElement> selectedTwoWay;
@@ -50,7 +52,8 @@ public class StudentModel implements TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
-	private SplashPrompt splashPrompt;
+	private OpenQuestionPrompt openResponsePrompt;
+	private HelpPrompt helpPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType,Properties> propertiesMap;
 	private Map<TBSButtonType, Boolean> buttonStates;
@@ -88,8 +91,9 @@ public class StudentModel implements TBSModel
 		this.hasArrows = hasArrows;
 		controller = new StudentController(this, view);
 		history = new Stack<Command>();
-		splashPrompt = new SplashPrompt(this);
-		prompt = splashPrompt;
+		prompt = new WelcomePrompt(this);
+		helpPrompt = new HelpPrompt(this);
+		openResponsePrompt = new OpenQuestionPrompt(this);
 	}
 	
 	public void changeSavedTree(String savedTree){
@@ -283,8 +287,7 @@ public class StudentModel implements TBSModel
 	
 	public void createButtons(Graphics2D g2)
 	{
-		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,
-				Arrays.asList(buttons));
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,buttons);
 		TBSGraphics.buttonsWidth = buttonDimensions.width + 
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
@@ -655,13 +658,20 @@ public class StudentModel implements TBSModel
 		this.prompt = null;
 	}
 	
-	public void promptUser(Prompt prompt) {
+	public void viewOpenResponse(OpenQuestionButtonType currentQuestion) {
+		openResponsePrompt.setCurrentQuestion(currentQuestion);
+		openResponsePrompt.setFinished(false);
+		this.prompt = openResponsePrompt;
+		view.refreshGraphics();
+	}
+	
+	public void viewPrompt(Prompt prompt){
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
 	
 	public void helpUser() {
-		this.prompt = splashPrompt;
+		this.prompt = helpPrompt;
 		view.refreshGraphics();
 	}
 
@@ -731,7 +741,7 @@ public class StudentModel implements TBSModel
 		this.admin = admin;
 	}
 
-	public TBSButtonType[] getButtons() {
+	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}
 	

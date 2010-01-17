@@ -136,8 +136,8 @@ public class StudentController extends TBSController
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			} else {
 				buttonIndex = x / TBSGraphics.buttonsWidth;
-				if(buttonIndex < model.getButtons().length) {
-					TBSButtonType temp = model.getButtons()[buttonIndex];
+				if(buttonIndex < model.getButtons().size()) {
+					TBSButtonType temp = model.getButtons().get(buttonIndex);
 					if(model.isButtonActive(temp))
 						c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 					else
@@ -203,7 +203,7 @@ public class StudentController extends TBSController
 					OpenQuestionButtonType q = temp.getCurrentQuestion();
 					model.setQuestion(input, q);
 					if(q.ordinal() < OpenQuestionButtonType.THREE.ordinal())
-						model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.values()[q.ordinal()+1]));
+						model.viewOpenResponse(OpenQuestionButtonType.values()[q.ordinal()+1]);
 					else
 						model.clearPrompt();
 				}else if(prompt instanceof YesNoPrompt){
@@ -458,8 +458,8 @@ public class StudentController extends TBSController
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= model.getButtons().length) return;
-		buttonClicked = model.getButtons()[buttonIndex];
+		if(buttonIndex >= model.getButtons().size()) return;
+		buttonClicked = model.getButtons().get(buttonIndex);
 		System.out.println(buttonClicked.toString());
 		if(!buttonClicked.isConfirmation())
 			view.setScreenString(getStatus(buttonClicked));
@@ -528,7 +528,7 @@ public class StudentController extends TBSController
 			}
 			break;
 		case CLEAR:
-			model.promptUser(new YesNoPrompt(model, TBSButtonType.CLEAR));
+			model.viewPrompt(new YesNoPrompt(model, TBSButtonType.CLEAR));
 			break;
 		case HELP:
 			model.helpUser();
@@ -545,13 +545,13 @@ public class StudentController extends TBSController
 		System.out.println(questionClicked.toString());
 		switch (questionClicked) {
 		case ONE:
-			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.ONE));
+			model.viewOpenResponse(OpenQuestionButtonType.ONE);
 			break;
 		case TWO:
-			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.TWO));
+			model.viewOpenResponse(OpenQuestionButtonType.TWO);
 			break;
 		case THREE:
-			model.promptUser(new OpenQuestionPrompt(model, OpenQuestionButtonType.THREE));
+			model.viewOpenResponse(OpenQuestionButtonType.THREE);
 			break;
 		}
 		setSelectedElement(null);

@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class AdminModel implements TBSModel
 	private AdminView view;
 	private Boolean admin;
 	private TBSController controller;
-	private TBSButtonType[] buttons;
+	private List<TBSButtonType> buttons;
 	private List<ModelElement> modelElements;
 	private int MESerialNumber=0;
 	private TBSApplet applet;
@@ -259,8 +258,7 @@ public class AdminModel implements TBSModel
 
 	public void createButtons(Graphics2D g2)
 	{
-		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,
-				Arrays.asList(buttons));
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,buttons);
 		TBSGraphics.buttonsWidth = buttonDimensions.width + 
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
@@ -562,7 +560,7 @@ public class AdminModel implements TBSModel
 		this.admin = admin;
 	}
 
-	public TBSButtonType[] getButtons() {
+	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}
 

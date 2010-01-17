@@ -13,47 +13,39 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
-import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 
-public class SplashPrompt extends Prompt
+public class WelcomePrompt extends Prompt
 {
 
 	//Information to be used by all prompt types
 	TBSModel model;
 	Graphics2D g2 = null;
 	Properties instrProps;
-	Properties helpProps; 
-	boolean seenIntro = false;
-
+	
 	//Prompt sizing information
 	Dimension padding = new Dimension(10,5);
-	Dimension promptSize = new Dimension();
+	Dimension promptSize = new Dimension(770,0);
 	Point anchorPoint = null;
-	int instructionStringY;
+	int welcomeStringY;
 	Rectangle closeButton;
 	Rectangle startButton;
-	boolean renderStart;
 	int buttonHeight;
 	int textHeight;
 
 	String instrString;
 	String welcomeMessage;
 
-	public SplashPrompt(TBSModel model) {
+	public WelcomePrompt(TBSModel model) {
 		super();
 		this.model = model;
 		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
-		helpProps = model.getProperties(PropertyType.HELP);
-		renderStart = true;
 	}
 
 
@@ -62,88 +54,60 @@ public class SplashPrompt extends Prompt
 	public void keyTyped(KeyEvent e){}
 
 	public void mousePressed(MouseEvent e) {
-		if(renderStart){
-			if(startButton.contains(e.getPoint()))
+		if(startButton.contains(e.getPoint()))
 				setFinished(true);
-		}else{
-			if(closeButton.contains(e.getPoint()))
+		if(closeButton.contains(e.getPoint()))
 				setFinished(true);
-		}			
-		renderStart = false;
 	}
 
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		int width = renderStart ? 750 : 800;
-		promptSize.setSize(width + padding.width * 2, 0);
-		if(renderStart){
-			List<String> incompletedItems = surveyStatus();
-			String introString = "";
-			if(incompletedItems.size() == 4)
-				introString = String.format(instrProps.getProperty("instrIntro"),
+		List<String> incompletedItems = surveyStatus();
+		String introString = "";
+		if(incompletedItems.size() == 4)
+			introString = String.format(instrProps.getProperty("instrIntro"),
 					welcomeMessage(incompletedItems));
-			else
-				introString = welcomeMessage(incompletedItems);	
-			List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,introString,
-					promptSize.width - padding.width * 2);
-			List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
-					instrProps.getProperty("instrDir"),
-					promptSize.width - padding.width * 2);
+		else
+			introString = welcomeMessage(incompletedItems);	
+		List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,introString,
+				promptSize.width - padding.width * 2);
+		List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
+				instrProps.getProperty("instrDir"),
+				promptSize.width - padding.width * 2);
 
-			calculateValues(introduction.size() + directions.size() + 5);
-			drawBox();
-			drawButtons();
-			drawText(introduction);
-			instructionStringY += textHeight + padding.height;
-			TBSGraphics.drawCenteredString(g2, instrProps.getProperty("instrHeader"),
-					anchorPoint.x + padding.width, instructionStringY,
-					promptSize.width - padding.width * 2,
-					textHeight,TBSGraphics.emptyNodeColor);
-			instructionStringY += (textHeight + padding.height) * 2;
-			drawText(directions);
-		}else{
-			Map<Integer, List<String>> actionsText = new TreeMap<Integer, List<String>>();
-			int totalLines = 0;
-			for(TBSButtonType bt : model.getButtons()){
-				List<String> temp = TBSGraphics.breakStringByLineWidth(g2,
-						helpProps.getProperty("help_" + bt.getText()),
-						promptSize.width - ((padding.width * 2) + TBSGraphics.buttonsWidth));
-				totalLines += temp.size();
-				actionsText.put(bt.ordinal(), temp);
-			}
-			List<String> orq = TBSGraphics.breakStringByLineWidth(g2,
-					helpProps.getProperty("help_123"),
-					promptSize.width - ((padding.width * 2) + TBSGraphics.buttonsWidth));
-			totalLines += orq.size();
-			calculateValues(totalLines);
-			drawBox();
-			drawButtons();
-			TBSButtonType[] orderedButtons = TBSButtonType.values();
-			for(Map.Entry<Integer,List<String>> action : actionsText.entrySet())
-				drawText(action.getValue(), orderedButtons[action.getKey()].getText());
-			drawText(orq, "1,2,3");
-		}
+		calculateValues(introduction.size() + directions.size() + 5);
+		drawBox();
+		drawButtons();
+		welcomeStringY = anchorPoint.y;
+		TBSGraphics.drawCenteredString(g2,"Welcome",
+				anchorPoint.x + padding.width, welcomeStringY,
+				promptSize.width - padding.width * 2,
+				buttonHeight,TBSGraphics.emptyNodeColor);
+		welcomeStringY += buttonHeight;
+		drawText(introduction);
+		welcomeStringY += textHeight + padding.height;
+		TBSGraphics.drawCenteredString(g2, instrProps.getProperty("instrHeader"),
+				anchorPoint.x + padding.width, welcomeStringY,
+				promptSize.width - padding.width * 2,
+				textHeight,TBSGraphics.emptyNodeColor);
+		welcomeStringY += (textHeight + padding.height) * 2;
+		drawText(directions);
 	}
 
 	public void calculateValues(int lineCount) {
-		instructionStringY = 0;
+		buttonHeight = textHeight + padding.height;
 		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
-				(padding.height * (lineCount + 1)));
+				(padding.height * (lineCount + 1)) + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), 
 				centerY - (promptSize.height / 2));
-		instructionStringY = anchorPoint.y;
-		buttonHeight = textHeight + padding.height;
 		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
 				buttonHeight, buttonHeight);
-		if(renderStart)
-			startButton = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
+		startButton = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
 					promptSize.width, buttonHeight);
-		else
-			startButton = new Rectangle();
 	}
 
 	public void drawBox() {
@@ -159,18 +123,18 @@ public class SplashPrompt extends Prompt
 	public void drawText(List<String> lines) {
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
-			drawString(line, startX, instructionStringY);
-			instructionStringY += textHeight + padding.height;
+			drawString(line, startX, welcomeStringY);
+			welcomeStringY += textHeight + padding.height;
 		}
 	}
 	
 	public void drawText(List<String> lines, String header) {
 		int startX = anchorPoint.x + padding.width;
-		TBSGraphics.drawCenteredString(g2, header, startX, instructionStringY, 0, textHeight, TBSGraphics.emptyNodeColor);
+		TBSGraphics.drawCenteredString(g2, header, startX, welcomeStringY, 0, textHeight, TBSGraphics.emptyNodeColor);
 		startX += TBSGraphics.buttonsWidth;
 		for(String line : lines){
-			drawString(line, startX, instructionStringY);
-			instructionStringY += textHeight + padding.height;
+			drawString(line, startX, welcomeStringY);
+			welcomeStringY += textHeight + padding.height;
 		}
 	}
 
@@ -186,20 +150,19 @@ public class SplashPrompt extends Prompt
 
 	public void drawButtons()
 	{
-		if(!renderStart){
-			TBSGraphics.renderButtonBackground(g2, closeButton, false);
-			g2.setColor(Color.BLACK);
-			g2.setStroke(new BasicStroke(3));
-			g2.draw(closeButton);
-			int x,y,w,h;
-			x = closeButton.x+1;
-			y = closeButton.y+1;
-			w = closeButton.width-1;
-			h = closeButton.height-1;
-			g2.draw(new Line2D.Double(x,y,x+w,y+h));
-			g2.draw(new Line2D.Double(x,y+h,x+w,y));
-			g2.setStroke(new BasicStroke());
-		}
+		TBSGraphics.renderButtonBackground(g2, closeButton, false);
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(3));
+		g2.draw(closeButton);
+		int x,y,w,h;
+		x = closeButton.x+1;
+		y = closeButton.y+1;
+		w = closeButton.width-1;
+		h = closeButton.height-1;
+		g2.draw(new Line2D.Double(x,y,x+w,y+h));
+		g2.draw(new Line2D.Double(x,y+h,x+w,y));
+		g2.setStroke(new BasicStroke());
+		
 		TBSGraphics.renderButtonBackground(g2, startButton, false);
 		g2.setColor(Color.gray);
 		g2.draw(startButton);
@@ -209,13 +172,10 @@ public class SplashPrompt extends Prompt
 
 
 	public boolean isOverButton(MouseEvent e){
-		if(renderStart){
-			if(startButton.contains(e.getPoint()))
+		if(startButton.contains(e.getPoint()))
 				return true;
-		}else{
-			if(closeButton.contains(e.getPoint()))
+		if(closeButton.contains(e.getPoint()))
 				return true;
-		}
 		return false;
 	}
 	
@@ -231,7 +191,7 @@ public class SplashPrompt extends Prompt
 			welcome.append("You have completed the survey and recieved 15 points. ");
 		else{
 			if(incompletedItems.size() < 4){
-				welcome.append("You still new to complete ");
+				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
 				for(String s : incompletedItems)

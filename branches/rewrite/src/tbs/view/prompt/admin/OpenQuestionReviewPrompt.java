@@ -34,7 +34,7 @@ public class OpenQuestionReviewPrompt extends Prompt
 	
 	//Prompt sizing information
 	Dimension padding = new Dimension(10,5);
-	Dimension promptSize = new Dimension();
+	Dimension promptSize = new Dimension(820,0);
 	Point anchorPoint = null;
 	int responseStringY;
 	Rectangle closeButton;
@@ -117,8 +117,6 @@ public class OpenQuestionReviewPrompt extends Prompt
 		this.g2 = g2;
 		if(textHeight == -1)
 			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		int width = 800;
-		promptSize.setSize(width + padding.width * 2, 0);
 		List<String> writtenQuestionText = new LinkedList<String>();
 		List<String> writtenAnswerText = new LinkedList<String>();
 		int writtenLines = 0;
@@ -136,6 +134,7 @@ public class OpenQuestionReviewPrompt extends Prompt
 			calculateValues(questionThree.size() + 2);
 		drawBox();
 		drawButtons();
+		
 		responseStringY = anchorPoint.y;
 		TBSGraphics.drawCenteredString(g2,"Open Responses - " + currentQuestion.getAdminText(),
 				anchorPoint.x + padding.width, responseStringY,
