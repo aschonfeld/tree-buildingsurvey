@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.Timer;
 
-import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;

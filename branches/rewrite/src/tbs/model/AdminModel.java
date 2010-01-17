@@ -292,8 +292,8 @@ public class AdminModel implements TBSModel
 	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
 		int currentY = 0;
 		students = new LinkedList<Student>();
-		for(String studentStringSrray : studentStringArrays){
-			Student temp = new Student(g2, studentStringSrray);
+		for(String studentStringArray : studentStringArrays){
+			Student temp = new Student(g2, studentStringArray);
 			students.add(temp);
 			if(temp.getWidth() > TBSGraphics.studentNodeWidth) 
 				TBSGraphics.studentNodeWidth = temp.getWidth();

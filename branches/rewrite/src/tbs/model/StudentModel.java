@@ -21,6 +21,7 @@ import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.StudentController;
 import tbs.controller.TBSController;
+import tbs.model.admin.Student;
 import tbs.model.history.Add;
 import tbs.model.history.Command;
 import tbs.model.history.Delete;
@@ -57,14 +58,15 @@ public class StudentModel implements TBSModel
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType,Properties> propertiesMap;
 	private Map<TBSButtonType, Boolean> buttonStates;
+	private Student student;
 	private String name;
 	private String questionOne;
 	private String questionTwo;
 	private String questionThree;
 	private Boolean hasArrows;
-	public StudentModel(TBSApplet app, String savedTree, Graphics2D g2,
+	public StudentModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
-			Boolean hasArrows, Map<PropertyType, Properties> propertiesMap) {
+			String studentString, Map<PropertyType, Properties> propertiesMap) {
 		applet = app;
 		this.propertiesMap = propertiesMap;
 		buttons = TBSButtonType.getButtons(false);
@@ -76,8 +78,11 @@ public class StudentModel implements TBSModel
 		buttonStates = new HashMap<TBSButtonType, Boolean>();
 		for(TBSButtonType b : buttons)
 			buttonStates.put(b, b.isActiveWhenCreated());
-		if(!"".equals(savedTree)){
-			loadTree(savedTree);
+		student = new Student(g2, studentString);
+		name = student.getName();
+		hasArrows = student.getHasArrows();
+		if(!"".equals(student.getTree())){
+			loadTree(student.getTree());
 			if(inTreeElements().size() > 1){
 				buttonStates.put(TBSButtonType.LINK, true);
 				buttonStates.put(TBSButtonType.DELETE, true);
@@ -86,9 +91,11 @@ public class StudentModel implements TBSModel
 					buttonStates.put(TBSButtonType.LABEL, false);
 			}
 		}
+		setQuestion(student.getQ1(), OpenQuestionButtonType.ONE);
+		setQuestion(student.getQ2(), OpenQuestionButtonType.TWO);
+		setQuestion(student.getQ3(), OpenQuestionButtonType.THREE);
 		view = new StudentView(this);
 		this.admin = false;
-		this.hasArrows = hasArrows;
 		controller = new StudentController(this, view);
 		history = new Stack<Command>();
 		prompt = new WelcomePrompt(this);
@@ -739,14 +746,7 @@ public class StudentModel implements TBSModel
 	}
 	
 	public String getName(){
-		if(name != null && name != ""){
-			String[] splitName = name.split(",");
-			StringBuffer nameBuffer = new StringBuffer();
-			for(int i=(splitName.length-1);i>=0;i--)
-				nameBuffer.append(splitName[i]).append(" ");
-			return nameBuffer.toString().trim();
-		}else
-			return "";
+		return name;
 	}
 	
 	public void setName(String name){

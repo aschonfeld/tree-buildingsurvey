@@ -20,6 +20,16 @@ public class Student {
 	private Point anchorPoint;
 	
 	public Student(Graphics2D g2, String studentDataString){
+		if(studentDataString == null || studentDataString == ""){
+			lastUpdate = "";
+			tree = "";
+			q1 = "";
+			q2 = "";
+			q3 = "";
+			hasArrows = true;
+			name = "";
+			return;
+		}
 		String[] studentData = studentDataString.split("\\+=");
 		setName(studentData[0]);
 		lastUpdate = studentData[1];

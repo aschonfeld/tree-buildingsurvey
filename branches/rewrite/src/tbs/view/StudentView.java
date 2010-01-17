@@ -206,6 +206,7 @@ public class StudentView extends TBSView implements Printable {
 					g2.draw(getArrowHead(conn, 0.75 * Math.PI));
 					g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 				}
+				g2.setStroke(new BasicStroke());
 			}
 		}
 	}
@@ -244,6 +245,7 @@ public class StudentView extends TBSView implements Printable {
 	}
 	
 	public void renderSelectedModelElement(Graphics2D g2, ModelElement me){
+		g2.setStroke(new BasicStroke(3));
 		if(me instanceof Node){
 			if(((Node) me).isBeingLabeled())
 				return; // do not draw green box around node being labeled
@@ -251,11 +253,10 @@ public class StudentView extends TBSView implements Printable {
 			double y = n.getY() - 1.5;
 			if(n.isInTree()) y -= yOffset;
 			g2.setColor(TBSGraphics.selectedNodeBorderColor);
-			g2.setStroke(new BasicStroke(TBSGraphics.selectedNodeBorderThickness));
 			g2.draw(new Rectangle2D.Double(n.getX()-1.5,
 					y,
-					n.getWidth() + TBSGraphics.selectedNodeBorderThickness,
-					n.getHeight() + TBSGraphics.selectedNodeBorderThickness));
+					n.getWidth() + 3,
+					n.getHeight() + 3));
 			if(n instanceof OrganismNode){
 				OrganismNode on = (OrganismNode) n;
 				if(on.isInTree())
@@ -274,14 +275,14 @@ public class StudentView extends TBSView implements Printable {
 					c.getTo());
 			conn = scrollAdjust(conn);
 			g2.setColor(TBSGraphics.connectionSelectedColor);
-			g2.setStroke(new BasicStroke(3));
 			g2.draw(conn);
 			if(model.hasArrows()){
 				g2.draw(getArrowHead(conn, 0.75 * Math.PI));
 				g2.draw(getArrowHead(conn, 1.25 * Math.PI));
 			}
-			g2.setStroke(new BasicStroke());
-		}			
+		}	
+		g2.setStroke(new BasicStroke());
+
 	}
 	
 	/**

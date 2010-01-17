@@ -164,6 +164,7 @@ sub load_student_survey {
 	$Q2 = $query->param('Q2');
 	$Q3 = $query->param('Q3');
 	$treeXML = $query->param('treeXML');
+	$lastUpdate = $query->param('lastUpdate');
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
@@ -225,9 +226,9 @@ sub load_student_survey {
 	} else {
 	    # if there's already data there, get it
 	    if ($rowcount != 0) {
-	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree FROM student_data WHERE name=?");
+	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM student_data WHERE name=?");
 	        $sth->execute($name);
-	        ($Q1, $Q2, $Q3, $treeXML) = $sth->fetchrow_array();
+	        ($Q1, $Q2, $Q3, $treeXML, $lastUpdate) = $sth->fetchrow_array();
 	        $sth->finish();
 	    }
 	}
@@ -290,15 +291,10 @@ sub load_student_survey {
   	print "name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	#print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
+	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
 	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
-	print "width=1175 height=590 name=\"TreeApplet\"> \n";
-	print "<param name=\"StudentName\" value=\"$name\"> \n";
-	print "<param name=\"Arrows\" value=\"$arrows\"> \n";
-	print "<param name=\"SavedTree\" value=\"$treeXML\"> \n";
-	print "<param name=\"quest1\" value=\"$Q1\"> \n";
-  	print "<param name=\"quest2\" value=\"$Q2\"> \n";
-  	print "<param name=\"quest3\" value=\"$Q3\"> \n";
+	#print "width=1175 height=590 name=\"TreeApplet\"> \n";
+	print "<param name=\"Student\" value=\"$name+=$lastUpdate+=$treeXML+=$Q1+=$Q2+=$Q3+=$arrows+=\"> \n";
   	print "<param name=\"Admin\" value=\"false\"> \n";
   	print "          You have to enable Java on your machine !</applet> \n";
   	print "</td><td>\n";
@@ -318,6 +314,7 @@ sub load_student_survey {
 	print "</td></tr><tr><td><center>\n";
     print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
     print "<input type=\"hidden\" name=\"Passwd\" value=\"$password\">\n";
+    print "<input type=\"hidden\" name=\"lastUpdate\" value=\"$lastUpdate\">\n";
     print "<input type=\"hidden\" name=\"treeXML\" value=\"$treeXML\">\n";
     print "<input type=\"hidden\" name=\"Q1\" value=\"$Q1\">\n";
     print "<input type=\"hidden\" name=\"Q2\" value=\"$Q2\">\n";
@@ -357,9 +354,9 @@ sub load_admin_survey {
 	print "<form name=\"form\" style=\"border: 0;padding-bottom: 0;margin-bottom: 0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding-bottom: 0;margin-bottom: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	#print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
+	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
 	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
-	print "width=1175 height=590 name=\"TreeApplet\"> \n";
+	#print "width=1175 height=590 name=\"TreeApplet\"> \n";
 	#$dbh = GradeDB::connect();
 	$dbh = treeDB::connect();
 	#$sth = $dbh->prepare("SELECT * FROM students ORDER BY name");
@@ -377,7 +374,7 @@ sub load_admin_survey {
 		my $Q1 = $data[3];
 		my $Q2 = $data[4];
 		my $Q3 = $data[5];
-		print "<param name=\"student$count\" value=\"$student_name+=$last_update+=$tree+=$Q1+=$Q2+=$Q3+=$arrows+=\"> \n";
+		print "<param name=\"Student$count\" value=\"$student_name+=$last_update+=$tree+=$Q1+=$Q2+=$Q3+=$arrows+=\"> \n";
     }
     $sth->finish();
 	$dbh->disconnect();

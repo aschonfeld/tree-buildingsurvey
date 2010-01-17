@@ -206,7 +206,6 @@ public class TBSGraphics {
 	 */
 	public static Color connectionSelectedColor = Color.GREEN;
 	public static Color selectedNodeBorderColor = Color.GREEN;
-	public static int selectedNodeBorderThickness = 3;
 	
 	/**
 	* Vertical spacing of buttons.
@@ -370,6 +369,10 @@ public class TBSGraphics {
 	public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
 		String currentLine = "";
 		List<String> widthBrokenString = new LinkedList<String>();
+		if(s == null || s == ""){
+			widthBrokenString.add("");
+			return widthBrokenString;
+		}
 		for(String token : s.split(" ")){
 			if(TBSGraphics.getStringBounds(g2, currentLine + token).width > width){
 				widthBrokenString.add(currentLine);
