@@ -77,9 +77,14 @@ public class OpenQuestionPrompt extends Prompt{
 		if(buttonsArea.contains(e.getPoint())){
         	int index = (int) ((e.getX() - buttonsArea.getX()) * buttons.size()) / promptSize.width;
         	String buttonValue = buttons.get(index).getValue();
-    		if("0".equals(buttonValue))
-        		setFinished(true);
-    		else{
+    		if("0".equals(buttonValue)){
+    			if(!currentQuestion.isRadio())
+    				setCurrentQuestion(OpenQuestionButtonType.values()[currentQuestion.ordinal()+1]);
+    			else{
+    				model.setQuestion(userInput, currentQuestion);
+    				setFinished(true);
+    			}	
+    		}else{
     			if(currentQuestion.isRadio()){
     				if(currentRadioQuestion == (radioAnswers.size()-1))
     					buttons = OpenQuestionPromptButtonType.getButtons(false);

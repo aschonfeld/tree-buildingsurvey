@@ -202,10 +202,7 @@ public class StudentController extends TBSController
 					String input = temp.getUserInput();
 					OpenQuestionButtonType q = temp.getCurrentQuestion();
 					model.setQuestion(input, q);
-					if(q.ordinal() < OpenQuestionButtonType.THREE.ordinal())
-						model.viewOpenResponse(OpenQuestionButtonType.values()[q.ordinal()+1]);
-					else
-						model.clearPrompt();
+					model.clearPrompt();
 				}else if(prompt instanceof YesNoPrompt){
 					YesNoPrompt temp = (YesNoPrompt) prompt;
 					switch(temp.getPromptType()){
