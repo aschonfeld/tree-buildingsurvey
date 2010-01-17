@@ -44,6 +44,7 @@ public class TBSApplet extends JApplet {
 	
 	private TBSModel model;
 	private TBSApplet app = this;
+	private boolean admin;
 
 	/**
 	* INIT instantiates TBSGraphics and TBSModel, and calls the
@@ -69,7 +70,7 @@ public class TBSApplet extends JApplet {
  			}
  			TreeMap<String, BufferedImage> organisms = loadOrganismsFromDirectory();
  			String adminStr = getParameter("Admin");
- 			boolean admin = Boolean.parseBoolean(adminStr);
+ 			admin = Boolean.parseBoolean(adminStr);
  			boolean arrows = true;
  			if(!admin){
  				String hasArrows = getParameter("Arrows");
@@ -92,8 +93,13 @@ public class TBSApplet extends JApplet {
  	 			model.setQuestion(q3, OpenQuestionButtonType.THREE);
  	 			model.setName(name);
  			}else{
+ 				int studentCt = 0;//Default number of radio questions
  				String numOfStudents = getParameter("StudentCount");
- 				int studentCt = Integer.parseInt(numOfStudents);
+ 				try{
+ 					studentCt = Integer.parseInt(numOfStudents);
+ 				} catch(NumberFormatException e) {
+ 					System.out.println("TBSApplet:Error parsing student count(value-" + numOfStudents + ")");
+ 				}
  				List<String> students = new LinkedList<String>();
  				String student;
  				for(int i=1; i<=studentCt; i++){
@@ -183,17 +189,12 @@ public class TBSApplet extends JApplet {
 		 	lines.add(line);
 		}
 	is.close();	
-	}//end try block
-	
-
-	catch (Exception e)
-	{
+	} catch (Exception e){
 		System.out.println("loadTreeFile: "+e);
 		e.printStackTrace();
-
 	}
 	return lines;
-	}//end loadTreeFile
+	}
 	
 	public String getTree(){ return model.exportTree(); }
 	
@@ -215,6 +216,33 @@ public class TBSApplet extends JApplet {
 			System.out.println("Unable to load " + filename + ": " + e);
 			return new Properties();
 		}
+	}
+	
+	public String[][] getParameterInfo(){
+		String[][] parameterInfo = null;
+		if(admin){
+			parameterInfo = new String[3][];
+			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
+			parameterInfo[1] = new String[]{"StudentCount", "Integer", "In admin mode this parameter tells the applet how many 'Student' parameters to get"};
+			parameterInfo[2] = new String[]{"Student(#)", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for each student"};
+		}else{
+			parameterInfo = new String[8][];
+			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
+			parameterInfo[1] = new String[]{"StudentName", "String", "The name of the student accessing the applet"};
+			parameterInfo[2] = new String[]{"LastUpdate", "Timestamp", "The date/time of this student's last update to the survey"};
+			parameterInfo[3] = new String[]{"Arrows", "Boolean", "Tells the applet whether to display connections with or without arrows for this student "};
+			parameterInfo[4] = new String[]{"SavedTree", "String", "The string representation of this student's saved tree"};
+			parameterInfo[5] = new String[]{"quest1", "String", "This student's response to the open-response question 1"};
+			parameterInfo[6] = new String[]{"quest2", "String", "This student's response to the open-response question 2"};
+			parameterInfo[7] = new String[]{"quest3", "String", "This student's response to the open-response question 3"};
+		}
+		return parameterInfo;
+	}
+	
+	public String getAppletInfo(){
+		return "Diversity of Life Survey Applet, Version 1.3\n"
+        + "Copyright Tree Building Survey Group,2010";
+  
 	}
 }
 
