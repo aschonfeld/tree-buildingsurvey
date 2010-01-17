@@ -6,7 +6,8 @@ public enum PropertyType {
 	INSTRUCTIONS("instructions.properties", true),
 	ORGANISMS("organisms.properties", false),
 	QUESTIONS("questions.properties", true),
-	STATUS("status.properties", true);
+	STATUS("status.properties", true),
+	ADMIN("admin.properties", true);
 	
 	private String filename;
 	

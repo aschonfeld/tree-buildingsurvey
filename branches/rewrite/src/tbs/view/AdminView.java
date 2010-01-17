@@ -16,11 +16,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.Timer;
 
+import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
@@ -31,6 +33,7 @@ import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.TBSModel;
 import tbs.model.admin.Student;
+import tbs.properties.PropertyType;
 import tbs.view.prompt.Prompt;
 
 /**
@@ -260,15 +263,20 @@ public class AdminView extends TBSView {
 	* Draw the statusString. 	
 	*/
 	public void renderScreenString(Graphics2D g2) {
-        int xVal = TBSGraphics.LINE_OF_DEATH + 20;
-        int yVal = TBSGraphics.buttonsHeight;
-        int yStep = TBSGraphics.buttonsHeight;
-		if(screenString == null) 
-			return;
-		int width = model.getApplet().getWidth() - (xVal + TBSGraphics.buttonsWidth);
+		TBSButtonType buttonClicked = model.getController().getButtonClicked();
+		int yStep = TBSGraphics.buttonsHeight;
+        
+        if(buttonClicked == null)
+        	buttonClicked = TBSButtonType.TREE;
+		
+        Properties adminProps = model.getProperties(PropertyType.ADMIN);
+		screenString = String.format(adminProps.getProperty(buttonClicked.name()), model.getName());
+		
+		int width = model.getApplet().getWidth();
 		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
+		int yVal = model.getApplet().getHeight() - (TBSGraphics.buttonsHeight * (lines.size()+1));
 		for(String line : lines) {
-			TBSGraphics.drawCenteredString(g2, line, xVal, yVal, 0, yStep, Color.CYAN);
+			TBSGraphics.drawCenteredString(g2, line, 0, yVal, width, yStep, TBSGraphics.emptyNodeColor);
 			yVal += yStep;
 		}
 	}
