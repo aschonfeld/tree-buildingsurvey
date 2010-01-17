@@ -190,7 +190,11 @@ public class WelcomePrompt extends Prompt
 		if(incompletedItems.isEmpty())
 			welcome.append("You have completed the survey and recieved 15 points. ");
 		else{
-			if(incompletedItems.size() < 4){
+			if(incompletedItems.size() == 1){
+				welcome.append("You still need to complete ");
+				welcome.append(incompletedItems.remove(0)).append(". ");
+			}
+			else if(incompletedItems.size() < 4){
 				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
