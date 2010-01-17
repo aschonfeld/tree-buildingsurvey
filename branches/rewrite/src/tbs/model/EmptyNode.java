@@ -61,22 +61,16 @@ public class EmptyNode extends Node
 		if(name.length()==0){
 			setName("");
 			setWidth(TBSGraphics.emptyNodeWidth);
-			//setHeight(TBSGraphics.emptyNodeHeight);
 			return;
 		}
 		int width = TBSGraphics.emptyNodeWidth;
-		//int height = TBSGraphics.emptyNodeHeight;
 		int padding = TBSGraphics.emptyNodePadding;
 		Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
 		int testWidth = stringBounds.width + 2 * padding;
-		//int testHeight = stringBounds.height + 2 * padding;
 		if (testWidth > TBSGraphics.emptyNodeWidth)
 			width = testWidth;
-		//if (testHeight > TBSGraphics.emptyNodeHeight)
-		//	height = testHeight;
 		setName(name);
-		setWidth(width);
-		//setHeight(height);		
+		setWidth(width);		
 	}
 
 	public boolean isBeingLabeled() {return beingLabeled;}

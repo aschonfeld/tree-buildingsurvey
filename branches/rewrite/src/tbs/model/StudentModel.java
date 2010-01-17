@@ -332,11 +332,7 @@ public class StudentModel implements TBSModel
 		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
 		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
-		/*
-		 * If you use this line it will make the positioning of the immortal node
-		 * like the default positioning of an organism node
-		 */		
-		//TBSGraphics.emptyNodeUpperY = currentY + TBSGraphics.ySpacing;
+		
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
 	}	
@@ -574,31 +570,36 @@ public class StudentModel implements TBSModel
 		List<ModelElement> savedTree = new LinkedList<ModelElement>();
 		EmptyNode savedImmortalEmptyNode = null;
 		String[] treeItems = tree.split("#");
-		for(String item : treeItems)
-		{
-			String data[] = item.split(":");
-			if (data[0].equals("O"))
-				savedTree.add(loadOrganismNode(data));
-			else if (data[0].equals("E")){
-				ModelElement temp = loadEmptyNode(data);
-				if(!((EmptyNode) temp).isInTree())
-					savedImmortalEmptyNode = (EmptyNode) temp;
-				savedTree.add(temp);
-			}else if (data[0].equals("C"))
-				savedTree.add(loadConnection(data, savedTree));
-			else
+		try{
+			for(String item : treeItems)
 			{
-				System.out.println("Problem in loadTree");
-				break;
+				String data[] = item.split(":");
+				if (data[0].equals("O"))
+					savedTree.add(loadOrganismNode(data));
+				else if (data[0].equals("E")){
+					ModelElement temp = loadEmptyNode(data);
+					if(!((EmptyNode) temp).isInTree())
+						savedImmortalEmptyNode = (EmptyNode) temp;
+					savedTree.add(temp);
+				}else if (data[0].equals("C"))
+					savedTree.add(loadConnection(data, savedTree));
+				else
+				{
+					System.out.println("Problem in loadTree");
+					break;
+				}
 			}
+
+			// Sort the local list
+			Collections.sort(savedTree, TBSGraphics.elementIdComparator);
+			modelElements = savedTree;
+			immortalEmptyNode = savedImmortalEmptyNode;
+			MESerialNumber = savedTree.size()+1;
+			System.out.println("loadTree: end");
+		}catch(NumberFormatException e){
+			System.out.println("There was an error parsing your saved tree. " + 
+					"Your tree has been reset.");
 		}
-	
-		// Sort the local list
-		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
-		modelElements = savedTree;
-		immortalEmptyNode = savedImmortalEmptyNode;
-		MESerialNumber = savedTree.size()+1;
-		System.out.println("loadTree: end");
 	}
 
 	/**
@@ -609,13 +610,19 @@ public class StudentModel implements TBSModel
 	 * reloading the image files, but it means we have to always use the
 	 * same set of organisms. 
 	 */
-	public ModelElement loadOrganismNode(String[] data)
-	{
-		int id = Integer.parseInt(data[1]);
+	public ModelElement loadOrganismNode(String[] data) throws NumberFormatException {
+		int id=0,x=0,y=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			x = Integer.parseInt(data[3]);
+			y = Integer.parseInt(data[4]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadOrganismNode:Error parsing organism data (id:" + data[1] +
+					",x:" + data[3] + "y:" + data[4]+")");
+			throw e;
+		}
 		ModelElement me = getElementBySN(id);
 		OrganismNode node = (OrganismNode) me;
-		int x = Integer.parseInt(data[3]);
-		int y = Integer.parseInt(data[4]);
 		Point pt = new Point(x,y);
 		node.setAnchorPoint(pt);
 		node.setInTree(Boolean.parseBoolean(data[5]));
@@ -626,12 +633,20 @@ public class StudentModel implements TBSModel
 	 * Load an EmptyNode. Might be possible to combine this with
 	 * loadOrganismNode().
 	 */
-	public ModelElement loadEmptyNode(String[] data)
+	public ModelElement loadEmptyNode(String[] data) throws NumberFormatException
 	{
-		int id = Integer.parseInt(data[1]);
 		String name = data[2];
-		int x = Integer.parseInt(data[3]);
-		int y = Integer.parseInt(data[4]);
+		int id=0,x=0,y=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			x = Integer.parseInt(data[3]);
+			y = Integer.parseInt(data[4]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadEmptyNode:Error parsing empty node (" +
+					name + ") data (id:" + data[1] +
+					",x:" + data[3] + "y:" + data[4]+")");
+			throw e;
+		}
 		Point pt = new Point(x,y);
 		Boolean in = (data[5].equals("true")?true:false);
 		if(!in)
@@ -642,14 +657,21 @@ public class StudentModel implements TBSModel
 		return (ModelElement) node;
 	}
 
-	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements) 
-	{
-		int id = Integer.parseInt(data[1]);
-		int from = Integer.parseInt(data[2]);
+	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements)
+	throws NumberFormatException {
+		int id=0,from=0,to=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			from = Integer.parseInt(data[2]);
+			to = Integer.parseInt(data[3]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadConnection:Error parsing connection data (id:" + data[1] +
+					",from id:" + data[2] + "to id:" + data[3]+")");
+			throw e;
+		}
 		int fromIndex = findIndexById(from, parsedElements);
-		int to = Integer.parseInt(data[3]);
 		int toIndex = findIndexById(to, parsedElements);
-		
+
 		Node fromNode = (Node) parsedElements.get(fromIndex);
 		Node toNode = (Node) parsedElements.get(toIndex);
 		Connection conn = new Connection(id, fromNode, toNode);
@@ -766,4 +788,5 @@ public class StudentModel implements TBSModel
 	public void setHasArrows(Boolean hasArrows) {
 		this.hasArrows = hasArrows;
 	}
+	
 }

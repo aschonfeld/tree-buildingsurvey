@@ -336,7 +336,13 @@ public class OpenQuestionPrompt extends Prompt{
 	private void constructRadioAnswers(){
 		radioAnswers = new LinkedList<String>();
 		String answerText = model.getQuestion(OpenQuestionButtonType.THREE);
-		int numRadios = Integer.parseInt(questionProps.getProperty("questionThree.numQuestions"));
+		int numRadios = 13;//Default number of radio questions
+		String numRadiosString = questionProps.getProperty("questionThree.numQuestions");
+		try{
+			numRadios = Integer.parseInt(numRadiosString);
+		} catch(NumberFormatException e){
+			System.out.println("OpenQuestionPrompt:Error parsing radio question count(value-" + numRadiosString + ") from questions.properties");
+		}
 		if(answerText == null || answerText == "")
 			answerText = "0,0,0,0,0,0,0,0,0,0,0,0,0";
 		for(String answer : answerText.split(","))
@@ -356,7 +362,7 @@ public class OpenQuestionPrompt extends Prompt{
 		try{
 			answerNum = Integer.parseInt(numberString);
 		}catch(NumberFormatException e){
-			System.out.println("Number format exception for answer text: " + numberString);
+			System.out.println("OpenQuestionPrompt:Number format exception for answer text: " + numberString);
 		}
 		return radioButtons[answerNum].getText();
 	}

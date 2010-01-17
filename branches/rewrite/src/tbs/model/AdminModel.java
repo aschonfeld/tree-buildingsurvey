@@ -396,29 +396,34 @@ public class AdminModel implements TBSModel
 	{
 		List<ModelElement> savedTree = new LinkedList<ModelElement>();
 		String[] treeItems = tree.split("#");
-		for(String item : treeItems)
-		{
-			String data[] = item.split(":");
-			if (data[0].equals("O"))
-				savedTree.add(loadOrganismNode(data));
-			else if (data[0].equals("E")){
-				ModelElement temp = loadEmptyNode(data);
-				if(((EmptyNode) temp).isInTree())
-					savedTree.add(temp);
-			}else if (data[0].equals("C"))
-				savedTree.add(loadConnection(data, savedTree));
-			else
+		try{
+			for(String item : treeItems)
 			{
-				System.out.println("Problem in loadTree");
-				break;
+				String data[] = item.split(":");
+				if (data[0].equals("O"))
+					savedTree.add(loadOrganismNode(data));
+				else if (data[0].equals("E")){
+					ModelElement temp = loadEmptyNode(data);
+					if(((EmptyNode) temp).isInTree())
+						savedTree.add(temp);
+				}else if (data[0].equals("C"))
+					savedTree.add(loadConnection(data, savedTree));
+				else
+				{
+					System.out.println("Problem in loadTree");
+					break;
+				}
 			}
+
+			// Sort the local list
+			Collections.sort(savedTree, TBSGraphics.elementIdComparator);
+			modelElements = savedTree;
+			MESerialNumber = savedTree.size()+1;
+			System.out.println("loadTree: end");
+		}catch(NumberFormatException e){
+			System.out.println("There was an error parsing saved tree for " + name + ". " + 
+			"This tree has been reset.");
 		}
-		
-		// Sort the local list
-		Collections.sort(savedTree, TBSGraphics.elementIdComparator);
-		modelElements = savedTree;
-		MESerialNumber = savedTree.size()+1;
-		System.out.println("loadTree: end");
 	}
 
 	/**
@@ -429,13 +434,19 @@ public class AdminModel implements TBSModel
 	 * reloading the image files, but it means we have to always use the
 	 * same set of organisms. 
 	 */
-	public ModelElement loadOrganismNode(String[] data)
-	{
-		int id = Integer.parseInt(data[1]);
+	public ModelElement loadOrganismNode(String[] data) throws NumberFormatException {
+		int id=0,x=0,y=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			x = Integer.parseInt(data[3]);
+			y = Integer.parseInt(data[4]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadOrganismNode:Error parsing organism data (id:" + data[1] +
+					",x:" + data[3] + "y:" + data[4]+")");
+			throw e;
+		}
 		ModelElement me = getElementBySN(id);
 		OrganismNode node = (OrganismNode) me;
-		int x = Integer.parseInt(data[3]);
-		int y = Integer.parseInt(data[4]);
 		Point pt = new Point(x,y);
 		node.setAnchorPoint(pt);
 		node.setInTree(Boolean.parseBoolean(data[5]));
@@ -446,12 +457,19 @@ public class AdminModel implements TBSModel
 	 * Load an EmptyNode. Might be possible to combine this with
 	 * loadOrganismNode().
 	 */
-	public ModelElement loadEmptyNode(String[] data)
-	{
-		int id = Integer.parseInt(data[1]);
+	public ModelElement loadEmptyNode(String[] data) throws NumberFormatException {
 		String name = data[2];
-		int x = Integer.parseInt(data[3]);
-		int y = Integer.parseInt(data[4]);
+		int id=0,x=0,y=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			x = Integer.parseInt(data[3]);
+			y = Integer.parseInt(data[4]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadEmptyNode:Error parsing empty node (" +
+					name + ") data (id:" + data[1] +
+					",x:" + data[3] + "y:" + data[4]+")");
+			throw e;
+		}
 		Point pt = new Point(x,y);
 		Boolean in = (data[5].equals("true")?true:false);
 		if(!in)
@@ -463,13 +481,20 @@ public class AdminModel implements TBSModel
 	}
 
 	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements) 
-	{
-		int id = Integer.parseInt(data[1]);
-		int from = Integer.parseInt(data[2]);
+	throws NumberFormatException {
+		int id=0,from=0,to=0;
+		try{
+			id = Integer.parseInt(data[1]);
+			from = Integer.parseInt(data[2]);
+			to = Integer.parseInt(data[3]);
+		}catch(NumberFormatException e){
+			System.out.println("StudentModel:loadConnection:Error parsing connection data (id:" + data[1] +
+					",from id:" + data[2] + "to id:" + data[3]+")");
+			throw e;
+		}
 		int fromIndex = findIndexById(from, parsedElements);
-		int to = Integer.parseInt(data[3]);
 		int toIndex = findIndexById(to, parsedElements);
-		
+
 		Node fromNode = (Node) parsedElements.get(fromIndex);
 		Node toNode = (Node) parsedElements.get(toIndex);
 		Connection conn = new Connection(id, fromNode, toNode);
