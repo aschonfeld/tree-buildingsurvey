@@ -214,9 +214,9 @@ public class WelcomePrompt extends Prompt
 		if(model.inTreeElements().isEmpty())
 			incompletedItems.add("the tree");
 		Student student = model.getStudent();
-		for(Map.Entry<OpenQuestionButtonType, Response> response : student.getResponses().entrySet()){
-			if(!response.getValue().isCompleted())
-				incompletedItems.add(response.getKey().getAdminText());
+		for(OpenQuestionButtonType q : OpenQuestionButtonType.values()){
+			if(!student.getResponse(q).isCompleted())
+				incompletedItems.add(q.getAdminText());
 		}
 		return incompletedItems;
 	}

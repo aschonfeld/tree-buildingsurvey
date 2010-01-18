@@ -224,8 +224,8 @@ public class AdminView extends JComponent implements Printable {
 			g2.fillRect(x, y,
 					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight);
 			String studentString = student.getName();
-			String lastUpdate = model.getStudent().getLastUpdate();
-			if(lastUpdate != null && lastUpdate != "")
+			String lastUpdate = student.getLastUpdate();
+			if(lastUpdate != null && lastUpdate.length() != 0)
 				studentString += " \u2713";
 			TBSGraphics.drawCenteredString(g2, studentString,
 					x, y,
@@ -281,7 +281,7 @@ public class AdminView extends JComponent implements Printable {
 		String screenString = String.format(adminProps.getProperty(buttonClicked.name()), model.getStudent().getName());
 		if(TBSButtonType.TREE.equals(buttonClicked)){
 			String lastUpdate = model.getStudent().getLastUpdate();
-			if(lastUpdate != null && lastUpdate != "")
+			if(lastUpdate != null && lastUpdate.length() > 0)
 				screenString += "(Last Update: " + lastUpdate + ")";
 		}
 		int width = model.getApplet().getWidth();

@@ -30,7 +30,7 @@ public class RadioResponse extends Response{
 		radioAnswers = new LinkedList<OpenQuestionPromptButtonType>();
 		String answerText = input == null ? "" : input.trim();
 		int numRadios = TBSGraphics.numberOfRadioQuestions;//Default number of radio questions
-		if(answerText == null || answerText == ""){
+		if(answerText == null || answerText.length() == 0){
 			for(int i=0;i<numRadios;i++)
 				radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
 		}else{

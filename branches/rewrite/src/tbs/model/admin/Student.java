@@ -29,23 +29,22 @@ public class Student {
 	public Student(Graphics2D g2, String studentDataString){
 		openResponses = new HashMap<OpenQuestionButtonType, Response>();
 		if(studentDataString == null || studentDataString == ""){
-			lastUpdate = "";
-			tree = "";
-			arrows = true;
-			name = "";
-			openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(""));
-			openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(""));
-			openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(""));
+			createNewStudent();
 			return;
 		}
-		String[] studentData = studentDataString.split("\\+=");
-		setName(studentData[0]);
-		setLastUpdate(studentData[1]);
-		tree = studentData[2];
-		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(studentData[3]));
-		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(studentData[4]));
-		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(studentData[5]));
-		String arrowsString = studentData[6];
+		String[] studentData = studentDataString.split("\\+");
+		if(studentData == null || studentData.length == 0){
+			createNewStudent();
+			return;
+		}
+		setName(studentData[0].trim());
+		setLastUpdate(studentData[1].substring(1).trim());
+		tree = studentData[2].substring(1).trim();
+		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(studentData[3].substring(1).trim()));
+		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(studentData[4].substring(1).trim()));
+		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(studentData[5].substring(1).trim()));
+		String arrowsString = studentData[6].substring(1).trim();
+		arrowsString = arrowsString.trim();
 		if(arrowsString == null || arrowsString == "")
 			arrows = true;
 		else
@@ -60,7 +59,7 @@ public class Student {
 	}
 	
 	public void setName(String nameInput){
-		if(nameInput != null && nameInput != ""){
+		if(nameInput != null && nameInput.length() > 0){
 			String[] splitName = nameInput.split(",");
 			StringBuffer nameBuffer = new StringBuffer();
 			for(int i=(splitName.length-1);i>=0;i--)
@@ -75,18 +74,19 @@ public class Student {
 	}
 
 	public String getLastUpdate() {
-		if(lastUpdate == null || lastUpdate == "")
-			return lastUpdate;
-		return displayFormat.format(lastUpdateTimestamp);
+		if(lastUpdate != null && lastUpdate.length() != 0 && lastUpdateTimestamp != null)
+			return displayFormat.format(lastUpdateTimestamp);
+		return lastUpdate;
 	}
 
 	public void setLastUpdate(String lastUpdate) {
 		this.lastUpdate = lastUpdate;
-		if(lastUpdate != null && lastUpdate != ""){
+		if(lastUpdate != null && lastUpdate.length() > 0){
 			try {
 				lastUpdateTimestamp = parseFormat.parse(lastUpdate);
 			} catch (ParseException e) {
 				System.out.println("Student:setLastUpdate:Error parsing date string(" + lastUpdate +")");
+				lastUpdateTimestamp = null;
 			}
 		}
 	}
@@ -128,6 +128,16 @@ public class Student {
 
 	public void setAnchorPoint(Point anchorPoint) {
 		this.anchorPoint = anchorPoint;
+	}
+	
+	private void createNewStudent(){
+		lastUpdate = "";
+		tree = "";
+		arrows = true;
+		name = "";
+		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(""));
+		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(""));
+		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(""));
 	}
 	
 }

@@ -16,17 +16,16 @@ public class WrittenResponse extends Response{
 	
 	public void updateText(String input){
 		text = input;
-		if(input != null && input != "")
+		if(input != null && input.length() > 0)
 			setCompleted(true);
 	}
 	
 	private void initWritten(String input){
-		if(input == null || input == "")
-			text = "";
-		else{
-			text = input.trim();
+		if(input != null && input.length() > 0){
+			text = input;
 			setCompleted(true);
-		}
+		}else
+			text = "";
 	}
 
 	public void updateText(int index, OpenQuestionPromptButtonType answer) {}
