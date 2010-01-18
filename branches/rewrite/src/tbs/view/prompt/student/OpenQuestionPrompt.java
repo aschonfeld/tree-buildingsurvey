@@ -33,7 +33,7 @@ public class OpenQuestionPrompt extends Prompt{
 	Graphics2D g2 = null;
 	Properties questionProps;
 	OpenQuestionButtonType currentQuestion;
-	String userInput = null;
+	String userInput = "";
 	
 	//Prompt sizing information
 	List<String> lineBrokenQuestion;
@@ -69,12 +69,12 @@ public class OpenQuestionPrompt extends Prompt{
         	int index = (int) ((e.getX() - buttonsArea.getX()) * buttons.size()) / promptSize.width;
         	OpenQuestionPromptButtonType buttonClicked = buttons.get(index);
         	if(OpenQuestionPromptButtonType.SUBMIT.equals(buttonClicked)){
-    			if(!currentQuestion.isRadio())
-    				setCurrentQuestion(OpenQuestionButtonType.values()[currentQuestion.ordinal()+1]);
-    			else{
+    			if(!currentQuestion.isRadio()){
     				model.getStudent().getResponse(currentQuestion).updateText(userInput);
+    				setCurrentQuestion(OpenQuestionButtonType.values()[currentQuestion.ordinal()+1]);
+    				userInput = "";
+    			}else
     				setFinished(true);
-    			}	
     		}else{
     			if(currentQuestion.isRadio()){
     				model.getStudent().getResponse(currentQuestion).updateText(currentRadioQuestion, buttons.get(index));
