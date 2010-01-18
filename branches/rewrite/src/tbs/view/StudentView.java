@@ -36,6 +36,7 @@ import tbs.model.ModelElement;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
+import tbs.model.admin.Student;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.student.OpenQuestionPrompt;
 import tbs.view.prompt.student.WelcomePrompt;
@@ -147,6 +148,8 @@ public class StudentView extends JComponent implements Printable {
 		buttonRect.setSize(new Dimension(TBSGraphics.questionButtonsWidth, buttonRect.height));
 		
 		Prompt prompt = model.getPrompt();
+		Student student = model.getStudent();
+		String buttonString;
 		for(OpenQuestionButtonType q: OpenQuestionButtonType.values()) {
 			if((prompt != null) && (prompt instanceof OpenQuestionPrompt)
 					&&  q.equals(((OpenQuestionPrompt)prompt).getCurrentQuestion()))
@@ -155,7 +158,10 @@ public class StudentView extends JComponent implements Printable {
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, q.toString(),
+			buttonString = q.toString();
+			if(student.getResponse(q).isCompleted())
+				buttonString += " \u2713";
+			TBSGraphics.drawCenteredString(g2, buttonString,
 					buttonRect.x, upperY, buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
 		}
@@ -237,10 +243,8 @@ public class StudentView extends JComponent implements Printable {
 				g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
 			else {
 				// organism is being dragged for possible addition to tree
-				if(on.getX() > 0) {
+				if(on.getX() > 0)
 					g2.drawImage(on.getImage(), on.getX(), on.getY(), null);
-					return;
-				}
 			}
 		}
 	}

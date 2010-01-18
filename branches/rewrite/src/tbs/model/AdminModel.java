@@ -259,7 +259,6 @@ public class AdminModel implements TBSModel
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
-		TBSGraphics.questionButtonsStart = (applet.getWidth()/2) - (TBSGraphics.buttonsWidth/2);
 	}
 	
 	// called during setup to create organism nodes
@@ -286,6 +285,8 @@ public class AdminModel implements TBSModel
 			if(temp.getHeight() > TBSGraphics.studentNodeHeight) 
 				TBSGraphics.studentNodeHeight = temp.getHeight();
 		}
+		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
+		TBSGraphics.studentNodeWidth += checkDimension.width;
 		TBSGraphics.studentNodeWidth += TBSGraphics.paddingWidth * 2;
 		TBSGraphics.studentNodeHeight += TBSGraphics.paddingWidth * 2;
 		for(Student s : students) {

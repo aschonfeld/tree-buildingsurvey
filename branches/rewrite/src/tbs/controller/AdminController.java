@@ -9,6 +9,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,7 +81,9 @@ public class AdminController extends TBSController
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(y < TBSGraphics.buttonsHeight)  {
-			if(x >= TBSGraphics.questionButtonsStart){
+			if(x >= model.getApplet().getWidth()-TBSGraphics.buttonsWidth)
+				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+			else if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
 				if(buttonIndex < OpenQuestionButtonType.values().length)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -108,7 +112,18 @@ public class AdminController extends TBSController
 		int x = e.getX();
         int y = e.getY();
 		if(y < TBSGraphics.buttonsHeight) {
-			if(x >= TBSGraphics.questionButtonsStart){
+			if(x >= (model.getApplet().getWidth()-TBSGraphics.buttonsWidth)){
+				PrinterJob printJob = PrinterJob.getPrinterJob();
+				printJob.setPrintable(view);
+				if (printJob.printDialog()){
+					try { 
+						printJob.print();
+					} catch(PrinterException pe) {
+						System.out.println("Error printing: " + pe);
+					}
+				}
+				return;
+			}else if(x >= TBSGraphics.questionButtonsStart){
 				handleMouseButtonPressed(x, y);
 				return;
 			}

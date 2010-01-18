@@ -3,6 +3,9 @@ package tbs.model.admin;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +16,9 @@ public class Student {
 
 	private String name;
 	private String lastUpdate;
+	private Date lastUpdateTimestamp;
+	private SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMMM yyyy h:mm a");
 	private String tree;
 	private Map<OpenQuestionButtonType, Response> openResponses;
 	private Boolean arrows;
@@ -34,7 +40,7 @@ public class Student {
 		}
 		String[] studentData = studentDataString.split("\\+=");
 		setName(studentData[0]);
-		lastUpdate = studentData[1];
+		setLastUpdate(studentData[1]);
 		tree = studentData[2];
 		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(studentData[3]));
 		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(studentData[4]));
@@ -69,9 +75,21 @@ public class Student {
 	}
 
 	public String getLastUpdate() {
-		return lastUpdate;
+		if(lastUpdate == null || lastUpdate == "")
+			return lastUpdate;
+		return displayFormat.format(lastUpdateTimestamp);
 	}
 
+	public void setLastUpdate(String lastUpdate) {
+		this.lastUpdate = lastUpdate;
+		if(lastUpdate != null && lastUpdate != ""){
+			try {
+				lastUpdateTimestamp = parseFormat.parse(lastUpdate);
+			} catch (ParseException e) {
+				System.out.println("Student:setLastUpdate:Error parsing date string(" + lastUpdate +")");
+			}
+		}
+	}
 	public String getTree() {
 		return tree;
 	}
