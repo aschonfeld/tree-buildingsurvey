@@ -33,7 +33,6 @@ import tbs.view.prompt.admin.OpenQuestionReviewPrompt;
 public class AdminModel implements TBSModel
 {
 	private AdminView view;
-	private Boolean admin;
 	private TBSController controller;
 	private List<TBSButtonType> buttons;
 	private List<ModelElement> modelElements;
@@ -62,7 +61,6 @@ public class AdminModel implements TBSModel
 			loadTree(selectedStudent.getTree());
 		openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
 		view = new AdminView(this);
-		this.admin = true;
 		controller = new AdminController(this, view);
 	}
 	
@@ -531,14 +529,6 @@ public class AdminModel implements TBSModel
 		this.textEntryBox = textEntryBox;
 	}
 	
-	public Boolean isAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(Boolean admin) {
-		this.admin = admin;
-	}
-
 	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}

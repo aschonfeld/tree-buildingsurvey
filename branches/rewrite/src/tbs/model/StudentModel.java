@@ -43,7 +43,6 @@ import tbs.view.prompt.student.WelcomePrompt;
 public class StudentModel implements TBSModel
 {
 	private StudentView view;
-	private Boolean admin;
 	private TBSController controller;
 	private List<TBSButtonType> buttons;
 	private List<ModelElement> modelElements;
@@ -87,7 +86,6 @@ public class StudentModel implements TBSModel
 			}
 		}
 		view = new StudentView(this);
-		this.admin = false;
 		controller = new StudentController(this, view);
 		history = new Stack<Command>();
 		prompt = new WelcomePrompt(this);
@@ -730,14 +728,6 @@ public class StudentModel implements TBSModel
 
 	public void setTextEntryBox(TextEntryBox textEntryBox) {
 		this.textEntryBox = textEntryBox;
-	}
-	
-	public Boolean isAdmin() {
-		return admin;
-	}
-
-	public void setAdmin(Boolean admin) {
-		this.admin = admin;
 	}
 
 	public List<TBSButtonType> getButtons() {

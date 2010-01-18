@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +22,6 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JApplet;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 
 import tbs.model.AdminModel;
 import tbs.model.StudentModel;
@@ -48,6 +45,7 @@ public class TBSApplet extends JApplet {
 	private TBSModel model;
 	private TBSApplet app = this;
 	private boolean admin;
+	private String browser;
 
 	/**
 	* INIT instantiates TBSGraphics and TBSModel, and calls the
@@ -58,9 +56,10 @@ public class TBSApplet extends JApplet {
 
  	EventQueue.invokeLater(new Runnable() {
  		public void run() {
- 			getIcons();
  			TBSGraphics.appletWidth = getWidth();
  			TBSGraphics.appletHeight = getHeight();
+ 			browser = getParameter("Browser");
+ 			TBSGraphics.updateBrowserSpecs(browser);
  			Graphics2D g2 = (Graphics2D) getGraphics();
  			RenderingHints rh = new RenderingHints(
  			RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -214,14 +213,16 @@ public class TBSApplet extends JApplet {
 	public String[][] getParameterInfo(){
 		String[][] parameterInfo = null;
 		if(admin){
-			parameterInfo = new String[3][];
+			parameterInfo = new String[4][];
 			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
 			parameterInfo[1] = new String[]{"StudentCount", "Integer", "In admin mode this parameter tells the applet how many 'Student' parameters to get"};
 			parameterInfo[2] = new String[]{"Student(#)", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for each student"};
+			parameterInfo[3] = new String[]{"Browser", "String", "This contains information about the browser that has accessed this applet"};
 		}else{
-			parameterInfo = new String[2][];
+			parameterInfo = new String[3][];
 			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
 			parameterInfo[1] = new String[]{"Student", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for this student"};
+			parameterInfo[2] = new String[]{"Browser", "String", "This contains information about the browser that has accessed this applet"};
 		}
 		return parameterInfo;
 	}
@@ -229,16 +230,6 @@ public class TBSApplet extends JApplet {
 	public String getAppletInfo(){
 		return "Diversity of Life Survey Applet, Version 1.3\n"
         + "Copyright Tree Building Survey Group,2010";
-	}
-	
-	public static void getIcons(){
-		UIDefaults defaults = UIManager.getDefaults();
-		Enumeration<Object> newKeys = defaults.keys();
-		while (newKeys.hasMoreElements()) {
-			Object obj = newKeys.nextElement();
-			if(obj.toString().contains("Icon"))
-				System.out.println(obj.toString());
-		}
 	}
 }
 

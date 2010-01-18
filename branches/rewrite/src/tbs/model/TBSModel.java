@@ -25,8 +25,6 @@ public interface TBSModel
 	
 	TBSApplet getApplet();
 	
-	Boolean isAdmin();
-	
 	List<TBSButtonType> getButtons();
 	
 	Boolean isButtonActive(TBSButtonType b);

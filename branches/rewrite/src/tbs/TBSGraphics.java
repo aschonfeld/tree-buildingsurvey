@@ -185,7 +185,7 @@ public class TBSGraphics {
 	public static int ySpacing = 1;
 	
 	// Font Properties
-	public static Font font = new Font("default", Font.BOLD, 16);
+	public static Font font = null;
 	public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
 	
 	/**
@@ -386,6 +386,15 @@ public class TBSGraphics {
 		if(currentLine.length() > 0)
 			widthBrokenString.add(currentLine);
 		return widthBrokenString;
+	}
+	
+	public static void updateBrowserSpecs(String browser){
+		Font tempFont = new Font("default", Font.BOLD, 16);
+		if(browser != null && browser.length() > 0){
+			if((browser.toLowerCase()).contains("mac"))
+				tempFont = new Font("default", Font.PLAIN, 16);
+		}
+		font = tempFont;
 	}
 	
 	
