@@ -13,7 +13,12 @@ public enum TBSButtonType {
 	LABEL("Label", true, false, true, false, true, false),
 	PRINT("Print", false, true, false, false, false, false), 
 	UNDO("Undo", false, false, false, true, false, false), 
-	SAVE("Save", false, true, false, false, false, false),
+	/*
+	 * For now we will eliminate the use of the "SAVE" button until we
+	 * can have some certainty that scripting within a Mac will work.
+	 * Javascript operations will be handled by the web-form.
+	 */
+	//SAVE("Save", false, true, false, false, false, false),
 	CLEAR("Clear", false, false, false, true, false, false),
 	HELP("Help",false, true, false, false, false, false),
 	TREE("Tree",false, true, false, false, false, true),
