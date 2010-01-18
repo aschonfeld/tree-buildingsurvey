@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.TreeMap;
 
+import javax.swing.JComponent;
+
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.StudentController;
@@ -32,7 +34,6 @@ import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
-import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.student.HelpPrompt;
@@ -43,7 +44,7 @@ public class StudentModel implements TBSModel
 {
 	private StudentView view;
 	private Boolean admin;
-	private StudentController controller;
+	private TBSController controller;
 	private List<TBSButtonType> buttons;
 	private List<ModelElement> modelElements;
 	private ModelElement selectedModelElement;
@@ -59,11 +60,7 @@ public class StudentModel implements TBSModel
 	private Map<PropertyType,Properties> propertiesMap;
 	private Map<TBSButtonType, Boolean> buttonStates;
 	private Student student;
-	private String name;
-	private String questionOne;
-	private String questionTwo;
-	private String questionThree;
-	private Boolean hasArrows;
+	
 	public StudentModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
 			String studentString, Map<PropertyType, Properties> propertiesMap) {
@@ -79,8 +76,6 @@ public class StudentModel implements TBSModel
 		for(TBSButtonType b : buttons)
 			buttonStates.put(b, b.isActiveWhenCreated());
 		student = new Student(g2, studentString);
-		name = student.getName();
-		hasArrows = student.getHasArrows();
 		if(!"".equals(student.getTree())){
 			loadTree(student.getTree());
 			if(inTreeElements().size() > 1){
@@ -91,9 +86,6 @@ public class StudentModel implements TBSModel
 					buttonStates.put(TBSButtonType.LABEL, false);
 			}
 		}
-		setQuestion(student.getQ1(), OpenQuestionButtonType.ONE);
-		setQuestion(student.getQ2(), OpenQuestionButtonType.TWO);
-		setQuestion(student.getQ3(), OpenQuestionButtonType.THREE);
 		view = new StudentView(this);
 		this.admin = false;
 		controller = new StudentController(this, view);
@@ -135,7 +127,7 @@ public class StudentModel implements TBSModel
 	/**
 	* Returns a handle for the View associated with this Model
    */
-	public TBSView getView() {
+	public JComponent getView() {
 		return view;
 	}
 	
@@ -718,41 +710,11 @@ public class StudentModel implements TBSModel
 		view.refreshGraphics();
 	}
 
-	public String getQuestion(OpenQuestionButtonType question){
-		switch(question){
-		case ONE:
-			return questionOne;
-		case TWO:
-			return questionTwo;
-		case THREE:
-			return questionThree;
-		}
-		return "";
+	public Student getStudent(){
+		return student;
 	}
 	
-	public void setQuestion(String input, OpenQuestionButtonType question){
-		String formattedInput = input == null ? "" : input.trim();
-		switch(question){
-		case ONE:
-			questionOne = formattedInput;
-			return;
-		case TWO:
-			questionTwo = formattedInput;
-			return;
-		case THREE:
-			questionThree = formattedInput;
-			return;
-		}
-	}
 	
-	public String getName(){
-		return name;
-	}
-	
-	public void setName(String name){
-		this.name = name;
-	}
-
 	public Map<TBSButtonType, Boolean> getButtonStates() {
 		return buttonStates;
 	}
@@ -779,14 +741,6 @@ public class StudentModel implements TBSModel
 
 	public List<TBSButtonType> getButtons() {
 		return buttons;
-	}
-	
-	public Boolean hasArrows() {
-		return hasArrows;
-	}
-
-	public void setHasArrows(Boolean hasArrows) {
-		this.hasArrows = hasArrows;
 	}
 	
 }

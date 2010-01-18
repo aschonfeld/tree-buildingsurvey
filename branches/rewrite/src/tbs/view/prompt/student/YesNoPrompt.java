@@ -33,7 +33,7 @@ public class YesNoPrompt extends Prompt{
 	YesNoButtonType[] buttons;
 	int numLines = 8; // number of lines of text input
 	Dimension padding = new Dimension(10,5);
-	Dimension promptSize = new Dimension();
+	Dimension promptSize = new Dimension(320,0);
 	Point anchorPoint = null;
 	int questionStringY;
 	Rectangle buttonsArea;
@@ -75,7 +75,6 @@ public class YesNoPrompt extends Prompt{
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		promptSize.setSize(300 + padding.width * 2, 0);
 		lineBrokenQuestion = new LinkedList<String>();
 		int questionLength = 0;
 		lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,

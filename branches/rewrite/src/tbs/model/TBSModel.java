@@ -6,19 +6,20 @@ package tbs.model;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JComponent;
+
 import tbs.TBSApplet;
 import tbs.controller.TBSController;
+import tbs.model.admin.Student;
 import tbs.properties.PropertyType;
-import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
-import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 
 
 public interface TBSModel 
 {
-	TBSView getView();
+	JComponent getView();
 	
 	TBSController getController();
 	
@@ -34,21 +35,13 @@ public interface TBSModel
 	
 	List<Node> inTreeElements();
 	
-	Boolean hasArrows();
-	
 	Prompt getPrompt();
 	
 	void clearPrompt();
 	
 	TextEntryBox getTextEntryBox();
 	
-	String getQuestion(OpenQuestionButtonType b);
-	
-	void setQuestion(String s, OpenQuestionButtonType b);
-	
-	String getName();
-	
-	void setName(String name);
+	Student getStudent();
 	
 	String exportTree();
 	

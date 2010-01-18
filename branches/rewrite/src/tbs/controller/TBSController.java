@@ -16,9 +16,7 @@ import tbs.view.TBSButtonType;
 **/
 public abstract class TBSController implements MouseListener, MouseMotionListener, KeyListener
 {
-	public TBSController(){
-		
-	}
+	public TBSController(){}
 	
 	public abstract TBSButtonType getButtonClicked();
 	

@@ -13,10 +13,13 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
+import tbs.model.admin.Response;
+import tbs.model.admin.Student;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
@@ -240,13 +243,11 @@ public class HelpPrompt extends Prompt
 		List<String> incompletedItems = new LinkedList<String>();
 		if(model.inTreeElements().isEmpty())
 			incompletedItems.add("the tree");
-		if("".equals(model.getQuestion(OpenQuestionButtonType.ONE)))
-			incompletedItems.add("question 1");
-		if("".equals(model.getQuestion(OpenQuestionButtonType.TWO)))
-			incompletedItems.add("question 2");
-		if("".equals(model.getQuestion(OpenQuestionButtonType.THREE)) 
-			|| "0,0,0,0,0,0,0,0,0,0,0,0,0".equals(model.getQuestion(OpenQuestionButtonType.THREE)))
-				incompletedItems.add("question 3");
+		Student student = model.getStudent();
+		for(Map.Entry<OpenQuestionButtonType, Response> response : student.getResponses().entrySet()){
+			if(!response.getValue().isCompleted())
+				incompletedItems.add(response.getKey().getAdminText());
+		}
 		if(incompletedItems.isEmpty()){
 			statusString.append("Currently you have created a tree and entered responses to all the open-response questions. ");
 			statusString.append("You are ready to submit your survey.");

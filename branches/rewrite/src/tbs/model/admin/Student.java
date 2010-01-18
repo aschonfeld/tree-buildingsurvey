@@ -3,45 +3,47 @@ package tbs.model.admin;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.HashMap;
+import java.util.Map;
 
 import tbs.TBSGraphics;
+import tbs.view.OpenQuestionButtonType;
 
 public class Student {
 
 	private String name;
 	private String lastUpdate;
 	private String tree;
-	private String q1;
-	private String q2;
-	private String q3;
-	private Boolean hasArrows;
+	private Map<OpenQuestionButtonType, Response> openResponses;
+	private Boolean arrows;
 	private int height;
 	private int width;
 	private Point anchorPoint;
 	
 	public Student(Graphics2D g2, String studentDataString){
+		openResponses = new HashMap<OpenQuestionButtonType, Response>();
 		if(studentDataString == null || studentDataString == ""){
 			lastUpdate = "";
 			tree = "";
-			q1 = "";
-			q2 = "";
-			q3 = "";
-			hasArrows = true;
+			arrows = true;
 			name = "";
+			openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(""));
+			openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(""));
+			openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(""));
 			return;
 		}
 		String[] studentData = studentDataString.split("\\+=");
 		setName(studentData[0]);
 		lastUpdate = studentData[1];
 		tree = studentData[2];
-		q1 = studentData[3];
-		q2 = studentData[4];
-		q3 = studentData[5];
-		String arrows = studentData[6];
-		if(arrows == null || arrows == "")
-			hasArrows = true;
+		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(studentData[3]));
+		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(studentData[4]));
+		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(studentData[5]));
+		String arrowsString = studentData[6];
+		if(arrowsString == null || arrowsString == "")
+			arrows = true;
 		else
-			hasArrows = Boolean.parseBoolean(arrows);
+			arrows = Boolean.parseBoolean(arrowsString);
 		Dimension d = TBSGraphics.getStringBounds(g2, name);
 		width = d.width;
 		height = d.height;
@@ -74,20 +76,16 @@ public class Student {
 		return tree;
 	}
 
-	public String getQ1() {
-		return q1;
+	public Response getResponse(OpenQuestionButtonType responseType) {
+		return openResponses.get(responseType);
+	}
+	
+	public Map<OpenQuestionButtonType, Response> getResponses(){
+		return openResponses;
 	}
 
-	public String getQ2() {
-		return q2;
-	}
-
-	public String getQ3() {
-		return q3;
-	}
-
-	public Boolean getHasArrows() {
-		return hasArrows;
+	public Boolean hasArrows() {
+		return arrows;
 	}
 
 	public int getHeight() {

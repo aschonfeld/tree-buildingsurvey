@@ -33,7 +33,6 @@ import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.student.OpenQuestionPrompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
 /**
@@ -197,13 +196,7 @@ public class StudentController extends TBSController
 			prompt.mousePressed(e);
 			if(prompt.isFinished()) {
 				// Get result of prompt here
-				if(prompt instanceof OpenQuestionPrompt){
-					OpenQuestionPrompt temp = (OpenQuestionPrompt) prompt;
-					String input = temp.getUserInput();
-					OpenQuestionButtonType q = temp.getCurrentQuestion();
-					model.setQuestion(input, q);
-					model.clearPrompt();
-				}else if(prompt instanceof YesNoPrompt){
+				if(prompt instanceof YesNoPrompt){
 					YesNoPrompt temp = (YesNoPrompt) prompt;
 					switch(temp.getPromptType()){
 						case CLEAR:

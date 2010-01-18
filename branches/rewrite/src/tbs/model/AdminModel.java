@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import javax.swing.JComponent;
+
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.AdminController;
@@ -22,9 +24,7 @@ import tbs.model.admin.Student;
 import tbs.model.history.Unlink;
 import tbs.properties.PropertyType;
 import tbs.view.AdminView;
-import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
-import tbs.view.TBSView;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.admin.AnalysisPrompt;
@@ -44,12 +44,8 @@ public class AdminModel implements TBSModel
 	private AnalysisPrompt analysisPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType, Properties> propertiesMap;
-	private String name;
-	private String questionOne;
-	private String questionTwo;
-	private String questionThree;
-	private Boolean hasArrows;
 	private List<Student> students;
+	private Student selectedStudent;
 	
 	public AdminModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
@@ -61,14 +57,9 @@ public class AdminModel implements TBSModel
 		createButtons(g2); // call before creating model elements
 		createModelElements(g2, organismNameToImage);
 		createStudents(g2, students);
-		Student firstStudent = this.students.get(0);
-		name = firstStudent.getName();
-		hasArrows = firstStudent.getHasArrows();
-		if(!"".equals(firstStudent.getTree()))
-			loadTree(firstStudent.getTree());
-		setQuestion(firstStudent.getQ1(), OpenQuestionButtonType.ONE);
-		setQuestion(firstStudent.getQ2(), OpenQuestionButtonType.TWO);
-		setQuestion(firstStudent.getQ3(), OpenQuestionButtonType.THREE);
+		selectedStudent = this.students.get(0);
+		if(!"".equals(selectedStudent.getTree()))
+			loadTree(selectedStudent.getTree());
 		openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
 		view = new AdminView(this);
 		this.admin = true;
@@ -76,16 +67,11 @@ public class AdminModel implements TBSModel
 	}
 	
 	public void changeSavedTree(int studentIndex){
-		Student selectedStudent = students.get(studentIndex);
-		name = selectedStudent.getName();
-		hasArrows = selectedStudent.getHasArrows();
+		selectedStudent = students.get(studentIndex);
 		if(!"".equals(selectedStudent.getTree()))
 			loadTree(selectedStudent.getTree());
 		else
 			resetModel();
-		setQuestion(selectedStudent.getQ1(), OpenQuestionButtonType.ONE);
-		setQuestion(selectedStudent.getQ2(), OpenQuestionButtonType.TWO);
-		setQuestion(selectedStudent.getQ3(), OpenQuestionButtonType.THREE);
 		openQuestionReviewPrompt = null;
 		analysisPrompt = null;
 	}
@@ -143,7 +129,7 @@ public class AdminModel implements TBSModel
 	/**
 	* Returns a handle for the View associated with this Model
    */
-	public TBSView getView() {
+	public JComponent getView() {
 		return view;
 	}
 	
@@ -421,7 +407,7 @@ public class AdminModel implements TBSModel
 			MESerialNumber = savedTree.size()+1;
 			System.out.println("loadTree: end");
 		}catch(NumberFormatException e){
-			System.out.println("There was an error parsing saved tree for " + name + ". " + 
+			System.out.println("There was an error parsing saved tree for " + selectedStudent.getName() + ". " + 
 			"This tree has been reset.");
 		}
 	}
@@ -536,41 +522,6 @@ public class AdminModel implements TBSModel
 		view.refreshGraphics();
 	}
 
-	public String getQuestion(OpenQuestionButtonType question){
-		switch(question){
-		case ONE:
-			return questionOne;
-		case TWO:
-			return questionTwo;
-		case THREE:
-			return questionThree;
-		}
-		return "";
-	}
-	
-	public void setQuestion(String input, OpenQuestionButtonType question){
-		String formattedInput = input == null ? "" : input.trim();
-		switch(question){
-		case ONE:
-			questionOne = formattedInput;
-			return;
-		case TWO:
-			questionTwo = formattedInput;
-			return;
-		case THREE:
-			questionThree = formattedInput;
-			return;
-		}
-	}
-
-	public String getName(){
-		return name;
-	}
-	
-	public void setName(String name){
-		this.name = name;
-	}
-	
 	public TextEntryBox getTextEntryBox() {
 		return textEntryBox;
 	}
@@ -592,13 +543,7 @@ public class AdminModel implements TBSModel
 	}
 
 	public Boolean isButtonActive(TBSButtonType b) {return false;}
-	
-	public Boolean hasArrows() {
-		return hasArrows;
-	}
 
-	public void setHasArrows(Boolean hasArrows) {
-		this.hasArrows = hasArrows;
-	}
+	public Student getStudent() {return selectedStudent;}
 
 }

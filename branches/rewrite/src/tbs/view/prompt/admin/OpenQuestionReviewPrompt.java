@@ -11,14 +11,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
+import tbs.model.admin.RadioResponse;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
@@ -43,57 +42,23 @@ public class OpenQuestionReviewPrompt extends Prompt
 	OpenQuestionButtonType currentQuestion;
 	int buttonHeight;
 	int textHeight = -1;
-	Map<OpenQuestionButtonType, String> writtenAnswers;
 	List<String[]> questionThree;
 	
 	public OpenQuestionReviewPrompt(TBSModel model) {
 		super();
 		this.model = model;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
-		writtenAnswers = new HashMap<OpenQuestionButtonType, String>();
-		writtenAnswers.put(OpenQuestionButtonType.ONE, model.getQuestion(OpenQuestionButtonType.ONE));
-		writtenAnswers.put(OpenQuestionButtonType.TWO, model.getQuestion(OpenQuestionButtonType.TWO));
-		List<String> radioAnswers = new LinkedList<String>();
-		String answerText = model.getQuestion(OpenQuestionButtonType.THREE);
-		int numRadios = 13;//Default number of radio questions
-		String numRadiosString = questionProps.getProperty("questionThree.numQuestions");
-		try{
-			numRadios = Integer.parseInt(numRadiosString);
-		} catch(NumberFormatException e){
-			System.out.println("OpenQuestionReviewPrompt:Error parsing radio question count(value-" + numRadiosString + ") from questions.properties");
-		}
-		if(answerText == null || answerText == "")
-			answerText = "0,0,0,0,0,0,0,0,0,0,0,0,0";
-		List<String> answerTextVals = new LinkedList<String>();
-		for(String answer : answerText.split(","))
-			answerTextVals.add(answer);
-		if(answerTextVals.size() < numRadios){
-			for(int i=answerTextVals.size();i<=numRadios;i++)
-				answerTextVals.add("0");
-		}else if(answerTextVals.size() > numRadios){
-			while(answerTextVals.size() != numRadios)
-				answerTextVals.remove(answerTextVals.size()-1);
-		}
-		int answerNum;
-		OpenQuestionPromptButtonType[] radioButtons = OpenQuestionPromptButtonType.values();
-		for(String answerTextVal : answerTextVals){
-			answerNum = 0;
-			try{
-				answerNum = Integer.parseInt(answerTextVal);
-			}catch(NumberFormatException e){
-				System.out.println("OpenQuestionReviewPrompt:Number format exception for answer text: " + answerTextVal);
-			}
-			radioAnswers.add(radioButtons[answerNum].getText());
-		}
 		questionThree = new LinkedList<String[]>();
-		int index = model.hasArrows() ? 1 : radioAnswers.size()-1;
+		int index = model.getStudent().hasArrows() ? 1 : TBSGraphics.numberOfRadioQuestions-1;
 		String[] radioPair;
-		for(String answer : radioAnswers){
+		RadioResponse radioResponse = (RadioResponse) model.getStudent().getResponse(OpenQuestionButtonType.THREE);
+		List<OpenQuestionPromptButtonType> radioAnswers = radioResponse.getRadioAnswers();
+		for(OpenQuestionPromptButtonType answer : radioAnswers){
 			radioPair = new String[2];
 			radioPair[0] = questionProps.getProperty("questionThree"+index);
-			radioPair[1] = answer;
+			radioPair[1] = answer.getText();
 			questionThree.add(radioPair);
-			if(model.hasArrows())
+			if(model.getStudent().hasArrows())
 				index++;
 			else
 				index--;
@@ -127,7 +92,7 @@ public class OpenQuestionReviewPrompt extends Prompt
 		List<String> writtenAnswerText = new LinkedList<String>();
 		int writtenLines = 0;
 		if(!currentQuestion.isRadio()){
-			String answerText = writtenAnswers.get(currentQuestion);
+			String answerText = model.getStudent().getResponse(currentQuestion).getText();
 			String questionText = questionProps.getProperty(currentQuestion.getQuestionKey());
 			writtenQuestionText = TBSGraphics.breakStringByLineWidth(g2,questionText,
 					promptSize.width - padding.width * 2);
