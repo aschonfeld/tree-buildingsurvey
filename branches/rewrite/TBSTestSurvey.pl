@@ -11,8 +11,11 @@ use CGI;
 #use GradeDB;
 use treeDB;
 
-#$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
-$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
+$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
+#$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
+$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+#$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
+
 
 @date = localtime(time);
 $too_late = 0;
@@ -40,6 +43,7 @@ sub login_page {
 	print "<title>Login to the TBS Survey</title>\n";
 	print "<SCRIPT type=\"text/javascript\">\n";
 	print "function getAdminValue() {\n";
+	print " document.form.Browser.value = navigator.userAgent;\n";
 	print " if(document.form.AdminCB.checked) {\n";
 	print "    document.form.AdminValue.value = \"true\";\n";
 	print "  }\n";
@@ -63,10 +67,7 @@ sub login_page {
 	$dbh = treeDB::connect();
 	%name_grade_hash = ();
 	#$sth = $dbh->prepare("SELECT * FROM students ORDER BY name");
-	$sth = $dbh->prepare("SELECT name FROM student_data WHERE name in 
-	(\"White,Brian\",\"GUEST\",\"Schonfeld,Andrew\",\"Kiparsky,Jon\",
-	\"Thelen,Glenn\",\"Bolker,Ethan\",\"Young,Aimee\",\"Skurtu,Tara\",
-	\"Nassali,Vivian\",\"Makosky,Amanda\") ORDER BY name");
+	$sth = $dbh->prepare("SELECT name FROM student_testdata ORDER BY name");
     $sth->execute();
     while (@result = $sth->fetchrow_array()) {
         $name_grade_hash{$result[0]} = "";
@@ -110,7 +111,7 @@ sub login_page {
     print "<input type=\"checkbox\" name=\"AdminCB\"><br>\n";
     print "<input type=\"submit\" value=\"Login\">\n";
     print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
-    
+    print "<input type=\"hidden\" name=\"Browser\" value=\"\">\n";
 	print "</form>\n";
 	print "<hr>\n";
 	#print "$count surveys entered.<br>\n";
@@ -157,7 +158,7 @@ sub load_student_survey {
 	#$query = CGI->new();
 	#$name = $query->param('Name');
 	#$password = $query->param('Passwd');
-	#$password = "pass";
+	$password = "pass";
 	$arrows = "true";
 	$name = $query->param('Name');
 	$Q1 = $query->param('Q1');
@@ -165,6 +166,7 @@ sub load_student_survey {
 	$Q3 = $query->param('Q3');
 	$treeXML = $query->param('treeXML');
 	$lastUpdate = $query->param('lastUpdate');
+	$browser = $query->param('Browser');
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
@@ -205,7 +207,7 @@ sub load_student_survey {
 	
     #see if there's already an entry for this student
 	$dbh = treeDB::connect();
-	$statement = "SELECT count(*) from student_data WHERE name=?";
+	$statement = "SELECT count(*) from student_testdata WHERE name=?";
 	$sth = $dbh->prepare($statement);
 	$sth->execute($name);
 	$rowcount = $sth->fetchrow();
@@ -215,9 +217,9 @@ sub load_student_survey {
 	if ($treeXML ne "") {
 	
 	    if ($rowcount == 0) {
-	        $statement = "INSERT INTO student_data (Q1, Q2, Q3, tree, date, name) VALUES (?,?,?,?,NOW(),?)";
+	        $statement = "INSERT INTO student_testdata (Q1, Q2, Q3, tree, date, name) VALUES (?,?,?,?,NOW(),?)";
 	    }  else {
-	        $statement = "UPDATE student_data SET Q1 = ?, Q2 = ?, Q3 = ?, tree = ?, date = NOW() WHERE name = ?";
+	        $statement = "UPDATE student_testdata SET Q1 = ?, Q2 = ?, Q3 = ?, tree = ?, date = NOW() WHERE name = ?";
 	    }
 	    $sth = $dbh->prepare($statement);
 	    $sth->execute($Q1, $Q2, $Q3, $treeXML, $name);
@@ -226,7 +228,7 @@ sub load_student_survey {
 	} else {
 	    # if there's already data there, get it
 	    if ($rowcount != 0) {
-	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM student_data WHERE name=?");
+	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM student_testdata WHERE name=?");
 	        $sth->execute($name);
 	        ($Q1, $Q2, $Q3, $treeXML, $lastUpdate) = $sth->fetchrow_array();
 	        $sth->finish();
@@ -291,11 +293,11 @@ sub load_student_survey {
   	print "name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
-	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
-	#print "width=1175 height=590 name=\"TreeApplet\"> \n";
+	print "archive=\"$jar_loc\" ";
+	print "width=1175 height=590 name=\"TreeApplet\"> \n";
 	print "<param name=\"Student\" value=\"$name+=$lastUpdate+=$treeXML+=$Q1+=$Q2+=$Q3+=$arrows+=\"> \n";
   	print "<param name=\"Admin\" value=\"false\"> \n";
+  	print "<param name=\"Browser\" value=\"$browser\"> \n";
   	print "          You have to enable Java on your machine !</applet> \n";
   	print "</td><td>\n";
     print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td>\n";
@@ -319,6 +321,7 @@ sub load_student_survey {
     print "<input type=\"hidden\" name=\"Q1\" value=\"$Q1\">\n";
     print "<input type=\"hidden\" name=\"Q2\" value=\"$Q2\">\n";
     print "<input type=\"hidden\" name=\"Q3\" value=\"$Q3\">\n";
+    print "<input type=\"hidden\" name=\"Browser\" value=\"$browser\">\n";
     if ($admin_mode == 0) {
          print "<input type=\"submit\" value=\"Save Work\" onclick=\"return isComplete();\">\n";
     }
@@ -334,8 +337,8 @@ sub load_admin_survey {
 	$name = $query->param('Name');
 	#$password = $query->param('Passwd');
 	$password = "pass";
-	$admin = $query->param('AdminValue');
 	$arrows = "true";
+	$browser = $query->param('Browser');
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
@@ -354,16 +357,12 @@ sub load_admin_survey {
 	print "<form name=\"form\" style=\"border: 0;padding-bottom: 0;margin-bottom: 0;\">\n";
   	print "<table style=\"border-collapse: collapse;padding-bottom: 0;margin-bottom: 0;\"><tr><td> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar\" ";
-	print "archive=\"http://cluster.bio.whe.umb.edu/Test/TBSRun.jar\" \n";
-	#print "width=1175 height=590 name=\"TreeApplet\"> \n";
+	print "archive=\"$jar_loc\" ";
+	print "width=1175 height=590 name=\"TreeApplet\"> \n";
 	#$dbh = GradeDB::connect();
 	$dbh = treeDB::connect();
 	#$sth = $dbh->prepare("SELECT * FROM students ORDER BY name");
-	$sth = $dbh->prepare("SELECT * FROM student_data WHERE name in 
-	(\"White,Brian\",\"GUEST\",\"Schonfeld,Andrew\",\"Kiparsky,Jon\",
-	\"Thelen,Glenn\",\"Bolker,Ethan\",\"Young,Aimee\",\"Skurtu,Tara\",
-	\"Nassali,Vivian\",\"Makosky,Amanda\") ORDER BY name");
+	$sth = $dbh->prepare("SELECT * FROM student_testdata ORDER BY name");
     $sth->execute();
     $count = 0;
 	while (@data = $sth->fetchrow_array()) {
@@ -380,6 +379,7 @@ sub load_admin_survey {
 	$dbh->disconnect();
 	print "<param name=\"Admin\" value=\"true\"> \n";
 	print "<param name=\"StudentCount\" value=\"$count\"> \n";
+	print "<param name=\"Browser\" value=\"$browser\"> \n";
   	print "          You have to enable Java on your machine !</applet> \n";
   	print "</td></tr></table>\n";
   	print "</form>\n";

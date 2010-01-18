@@ -84,7 +84,6 @@ Q1 blob null,
 Q2 blob null,
 Q3 varchar(50) not null default '0,0,0,0,0,0,0,0,0,0,0,0,0');
 
-
 -- insert student test data
 insert into student_data values ('Lincoln,Barbara Elizabeth',null,'','','','');
 insert into student_data values ('Steinberg,David J',null,'','','','');
@@ -250,6 +249,25 @@ insert into student_data values ('Bautista,Jazmine Rose',null,'','','','');
 insert into student_data values ('Medina-Rivera,Katy L',null,'','','','');
 insert into student_data values ('Defendre,Marie C',null,'','','','');
 insert into student_data values ('Gittins Stone,Daniel Ian',null,'','','','');
+
+create table student_testdata (name varchar(50) null,
+date datetime null,
+tree mediumblob null,
+Q1 blob null,
+Q2 blob null,
+Q3 varchar(50) not null default '0,0,0,0,0,0,0,0,0,0,0,0,0');
+
+insert into student_testdata (name, date, tree, Q1, Q2, Q3)
+select * from student_data where name in ('White,Brian',
+'GUEST','Schonfeld,Andrew','Kiparsky,Jon',
+'Thelen,Glenn','Bolker,Ethan','Young,Aimee','Skurtu,Tara',
+'Nassali,Vivian','Makosky,Amanda');
+insert into student_testdata values ('Kiparsky,Carol',null,'','','','');
+
+select * from student_data where name in ('White,Brian',
+'GUEST','Schonfeld,Andrew','Kiparsky,Jon',
+'Thelen,Glenn','Bolker,Ethan','Young,Aimee','Skurtu,Tara',
+'Nassali,Vivian','Makosky,Amanda');
 
 -- insert student test data
 insert into students(name,section,password) values ('Lincoln,Barbara Elizabeth','A','pass');
