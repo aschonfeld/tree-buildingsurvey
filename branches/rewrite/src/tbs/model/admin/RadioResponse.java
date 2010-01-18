@@ -18,7 +18,7 @@ public class RadioResponse extends Response{
 	public String getText() {
 		String radioAnswersToString = "";
 		for(OpenQuestionPromptButtonType answer : radioAnswers)
-			radioAnswersToString += answer.getText()+",";
+			radioAnswersToString += "" + answer.ordinal()+",";
 		return radioAnswersToString.substring(0, radioAnswersToString.length()-1);
 	}
 	
@@ -27,6 +27,7 @@ public class RadioResponse extends Response{
 	}
 	
 	private void initRadio(String input){
+		System.out.println("Radio response:" + input);
 		radioAnswers = new LinkedList<OpenQuestionPromptButtonType>();
 		String answerText = input == null ? "" : input.trim();
 		int numRadios = TBSGraphics.numberOfRadioQuestions;//Default number of radio questions
@@ -34,6 +35,7 @@ public class RadioResponse extends Response{
 			for(int i=0;i<numRadios;i++)
 				radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
 		}else{
+			System.out.println("Radio response:" + answerText);
 			for(String answer : answerText.split(",")){
 				if(!"0".equals(answer))
 					setCompleted(true);
@@ -59,7 +61,7 @@ public class RadioResponse extends Response{
 		try{
 			answerNum = Integer.parseInt(numberString);
 		}catch(NumberFormatException e){
-			System.out.println("OpenQuestionPrompt:Number format exception for answer text: " + numberString);
+			System.out.println("RadioResponse:Number format exception for answer text: " + numberString);
 			return OpenQuestionPromptButtonType.SUBMIT;
 		}
 		return OpenQuestionPromptButtonType.values()[answerNum];
