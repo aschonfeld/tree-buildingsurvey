@@ -190,6 +190,8 @@ public class StudentController extends TBSController
 	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
+		if(labelingInProgress)
+			return;
 		Prompt prompt = model.getPrompt();
 
 		if(prompt != null) {
@@ -236,7 +238,10 @@ public class StudentController extends TBSController
 	* refresh screen image.
 	*/
 	public void mouseDragged(MouseEvent e){
-		if(model.getPrompt() != null) return;
+		if(labelingInProgress)
+			return;
+		if(model.getPrompt() != null)
+			return;
 		int x = e.getX();
 		int y = e.getY();
 		int deltaX = x - previousX;
@@ -276,7 +281,10 @@ public class StudentController extends TBSController
 	*/	
 	public void mouseReleased(MouseEvent e) 
 	{
-		if(model.getPrompt() != null) return;
+		if(labelingInProgress)
+			return;
+		if(model.getPrompt() != null)
+			return;
 		//Auto-add/delete: 
 		if (draggedNode != null)
 		{
