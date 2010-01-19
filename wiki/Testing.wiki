@@ -2,7 +2,7 @@ Information for our volunteer testers
 
 = Introduction =
 
-Thank you for volunteering to test the TBS applet. Your feedback will help us improve this testing software: the more you complain, the better. Please read this over so you know how best to complain helpfully. 
+Thank you for volunteering to test the TBS applet. Your feedback will help us improve this testing software: the more you complain, the better. Please read this over so you know how best to complain helpfully. At the bottom of this page, you'll find the link to the applet. 
 
 = The Purpose = 
 
@@ -14,14 +14,12 @@ Your task is to assume that you are a student in Biology 101. Your professor has
 = Reporting Issues =
 The most obvious failures of the program are bugs. Bugs range from total failure of the code all the way down to modest failures to meet expectations. If it annoys you, or surprises you, or goes contrary to your intuition, we'd probably want to know about it. Less obvious, but reported in the same way, are non-code issues, such as unclear instructions, typos, or an objection to a choice of color. Anything that strikes you as noteworthy can and should be reported as an "issue". User interface is definitely an issue: if you expect a certain behavior, and get something else, then you've found a bug. 
 
-How much time you want to spend reporting bugs is up to you; the only thing we ask is that you give us some details about any issue that you choose to report. 
-The importance of a bug report is that it enables us to figure out in detail what happened when things went wrong. The more you can tell us about what the state of things when the bug occurred, the more useful your report. 
+How much time you want to spend reporting bugs is up to you; the only thing we ask is that you give us as much detail as you can about any issue that you choose to report. 
+The more you tell us about what the problem was and what led to it, the easier it is for us to fix the problem.  
 
-To report a bug or a glitch, click on the issues tab, above. First, look down the list of reported issues. If any of the issues reported seem to match what you're seeing, click on that issue and read futher. If it seems like it's the same problem, you can add your experience as a comment to this one. This is very useful, especially if you have more information on how the bug came about, or if you found a similar problem under different circumstances. 
+To report a bug or a glitch, click on the issues tab, above. First, look down the list of reported issues. If any of the issues reported seem to match what you're seeing, click on that issue and read futher. If it seems like it's the same problem, you can add your experience as a comment to this one. This is very useful, especially if you have more information on how the bug came about, or if you found a similar problem under slightly different circumstances. 
 
-If you don't see a bug similar to yours, click on "New Issue", directly below the TBS logo in the upper left corner of the Issues page. From the drop down menu, select "defect report from user", and fill in the fields. Make the summary as precise as you can. "A problem with TBS" is not a helpful summary. "Undo Print fails to revert my printout to a blank sheet of paper" would be a good level of detail. 
-
-OS and browser information are important. In principle, this code should work on any browser and any system. In practice, this has not been the case. 
+If you don't see a bug similar to yours, click on "New Issue", directly below the TBS logo in the upper left corner of the Issues page. From the drop down menu, select "defect report from user", and fill in the fields. Make the summary as precise as you can. "A problem with TBS" is not a helpful summary. "Undo Print fails to revert my printout to a blank sheet of paper" would be a good summary. The report should have anything that seems relevant: what you did, what you expected to happen, and what did happen. Finally, please make a note of your email address, and what OS and browser you're using. 
 
 
 = Failure to Load = 
@@ -36,4 +34,4 @@ We'd prefer that you provide your feedback as Issues, as described above. Howeve
 
 = The Applet = 
 
-Now that you've read this, click [http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl here] to go to the applet. Select your name from the drop-down menu and click the "login" button to start. Hint - if you open the applet in separate tab, it'll be easier to report issues as they come up!
+Now that you've read this, click [http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl here] to go to the applet. Select your name from the drop-down menu and click the "login" button to start. Hint - if you open the applet in separate tab, it'll be easier to report issues as they come up.
