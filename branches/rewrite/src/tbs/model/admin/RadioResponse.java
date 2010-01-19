@@ -35,7 +35,6 @@ public class RadioResponse extends Response{
 			for(int i=0;i<numRadios;i++)
 				radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
 		}else{
-			System.out.println("Radio response:" + answerText);
 			for(String answer : answerText.split(",")){
 				if(!"0".equals(answer))
 					setCompleted(true);
