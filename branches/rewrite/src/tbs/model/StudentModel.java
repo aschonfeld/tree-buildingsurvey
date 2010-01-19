@@ -289,7 +289,7 @@ public class StudentModel implements TBSModel
 		Command c = history.pop();
 		if(c instanceof Unlink)
 			buttonStates.put(TBSButtonType.UNLINK, true);
-		if(history.isEmpty())
+		if(history.isEmpty() || history.size() == 0)
 			buttonStates.put(TBSButtonType.UNDO, false);
 		return c;
 	}
