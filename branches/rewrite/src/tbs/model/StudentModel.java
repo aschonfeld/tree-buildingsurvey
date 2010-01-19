@@ -82,7 +82,9 @@ public class StudentModel implements TBSModel
 				buttonStates.put(TBSButtonType.DELETE, true);
 				buttonStates.put(TBSButtonType.CLEAR, true);
 				if(hasEmptyNodes())
-					buttonStates.put(TBSButtonType.LABEL, false);
+					buttonStates.put(TBSButtonType.LABEL, true);
+				if(hasConnections())
+					buttonStates.put(TBSButtonType.UNLINK, true);
 			}
 		}
 		view = new StudentView(this);
