@@ -197,8 +197,11 @@ public class OpenQuestionPrompt extends Prompt{
 			drawRadioSelectionButtons();
 			drawRadio(radioText);
 		}else{
-			if(userInput != null)
-				drawWritten(Arrays.asList(userInput.split("\n")));
+			if(userInput != null){
+				for(String line : userInput.split("\n"))
+					drawWritten(TBSGraphics.breakStringByLineWidth(g2,line,
+						promptSize.width - (padding.width * 2)));
+			}
 		}
 	}
 	
