@@ -44,11 +44,17 @@ public abstract class Node extends ModelElement implements Cloneable
 	{
 		return anchorPoint;	
 	}
-	
+
+	/**
+	* Returns the rectangle defined by this Node.
+	*/	
 	public Rectangle getRectangle(){
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 	
+	/**
+	*	Returns the rectangle defined by this Node with 4 pixels of padding on each side	
+	*/
 	public Rectangle getPaddedRectangle(){
 		return new Rectangle(getX()-4, getY()-4, getWidth()+8, getHeight()+8);
 	}
@@ -151,7 +157,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	* (false). This method should only be called to reflect actual change
 	* in status, ie, if an Organism Node is moved out of the active
 	* field, setInTree(false) would be the correct way to ensure that the
-	* object knows it is not to connect to other objects. .
+	* object knows it is not to connect to other objects.
 	*/ 
 	public void setInTree(boolean inTree)
 	{ 

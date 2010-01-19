@@ -35,9 +35,15 @@ public class Connection extends ModelElement implements Cloneable
 	* Returns the origin node of this connection
 	*/
 	public Node getFrom(){ return from; }
-	
+
+	/**
+	* Sets source node of this connection
+	*/	
 	public void setFrom(Node from){ this.from=from; }
 	
+	/**
+	* Returns true if this connection involves the specified node.
+	*/
 	public boolean hasNode(Node n){
 		return to.equals(n) || from.equals(n);
 	}

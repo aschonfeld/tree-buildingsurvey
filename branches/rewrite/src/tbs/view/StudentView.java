@@ -203,17 +203,20 @@ public class StudentView extends JComponent implements Printable {
 
 			}else if(me instanceof Connection){
 				Connection c = (Connection) me;
-				Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
-						c.getTo());
-				conn = scrollAdjust(conn);
-				g2.setColor(TBSGraphics.connectionColor);
-				g2.setStroke(new BasicStroke(3));
-				g2.draw(conn);
-				if(model.getStudent().hasArrows()){
-					g2.draw(getArrowHead(conn, 0.75 * Math.PI));
-					g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+				if (!c.getFrom().collidesWith(c.getTo()))
+				{
+					Line2D conn = TBSUtils.getConnectionBounds(c.getFrom(), 
+							c.getTo());
+					conn = scrollAdjust(conn);
+					g2.setColor(TBSGraphics.connectionColor);
+					g2.setStroke(new BasicStroke(3));
+					g2.draw(conn);
+					if(model.getStudent().hasArrows()){
+						g2.draw(getArrowHead(conn, 0.75 * Math.PI));
+						g2.draw(getArrowHead(conn, 1.25 * Math.PI));
+					}
+					g2.setStroke(new BasicStroke());
 				}
-				g2.setStroke(new BasicStroke());
 			}
 		}
 	}

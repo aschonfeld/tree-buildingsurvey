@@ -47,7 +47,7 @@ public class YesNoPrompt extends Prompt{
 		this.model = model;
 		this.promptType = promptType;
 		question = "Are you sure you want to " + promptType.getText() +
-			"? This action is undoable.";
+			"? You will not be able to undo.";
 		buttons = YesNoButtonType.values();
 	}
 	
