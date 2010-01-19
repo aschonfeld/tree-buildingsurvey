@@ -72,7 +72,6 @@ public class OpenQuestionPrompt extends Prompt{
     			if(!currentQuestion.isRadio()){
     				model.getStudent().getResponse(currentQuestion).updateText(userInput);
     				setCurrentQuestion(OpenQuestionButtonType.values()[currentQuestion.ordinal()+1]);
-    				userInput = "";
     			}else
     				setFinished(true);
     		}else{
@@ -309,10 +308,9 @@ public class OpenQuestionPrompt extends Prompt{
 	public void setCurrentQuestion(OpenQuestionButtonType currentQuestion) {
 		this.currentQuestion = currentQuestion;
 		buttons = OpenQuestionPromptButtonType.getButtons(currentQuestion.isRadio());
-		if(currentQuestion.isRadio()){
-			userInput = model.getStudent().getResponse(currentQuestion).getText();
+		userInput = model.getStudent().getResponse(currentQuestion).getText();
+		if(currentQuestion.isRadio())
 			currentRadioQuestion = 0;
-		}
 	}
 	
 	public boolean isOverButton(MouseEvent e){
