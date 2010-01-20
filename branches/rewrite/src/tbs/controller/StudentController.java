@@ -54,6 +54,13 @@ public class StudentController extends TBSController
 	private OpenQuestionButtonType questionClicked = null;
 	private boolean labelingInProgress = false;
 	
+	public void printMouseEvent(MouseEvent e) {
+		//System.out.println(e.toString());
+	}
+	
+	public void printKeyEvent(KeyEvent e) {
+		//System.out.println(e.toString());
+	}
 	
 	public StudentController(StudentModel m, StudentView v) {
     	model = m;
@@ -67,11 +74,14 @@ public class StudentController extends TBSController
     }
 	
 	public void keyPressed(KeyEvent e) {
+		printKeyEvent(e);
 		if(model.getPrompt() != null) {
 			model.getPrompt().keyPressed(e);
 			return;
 		}
-		
+		if(e.getKeyCode() == KeyEvent.VK_F1) {
+			model.setStudentControllerTest(new StudentControllerTest(this, model.getView()));
+		}
 		if(statusString == null)
 			statusString = new String();
 		
@@ -98,6 +108,7 @@ public class StudentController extends TBSController
 		
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {
+		printKeyEvent(e);
 		if(model.getPrompt() != null) {
 			model.getPrompt().keyTyped(e);
 			return;
@@ -114,6 +125,7 @@ public class StudentController extends TBSController
 	public void mouseExited(MouseEvent e){}
 	
 	public void mouseMoved(MouseEvent e){
+		printMouseEvent(e);
 		Prompt prompt = model.getPrompt();
 		if(prompt != null){
 			if(prompt.isOverButton(e))
@@ -174,6 +186,7 @@ public class StudentController extends TBSController
 	
 	// No need to use since mousePressed is used instead
 	public void mouseClicked(MouseEvent e) {
+		printMouseEvent(e);
 		if(model.getPrompt() != null)
 			return;
 		if(buttonClicked != null){
@@ -190,6 +203,7 @@ public class StudentController extends TBSController
 	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
+		printMouseEvent(e);
 		if(labelingInProgress)
 			return;
 		Prompt prompt = model.getPrompt();
@@ -238,6 +252,7 @@ public class StudentController extends TBSController
 	* refresh screen image.
 	*/
 	public void mouseDragged(MouseEvent e){
+		printMouseEvent(e);
 		if(labelingInProgress)
 			return;
 		if(model.getPrompt() != null)
@@ -281,6 +296,7 @@ public class StudentController extends TBSController
 	*/	
 	public void mouseReleased(MouseEvent e) 
 	{
+		printMouseEvent(e);
 		if(labelingInProgress)
 			return;
 		if(model.getPrompt() != null)

@@ -431,7 +431,10 @@ public class StudentView extends JComponent implements Printable {
 		}else
 			prompt.paintComponent(g2);
 		setCursor(cursor);
-	}	
+		if(model.getStudentControllerTest() != null) {
+			model.getStudentControllerTest().renderVirtualCursor(g2);
+		}
+	}
 	
 	public int print(Graphics g, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {

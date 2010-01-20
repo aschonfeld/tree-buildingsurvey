@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
 import tbs.controller.StudentController;
+import tbs.controller.StudentControllerTest;
 import tbs.controller.TBSController;
 import tbs.model.admin.Student;
 import tbs.model.history.Add;
@@ -59,6 +60,7 @@ public class StudentModel implements TBSModel
 	private Map<PropertyType,Properties> propertiesMap;
 	private Map<TBSButtonType, Boolean> buttonStates;
 	private Student student;
+	private StudentControllerTest sct;
 	
 	public StudentModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
@@ -93,6 +95,7 @@ public class StudentModel implements TBSModel
 		prompt = new WelcomePrompt(this);
 		helpPrompt = new HelpPrompt(this);
 		openResponsePrompt = new OpenQuestionPrompt(this);
+		sct = null;
 	}
 	
 	public void changeSavedTree(String savedTree){
@@ -736,5 +739,13 @@ public class StudentModel implements TBSModel
 	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}
+	
+	public StudentControllerTest getStudentControllerTest() {
+		return sct;
+	}
+	
+	public void setStudentControllerTest(StudentControllerTest sct) {
+		this.sct = sct;
+	}	
 	
 }
