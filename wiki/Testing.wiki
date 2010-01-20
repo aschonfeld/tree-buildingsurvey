@@ -24,12 +24,7 @@ If you don't see a bug similar to yours, click on "New Issue", directly below th
 
 = Failure to Load = 
 
-One bug that we are aware of is the failure of the applet to load on certain non-Windows machines: some Linux and Macintosh machines have had trouble starting this applet. If you click the "Log in" button and the applet fails to appear, please add a comment under Issue 34 "Applet fails to load..." with the details of your OS (ie, Mac OS 10.5.8)  and browser (ie, Firefox 3.6.7). If you know what level of java your machine is running, or you know how to find out, that's also useful. If not, don't worry about it. 
-
-Mac users: if you find that the applet fails to load, we have had good luck running it under [http://www.icab.de iCab]. The trial version is a free download, and it's a pretty quick install. You might even find you like the browser, although it's a $20 charge to register your copy and and get rid of the "please register" notice. 
-
-= Narrative reports = 
-We'd prefer that you provide your feedback as Issues, as described above. However, if there's something that doesn't seem suited to that format, or you'd just prefer to submit your feedback in a more free-form or narrative approach, you can send it as email to jon.kiparsky@gmail.com
+One bug that we are aware of is the failure of the applet to load on certain non-Windows machines: some Linux and Macintosh machines have had trouble starting this applet. If you click the "Log in" button and the applet fails to appear, please follow [NoLoad this link]. 
 
 
 = The Applet = 
