@@ -60,7 +60,6 @@ sub login_page {
 	     print "Sorry.</font></center></td></tr></table></center>\n";	
 	}
 	
-	#print "<form action=\"$script_url\" method=\"POST\">\n";
 	print "<form action=\"$script_url\" method=\"POST\" onsubmit=\"return getAdminValue();\" ";
   	print "name=\"form\">\n";
   	
@@ -283,16 +282,19 @@ sub load_student_survey {
 	     #$dbh->disconnect();
 	}
 	print "<form action=\"$script_url\" method=\"POST\" name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
-  	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td> \n";
-	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"$jar_loc\" ";
-	print "width=1175 height=590 name=\"TreeApplet\"> \n";
+  	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\"> \n";
+  	print "<tr>\n";
+  	print "<td width=\"85%\">\n";
+	print "<applet code=\"tbs.TBSApplet.class\" archive=\"$jar_loc\" width=\"100%\" height=\"100%\" name=\"TreeApplet\"> \n";
 	print "<param name=\"Student\" value=\"$name+=$lastUpdate+=$treeXML+=$Q1+=$Q2+=$Q3+=$arrows+=\"> \n";
   	print "<param name=\"Admin\" value=\"false\"> \n";
   	print "<param name=\"Browser\" value=\"$browser\"> \n";
-  	print "          You have to enable Java on your machine !</applet> \n";
-  	print "</td><td height=\"100%\">\n";
-    print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\"><tr><td valign=\"top\"><center>\n";
+  	print "You have to enable Java on your machine! \n";
+  	print "</applet>\n";
+  	print "</td>\n";
+  	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
+  	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
+  	print "<tr><td valign=\"top\"><center>\n";
     print "<input type=\"button\" value=\"Logout\" onclick=\"window.navigate('$script_url');\">\n";
     print "</center></td></tr>\n";
     print "<tr><td><center>\n";
@@ -318,9 +320,9 @@ sub load_student_survey {
     print "<input type=\"hidden\" name=\"Browser\" value=\"$browser\">\n";
     print "<input type=\"submit\" value=\"Submit Survey\" onclick=\"return isComplete();\">\n";
     print "</center></td></tr> \n";
-    print "<tfoot><tr><td>\n";
+    print "<tfoot><tr><td valign=\"bottom\">\n";
     print "<center>For any issues<br> with this site<br> click here<br> \n";
-    print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.navigate('$googleCode_url');\"></center> \n";
+    print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"></center> \n";
     print "</td></tr></tfoot>\n";
     print "</table>\n";
     print "</td></tr></table>\n";
@@ -349,13 +351,11 @@ sub load_admin_survey {
 	}
 
 	print "</head>\n";
-	print "<body bgcolor = \"lightblue\" style=\"border: 0;padding-bottom: 0;margin-bottom: 0;\">\n"; 
-	
-	print "<form name=\"form\" style=\"border: 0;padding-bottom: 0;margin-bottom: 0;\">\n";
-  	print "<table style=\"border-collapse: collapse;padding-bottom: 0;margin-bottom: 0;\"><tr><td> \n";
-	print "<applet code=\"tbs.TBSApplet.class\" ";
-	print "archive=\"$jar_loc\" ";
-	print "width=1175 height=590 name=\"TreeApplet\"> \n";
+	print "<body bgcolor = \"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
+	print "<form name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
+  	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\">\n";
+  	print "<tr><td width=\"85%\"> \n";
+	print "<applet code=\"tbs.TBSApplet.class\" archive=\"$jar_loc\" width=\"100%\" height=\"100%\" name=\"TreeApplet\"> \n";
 	#$dbh = GradeDB::connect();
 	$dbh = treeDB::connect();
 	#$sth = $dbh->prepare("SELECT * FROM students ORDER BY name");
@@ -377,8 +377,24 @@ sub load_admin_survey {
 	print "<param name=\"Admin\" value=\"true\"> \n";
 	print "<param name=\"StudentCount\" value=\"$count\"> \n";
 	print "<param name=\"Browser\" value=\"$browser\"> \n";
-  	print "          You have to enable Java on your machine !</applet> \n";
-  	print "</td></tr></table>\n";
+  	print "You have to enable Java on your machine!\n";
+  	print "</applet> \n";
+  	print "</td>\n";
+  	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
+  	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
+  	print "<tr><td valign=\"top\"><center>\n";
+  	print "<input type=\"button\" value=\"Logout\" onclick=\"window.navigate('$script_url');\">\n";
+  	print "</center></td></tr>\n";
+  	print "<tr><td><center>\n";
+  	print "<font size=+1>Diversity of Life<br> Survey<br> Administrator Version</font><br>\n";
+  	print "</center></td></tr>\n";
+  	print "<tfoot><tr><td valign=\"bottom\">\n";
+  	print "<center>For any issues<br> with this site<br> click here<br>\n";
+  	print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"></center>\n";
+  	print "</td></tr></tfoot>\n";
+  	print "</table>\n";
+  	print "</td>\n";
+  	print "</tr></table>\n";
   	print "</form>\n";
     print "</body></html>\n";
 }
