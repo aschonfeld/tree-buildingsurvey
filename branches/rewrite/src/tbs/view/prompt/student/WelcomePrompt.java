@@ -13,12 +13,10 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
-import tbs.model.admin.Response;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
