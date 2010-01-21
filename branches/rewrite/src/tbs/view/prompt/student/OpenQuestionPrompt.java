@@ -7,16 +7,22 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextLayout;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+
+import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
@@ -31,8 +37,23 @@ public class OpenQuestionPrompt extends Prompt{
 	//Information to be used by all prompt types
 	TBSModel model;
 	Graphics2D g2 = null;
+	private ActionListener hider = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			cursorIsOn = !cursorIsOn;
+		}
+	};
+	private Timer timer = new Timer(500, hider);
+	private List<Integer> pressedKeys;
+	private boolean cursorIsOn = true;
+	private int cursorIndex;
+	private int lineIndex;
+	private int cursorWidth = 2;
+	private Color offColor = Color.white;
+	private Color onColor = Color.darkGray;
+	
 	Properties questionProps;
 	OpenQuestionButtonType currentQuestion;
+	ArrayList<String> userInputLines;
 	String userInput = "";
 	
 	//Prompt sizing information
@@ -41,6 +62,7 @@ public class OpenQuestionPrompt extends Prompt{
 	int numLines = 8; // number of lines of text input
 	Dimension padding = new Dimension(10,5);
 	Dimension promptSize = new Dimension(770,0);
+	int width = 750;
 	Point anchorPoint = null;
 	int questionStringY;
 	Rectangle buttonsArea;
@@ -62,6 +84,13 @@ public class OpenQuestionPrompt extends Prompt{
 		this.model = model;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
 		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
+		textHeight = 0;
+		pressedKeys = new LinkedList<Integer>();
+		pressedKeys.add(KeyEvent.VK_DELETE);
+		pressedKeys.add(KeyEvent.VK_UP);
+		pressedKeys.add(KeyEvent.VK_DOWN);
+		pressedKeys.add(KeyEvent.VK_RIGHT);
+		pressedKeys.add(KeyEvent.VK_LEFT);
 	}
 	
 	public void mousePressed(MouseEvent e){
@@ -70,7 +99,7 @@ public class OpenQuestionPrompt extends Prompt{
         	OpenQuestionPromptButtonType buttonClicked = buttons.get(index);
         	if(OpenQuestionPromptButtonType.SUBMIT.equals(buttonClicked)){
     			if(!currentQuestion.isRadio()){
-    				model.getStudent().getResponse(currentQuestion).updateText(userInput);
+    				model.getStudent().getResponse(currentQuestion).updateText(convertLinesToUserInput());
     				setCurrentQuestion(OpenQuestionButtonType.values()[currentQuestion.ordinal()+1]);
     			}else
     				setFinished(true);
@@ -93,52 +122,122 @@ public class OpenQuestionPrompt extends Prompt{
         		}
         	}
         }
+		if(timer.isRunning())
+			timer.stop();
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-			if(userInput.length() > 0)
-				userInput = userInput.substring(0 , userInput.length() - 1);
-		}
-		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			//String[] lines = userInput.split("\n");
-			//if(lines.length < numLines - 1) userInput += "\n";
+		if(currentQuestion.isRadio())
+			return;
+		if(!pressedKeys.contains(e.getKeyCode()))
+			return;
+		int size = userInputLines.size();	
+		String currentLine = userInputLines.get(lineIndex);
+		StringBuffer temp = new StringBuffer(currentLine);
+		int len = currentLine.length();
+		if(e.getKeyCode() == KeyEvent.VK_DELETE){
+			if(cursorIndex < (len-1)){
+				temp.deleteCharAt(cursorIndex);
+				userInputLines.set(lineIndex, temp.toString());
+			}
+		}else if(e.getKeyCode() == KeyEvent.VK_LEFT){
+			if(cursorIndex > 0)
+				cursorIndex--;
+			else{
+				if(lineIndex > 0){
+					lineIndex--;
+					currentLine = userInputLines.get(lineIndex);
+					len = currentLine.length();
+					cursorIndex = len;
+				}
+			}	
+		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+			if(cursorIndex < len)
+				cursorIndex++;
+			else{
+				if(lineIndex < size-1){
+					lineIndex++;
+					cursorIndex = 0;
+				}
+			}
+		}else if(e.getKeyCode() == KeyEvent.VK_DOWN){
+			if(size > 1 && lineIndex < size-1){
+				lineIndex++;
+				currentLine = userInputLines.get(lineIndex);
+				len = currentLine.length();
+				if(cursorIndex > len-1)
+					cursorIndex = userInputLines.get(lineIndex).length();
+			}
+		}else if(e.getKeyCode() == KeyEvent.VK_UP){
+			if(size > 1 && lineIndex > 0){
+				lineIndex--;
+				currentLine = userInputLines.get(lineIndex);
+				len = currentLine.length();
+				if(cursorIndex > len-1)
+					cursorIndex = userInputLines.get(lineIndex).length();
+			}
 		}
 	}
 	
 	public void keyTyped(KeyEvent e) {
-		int lineWidth = 0;
+		if(pressedKeys.contains(e.getKeyCode()))
+			return;
+		if(currentQuestion.isRadio())
+			return;
 		char c = e.getKeyChar();
-		String[] lines = userInput.split("\n");
-		String currentLine = lines[lines.length - 1];
-		if(currentLine.length() > 0) {
-			lineWidth = TBSGraphics.getStringBounds(g2,currentLine).width;
-		} else {
-			lineWidth = 0;
-		}
-		if(lineWidth > (promptSize.width - padding.width * 2)) {
-			// automatically insert new line for long lines if enough room
-			if(lines.length < numLines - 1) {
-				if(c != '\b') userInput += "\n";
-			} else {
-				// out of space
-				return;
-			}
-		}
+		//Catch for illegal database delimeters (+,=)
+		Matcher m = TBSGraphics.writtenResponseIllegalCharacters.matcher("" + c);
+		if(m.find())
+			return;
+		
+		String currentLine = userInputLines.get(lineIndex);
+		StringBuffer temp = new StringBuffer(currentLine);
 		if(c == '\b'){
-			if(userInput.length() > 0)
-				userInput = userInput.substring(0 , userInput.length() - 1);
-		} else
-			userInput += c;
-		// check if max number of lines exceeded
-		lines = userInput.split("\n");
-		if(lines.length >= numLines) 
-			userInput = userInput.substring(0 , userInput.length() - 1);
+			if(cursorIndex > 0){
+				temp.deleteCharAt(cursorIndex-1);
+				userInputLines.set(lineIndex, temp.toString());
+				cursorIndex--;
+			}else{
+				if(lineIndex > 0){
+					userInputLines.remove(lineIndex);
+					lineIndex--;
+					currentLine = userInputLines.get(lineIndex);
+					temp = new StringBuffer(currentLine);
+					cursorIndex = temp.length();
+				}
+			}
+		}else{
+			int totalLines = 0;
+			for(int i=0;i<userInputLines.size();i++){
+				if(i==lineIndex && c != '\b' && c != '\n')
+					totalLines += TBSGraphics.breakStringByLineWidth(g2, userInputLines.get(i)+c, width).size();
+				else
+					totalLines += TBSGraphics.breakStringByLineWidth(g2, userInputLines.get(i), width).size();
+			}
+			if(c == '\n'){
+				if(totalLines < numLines){
+					if(lineIndex == userInputLines.size()-1)
+						userInputLines.add("");
+					else
+						userInputLines.add(lineIndex+1,"");
+					lineIndex++;
+					cursorIndex = 0;
+					return;
+				}
+			}else{
+				if(totalLines <= numLines){
+					temp.insert(cursorIndex, c);
+					userInputLines.set(lineIndex, temp.toString());
+					cursorIndex++;
+				}
+			}
+		}	
 	}
 	
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
-		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
+		if(textHeight == 0)
+			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		lineBrokenQuestion = new LinkedList<String>();
 		List<String> text = new LinkedList<String>();
 		List<String[]> radioText = new LinkedList<String[]>();
@@ -146,8 +245,7 @@ public class OpenQuestionPrompt extends Prompt{
 		if(!currentQuestion.isRadio()){
 			if(!questionTexts.containsKey(currentQuestion)){
 				text = TBSGraphics.breakStringByLineWidth(g2,
-						questionProps.getProperty(currentQuestion.getQuestionKey()),
-						promptSize.width - (padding.width * 2));
+						questionProps.getProperty(currentQuestion.getQuestionKey()),width);
 				questionTexts.put(currentQuestion, text);
 			}else
 				text = questionTexts.get(currentQuestion);
@@ -155,8 +253,7 @@ public class OpenQuestionPrompt extends Prompt{
 		}else{
 			if(!questionTexts.containsKey(currentQuestion)){
 				text = TBSGraphics.breakStringByLineWidth(g2,
-						questionProps.getProperty(currentQuestion.getQuestionKey()),
-						promptSize.width - (padding.width * 2));
+						questionProps.getProperty(currentQuestion.getQuestionKey()),width);
 				questionTexts.put(currentQuestion, text);
 			}else
 				text = questionTexts.get(currentQuestion);
@@ -184,8 +281,7 @@ public class OpenQuestionPrompt extends Prompt{
 		
 		questionStringY = anchorPoint.y;
 		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentQuestion.getAdminText(),
-				anchorPoint.x + padding.width, questionStringY,
-				promptSize.width - padding.width * 2,
+				anchorPoint.x + padding.width, questionStringY,width,
 				buttonHeight,TBSGraphics.emptyNodeColor);
 		questionStringY += buttonHeight;
 		
@@ -197,10 +293,69 @@ public class OpenQuestionPrompt extends Prompt{
 			drawRadioSelectionButtons();
 			drawRadio(radioText);
 		}else{
-			if(userInput != null){
-				for(String line : userInput.split("\n"))
-					drawWritten(TBSGraphics.breakStringByLineWidth(g2,line,
-						promptSize.width - (padding.width * 2)));
+			String line = "";
+			for(int i=0;i<userInputLines.size();i++){
+				line = userInputLines.get(i);
+				if(i != lineIndex){
+					if(ableToBeLayout(line))
+						drawWritten(TBSGraphics.breakStringByLineWidth(g2,line,width));
+					else
+						questionStringY += textHeight + padding.height;
+				}else{
+					TextLayout layout;
+					int x, y;
+					List<String> tempLines = TBSGraphics.breakStringByLineWidth(g2,line,width);
+					int currentSize = 0;
+					int cursorY = 0;
+					String cursorLine = "";
+					int cursorLineIndex = 0;
+					int adjCursorIndex = cursorIndex;
+					if(tempLines.size() == 1){
+						cursorLine = line;
+						cursorY = questionStringY;
+					}else{
+						String tempLine = "";
+						for(int j=0;j<tempLines.size();j++){
+							tempLine = tempLines.get(j);
+							if(adjCursorIndex <= tempLine.length() && cursorLineIndex == 0){
+								cursorLine = tempLine;
+								cursorY = questionStringY;
+								questionStringY += textHeight + padding.height;
+								cursorLineIndex = j;
+							}else{
+								drawString(tempLine, anchorPoint.x + padding.width, questionStringY);
+								questionStringY += textHeight + padding.height;
+								currentSize += tempLine.length();
+								if(j>=cursorLineIndex)
+									adjCursorIndex -= tempLine.length();
+							}
+							i++;	
+						}
+					}
+					// calculate dimensions of String s
+					x = anchorPoint.x + padding.width;
+					y = cursorY + textHeight;
+					boolean cursorWithinName = adjCursorIndex <= cursorLine.length()-1;
+					String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
+					int cursorX = x;
+					if(ableToBeLayout(beforeCursor)){
+						layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
+						layout.draw(g2, x, y);
+						cursorX += ((int) layout.getBounds().getWidth() + 2);
+					}
+					else
+						cursorX += 2;
+					if(cursorWithinName){
+						String afterCursor = cursorLine.substring(adjCursorIndex);
+						if(ableToBeLayout(afterCursor)){
+							layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
+							layout.draw(g2, cursorX + cursorWidth, y);
+						}
+					}
+					drawCursor(g2, new Point(cursorX,cursorY), new Point(cursorWidth, textHeight));
+					if(adjCursorIndex != cursorIndex)
+						questionStringY += textHeight + padding.height;
+				}	
 			}
 		}
 	}
@@ -304,6 +459,14 @@ public class OpenQuestionPrompt extends Prompt{
 		}
 	}
 	
+	public void drawCursor(Graphics2D g2, Point upperLeft, Point size) {
+		if(cursorIsOn) 
+			g2.setColor(onColor);
+		else
+			g2.setColor(offColor);
+		g2.fillRect(upperLeft.x, upperLeft.y, size.x, size.y);
+	}
+	
 	public OpenQuestionButtonType getCurrentQuestion() {
 		return currentQuestion;
 	}
@@ -314,6 +477,29 @@ public class OpenQuestionPrompt extends Prompt{
 		userInput = model.getStudent().getResponse(currentQuestion).getText();
 		if(currentQuestion.isRadio())
 			currentRadioQuestion = 0;
+		else{
+			userInputLines = new ArrayList<String>();
+			for(String line : userInput.split("\n"))
+				userInputLines.add(line);
+				
+			int size = 0;
+			if(!userInputLines.isEmpty())
+				size = userInputLines.size();
+				
+			if(size == 0){
+				userInputLines.add("");
+				lineIndex = 0;
+				cursorIndex = 0;
+			}else{
+				lineIndex = size-1;
+				String temp = userInputLines.get(lineIndex);
+				if(ableToBeLayout(temp))
+					cursorIndex = temp.length();
+				else
+					cursorIndex = 0;
+			}
+			timer.start();
+		}
 	}
 	
 	public boolean isOverButton(MouseEvent e){
@@ -324,6 +510,20 @@ public class OpenQuestionPrompt extends Prompt{
 		if(currentQuestion.isRadio())
 			return radioQuestionSelection.contains(e.getPoint());
 		return false;
+	}
+	
+	private boolean ableToBeLayout(String s){
+		return (s != null && s.length() != 0);
+	}
+	
+	private String convertLinesToUserInput(){
+		StringBuffer returnString = new StringBuffer("");
+		for(String line : userInputLines)
+			returnString.append(line).append("\n");
+		
+		if(ableToBeLayout(returnString.toString()))
+			return returnString.substring(0, returnString.length()-1).toString();
+		return "";
 	}
 	
 }

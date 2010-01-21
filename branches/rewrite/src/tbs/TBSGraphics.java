@@ -132,6 +132,7 @@ public class TBSGraphics {
 	 * entered when labeling an empty node
 	 */
 	public static Pattern emptyNodePattern = Pattern.compile("[0-9a-zA-Z' ']");
+	public static Pattern writtenResponseIllegalCharacters = Pattern.compile("[+=]");
 	
 	/**
 	 * Label for immortal empty node
@@ -371,7 +372,7 @@ public class TBSGraphics {
 	public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
 		String currentLine = "";
 		List<String> widthBrokenString = new LinkedList<String>();
-		if(s == null || s == ""){
+		if(s == null || s.length() == 0){
 			widthBrokenString.add("");
 			return widthBrokenString;
 		}
