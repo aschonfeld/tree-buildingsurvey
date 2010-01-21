@@ -11,22 +11,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
-import tbs.model.TBSModel;
-import tbs.model.admin.Student;
+import tbs.model.StudentModel;
 import tbs.properties.PropertyType;
-import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 
 public class WelcomePrompt extends Prompt
 {
 
 	//Information to be used by all prompt types
-	TBSModel model;
+	StudentModel model;
 	Graphics2D g2 = null;
 	Properties instrProps;
 	
@@ -43,7 +40,7 @@ public class WelcomePrompt extends Prompt
 	String instrString;
 	String welcomeMessage;
 
-	public WelcomePrompt(TBSModel model) {
+	public WelcomePrompt(StudentModel model) {
 		super();
 		this.model = model;
 		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
@@ -65,7 +62,7 @@ public class WelcomePrompt extends Prompt
 	{
 		this.g2 = g2;
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		List<String> incompletedItems = surveyStatus();
+		List<String> incompletedItems = model.incompletedItems();
 		String introString = "";
 		if(incompletedItems.size() == 4)
 			introString = String.format(instrProps.getProperty("instrIntro"),
@@ -205,18 +202,6 @@ public class WelcomePrompt extends Prompt
 			}
 		}
 		return welcome.toString();
-	}
-	
-	private List<String> surveyStatus(){
-		List<String> incompletedItems = new LinkedList<String>();
-		if(model.inTreeElements().isEmpty())
-			incompletedItems.add("the tree");
-		Student student = model.getStudent();
-		for(OpenQuestionButtonType q : OpenQuestionButtonType.values()){
-			if(!student.getResponse(q).isCompleted())
-				incompletedItems.add(q.getAdminText());
-		}
-		return incompletedItems;
 	}
 
 }

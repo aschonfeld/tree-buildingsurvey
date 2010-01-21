@@ -746,6 +746,38 @@ public class StudentModel implements TBSModel
 	
 	public void setStudentControllerTest(StudentControllerTest sct) {
 		this.sct = sct;
-	}	
+	}
+	
+	public List<String> incompletedItems(){
+		List<String> incompletedItems = new LinkedList<String>();
+		if(inTreeElements().isEmpty())
+			incompletedItems.add("the tree");
+		for(OpenQuestionButtonType q : OpenQuestionButtonType.values()){
+			if(!student.getResponse(q).isCompleted())
+				incompletedItems.add(q.getAdminText());
+		}
+		return incompletedItems;
+	}
+	
+	public String surveyStatus(){
+		StringBuffer statusString = new StringBuffer("");
+		List<String> incompletedItems = incompletedItems();
+		if(incompletedItems.isEmpty()){
+			return "";
+		}else{
+			if(incompletedItems.size() == 1){
+				statusString.append("Currently you still need to complete ");
+				statusString.append(incompletedItems.remove(0)).append(". ");
+			}else if(incompletedItems.size() <= 4){
+				statusString.append("Currently you still need to complete ");
+				statusString.append(incompletedItems.remove(0));
+				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
+				for(String s : incompletedItems)
+					statusString.append(", ").append(s);
+				statusString.append(" & " + statusEnd + ". ");
+			}
+		}
+		return statusString.toString();
+	}
 	
 }

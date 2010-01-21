@@ -13,15 +13,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
-import tbs.model.TBSModel;
-import tbs.model.admin.Response;
-import tbs.model.admin.Student;
+import tbs.model.StudentModel;
 import tbs.properties.PropertyType;
-import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.HelpPromptButtonType;
@@ -30,7 +26,7 @@ public class HelpPrompt extends Prompt
 {
 
 	//Information to be used by all prompt types
-	TBSModel model;
+	StudentModel model;
 	Graphics2D g2 = null;
 	Properties instrProps;
 	Properties helpProps; 
@@ -55,7 +51,7 @@ public class HelpPrompt extends Prompt
 	List<String> buttonHeaders;
 	List<List<String>> buttonTexts;
 
-	public HelpPrompt(TBSModel model) {
+	public HelpPrompt(StudentModel model) {
 		super();
 		this.model = model;
 		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
@@ -98,8 +94,12 @@ public class HelpPrompt extends Prompt
 		List<String> text = new LinkedList<String>();
 		int totalLines = 0;
 		if(HelpPromptButtonType.SURVEY_STATUS.equals(selectedOption)){
-			text = TBSGraphics.breakStringByLineWidth(g2,
-					surveyStatus(),
+			String status = model.surveyStatus();
+			if(status == "")
+				status = "Currently you have created a tree and entered " + 
+				"responses to all the open-response questions. " +
+				"You are ready to submit your survey.";
+			text = TBSGraphics.breakStringByLineWidth(g2,status,
 					promptSize.width - padding.width * 2);
 			totalLines += text.size() + 2;
 		}else if(HelpPromptButtonType.INSTRUCTIONS.equals(selectedOption)){
@@ -237,35 +237,5 @@ public class HelpPrompt extends Prompt
 			return true;
 		return false;
 	}
-	
-	private String surveyStatus(){
-		StringBuffer statusString = new StringBuffer("");
-		List<String> incompletedItems = new LinkedList<String>();
-		if(model.inTreeElements().isEmpty())
-			incompletedItems.add("the tree");
-		Student student = model.getStudent();
-		for(Map.Entry<OpenQuestionButtonType, Response> response : student.getResponses().entrySet()){
-			if(!response.getValue().isCompleted())
-				incompletedItems.add(response.getKey().getAdminText());
-		}
-		if(incompletedItems.isEmpty()){
-			statusString.append("Currently you have created a tree and entered responses to all the open-response questions. ");
-			statusString.append("You are ready to submit your survey.");
-		}else{
-			if(incompletedItems.size() == 1){
-				statusString.append("Currently you still need to complete ");
-				statusString.append(incompletedItems.remove(0)).append(". ");
-			}else if(incompletedItems.size() <= 4){
-				statusString.append("Currently you still need to complete ");
-				statusString.append(incompletedItems.remove(0));
-				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
-				for(String s : incompletedItems)
-					statusString.append(", ").append(s);
-				statusString.append(" & " + statusEnd + ". ");
-			}
-		}
-		return statusString.toString();
-	}
-
 }
 

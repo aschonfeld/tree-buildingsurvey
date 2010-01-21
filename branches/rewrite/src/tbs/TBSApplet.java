@@ -186,7 +186,14 @@ public class TBSApplet extends JApplet {
 	public String getQ2(){return model.getStudent().getResponse(OpenQuestionButtonType.TWO).getText();}	
 	public String getQ3(){return model.getStudent().getResponse(OpenQuestionButtonType.THREE).getText();}
 	
-	public Properties loadPropertyFile(PropertyType pt){
+	public String getStatus(){
+		if(admin)
+			return "";
+		else
+			return ((StudentModel)model).surveyStatus();
+	}
+	
+	private Properties loadPropertyFile(PropertyType pt){
 		Properties props = new Properties();
 		String filename = "/tbs/properties/"+pt.getFilename();
 		try{
