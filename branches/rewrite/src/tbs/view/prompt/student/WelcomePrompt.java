@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.StudentModel;
+import tbs.model.admin.Student;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
@@ -179,27 +180,31 @@ public class WelcomePrompt extends Prompt
 	}
 	
 	private String welcomeMessage(List<String> incompletedItems){
-		String name = model.getStudent().getName();
+		Student student = model.getStudent();
+		String name = student.getName();
+		String lastUpdate = student.getLastUpdate();
 		StringBuffer welcome = new StringBuffer("Welcome");
 		if(incompletedItems.size() < OpenQuestionButtonType.values().length+1)
 			welcome.append(" back");
 		if(name != "")
-			welcome.append(" "+name);
+			welcome.append(", "+name+", ");
 		welcome.append(" to the Diversity Of Life Survey! ");
-		if(incompletedItems.isEmpty())
-			welcome.append("You have completed the survey and recieved 15 points. ");
-		else{
-			if(incompletedItems.size() == 1){
-				welcome.append("You still need to complete ");
-				welcome.append(incompletedItems.remove(0)).append(". ");
-			}
-			else if(incompletedItems.size() <= OpenQuestionButtonType.values().length+1){
-				welcome.append("You still need to complete ");
-				welcome.append(incompletedItems.remove(0));
-				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
-				for(String s : incompletedItems)
-					welcome.append(", ").append(s);
-				welcome.append(" & " + statusEnd + ". ");
+		if(lastUpdate != null && lastUpdate.length() != 0){
+			if(incompletedItems.isEmpty())
+				welcome.append("You have completed the survey and recieved 15 points. ");
+			else{
+				if(incompletedItems.size() == 1){
+					welcome.append("You still need to complete ");
+					welcome.append(incompletedItems.remove(0)).append(". ");
+				}
+				else if(incompletedItems.size() <= OpenQuestionButtonType.values().length+1){
+					welcome.append("You still need to complete ");
+					welcome.append(incompletedItems.remove(0));
+					String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
+					for(String s : incompletedItems)
+						welcome.append(", ").append(s);
+					welcome.append(" & " + statusEnd + ". ");
+				}
 			}
 		}
 		return welcome.toString();

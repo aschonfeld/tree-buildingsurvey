@@ -235,7 +235,12 @@ sub load_student_survey {
 	
 	$dbh->disconnect();
 	
-	if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
+	#If Professor White requests the radio question be put back into
+	#the open-response section, then reinstitute this line of code and
+	#comment out the one underneath it.
+	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
+		
+	if (($Q1 eq "") || ($Q2 eq "")) {
 	     $complete = 0;
 	} else {
 	     $complete = 1;

@@ -26,6 +26,7 @@ import javax.swing.JApplet;
 import tbs.model.AdminModel;
 import tbs.model.StudentModel;
 import tbs.model.TBSModel;
+import tbs.model.admin.Response;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 
@@ -182,9 +183,29 @@ public class TBSApplet extends JApplet {
 	}
 	
 	public String getTree(){return model.exportTree();}
-	public String getQ1(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[0]).getText();}
-	public String getQ2(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[1]).getText();}	
-	public String getQ3(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[2]).getText();}
+	
+	public String getQ1(){
+		Map<OpenQuestionButtonType, Response> responses = model.getStudent().getResponses();
+		if(responses.containsKey(OpenQuestionButtonType.values()[0]))
+			return responses.get(OpenQuestionButtonType.values()[0]).getText();
+		else
+			return "";
+	}
+	
+	public String getQ2(){
+		Map<OpenQuestionButtonType, Response> responses = model.getStudent().getResponses();
+		if(responses.containsKey(OpenQuestionButtonType.values()[1]))
+			return responses.get(OpenQuestionButtonType.values()[1]).getText();
+		else
+			return "";
+	}	
+	public String getQ3(){
+		Map<OpenQuestionButtonType, Response> responses = model.getStudent().getResponses();
+		if(responses.containsKey(OpenQuestionButtonType.values()[2]))
+			return responses.get(OpenQuestionButtonType.values()[2]).getText();
+		else
+			return "";
+	}
 	
 	public String getStatus(){
 		if(admin)
