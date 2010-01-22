@@ -38,8 +38,9 @@ import tbs.view.TBSButtonType;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.student.HelpPrompt;
-import tbs.view.prompt.student.OpenQuestionPrompt;
+import tbs.view.prompt.student.RadioQuestionPrompt;
 import tbs.view.prompt.student.WelcomePrompt;
+import tbs.view.prompt.student.WrittenQuestionPrompt;
 
 public class StudentModel implements TBSModel
 {
@@ -54,7 +55,8 @@ public class StudentModel implements TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
-	private OpenQuestionPrompt openResponsePrompt;
+	private WrittenQuestionPrompt writtenQuestionPrompt;
+	private RadioQuestionPrompt radioQuestionPrompt;
 	private HelpPrompt helpPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType,Properties> propertiesMap;
@@ -94,7 +96,12 @@ public class StudentModel implements TBSModel
 		history = new Stack<Command>();
 		prompt = new WelcomePrompt(this);
 		helpPrompt = new HelpPrompt(this);
-		openResponsePrompt = new OpenQuestionPrompt(this);
+		writtenQuestionPrompt = new WrittenQuestionPrompt(this);
+		/*
+		 * Until Professor White says otherwise we will be eliminating the radio
+		 * portion of the open-response
+		 * radioQuestionPrompt = new RadioQuestionPrompt(this);
+		 */
 		sct = null;
 	}
 	
@@ -699,9 +706,15 @@ public class StudentModel implements TBSModel
 	}
 	
 	public void viewOpenResponse(OpenQuestionButtonType currentQuestion) {
-		openResponsePrompt.setCurrentQuestion(currentQuestion);
-		openResponsePrompt.setFinished(false);
-		this.prompt = openResponsePrompt;
+		if(currentQuestion.isRadio()){
+			radioQuestionPrompt.setCurrentQuestion(currentQuestion);
+			radioQuestionPrompt.setFinished(false);
+			this.prompt = radioQuestionPrompt;
+		}else{
+			writtenQuestionPrompt.setCurrentQuestion(currentQuestion);
+			writtenQuestionPrompt.setFinished(false);
+			this.prompt = writtenQuestionPrompt;
+		}
 		view.refreshGraphics();
 	}
 	
@@ -768,7 +781,7 @@ public class StudentModel implements TBSModel
 			if(incompletedItems.size() == 1){
 				statusString.append("Currently you still need to complete ");
 				statusString.append(incompletedItems.remove(0)).append(". ");
-			}else if(incompletedItems.size() <= 4){
+			}else if(incompletedItems.size() <= OpenQuestionButtonType.values().length+1){
 				statusString.append("Currently you still need to complete ");
 				statusString.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);

@@ -557,17 +557,7 @@ public class StudentController extends TBSController
 		if(buttonIndex >= OpenQuestionButtonType.values().length) return;
 		questionClicked = OpenQuestionButtonType.values()[buttonIndex];
 		System.out.println(questionClicked.toString());
-		switch (questionClicked) {
-		case ONE:
-			model.viewOpenResponse(OpenQuestionButtonType.ONE);
-			break;
-		case TWO:
-			model.viewOpenResponse(OpenQuestionButtonType.TWO);
-			break;
-		case THREE:
-			model.viewOpenResponse(OpenQuestionButtonType.THREE);
-			break;
-		}
+		model.viewOpenResponse(questionClicked);
 		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }

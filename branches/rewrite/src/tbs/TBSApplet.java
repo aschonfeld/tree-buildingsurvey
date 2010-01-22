@@ -182,9 +182,9 @@ public class TBSApplet extends JApplet {
 	}
 	
 	public String getTree(){return model.exportTree();}
-	public String getQ1(){return model.getStudent().getResponse(OpenQuestionButtonType.ONE).getText();}
-	public String getQ2(){return model.getStudent().getResponse(OpenQuestionButtonType.TWO).getText();}	
-	public String getQ3(){return model.getStudent().getResponse(OpenQuestionButtonType.THREE).getText();}
+	public String getQ1(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[0]).getText();}
+	public String getQ2(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[1]).getText();}	
+	public String getQ3(){return model.getStudent().getResponse(OpenQuestionButtonType.values()[2]).getText();}
 	
 	public String getStatus(){
 		if(admin)
@@ -198,23 +198,11 @@ public class TBSApplet extends JApplet {
 		String filename = "/tbs/properties/"+pt.getFilename();
 		try{
 			props.load(this.getClass().getResource(filename).openStream());
-			if(PropertyType.QUESTIONS.equals(pt))
-				loadNumberOfRadioQuestions(props.getProperty("questionThree.numQuestions"));
 			return props;
 		}catch(Exception e){
 			System.out.println("Unable to load " + filename + ": " + e);
 			return new Properties();
 		}
-	}
-	
-	private void loadNumberOfRadioQuestions(String numRadiosString){
-		int numRadios = 13;//Default number of radio questions
-		try{
-			numRadios = Integer.parseInt(numRadiosString);
-		} catch(NumberFormatException e){
-			System.out.println("OpenQuestionPrompt:Error parsing radio question count(value-" + numRadiosString + ") from questions.properties");
-		}
-		TBSGraphics.numberOfRadioQuestions = numRadios;
 	}
 	
 	public String[][] getParameterInfo(){

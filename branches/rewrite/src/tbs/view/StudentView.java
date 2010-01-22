@@ -38,7 +38,7 @@ import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 import tbs.model.admin.Student;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.student.OpenQuestionPrompt;
+import tbs.view.prompt.student.WrittenQuestionPrompt;
 import tbs.view.prompt.student.WelcomePrompt;
 
 /**
@@ -151,8 +151,8 @@ public class StudentView extends JComponent implements Printable {
 		Student student = model.getStudent();
 		String buttonString;
 		for(OpenQuestionButtonType q: OpenQuestionButtonType.values()) {
-			if((prompt != null) && (prompt instanceof OpenQuestionPrompt)
-					&&  q.equals(((OpenQuestionPrompt)prompt).getCurrentQuestion()))
+			if((prompt != null) && (prompt instanceof WrittenQuestionPrompt)
+					&&  q.equals(((WrittenQuestionPrompt)prompt).getCurrentQuestion()))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);

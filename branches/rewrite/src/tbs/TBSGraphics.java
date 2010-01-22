@@ -246,8 +246,6 @@ public class TBSGraphics {
 	*/ 
 	public static int questionButtonsWidth = 0;
 	
-	public static int numberOfRadioQuestions = 0;
-	
 	/**
 	* Starting x-coordinate of question buttons. Set in [TBSModel.???]
 	*/ 

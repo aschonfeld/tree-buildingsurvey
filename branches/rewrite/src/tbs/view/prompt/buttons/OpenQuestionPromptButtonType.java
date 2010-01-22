@@ -40,10 +40,19 @@ public enum OpenQuestionPromptButtonType {
 		return text;
 	}
 	
-	public static List<OpenQuestionPromptButtonType> getButtons(boolean isRadio){
+	public static List<OpenQuestionPromptButtonType> getRadioButtons(){
 		List<OpenQuestionPromptButtonType> buttons = new LinkedList<OpenQuestionPromptButtonType>();
 		for(OpenQuestionPromptButtonType button : values()){
-			if(button.radio == isRadio)
+			if(button.radio)
+				buttons.add(button);
+		}
+		return buttons;
+	}
+	
+	public static List<OpenQuestionPromptButtonType> getWrittenButtons(){
+		List<OpenQuestionPromptButtonType> buttons = new LinkedList<OpenQuestionPromptButtonType>();
+		for(OpenQuestionPromptButtonType button : values()){
+			if(!button.radio)
 				buttons.add(button);
 		}
 		return buttons;

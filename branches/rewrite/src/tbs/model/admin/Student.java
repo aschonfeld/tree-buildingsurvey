@@ -40,9 +40,14 @@ public class Student {
 		setName(studentData[0].trim());
 		setLastUpdate(studentData[1].substring(1).trim());
 		tree = studentData[2].substring(1).trim();
-		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(studentData[3].substring(1).trim()));
-		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(studentData[4].substring(1).trim()));
-		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(studentData[5].substring(1).trim()));
+		int splitIndex = 3;
+		for(OpenQuestionButtonType response : OpenQuestionButtonType.values()){
+			if(response.isRadio())
+				openResponses.put(response, new RadioResponse(studentData[splitIndex].substring(1).trim(),response.getRadioQuestionCount()));
+			else
+				openResponses.put(response, new WrittenResponse(studentData[splitIndex].substring(1).trim()));
+			splitIndex++;
+		}
 		String arrowsString = studentData[6].substring(1).trim();
 		arrowsString = arrowsString.trim();
 		if(arrowsString == null || arrowsString == "")
@@ -135,9 +140,12 @@ public class Student {
 		tree = "";
 		arrows = true;
 		name = "";
-		openResponses.put(OpenQuestionButtonType.ONE, new WrittenResponse(""));
-		openResponses.put(OpenQuestionButtonType.TWO, new WrittenResponse(""));
-		openResponses.put(OpenQuestionButtonType.THREE, new RadioResponse(""));
+		for(OpenQuestionButtonType button : OpenQuestionButtonType.values()){
+			if(button.isRadio())
+				openResponses.put(button, new RadioResponse("", button.getRadioQuestionCount()));
+			else
+				openResponses.put(button, new WrittenResponse(""));
+		}
 	}
 	
 }

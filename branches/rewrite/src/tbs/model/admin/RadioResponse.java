@@ -3,16 +3,17 @@ package tbs.model.admin;
 import java.util.LinkedList;
 import java.util.List;
 
-import tbs.TBSGraphics;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
 public class RadioResponse extends Response{
 
 	private List<OpenQuestionPromptButtonType> radioAnswers;
 	
-	public RadioResponse(String input){
+	private int questionCount;
+	
+	public RadioResponse(String input, int questionCount){
 		super();
-		initRadio(input);
+		initRadio(input, questionCount);
 	}
 	
 	public String getText() {
@@ -26,13 +27,13 @@ public class RadioResponse extends Response{
 		return radioAnswers;
 	}
 	
-	private void initRadio(String input){
+	private void initRadio(String input, int questionCount){
+		this.questionCount = questionCount;
 		System.out.println("Radio response:" + input);
 		radioAnswers = new LinkedList<OpenQuestionPromptButtonType>();
 		String answerText = input == null ? "" : input.trim();
-		int numRadios = TBSGraphics.numberOfRadioQuestions;//Default number of radio questions
 		if(answerText == null || answerText.length() == 0){
-			for(int i=0;i<numRadios;i++)
+			for(int i=0;i<questionCount;i++)
 				radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
 		}else{
 			for(String answer : answerText.split(",")){
@@ -40,11 +41,11 @@ public class RadioResponse extends Response{
 					setCompleted(true);
 				radioAnswers.add(convertStringToRadioAnswer(answer));
 			}
-			if(radioAnswers.size() < numRadios){
-				for(int i=radioAnswers.size();i<=numRadios;i++)
+			if(radioAnswers.size() < questionCount){
+				for(int i=radioAnswers.size();i<=questionCount;i++)
 					radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
-			}else if(radioAnswers.size() > numRadios){
-				while(radioAnswers.size() != numRadios)
+			}else if(radioAnswers.size() > questionCount){
+				while(radioAnswers.size() != questionCount)
 					radioAnswers.remove(radioAnswers.size()-1);
 			}
 		}
@@ -66,6 +67,10 @@ public class RadioResponse extends Response{
 		return OpenQuestionPromptButtonType.values()[answerNum];
 	}
 
-	public void updateText(String input) {}	
+	public void updateText(String input) {}
+
+	public int getQuestionCount() {
+		return questionCount;
+	}	
 
 }

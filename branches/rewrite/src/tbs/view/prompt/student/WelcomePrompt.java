@@ -17,6 +17,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.StudentModel;
 import tbs.properties.PropertyType;
+import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 
 public class WelcomePrompt extends Prompt
@@ -64,7 +65,7 @@ public class WelcomePrompt extends Prompt
 		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		List<String> incompletedItems = model.incompletedItems();
 		String introString = "";
-		if(incompletedItems.size() == 4)
+		if(incompletedItems.size() == OpenQuestionButtonType.values().length+1)
 			introString = String.format(instrProps.getProperty("instrIntro"),
 					welcomeMessage(incompletedItems));
 		else
@@ -180,7 +181,7 @@ public class WelcomePrompt extends Prompt
 	private String welcomeMessage(List<String> incompletedItems){
 		String name = model.getStudent().getName();
 		StringBuffer welcome = new StringBuffer("Welcome");
-		if(incompletedItems.size() < 4)
+		if(incompletedItems.size() < OpenQuestionButtonType.values().length+1)
 			welcome.append(" back");
 		if(name != "")
 			welcome.append(" "+name);
@@ -192,7 +193,7 @@ public class WelcomePrompt extends Prompt
 				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0)).append(". ");
 			}
-			else if(incompletedItems.size() <= 4){
+			else if(incompletedItems.size() <= OpenQuestionButtonType.values().length+1){
 				welcome.append("You still need to complete ");
 				welcome.append(incompletedItems.remove(0));
 				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);

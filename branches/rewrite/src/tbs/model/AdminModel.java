@@ -28,7 +28,8 @@ import tbs.view.TBSButtonType;
 import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.admin.AnalysisPrompt;
-import tbs.view.prompt.admin.OpenQuestionReviewPrompt;
+import tbs.view.prompt.admin.RadioQuestionReviewPrompt;
+import tbs.view.prompt.admin.WrittenQuestionReviewPrompt;
 
 public class AdminModel implements TBSModel
 {
@@ -39,7 +40,8 @@ public class AdminModel implements TBSModel
 	private int MESerialNumber=0;
 	private TBSApplet applet;
 	private Prompt prompt;
-	private OpenQuestionReviewPrompt openQuestionReviewPrompt;
+	private WrittenQuestionReviewPrompt writtenQuestionReviewPrompt;
+	private RadioQuestionReviewPrompt radioQuestionReviewPrompt;
 	private AnalysisPrompt analysisPrompt;
 	private TextEntryBox textEntryBox;
 	private Map<PropertyType, Properties> propertiesMap;
@@ -59,7 +61,12 @@ public class AdminModel implements TBSModel
 		selectedStudent = this.students.get(0);
 		if(!"".equals(selectedStudent.getTree()))
 			loadTree(selectedStudent.getTree());
-		openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
+		writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
+		/*
+		 * Until Professor White says otherwise we will be eliminating the radio
+		 * portion of the open-response
+		 * radioQuestionReviewPrompt = new RadioQuestionReviewPrompt(this);
+		 */
 		view = new AdminView(this);
 		controller = new AdminController(this, view);
 	}
@@ -70,7 +77,7 @@ public class AdminModel implements TBSModel
 			loadTree(selectedStudent.getTree());
 		else
 			resetModel();
-		openQuestionReviewPrompt = null;
+		writtenQuestionReviewPrompt = null;
 		analysisPrompt = null;
 	}
 	
@@ -510,9 +517,9 @@ public class AdminModel implements TBSModel
 	}
 	
 	public void questionReview() {
-		if(openQuestionReviewPrompt == null)
-			openQuestionReviewPrompt = new OpenQuestionReviewPrompt(this);
-		this.prompt = openQuestionReviewPrompt;
+		if(writtenQuestionReviewPrompt == null)
+			writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
+		this.prompt = writtenQuestionReviewPrompt;
 		view.refreshGraphics();
 	}
 	

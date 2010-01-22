@@ -16,18 +16,16 @@ import java.util.List;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
-import tbs.model.TBSModel;
-import tbs.model.admin.RadioResponse;
+import tbs.model.AdminModel;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
-import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
-public class OpenQuestionReviewPrompt extends Prompt
+public class WrittenQuestionReviewPrompt extends Prompt
 {
 
 	//Information to be used by all prompt types
-	TBSModel model;
+	AdminModel model;
 	Graphics2D g2 = null;
 	Properties questionProps;
 	
@@ -38,32 +36,16 @@ public class OpenQuestionReviewPrompt extends Prompt
 	int responseStringY;
 	Rectangle closeButton;
 	Rectangle questionButtons;
-	OpenQuestionButtonType[] buttons = OpenQuestionButtonType.values();
-	OpenQuestionButtonType currentQuestion;
 	int buttonHeight;
 	int textHeight = -1;
-	List<String[]> questionThree;
+	List<OpenQuestionButtonType> writtenQuestions = OpenQuestionButtonType.getWrittenButtons();
+	OpenQuestionButtonType currentWrittenQuestion;
 	
-	public OpenQuestionReviewPrompt(TBSModel model) {
+	public WrittenQuestionReviewPrompt(AdminModel model) {
 		super();
 		this.model = model;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
-		questionThree = new LinkedList<String[]>();
-		int index = model.getStudent().hasArrows() ? 1 : TBSGraphics.numberOfRadioQuestions-1;
-		String[] radioPair;
-		RadioResponse radioResponse = (RadioResponse) model.getStudent().getResponse(OpenQuestionButtonType.THREE);
-		List<OpenQuestionPromptButtonType> radioAnswers = radioResponse.getRadioAnswers();
-		for(OpenQuestionPromptButtonType answer : radioAnswers){
-			radioPair = new String[2];
-			radioPair[0] = questionProps.getProperty("questionThree"+index);
-			radioPair[1] = answer.getText();
-			questionThree.add(radioPair);
-			if(model.getStudent().hasArrows())
-				index++;
-			else
-				index--;
-		}
-		currentQuestion = OpenQuestionButtonType.ONE;
+		currentWrittenQuestion = writtenQuestions.get(0);
 		
 	}
 
@@ -77,8 +59,8 @@ public class OpenQuestionReviewPrompt extends Prompt
 				setFinished(true);
 		else{
 			if(questionButtons.contains(e.getPoint())){
-	        	int index = (int) ((e.getX() - questionButtons.getX()) * buttons.length) / promptSize.width;
-	        	currentQuestion = buttons[index];
+	        	int index = (int) ((e.getX() - questionButtons.getX()) * writtenQuestions.size()) / promptSize.width;
+	        	currentWrittenQuestion = writtenQuestions.get(index);
 	        }
 		}
 	}
@@ -91,33 +73,27 @@ public class OpenQuestionReviewPrompt extends Prompt
 		List<String> writtenQuestionText = new LinkedList<String>();
 		List<String> writtenAnswerText = new LinkedList<String>();
 		int writtenLines = 0;
-		if(!currentQuestion.isRadio()){
-			String answerText = model.getStudent().getResponse(currentQuestion).getText();
-			String questionText = questionProps.getProperty(currentQuestion.getQuestionKey());
-			writtenQuestionText = TBSGraphics.breakStringByLineWidth(g2,questionText,
-					promptSize.width - padding.width * 2);
-			writtenLines += writtenQuestionText.size();
-			writtenAnswerText = TBSGraphics.breakStringByLineWidth(g2,answerText,
-					promptSize.width - padding.width * 2);
-			writtenLines += writtenAnswerText.size();
-			calculateValues(writtenLines + 2);
-		}else
-			calculateValues(questionThree.size() + 2);
+		String writtenQuestion = questionProps.getProperty(currentWrittenQuestion.getQuestionKey());
+		String writtenAnswer = model.getStudent().getResponse(currentWrittenQuestion).getText();
+		writtenQuestionText = TBSGraphics.breakStringByLineWidth(g2,writtenQuestion,
+				promptSize.width - padding.width * 2);
+		writtenLines += writtenQuestionText.size();
+		writtenAnswerText = TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
+				promptSize.width - padding.width * 2);
+		writtenLines += writtenAnswerText.size();
+		calculateValues(writtenLines + 2);
 		drawBox();
 		drawButtons();
 		
 		responseStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Open Responses - " + currentQuestion.getAdminText(),
+		TBSGraphics.drawCenteredString(g2,"Open Responses - " + currentWrittenQuestion.getAdminText(),
 				anchorPoint.x + padding.width, responseStringY,
 				promptSize.width - padding.width * 2,
 				buttonHeight,TBSGraphics.emptyNodeColor);
 		responseStringY += buttonHeight;
 		
-		if(!currentQuestion.isRadio()){
-			drawWritten(writtenQuestionText, false);
-			drawWritten(writtenAnswerText, true);
-		}else
-			drawRadio(questionThree);
+		drawWritten(writtenQuestionText, false);
+		drawWritten(writtenAnswerText, true);
 	}
 
 	public void calculateValues(int lineCount) {
@@ -191,15 +167,15 @@ public class OpenQuestionReviewPrompt extends Prompt
 		g2.setStroke(new BasicStroke());
 		
 		Rectangle buttonRect = new Rectangle(questionButtons.x, questionButtons.y,
-				questionButtons.width/buttons.length, questionButtons.height);
-		for(OpenQuestionButtonType button: buttons) {
-			if(button.equals(currentQuestion))
+				questionButtons.width/writtenQuestions.size(), questionButtons.height);
+		for(OpenQuestionButtonType writtenQuestion: writtenQuestions) {
+			if(writtenQuestion.equals(currentWrittenQuestion))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
 			else
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, button.getAdminText(), buttonRect.x,
+			TBSGraphics.drawCenteredString(g2, writtenQuestion.getAdminText(), buttonRect.x,
 					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
 		}
