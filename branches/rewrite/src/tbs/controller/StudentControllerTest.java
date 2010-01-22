@@ -24,18 +24,21 @@ public class StudentControllerTest
 	
 	private StudentController sc;
 	private Component sourceComponent;
+	private int timerMillis = 10;
 	private int mouseModifiers = 0;
 	private int keyModifiers = 0;
-	private int mouseX;
-	private int mouseY;
 	private int minX = 0;
-	private int maxX = 500;
-	private int minY = 100;
-	private int maxY = 500;
+	private int maxX = 670; // Right of "Help" Button
+	private int minY = 30; // Below Buttons
+	private int maxY = 580; // Below ImmortalNode
+	private Point mouseLocation = new Point(300, 300);
+	//private Point minLocation = new Point(minX, minY);
+	//private Point maxLocation = new Point(maxX, maxY);
 	private int minDelta = 3;
 	private int maxDelta = 10;
 	private Random randomGenerator;
 	private String actionString = "NONE";
+	private boolean doTest = true;
 	
 	private Timer timer;
 	private ActionListener fireNextEvent = new ActionListener() {
@@ -44,11 +47,29 @@ public class StudentControllerTest
 		}
 	};
 	
-	private enum UserActionType {
-		MOUSE_CLICKED,
-		MOUSE_MOVED,
-		MOUSE_DRAGGED,
+	private enum SpecialPoint {
+	    SELECT (34, 12),
+	    ADD (100, 12),
+	    DELETE (170, 12),
+	    LINK (236, 12),
+	    UNLINK (301, 12),
+	    LABEL (370, 12),
+	    UNDO (506, 12),
+	    IMMORTAL_NODE (50, 564);
+
+	    private final int x;
+	    private final int y;
+	    
+	    SpecialPoint(int x, int y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	    
+	    public Point getPoint() {
+	    	return new Point(x, y);
+	    }
 	}
+
 	
 	private enum SystemEventType {
 		MOUSE_PRESSED,
@@ -56,6 +77,8 @@ public class StudentControllerTest
 		MOUSE_CLICKED,
 		MOUSE_MOVED,
 		MOUSE_DRAGGED,
+		KEY_PRESSED,
+		KEY_TYPED,
 		NO_OP;
 	}
 	
@@ -63,32 +86,46 @@ public class StudentControllerTest
 		
 		private SystemEventType type;
 		private Point p;
+		private char keyChar;
 		
 		SystemEvent(SystemEventType type, Point p) {
 			this.type = type;
 			this.p = p;
+			this.keyChar = 0;
+		}
+		
+		SystemEvent(SystemEventType type, char keyChar) {
+			this.type = type;
+			this.p = null;
+			this.keyChar = keyChar;
+		}
+		
+		SystemEvent(SystemEventType type) {
+			this.type = type;
+			this.p = null;
+			this.keyChar = 0;
 		}
 		
 		SystemEventType getType() {return type;}
-		int getX() {return p.x;}
-		int getY() {return p.y;}
 		Point getPoint() {return p;}
+		char getKeyChar() {return keyChar;};
 	}
 	
 	public StudentControllerTest(StudentController sc, Component sourceComponent) {
 		this.sc = sc;
 		this.sourceComponent = sourceComponent;
-		mouseX = 300;
-		mouseY = 300;
 		eventStack = new Stack<SystemEvent>();
-		timer = new Timer(10, fireNextEvent);
+		timer = new Timer(timerMillis, fireNextEvent);
  		timer.start();
  		randomGenerator = new Random(System.currentTimeMillis());
     }
 	
 	private void nextEvent() {
 		if (eventStack.empty()) {
+			if(!doTest) return;
+			insertWait(100);
 			nextUserAction();
+			insertWait(100);
 		} else {
 			executeNextSystemEvent();
 		}
@@ -98,51 +135,127 @@ public class StudentControllerTest
 		SystemEvent e = eventStack.pop();
 		switch(e.getType()) {
 		case MOUSE_PRESSED:
-			mousePressed(e.getX(), e.getY());
+			mousePressed();
 			break;
 		case MOUSE_RELEASED:
-			mouseReleased(e.getX(), e.getY());
+			mouseReleased();
 			break;
 		case MOUSE_CLICKED:
-			mouseClicked(e.getX(), e.getY());
+			mouseClicked();
 			break;
 		case MOUSE_MOVED:
-			mouseMoved(e.getX(), e.getY());
+			mouseMoved(e.getPoint());
 			break;
 		case MOUSE_DRAGGED:
-			mouseDragged(e.getX(), e.getY());
+			mouseDragged(e.getPoint());
 			break;
+		case KEY_PRESSED:
+			keyPressed(e.getKeyChar());
+			break;
+		case KEY_TYPED:
+			keyTyped(e.getKeyChar());
+			break;			
 		case NO_OP:
 			break;
 		}
 	}
 	
 	private void nextUserAction() {
-		double randVal = Math.random() * 100.0;
-		if(randVal < 30.0) {
-			generateMouseMoved();
+		if(sc.getLabelingInProgress()) {
+			pressKey();
 			return;
 		}
-		generateMouseDragged();
+		double randVal = Math.random() * 100.0;
+		if(randVal < 40.0) {
+			moveMouseTo();
+			return;
+		}
+		if(randVal < 80.0) {
+			dragMouseTo();
+			return;
+		}
+		if(randVal < 90.0) {
+			clickMouse();
+			return;
+		}
+		pressButton();
 	}
 	
-	private void generateMouseMoved() {
-		ArrayList<Point> coordinates = getMouseCoordinates();
+	private void pressKey() {
+		double randVal = Math.random() * 100.0;
+		if(randVal < 95.0) {
+			char keyChar = 'a';
+			keyChar += (char) randomGenerator.nextInt(25);
+			eventStack.push(new SystemEvent(SystemEventType.KEY_TYPED, keyChar));
+			eventStack.push(new SystemEvent(SystemEventType.KEY_PRESSED, keyChar));
+			return;
+		}
+		eventStack.push(new SystemEvent(SystemEventType.KEY_TYPED, '\n'));
+		eventStack.push(new SystemEvent(SystemEventType.KEY_PRESSED, '\n'));
+	}
+	
+	private void pressButton() {
+		pressButton(getRandomButton());
+    }
+	
+	private void pressButton(SpecialPoint button) {
+		clickMouse();
+		moveMouseTo(button.getPoint());
+    }
+	
+	private SpecialPoint getRandomButton() {
+		double randVal = Math.random() * 100.0;
+		if  (randVal < 10.0) return SpecialPoint.SELECT;
+		if  (randVal < 15.0) return SpecialPoint.ADD;
+		if  (randVal < 20.0) return SpecialPoint.DELETE;
+		if  (randVal < 80.0) return SpecialPoint.LINK;
+		if  (randVal < 95.0) return SpecialPoint.LABEL;
+		return SpecialPoint.UNDO;
+    }
+	
+	private void insertWait(int millis) {
+		int numDelays = millis / timerMillis;
+		for(int delay = 0; delay < numDelays; delay++) {
+			eventStack.push(new SystemEvent(SystemEventType.NO_OP));
+		}
+	}
+	
+	private void clickMouse() {
+		insertWait(1000);
+		eventStack.push(new SystemEvent(SystemEventType.MOUSE_CLICKED));
+		eventStack.push(new SystemEvent(SystemEventType.MOUSE_RELEASED));
+		insertWait(200);
+		eventStack.push(new SystemEvent(SystemEventType.MOUSE_PRESSED));
+		insertWait(1000);	
+	}
+	
+	// move mouse to random point
+	private void moveMouseTo() {
+		moveMouseTo(getRandomCoordinate());
+	}
+	
+	// move mouse to newPoint
+	private void moveMouseTo(Point newPoint) {
+		ArrayList<Point> coordinates = getMouseCoordinates(newPoint);
 		for(int index = coordinates.size() - 1; index > 0; index--) {
 			Point current = coordinates.get(index - 1);
 			eventStack.push(new SystemEvent(SystemEventType.MOUSE_MOVED, current));
 		}
 	}
 	
-	private void generateMouseDragged() {
-		Point newPoint = getRandomCoordinate();
-		eventStack.push(new SystemEvent(SystemEventType.MOUSE_RELEASED, newPoint));
+	private void dragMouseTo() {
+		dragMouseTo(getRandomCoordinate());
+	}
+	
+	
+	private void dragMouseTo(Point newPoint) {
+		eventStack.push(new SystemEvent(SystemEventType.MOUSE_RELEASED));
 		ArrayList<Point> coordinates = getMouseCoordinates(newPoint);
 		for(int index = coordinates.size() - 1; index > 0; index--) {
 			Point current = coordinates.get(index - 1);
 			eventStack.push(new SystemEvent(SystemEventType.MOUSE_DRAGGED, current));
 		}
-		eventStack.push(new SystemEvent(SystemEventType.MOUSE_PRESSED, new Point(mouseX, mouseY)));
+		eventStack.push(new SystemEvent(SystemEventType.MOUSE_PRESSED));
 	}
 	
 	private Point getRandomCoordinate() {
@@ -150,17 +263,13 @@ public class StudentControllerTest
 		int newY = minY + randomGenerator.nextInt(maxY - minY);
 		return new Point(newX, newY);
 	}
-	
-	private ArrayList<Point> getMouseCoordinates() {
-		return getMouseCoordinates(getRandomCoordinate());
-	}
-	
+		
 	private ArrayList<Point> getMouseCoordinates(Point newPoint) {
 		int newX = newPoint.x;
 		int newY = newPoint.y;
 		ArrayList<Point> returnVal = new ArrayList<Point>();
-		double x = mouseX;
-		double y = mouseY;
+		double x = mouseLocation.x;
+		double y = mouseLocation.y;
 		int intX = -1;
 		int intY = -1;
 		double numMoves = 1.0;
@@ -176,30 +285,21 @@ public class StudentControllerTest
 		}
 		double deltaXStep = deltaX / numMoves;
 		double deltaYStep = deltaY / numMoves;
-		//System.out.println("NUMMOVES " + numMoves);
-		//System.out.println("STARTX " + mouseX + "STARTY " + mouseY);
-		//System.out.println("DELTAX " + deltaXStep + "DELTAY " + deltaYStep);
-		//System.out.println("!ENDX " + newX + "!ENDY " + newY);
 		for(double move = 0.0; move < numMoves; move += 1.0) {
 			x += deltaXStep;
 			y += deltaYStep;
 			intX = (int) Math.round(x);
 			intY = (int) Math.round(y);
-			//System.out.println(intX + " " + intY);
 			returnVal.add(new Point(intX, intY));
 		}
-		//System.out.println("ENDX " + newX + "ENDY " + newY);
 		if((intX != newX) || (intY != newY)) {
 			returnVal.add(new Point(newX, newY));
 		}
-		//mouseX = newX;
-		//mouseY = newY;
 		return returnVal;
 	}
 	
-	private void keyPressed(KeyEvent e) {
-		char keyChar = 'p';
-		int keyCode = 0;
+	private void keyPressed(char keyChar) {
+		int keyCode = Character.getNumericValue(keyChar);
 		KeyEvent event = new KeyEvent(
 				sourceComponent, 
 				KeyEvent.KEY_PRESSED, 
@@ -210,12 +310,11 @@ public class StudentControllerTest
 		sc.keyPressed(event);
 	}
 
-	private void keyTyped(KeyEvent e) {
-		char keyChar = 'p';
+	private void keyTyped(char keyChar) {
 		int keyCode = 0;
 		KeyEvent event = new KeyEvent(
 				sourceComponent, 
-				KeyEvent.KEY_PRESSED, 
+				KeyEvent.KEY_TYPED, 
 				System.currentTimeMillis(), 
 				keyModifiers, 
 				keyCode, 
@@ -223,7 +322,7 @@ public class StudentControllerTest
 		sc.keyTyped(event);
 	}
 	
-	private void mouseMoved(int x, int y){
+	private void mouseMoved(Point location){
 		int mouseClickCount = 0;
 		actionString = "MOVE";
 		MouseEvent event = new MouseEvent(
@@ -231,47 +330,44 @@ public class StudentControllerTest
 				MouseEvent.MOUSE_CLICKED, 
 				System.currentTimeMillis(), 
 				mouseModifiers, 
-				x, 
-				y, 
+				location.x, 
+				location.y, 
 				mouseClickCount, 
 				false);
-		mouseX = x;
-		mouseY = y;
+		mouseLocation = location;
 		sc.mouseMoved(event);
 	}
 	
-	// No need to use since mousePressed is used instead
-	private void mouseClicked(int x, int y) {
-		mousePressed(x,y);
-		mouseReleased(x,y);
+	private void mouseClicked() {
 		int mouseClickCount = 1;
+		actionString = "CLICK";
 		MouseEvent event = new MouseEvent(
 				sourceComponent, 
 				MouseEvent.MOUSE_CLICKED, 
 				System.currentTimeMillis(), 
 				mouseModifiers, 
-				x, 
-				y, 
+				mouseLocation.x, 
+				mouseLocation.y, 
 				mouseClickCount, 
 				false);
 		sc.mouseClicked(event);
 	}
 	
-	private void mousePressed(int x, int y){
+	private void mousePressed(){
 		int mouseClickCount = 1;
 		MouseEvent event = new MouseEvent(
 				sourceComponent, 
 				MouseEvent.MOUSE_PRESSED, 
 				System.currentTimeMillis(), 
 				mouseModifiers, 
-				x, 
-				y, 
+				mouseLocation.x, 
+				mouseLocation.y, 
 				mouseClickCount, 
 				false);
 		sc.mousePressed(event);
 	}
 	
-	private void mouseDragged(int x, int y){
+	private void mouseDragged(Point location){
 		actionString = "DRAG";
 		int mouseClickCount = 0;
 		MouseEvent event = new MouseEvent(
@@ -279,16 +375,15 @@ public class StudentControllerTest
 				MouseEvent.MOUSE_DRAGGED, 
 				System.currentTimeMillis(), 
 				mouseModifiers, 
-				x, 
-				y, 
+				location.x, 
+				location.y, 
 				mouseClickCount, 
 				false);
-		mouseX = x;
-		mouseY = y;
+		mouseLocation = location;
 		sc.mouseDragged(event);
  	}
 	
-	private void mouseReleased(int x, int y)
+	private void mouseReleased()
 	{
 		int mouseClickCount = 1;
 		MouseEvent event = new MouseEvent(
@@ -296,17 +391,22 @@ public class StudentControllerTest
 				MouseEvent.MOUSE_RELEASED, 
 				System.currentTimeMillis(), 
 				mouseModifiers, 
-				x, 
-				y, 
+				mouseLocation.x, 
+				mouseLocation.y,
 				mouseClickCount, 
 				false);
 		sc.mouseReleased(event);
 	}
 	
 	public void renderVirtualCursor(Graphics2D g2) {
+		if(!doTest) return;
 		g2.setColor(Color.RED);
-		g2.fillRect(mouseX - 4, mouseY - 4, 8, 8);
-		g2.drawString(actionString, (float) mouseX + 4, (float) mouseY + 4);
+		g2.fillRect(mouseLocation.x - 4, mouseLocation.y - 4, 8, 8);
+		g2.drawString(actionString, (float) mouseLocation.x + 4, (float) mouseLocation.y + 4);
+	}
+	
+	public void toggleTest() {
+		doTest = !doTest;
 	}
 	
 }

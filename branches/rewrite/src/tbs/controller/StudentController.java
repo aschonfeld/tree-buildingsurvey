@@ -55,11 +55,17 @@ public class StudentController extends TBSController
 	private boolean labelingInProgress = false;
 	
 	public void printMouseEvent(MouseEvent e) {
-		//System.out.println(e.toString());
+		if(e.getID() == MouseEvent.MOUSE_CLICKED) {
+			//System.out.println(e.toString());
+		}
 	}
 	
 	public void printKeyEvent(KeyEvent e) {
-		//System.out.println(e.toString());
+		System.out.println(e.toString());
+	}
+	
+	public boolean getLabelingInProgress() {
+		return labelingInProgress;
 	}
 	
 	public StudentController(StudentModel m, StudentView v) {
@@ -80,7 +86,11 @@ public class StudentController extends TBSController
 			return;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_F1) {
-			model.setStudentControllerTest(new StudentControllerTest(this, model.getView()));
+			if(model.getStudentControllerTest() == null) {
+				model.setStudentControllerTest(new StudentControllerTest(this, model.getView()));
+			} else {
+				model.getStudentControllerTest().toggleTest();
+			}
 		}
 		if(statusString == null)
 			statusString = new String();
