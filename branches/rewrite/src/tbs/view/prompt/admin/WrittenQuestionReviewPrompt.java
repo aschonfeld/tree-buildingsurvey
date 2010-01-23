@@ -28,25 +28,32 @@ public class WrittenQuestionReviewPrompt extends Prompt
 	AdminModel model;
 	Graphics2D g2 = null;
 	Properties questionProps;
-	
+
 	//Prompt sizing information
 	Dimension padding = new Dimension(10,5);
 	Dimension promptSize = new Dimension(820,0);
 	Point anchorPoint = null;
 	int responseStringY;
 	Rectangle closeButton;
-	Rectangle questionButtons;
+	Rectangle pageButtons = new Rectangle();
 	int buttonHeight;
 	int textHeight = -1;
 	List<OpenQuestionButtonType> writtenQuestions = OpenQuestionButtonType.getWrittenButtons();
-	OpenQuestionButtonType currentWrittenQuestion;
-	
+	List<List<String>> writtenQuestionTexts;
+	int maxLinesOfQuestionText;
+	int currentPage;
+	int pageButtonWidth;
+	List<String> pageButtonText;
+
 	public WrittenQuestionReviewPrompt(AdminModel model) {
 		super();
 		this.model = model;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
-		currentWrittenQuestion = writtenQuestions.get(0);
-		
+		writtenQuestionTexts = new LinkedList<List<String>>();
+		maxLinesOfQuestionText = 0;
+		currentPage = 1;
+		pageButtonText = new LinkedList<String>();
+		pageButtonWidth = 0;
 	}
 
 
@@ -56,12 +63,12 @@ public class WrittenQuestionReviewPrompt extends Prompt
 
 	public void mousePressed(MouseEvent e) {
 		if(closeButton.contains(e.getPoint()))
-				setFinished(true);
+			setFinished(true);
 		else{
-			if(questionButtons.contains(e.getPoint())){
-	        	int index = (int) ((e.getX() - questionButtons.getX()) * writtenQuestions.size()) / promptSize.width;
-	        	currentWrittenQuestion = writtenQuestions.get(index);
-	        }
+			if(pageButtons.contains(e.getPoint())){
+				int index = (int) ((e.getX() - pageButtons.getX()) * writtenQuestions.size()) / promptSize.width;
+				currentPage = index+1;
+			}
 		}
 	}
 
@@ -70,33 +77,43 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		this.g2 = g2;
 		if(textHeight == -1)
 			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
-		List<String> writtenQuestionText = new LinkedList<String>();
-		List<String> writtenAnswerText = new LinkedList<String>();
-		int writtenLines = 0;
-		String writtenQuestion = questionProps.getProperty(currentWrittenQuestion.getQuestionKey());
-		String writtenAnswer = model.getStudent().getResponse(currentWrittenQuestion).getText();
-		writtenQuestionText = TBSGraphics.breakStringByLineWidth(g2,writtenQuestion,
-				promptSize.width - padding.width * 2);
-		writtenLines += writtenQuestionText.size();
-		writtenAnswerText = TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
-				promptSize.width - padding.width * 2);
-		writtenLines += writtenAnswerText.size();
-		calculateValues(writtenLines + 2);
+		calculateValues();
 		drawBox();
+		TBSGraphics.drawCloseButton(g2, closeButton);
 		drawButtons();
-		
+
 		responseStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Open Responses - " + currentWrittenQuestion.getAdminText(),
+		int maxQuestion = currentPage * 2;
+		TBSGraphics.drawCenteredString(g2,"Open Responses - Questions " + (maxQuestion-1) + " & " + maxQuestion,
 				anchorPoint.x + padding.width, responseStringY,
 				promptSize.width - padding.width * 2,
 				buttonHeight,TBSGraphics.emptyNodeColor);
 		responseStringY += buttonHeight;
 		
-		drawWritten(writtenQuestionText, false);
-		drawWritten(writtenAnswerText, true);
+		for(int i=(maxQuestion-2);i<maxQuestion;i++){
+			drawWritten(writtenQuestionTexts.get(i), false);
+			List<String> writtenAnswerText = new LinkedList<String>();
+			String writtenAnswer = model.getStudent().getResponse(writtenQuestions.get(i)).getText();
+			writtenAnswerText = TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
+					promptSize.width - padding.width * 2);
+			drawWritten(writtenAnswerText, true);
+			responseStringY += (textHeight + padding.height)*(TBSGraphics.maxLinesOfWrittenText-writtenAnswerText.size());
+		}
 	}
 
-	public void calculateValues(int lineCount) {
+	public void calculateValues() {
+		int lineCount = TBSGraphics.maxLinesOfWrittenText*2;
+		if(writtenQuestionTexts.size() == 0){
+			for(OpenQuestionButtonType writtenQuestion : writtenQuestions){
+				List<String> temp = TBSGraphics.breakStringByLineWidth(g2,
+						questionProps.getProperty(writtenQuestion.getQuestionKey()),
+				promptSize.width - padding.width * 2);
+				if(temp.size() > maxLinesOfQuestionText)
+					maxLinesOfQuestionText = temp.size();
+				writtenQuestionTexts.add(temp);
+			}
+		}
+		lineCount += maxLinesOfQuestionText*2;
 		buttonHeight = textHeight + padding.height;
 		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)) + buttonHeight);
@@ -104,8 +121,19 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), 
 				centerY - (promptSize.height / 2));
-		questionButtons = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
-				promptSize.width, buttonHeight);
+		int questionCount = writtenQuestions.size();
+		if(questionCount > 2){
+			if(pageButtonText.size() == 0){
+				for(int i=1;i<=questionCount/2;i++)
+					pageButtonText.add(""+i);
+				pageButtonWidth = TBSGraphics.get2DStringBounds(g2, pageButtonText).width;
+				pageButtonWidth += TBSGraphics.paddingWidth * 2;
+			}
+			int pageButtonsWidth = (pageButtonWidth*questionCount);
+			int pageButtonStart = (anchorPoint.x + (promptSize.width/2)) - (pageButtonsWidth/2);
+			pageButtons = new Rectangle(pageButtonStart, anchorPoint.y + (promptSize.height - buttonHeight),
+					pageButtonsWidth, buttonHeight);
+		}
 		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
 				buttonHeight, buttonHeight);
 	}
@@ -127,7 +155,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 			responseStringY += textHeight + padding.height;
 		}
 	}
-	
+
 	public void drawRadio(List<String[]> lines) {
 		int questionX = anchorPoint.x + padding.width;
 		int answerX = anchorPoint.x + promptSize.width;
@@ -138,8 +166,8 @@ public class WrittenQuestionReviewPrompt extends Prompt
 			responseStringY += textHeight + padding.height;
 		}
 	}
-	
-	
+
+
 
 	public void drawString(String s, int x, int y){
 		drawString(s, x, y, false);
@@ -153,37 +181,26 @@ public class WrittenQuestionReviewPrompt extends Prompt
 
 	public void drawButtons()
 	{
-		TBSGraphics.renderButtonBackground(g2, closeButton, false);
-		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(3));
-		g2.draw(closeButton);
-		int x,y,w,h;
-		x = closeButton.x+1;
-		y = closeButton.y+1;
-		w = closeButton.width-1;
-		h = closeButton.height-1;
-		g2.draw(new Line2D.Double(x,y,x+w,y+h));
-		g2.draw(new Line2D.Double(x,y+h,x+w,y));
-		g2.setStroke(new BasicStroke());
-		
-		Rectangle buttonRect = new Rectangle(questionButtons.x, questionButtons.y,
-				questionButtons.width/writtenQuestions.size(), questionButtons.height);
-		for(OpenQuestionButtonType writtenQuestion: writtenQuestions) {
-			if(writtenQuestion.equals(currentWrittenQuestion))
-				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
-			else
-				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, writtenQuestion.getAdminText(), buttonRect.x,
-					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
-			buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
+		if(pageButtonText.size() > 0){
+			Rectangle buttonRect = new Rectangle(pageButtons.x, pageButtons.y,
+					pageButtons.width/pageButtonText.size(), pageButtons.height);
+			for(String page : pageButtonText) {
+				if(page.equals(Integer.toString(currentPage)))
+					TBSGraphics.renderButtonBackground(g2, buttonRect, true);
+				else
+					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				TBSGraphics.drawCenteredString(g2, page, buttonRect.x,
+						buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
+				buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
+			}
 		}
 	}
 
 
 	public boolean isOverButton(MouseEvent e){
-		return (closeButton.contains(e.getPoint()) || questionButtons.contains(e.getPoint()));
+		return (closeButton.contains(e.getPoint()) || pageButtons.contains(e.getPoint()));
 	}
 
 }
