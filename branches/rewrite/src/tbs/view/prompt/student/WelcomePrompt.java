@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Properties;
