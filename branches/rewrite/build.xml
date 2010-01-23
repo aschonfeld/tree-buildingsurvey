@@ -28,7 +28,7 @@
     </target>
 
 	<target name="jarfile" depends="compile" description="Makes jar file">
-	    <jar destfile="${build.dir}/${jarfile}.jar">
+	    <jar destfile="${basedir}/${jarfile}.jar" basedir="${build.dir}">
 	        <manifest>
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
@@ -37,7 +37,6 @@
 	    	<fileset dir="${build.dir}"/>
 	    	<fileset dir="${lib.dir}"/>
 	    </jar>
-		<move file="${build.dir}/TBSRun.jar" todir="."/>
     </target>
 	
 	<target name="javadoc" depends="clean-javadoc" description="Create Javadocs for the source code">
