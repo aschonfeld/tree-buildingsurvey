@@ -483,7 +483,8 @@ public class StudentController extends TBSController
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= model.getButtons().size()) return;
+		if(buttonIndex >= model.getButtons().size())
+			return;
 		buttonClicked = model.getButtons().get(buttonIndex);
 		System.out.println(buttonClicked.toString());
 		if(!buttonClicked.isConfirmation())
@@ -574,7 +575,8 @@ public class StudentController extends TBSController
     	// clicking on empty space always cancels connection
 		if(clickedElement == null) {
 			unselectPrevious();
-			if(!buttonClicked.equals(TBSButtonType.ADD))
+			if(!buttonClicked.equals(TBSButtonType.ADD) 
+					&& !buttonClicked.equals(TBSButtonType.DELETE))
 				buttonClicked = TBSButtonType.SELECT;
 		}
 		clearCurrentActions();
@@ -610,6 +612,14 @@ public class StudentController extends TBSController
 				}
 			}
 			break;
+		case DELETE:
+			if(clickedElement == null){
+				buttonClicked = TBSButtonType.SELECT;
+				break;
+			}
+			selectedElement = clickedElement;
+			handleDelete();
+			return;
 		case LINK:
 			if(clickedElement == null) 
 				break;

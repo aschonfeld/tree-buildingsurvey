@@ -7,7 +7,7 @@ public enum TBSButtonType {
 
 	SELECT("Select", true, true, false, false, false, false),
 	ADD("Add", true, true, false, false, false, false),
-	DELETE("Delete", false, false, false, false, false, false),
+	DELETE("Delete", true, false, false, false, false, false),
 	LINK("Link", true, false, true, false, false, false),
 	UNLINK("Unlink", true, false, false, false, true, false),
 	LABEL("Label", true, false, true, false, true, false),
