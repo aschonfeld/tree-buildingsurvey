@@ -53,6 +53,7 @@ public class StudentController extends TBSController
 	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
 	private OpenQuestionButtonType questionClicked = null;
 	private boolean labelingInProgress = false;
+	private boolean itemDeleted = false;
 	
 	public void printMouseEvent(MouseEvent e) {
 		if(e.getID() == MouseEvent.MOUSE_CLICKED) {
@@ -204,6 +205,10 @@ public class StudentController extends TBSController
 				buttonClicked = TBSButtonType.SELECT;
 			if(!model.isButtonActive(buttonClicked))
 				buttonClicked = TBSButtonType.SELECT;
+			if(TBSButtonType.DELETE.equals(buttonClicked) && itemDeleted){
+				buttonClicked = TBSButtonType.SELECT;
+				itemDeleted = false;
+			}
 		}
 		
 	}
@@ -473,6 +478,7 @@ public class StudentController extends TBSController
 		}else
 			model.removeFromTree(selectedElement);
 		unselectPrevious();
+		itemDeleted = true;
     }
     
     public void clearCurrentActions() {
