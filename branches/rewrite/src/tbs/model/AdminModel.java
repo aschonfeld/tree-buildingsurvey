@@ -72,13 +72,19 @@ public class AdminModel implements TBSModel
 	}
 	
 	public void changeSavedTree(int studentIndex){
-		selectedStudent = students.get(studentIndex);
-		if(!"".equals(selectedStudent.getTree()))
-			loadTree(selectedStudent.getTree());
-		else
-			resetModel();
-		writtenQuestionReviewPrompt = null;
-		analysisPrompt = null;
+		/*
+		 * Make sure your don't re-calculate the selected student's
+		 * information
+		 */
+		if(studentIndex != students.indexOf(selectedStudent)){
+			selectedStudent = students.get(studentIndex);
+			if(!"".equals(selectedStudent.getTree()))
+				loadTree(selectedStudent.getTree());
+			else
+				resetModel();
+			writtenQuestionReviewPrompt = null;
+			analysisPrompt = null;
+		}
 	}
 	
 	public void resetModel(){

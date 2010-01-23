@@ -19,6 +19,7 @@ import tbs.model.AdminModel;
 import tbs.model.Connection;
 import tbs.model.ModelElement;
 import tbs.model.OrganismNode;
+import tbs.model.admin.Student;
 import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
@@ -55,12 +56,20 @@ public class AdminController extends TBSController
 		handleStudentPressed(x, y);		
 	}
 
-	public void keyPressed(KeyEvent arg0) {}
+	public void keyPressed(KeyEvent e) {
+		List<Student> students = model.getStudents();
+		int index = students.indexOf(model.getStudent());
+		if(e.getKeyCode() == KeyEvent.VK_DOWN){
+			if(index < students.size()-1)
+				model.changeSavedTree(index+1);
+		}else if(e.getKeyCode() == KeyEvent.VK_UP){
+			if(index > 0)
+				model.changeSavedTree(index-1);
+		}
+	}
 
-	public void keyReleased(KeyEvent arg0) {}
-
-	public void keyTyped(KeyEvent arg0) {}
-		
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {}	
 	public void mouseEntered(MouseEvent e){}
 	public void mouseExited(MouseEvent e){}
 	
