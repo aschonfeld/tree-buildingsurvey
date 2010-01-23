@@ -234,6 +234,7 @@ public class StudentController extends TBSController
 							if(temp.getResponse().getValue()){
 								view.setScreenString(getStatus(temp.getPromptType()));
 								model.resetModel();
+								buttonClicked = TBSButtonType.SELECT;
 							}
 							break;
 					}
