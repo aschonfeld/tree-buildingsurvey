@@ -47,7 +47,7 @@ public class AdminController extends TBSController
  		});
  		view.getStudentBar().addAdjustmentListener(new AdjustmentListener() {
  			public void adjustmentValueChanged(AdjustmentEvent e) {
- 				view.setStudentYOffset((e.getValue() * view.getHeight()) / 100);
+ 				view.setStudentYOffset(e.getValue());
  			}
  		});
     }
@@ -60,11 +60,19 @@ public class AdminController extends TBSController
 		List<Student> students = model.getStudents();
 		int index = students.indexOf(model.getStudent());
 		if(e.getKeyCode() == KeyEvent.VK_DOWN){
-			if(index < students.size()-1)
+			if(index < students.size()-1){
 				model.changeSavedTree(index+1);
+				boolean moveBar = ((model.getStudent().getAnchorPoint().y + TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing) - view.getStudentYOffset()) > model.getApplet().getHeight();
+				if(moveBar)
+					view.getStudentBar().setValue(view.getStudentBar().getValue() + view.getStudentBar().getBlockIncrement());
+			}
 		}else if(e.getKeyCode() == KeyEvent.VK_UP){
-			if(index > 0)
+			if(index > 0){
 				model.changeSavedTree(index-1);
+				boolean moveBar = (model.getStudent().getAnchorPoint().y - view.getStudentYOffset()) < 0;
+				if(moveBar)
+					view.getStudentBar().setValue(view.getStudentBar().getValue() - view.getStudentBar().getBlockIncrement());
+			}
 		}
 	}
 
@@ -85,7 +93,8 @@ public class AdminController extends TBSController
 		x = e.getX();
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-		if (x > view.getStudentBar().getWidth() && x < TBSGraphics.studentNodeWidth){
+		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
+		if (x > scrollWidth && x < TBSGraphics.studentNodeWidth){
 			int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -148,7 +157,8 @@ public class AdminController extends TBSController
 		
 		view.requestFocusInWindow();
         // if mouse is in button bar
-        if (x > view.getStudentBar().getWidth() && x < TBSGraphics.studentNodeWidth)
+		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
+        if (x > scrollWidth && x < TBSGraphics.studentNodeWidth)
 			handleStudentPressed(x, y);
 	}
 	

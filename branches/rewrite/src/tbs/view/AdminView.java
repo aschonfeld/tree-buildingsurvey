@@ -56,8 +56,9 @@ public class AdminView extends JComponent implements Printable {
 	// This connection follows the mouse
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
+	private boolean hasStudentScroll = false;
 	private JScrollBar studentBar;
-	private int studentYOffset;
+	private int studentYOffset = 0;
 	private Cursor cursor;
 	
 	//Tooltip information
@@ -75,10 +76,18 @@ public class AdminView extends JComponent implements Printable {
         model = m;
         cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     	verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
-    	studentBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
-		setLayout(new BorderLayout());
-		add(studentBar, BorderLayout.WEST);
- 		add(verticalBar, BorderLayout.EAST);
+    	setLayout(new BorderLayout());
+    	add(verticalBar, BorderLayout.EAST);
+    	int studentBarMax = (TBSGraphics.studentNodeHeight * (model.getStudents().size()-1));
+    	studentBarMax -= TBSGraphics.ySpacing;
+    	if(studentBarMax > model.getApplet().getHeight()){
+    		studentBar = new JScrollBar(JScrollBar.VERTICAL, 0, model.getApplet().getHeight(), 0, studentBarMax);
+    		studentBar.setBlockIncrement(TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing);
+    		add(studentBar, BorderLayout.WEST);
+    		hasStudentScroll = true;
+    	}else{
+    		studentBar = new JScrollBar();
+    	}
  		timer = new Timer(1000, hider);
 	}
 	
@@ -95,10 +104,14 @@ public class AdminView extends JComponent implements Printable {
 		yOffset = yo;
 	}
 	
+	public boolean hasStudentScroll() {
+		return hasStudentScroll;
+	}
+	
 	public JScrollBar getStudentBar() {
 		return studentBar;
 	}
-	
+
 	public int getStudentYOffset() {
 		return studentYOffset;
 	}
