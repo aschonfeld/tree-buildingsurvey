@@ -463,7 +463,8 @@ public class StudentController extends TBSController
     }
  
     public void handleDelete() {
-		if(selectedElement == null) return;
+		if(selectedElement == null) 
+			return;
 		clearCurrentActions();
 		if(model.getSelectedTwoWay() != null){
 			for(ModelElement tw : model.getSelectedTwoWay())
@@ -488,10 +489,6 @@ public class StudentController extends TBSController
 		if(!buttonClicked.isConfirmation())
 			view.setScreenString(getStatus(buttonClicked));
 		switch (buttonClicked) {
-		case SELECT:
-			break;
-		case ADD:
-			break;
 		case DELETE:
 			handleDelete();
 			break;

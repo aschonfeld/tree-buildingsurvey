@@ -104,20 +104,6 @@ public class StudentModel implements TBSModel
 		 */
 		sct = null;
 	}
-	
-	public void changeSavedTree(String savedTree){
-		if(!"".equals(savedTree)){
-			loadTree(savedTree);
-			if(inTreeElements().size() > 1){
-				buttonStates.put(TBSButtonType.LINK, true);
-				buttonStates.put(TBSButtonType.DELETE, true);
-				buttonStates.put(TBSButtonType.CLEAR, true);
-				if(hasEmptyNodes())
-					buttonStates.put(TBSButtonType.LABEL, false);
-			}
-		}
-		history = new Stack<Command>();		
-	}
 
 	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
@@ -130,6 +116,7 @@ public class StudentModel implements TBSModel
 		for(Node n : inTreeElements){
 			removeFromTree(n);
 		}
+		MESerialNumber = modelElements.size();
 		history = new Stack<Command>();
 		buttonStates.put(TBSButtonType.UNDO, false);
 	}
@@ -434,8 +421,14 @@ public class StudentModel implements TBSModel
 		Connection newConn = new Connection(id == -1 ? getSerial() : id, from, to);
 		if(id == -1)
 			modelElements.add(newConn);
-		else
-			modelElements.add(id, newConn);
+		else{
+			if(id < modelElements.size())
+				modelElements.add(id, newConn);
+			else{
+				modelElements.add(newConn);
+				Collections.sort(modelElements, TBSGraphics.elementIdComparator);
+			}
+		}
 		from.addConnectionTo(to);
 		to.addConnectionFrom(from);
 		if(!controller.getButtonClicked().equals(TBSButtonType.UNDO)){
@@ -605,7 +598,7 @@ public class StudentModel implements TBSModel
 			Collections.sort(savedTree, TBSGraphics.elementIdComparator);
 			modelElements = savedTree;
 			immortalEmptyNode = savedImmortalEmptyNode;
-			MESerialNumber = savedTree.size()+1;
+			MESerialNumber = savedTree.size();
 			System.out.println("loadTree: end");
 		}catch(NumberFormatException e){
 			System.out.println("There was an error parsing your saved tree. " + 

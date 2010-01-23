@@ -1,8 +1,10 @@
 package tbs.model.history;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import tbs.TBSGraphics;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
@@ -63,20 +65,20 @@ public class Delete extends Command{
 				model.setElement(model.findIndexByElement(c.getFrom()), c.getFrom());
 				model.setElement(model.findIndexByElement(c.getTo()), c.getTo());
 			}else{
-				if(modelElement instanceof EmptyNode){
-					System.out.println("Undoing empty node delete command.");
+				System.out.println("Undoing " + modelElement.getClass().getSimpleName() + " delete command.");
+				if(modelElement.getId() < model.getElements().size())
 					model.getElements().add(modelElement.getId(), modelElement);
-				}else{
-					System.out.println("Undoing organism node delete command.");
-					model.setElement(modelElement.getId(), modelElement);
+				else{
+					model.getElements().add(modelElement);
+					Collections.sort(model.getElements(), TBSGraphics.elementIdComparator);
 				}
 				for(Connection c : elementConnections){
 					int id;
 					id = c.getFrom() == null ? modelElement.getId() : c.getFrom().getId();
-					Node from = (Node) model.getElementBySN(id);
+					Node from = (Node) model.getElement(model.findIndexById(id));
 					id = c.getTo() == null ? modelElement.getId() : c.getTo().getId();
-					Node to = (Node) model.getElementBySN(id);
-					model.addConnection(from,to);
+					Node to = (Node) model.getElement(model.findIndexById(id));
+					model.addConnection(from,to,c.getId());
 				}
 			}
 		}
