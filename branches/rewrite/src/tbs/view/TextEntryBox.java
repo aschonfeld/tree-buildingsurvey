@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 
 import javax.swing.Timer;
@@ -38,6 +40,7 @@ public class TextEntryBox {
 	private Color borderColor = Color.yellow;
 	private int cursorWidth = 2;
 	private boolean cursorIsOn = true;
+	private List<Integer> pressedKeys;
 	
 	public TextEntryBox(EmptyNode node) {
 		this.node = node;
@@ -45,18 +48,24 @@ public class TextEntryBox {
 		if(name == null || name == "")
 			cursorIndex = 0;
 		else
-			cursorIndex = name.length()-1;	
+			cursorIndex = name.length();	
 		leftX = node.getAnchorPoint().x;
 		width = node.getWidth();
 		height = node.getHeight();
+		pressedKeys = new LinkedList<Integer>();
+		pressedKeys.add(KeyEvent.VK_DELETE);
+		pressedKeys.add(KeyEvent.VK_RIGHT);
+		pressedKeys.add(KeyEvent.VK_LEFT);
 		timer = new Timer(500, hider);
  		timer.start();
 	}
 	
 	public void keyPressed(KeyEvent e) {
+		if(!pressedKeys.contains(e.getKeyCode()))
+			return;
 		int len = name.length();
 		if(e.getKeyCode() == KeyEvent.VK_DELETE){
-			if(cursorIndex < (len-1)){
+			if(cursorIndex < len){
 				StringBuffer temp = new StringBuffer(name);
 				temp.deleteCharAt(cursorIndex);
 				name = temp.toString();
@@ -71,7 +80,9 @@ public class TextEntryBox {
 			
 	}
 	
-	public void keyTyped(KeyEvent e) {
+	public void keyTyped(KeyEvent e){
+		if(pressedKeys.contains(e.getKeyCode()))
+			return;
 		char c = e.getKeyChar();
 		StringBuffer temp = new StringBuffer(name);
 		if(c == '\b'){
@@ -133,7 +144,7 @@ public class TextEntryBox {
 		// calculate dimensions of String s
 		x = leftX + TBSGraphics.emptyNodePadding;
 		y = upperY + height - TBSGraphics.emptyNodePadding;
-		boolean cursorWithinName = cursorIndex < name.length()-1;
+		boolean cursorWithinName = cursorIndex < name.length();
 		String beforeCursor = cursorWithinName ? name.substring(0, cursorIndex) : name;
 		int cursorX = x;
 		if(ableToBeLayout(beforeCursor)){

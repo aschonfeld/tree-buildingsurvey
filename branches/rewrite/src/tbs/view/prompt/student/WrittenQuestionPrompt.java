@@ -113,7 +113,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		StringBuffer temp = new StringBuffer(currentLine);
 		int len = currentLine.length();
 		if(e.getKeyCode() == KeyEvent.VK_DELETE){
-			if(cursorIndex < (len-1)){
+			if(cursorIndex < len){
 				temp.deleteCharAt(cursorIndex);
 				userInputLines.set(lineIndex, temp.toString());
 			}
@@ -277,7 +277,7 @@ public class WrittenQuestionPrompt extends Prompt{
 				// calculate dimensions of String s
 				x = anchorPoint.x + padding.width;
 				y = cursorY + textHeight;
-				boolean cursorWithinName = adjCursorIndex <= cursorLine.length()-1;
+				boolean cursorWithinName = adjCursorIndex < cursorLine.length();
 				String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
 				int cursorX = x;
 				if(ableToBeLayout(beforeCursor)){
