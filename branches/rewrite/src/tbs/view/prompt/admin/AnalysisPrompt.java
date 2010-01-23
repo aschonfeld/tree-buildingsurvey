@@ -63,6 +63,7 @@ public class AnalysisPrompt extends Prompt
 		calculateValues(3);
 		analysisStringY = anchorPoint.y;
 		drawBox();
+		TBSGraphics.drawCloseButton(g2, closeButton);
 		drawButtons();
 		analysisStringY = anchorPoint.y;
 		TBSGraphics.drawCenteredString(g2,"Anaylsis - Currently Under Construction",
@@ -126,20 +127,7 @@ public class AnalysisPrompt extends Prompt
 	}
 
 	public void drawButtons()
-	{
-		TBSGraphics.renderButtonBackground(g2, closeButton, false);
-			g2.setColor(Color.BLACK);
-			g2.setStroke(new BasicStroke(3));
-			g2.draw(closeButton);
-			int x,y,w,h;
-			x = closeButton.x+1;
-			y = closeButton.y+1;
-			w = closeButton.width-1;
-			h = closeButton.height-1;
-			g2.draw(new Line2D.Double(x,y,x+w,y+h));
-			g2.draw(new Line2D.Double(x,y+h,x+w,y));
-			g2.setStroke(new BasicStroke());
-	}
+	{}
 
 
 	public boolean isOverButton(MouseEvent e){

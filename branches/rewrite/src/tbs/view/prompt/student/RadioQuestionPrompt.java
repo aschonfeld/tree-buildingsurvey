@@ -131,6 +131,7 @@ public class RadioQuestionPrompt extends Prompt{
 			radioText.get(i)[1] = radioAnswers.get(i).getText();
 		calculateValues(totalLines);
 		drawBox();
+		TBSGraphics.drawCloseButton(g2, closeButton);
 		drawButtons();
 
 		questionStringY = anchorPoint.y;
@@ -205,19 +206,6 @@ public class RadioQuestionPrompt extends Prompt{
 
 	public void drawButtons()
 	{
-		TBSGraphics.renderButtonBackground(g2, closeButton, false);
-		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(3));
-		g2.draw(closeButton);
-		int x,y,w,h;
-		x = closeButton.x+1;
-		y = closeButton.y+1;
-		w = closeButton.width-1;
-		h = closeButton.height-1;
-		g2.draw(new Line2D.Double(x,y,x+w,y+h));
-		g2.draw(new Line2D.Double(x,y+h,x+w,y));
-		g2.setStroke(new BasicStroke());
-
 		Rectangle buttonRect = new Rectangle(buttonsArea.x, buttonsArea.y,
 				buttonsArea.width/buttons.size(), buttonsArea.height);
 		for(OpenQuestionPromptButtonType button: buttons) {

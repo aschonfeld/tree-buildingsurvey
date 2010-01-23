@@ -2,13 +2,16 @@
 //TBSGraphics: Constants and low-level methods for graphics handling
 package tbs;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.font.TextLayout;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
@@ -133,6 +136,8 @@ public class TBSGraphics {
 	 */
 	public static Pattern emptyNodePattern = Pattern.compile("[0-9a-zA-Z' ']");
 	public static Pattern writtenResponseIllegalCharacters = Pattern.compile("[+=]");
+  
+  public static int maxLinesOfWrittenText = 8;
 	
 	/**
 	 * Label for immortal empty node
@@ -250,6 +255,8 @@ public class TBSGraphics {
 	* Starting x-coordinate of question buttons. Set in [TBSModel.???]
 	*/ 
 	public static int questionButtonsStart = 0;
+	
+	public static Stroke closeButtonStroke = null;
 	
 	public static Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
 		public int compare( ModelElement o1, ModelElement o2 ) {
@@ -389,11 +396,30 @@ public class TBSGraphics {
 	
 	public static void updateBrowserSpecs(String browser){
 		Font tempFont = new Font("default", Font.BOLD, 16);
+		Stroke stroke = new BasicStroke(3);
 		if(browser != null && browser.length() > 0){
-			if((browser.toLowerCase()).contains("mac"))
+			if((browser.toLowerCase()).contains("mac")){
 				tempFont = new Font("default", Font.PLAIN, 16);
+				stroke = new BasicStroke();
+			}
 		}
 		font = tempFont;
+		closeButtonStroke = stroke;
+	}
+	
+	public static void drawCloseButton(Graphics2D g2, Rectangle closeButton){
+		TBSGraphics.renderButtonBackground(g2, closeButton, false);
+		g2.setColor(Color.BLACK);
+		g2.setStroke(closeButtonStroke);
+		g2.draw(closeButton);
+		int x,y,w,h;
+		x = closeButton.x+1;
+		y = closeButton.y+1;
+		w = closeButton.width-1;
+		h = closeButton.height-1;
+		g2.draw(new Line2D.Double(x,y,x+w,y+h));
+		g2.draw(new Line2D.Double(x,y+h,x+w,y));
+		g2.setStroke(new BasicStroke());
 	}
 	
 	

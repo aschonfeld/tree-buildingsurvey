@@ -58,7 +58,6 @@ public class WrittenQuestionPrompt extends Prompt{
 	//Prompt sizing information
 	List<String> lineBrokenQuestion;
 	List<OpenQuestionPromptButtonType> buttons;
-	int numLines = 8; // number of lines of text input
 	Dimension padding = new Dimension(10,5);
 	Dimension promptSize = new Dimension(770,0);
 	int width = 750;
@@ -191,7 +190,7 @@ public class WrittenQuestionPrompt extends Prompt{
 					totalLines += TBSGraphics.breakStringByLineWidth(g2, userInputLines.get(i), width).size();
 			}
 			if(c == '\n'){
-				if(totalLines < numLines){
+				if(totalLines < TBSGraphics.maxLinesOfWrittenText){
 					if(lineIndex == userInputLines.size()-1)
 						userInputLines.add("");
 					else
@@ -201,7 +200,7 @@ public class WrittenQuestionPrompt extends Prompt{
 					return;
 				}
 			}else{
-				if(totalLines <= numLines){
+				if(totalLines <= TBSGraphics.maxLinesOfWrittenText){
 					temp.insert(cursorIndex, c);
 					userInputLines.set(lineIndex, temp.toString());
 					cursorIndex++;
@@ -223,7 +222,7 @@ public class WrittenQuestionPrompt extends Prompt{
 			questionTexts.put(currentQuestion, text);
 		}else
 			text = questionTexts.get(currentQuestion);
-		totalLines = text.size() + 3 + numLines;	
+		totalLines = text.size() + 3 + TBSGraphics.maxLinesOfWrittenText;	
 		calculateValues(totalLines);
 		drawBox();
 		drawButtons();
