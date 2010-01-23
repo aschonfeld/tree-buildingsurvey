@@ -489,6 +489,10 @@ public class StudentController extends TBSController
 		System.out.println(buttonClicked.toString());
 		if(!buttonClicked.isConfirmation())
 			view.setScreenString(getStatus(buttonClicked));
+		if(!model.isButtonActive(buttonClicked)){
+			buttonClicked = TBSButtonType.SELECT;
+			return;
+		}
 		switch (buttonClicked) {
 		case DELETE:
 			handleDelete();
