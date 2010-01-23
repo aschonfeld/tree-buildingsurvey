@@ -447,7 +447,6 @@ public class StudentModel implements TBSModel
 
 	public List<Connection> getConnectionsByNode(Node n){
 		Unlink unlink = new Unlink();
-		unlink.setNode(n);
 		List<Connection> connections = new LinkedList<Connection>();
 		Connection c;
 		for (ModelElement me: modelElements)
@@ -478,9 +477,9 @@ public class StudentModel implements TBSModel
 	{
 		List<Connection> connections = getConnectionsByNode(n);
 		if(!history.isEmpty()){
-		Command comm = history.peek();
-		if(comm instanceof Delete)
-			((Delete) comm).setElementConnections(connections);
+			Command comm = history.peek();
+			if(comm instanceof Delete)
+				((Delete) comm).setElementConnections(connections);
 		}
 		for(Connection c : connections){
 			c.getFrom().getConnectedTo().remove(c.getTo());

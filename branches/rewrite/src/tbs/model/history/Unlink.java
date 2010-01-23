@@ -11,8 +11,6 @@ public class Unlink extends Command{
 
 	private List<Connection> connections;
 	
-	private Node node;
-	
 	public Unlink(){
 		this.connections = new LinkedList<Connection>();
 	}
@@ -21,12 +19,6 @@ public class Unlink extends Command{
 		this();
 		this.connections.add(c);
 	}
-	
-	public Unlink(Node node){
-		this();
-		this.node = node;
-	}
-	
 	
 	public List<Connection> getConnections() {
 		return connections;
@@ -40,53 +32,28 @@ public class Unlink extends Command{
 		connections.add(c);
 	}
 
-	public Node getNode() {
-		return node;
-	}
-
-	public void setNode(Node node) {
-		this.node = node;
-	}
-
 	public void execute(StudentModel model) {
-		if(node != null){
-			for(Connection c : connections){
+		for(Connection c : connections){
 				c.getFrom().getConnectedTo().remove(c.getTo());
 				c.getTo().getConnectedFrom().remove(c.getFrom());
-				model.getElements().remove(c);
-			} 
-		}else{
-			Connection c = connections.get(0);
-			c.getFrom().getConnectedTo().remove(c.getTo());
-			c.getTo().getConnectedFrom().remove(c.getFrom());
-			model.getElements().remove(c);
+				model.getElements().remove(c); 
 		}
 	}
 
 	public void undo(StudentModel model) {
 		System.out.println("Undoing unlink command.");
-		int index;
-		if(node != null){
-			model.getElements().addAll(connections);
-			index = model.findIndexByElement(node);
-			if(index >= 0)
-				model.setElement(index, node);
-		}else{
-			for(Connection c : connections){
-				model.addElement(c);
-				index = model.findIndexByElement(c.getFrom());
-				((Node) model.getElement(index)).addConnectionTo(c.getTo());
-				index = model.findIndexByElement(c.getTo());
-				((Node) model.getElement(index)).addConnectionFrom(c.getFrom());
-			}
+		for(Connection c : connections){
+				int id;
+				id = c.getFrom().getId();
+				Node from = (Node) model.getElement(model.findIndexById(id));
+				id = c.getTo().getId();
+				Node to = (Node) model.getElement(model.findIndexById(id));
+				model.addConnection(from,to,c.getId());
 		}
 	}
 
 	public String toString() {
-		if(node != null)
-			return "Node Unlink";
-		else
-			return "Connection Unlink";
+		return "Unlinking Connections";
 	}
 
 }

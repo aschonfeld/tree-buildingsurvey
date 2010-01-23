@@ -21,7 +21,6 @@ import tbs.TBSGraphics;
 import tbs.controller.AdminController;
 import tbs.controller.TBSController;
 import tbs.model.admin.Student;
-import tbs.model.history.Unlink;
 import tbs.properties.PropertyType;
 import tbs.view.AdminView;
 import tbs.view.TBSButtonType;
@@ -366,8 +365,6 @@ public class AdminModel implements TBSModel
 	}
 
 	public List<Connection> getConnectionsByNode(Node n){
-		Unlink unlink = new Unlink();
-		unlink.setNode(n);
 		List<Connection> connections = new LinkedList<Connection>();
 		Connection c;
 		for (ModelElement me: modelElements)
@@ -376,11 +373,6 @@ public class AdminModel implements TBSModel
 				c = (Connection) me;
 				if(c.hasNode(n)){
 					connections.add(c);
-					try{
-						unlink.addConnection((Connection) c.clone());
-					}catch(CloneNotSupportedException e){
-						System.out.println("Unable to create connection clone.");
-					}
 				}
 			}
 		}
