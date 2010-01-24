@@ -2,6 +2,13 @@
 
 = Comments and questions from the professor = 
 
+
+=== January 24 ===
+
+The good news is that bug fixing continues. The bad news is that I see no schedule for the deliverable to Professor White. When does he need it by? When is your code freeze? 
+
+What is the priority ordering for fixing bugs? Who is assigned to which ones?
+
 === January 3 ===
 
 I see nothing on the schedule between now and January 30, which is when you say you will have a "Functioning program with full feature set". What is that feature set? Does Professor White know what he will have then, and that he will be able to use it with his students? Is that the right date for him (since the semester will already have begun by then.)
