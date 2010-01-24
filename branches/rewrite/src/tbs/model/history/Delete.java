@@ -9,6 +9,7 @@ import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
 import tbs.model.Node;
+import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 
 public class Delete extends Command{
@@ -66,11 +67,16 @@ public class Delete extends Command{
 				model.setElement(model.findIndexByElement(c.getTo()), c.getTo());
 			}else{
 				System.out.println("Undoing " + modelElement.getClass().getSimpleName() + " delete command.");
-				if(modelElement.getId() < model.getElements().size())
-					model.getElements().add(modelElement.getId(), modelElement);
-				else{
-					model.getElements().add(modelElement);
-					Collections.sort(model.getElements(), TBSGraphics.elementIdComparator);
+				if(modelElement instanceof OrganismNode){
+					int id = model.findIndexById(modelElement.getId());
+					model.getElements().set(id, modelElement);
+				}else{
+					if(modelElement.getId() < model.getElements().size())
+						model.getElements().add(modelElement.getId(), modelElement);
+					else{
+						model.getElements().add(modelElement);
+						Collections.sort(model.getElements(), TBSGraphics.elementIdComparator);
+					}
 				}
 				for(Connection c : elementConnections){
 					int id;
