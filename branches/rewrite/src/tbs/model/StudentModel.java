@@ -81,14 +81,17 @@ public class StudentModel implements TBSModel
 		student = new Student(g2, studentString);
 		if(!"".equals(student.getTree())){
 			loadTree(student.getTree());
-			if(inTreeElements().size() > 1){
-				buttonStates.put(TBSButtonType.LINK, true);
+			int inTreeElementCount = inTreeElements().size();
+			if(inTreeElementCount > 0){
 				buttonStates.put(TBSButtonType.DELETE, true);
-				buttonStates.put(TBSButtonType.CLEAR, true);
-				if(hasEmptyNodes())
-					buttonStates.put(TBSButtonType.LABEL, true);
-				if(hasConnections())
-					buttonStates.put(TBSButtonType.UNLINK, true);
+				if(inTreeElementCount > 1){
+					buttonStates.put(TBSButtonType.LINK, true);
+					buttonStates.put(TBSButtonType.CLEAR, true);
+					if(hasEmptyNodes())
+						buttonStates.put(TBSButtonType.LABEL, true);
+					if(hasConnections())
+						buttonStates.put(TBSButtonType.UNLINK, true);
+				}
 			}
 		}
 		view = new StudentView(this);
