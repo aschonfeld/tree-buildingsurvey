@@ -99,7 +99,7 @@ public class AdminController extends TBSController
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(y < TBSGraphics.buttonsHeight)  {
-			if(x >= model.getApplet().getWidth()-TBSGraphics.buttonsWidth)
+			if(x >= model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + view.getVerticalBar().getWidth()))
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			else if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
@@ -130,7 +130,7 @@ public class AdminController extends TBSController
 		int x = e.getX();
         int y = e.getY();
 		if(y < TBSGraphics.buttonsHeight) {
-			if(x >= (model.getApplet().getWidth()-TBSGraphics.buttonsWidth)){
+			if(x >= (model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + view.getVerticalBar().getWidth()))){
 				PrinterJob printJob = PrinterJob.getPrinterJob();
 				printJob.setPrintable(view);
 				if (printJob.printDialog()){

@@ -286,20 +286,16 @@ public class AdminModel implements TBSModel
 	
 	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
 		int currentY = 0;
-		TBSGraphics.studentNodeWidth = 0;
 		TBSGraphics.studentNodeHeight = 0;
 		students = new LinkedList<Student>();
+		int lines = 0;
 		for(String studentStringArray : studentStringArrays){
 			Student temp = new Student(g2, studentStringArray);
 			students.add(temp);
-			if(temp.getWidth() > TBSGraphics.studentNodeWidth) 
-				TBSGraphics.studentNodeWidth = temp.getWidth();
-			if(temp.getHeight() > TBSGraphics.studentNodeHeight) 
-				TBSGraphics.studentNodeHeight = temp.getHeight();
+			if(temp.getNodeName().size() > lines) 
+				lines = temp.getNodeName().size();
 		}
-		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
-		TBSGraphics.studentNodeWidth += checkDimension.width;
-		TBSGraphics.studentNodeWidth += TBSGraphics.paddingWidth * 2;
+		TBSGraphics.studentNodeHeight = lines * TBSGraphics.textHeight;
 		TBSGraphics.studentNodeHeight += TBSGraphics.paddingWidth * 2;
 		for(Student s : students) {
 			s.setAnchorPoint(new Point(0, currentY));

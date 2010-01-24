@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import tbs.TBSGraphics;
@@ -15,6 +16,7 @@ import tbs.view.OpenQuestionButtonType;
 public class Student {
 
 	private String name;
+	private List<String> nodeName;
 	private String lastUpdate;
 	private Date lastUpdateTimestamp;
 	private SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -57,6 +59,7 @@ public class Student {
 		Dimension d = TBSGraphics.getStringBounds(g2, name);
 		width = d.width;
 		height = d.height;
+		nodeName = TBSGraphics.breakStringByLineWidth(g2, name, 150);
 	}
 	
 	public String toString(){
@@ -146,6 +149,10 @@ public class Student {
 			else
 				openResponses.put(button, new WrittenResponse(""));
 		}
+	}
+
+	public List<String> getNodeName() {
+		return nodeName;
 	}
 	
 }

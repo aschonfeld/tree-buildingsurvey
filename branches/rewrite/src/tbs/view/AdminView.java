@@ -7,6 +7,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -26,6 +27,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.Timer;
+import javax.swing.text.View;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -161,7 +163,11 @@ public class AdminView extends JComponent implements Printable {
 			buttonClicked = TBSButtonType.TREE;
 		Graphics2D g2 = (Graphics2D) g;
 		List<TBSButtonType> buttons = model.getButtons();
-		TBSGraphics.questionButtonsStart = (model.getApplet().getWidth()/2) - ((TBSGraphics.buttonsWidth*buttons.size())/2);
+		int studentWidth = TBSGraphics.studentNodeWidth 
+		+ verticalBar.getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
+		TBSGraphics.questionButtonsStart = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-verticalBar.getWidth())
+		- ((TBSGraphics.buttonsWidth*buttons.size())/2);
+		//TBSGraphics.questionButtonsStart = (model.getApplet().getWidth()/2) - ((TBSGraphics.buttonsWidth*buttons.size())/2);
 		Rectangle buttonRect = new Rectangle(TBSGraphics.questionButtonsStart,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
 		for(TBSButtonType b: buttons) {
@@ -177,7 +183,8 @@ public class AdminView extends JComponent implements Printable {
 		}
 		
 		//Print Button
-		buttonRect = new Rectangle(model.getApplet().getWidth()-TBSGraphics.buttonsWidth,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
+		buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + verticalBar.getWidth()),
+				0,TBSGraphics.buttonsWidth/2, TBSGraphics.buttonsHeight);
 		TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 		g2.setColor(Color.gray);
 		g2.draw(buttonRect);
@@ -226,7 +233,10 @@ public class AdminView extends JComponent implements Printable {
 	
 	public void renderStudents(Graphics2D g2){
 		String selectedStudentName = model.getStudent().getName();
-		int x,y;
+		int x,y,width;
+		width = TBSGraphics.studentNodeWidth;
+		Dimension d = TBSGraphics.getStringBounds(g2, " \u2713");
+		width -= d.width + TBSGraphics.paddingWidth;
 		for(Student student : model.getStudents()){
 			if(student.getName().equals(selectedStudentName))
 				g2.setColor(Color.GREEN);
@@ -236,14 +246,19 @@ public class AdminView extends JComponent implements Printable {
 			y = student.getAnchorPoint().y - studentYOffset;
 			g2.fillRect(x, y,
 					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight);
-			String studentString = student.getName();
 			String lastUpdate = student.getLastUpdate();
 			if(lastUpdate != null && lastUpdate.length() != 0)
-				studentString += " \u2713";
-			TBSGraphics.drawCenteredString(g2, studentString,
-					x, y,
-					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight,
-					Color.BLACK);
+				TBSGraphics.drawCenteredString(g2, " \u2713",
+						x + width, y, d.width + TBSGraphics.paddingWidth,
+						TBSGraphics.studentNodeHeight,
+						Color.BLACK);
+			y += TBSGraphics.paddingWidth;
+			for(String nameString : student.getNodeName()){
+				TBSGraphics.drawCenteredString(g2, nameString,
+						x + TBSGraphics.paddingWidth, y,width, TBSGraphics.textHeight,
+						Color.BLACK);
+				y += TBSGraphics.textHeight;
+			}
 		}
 	}
 	
@@ -297,11 +312,16 @@ public class AdminView extends JComponent implements Printable {
 			if(lastUpdate != null && lastUpdate.length() > 0)
 				screenString += "(Last Update: " + lastUpdate + ")";
 		}
-		int width = model.getApplet().getWidth();
+		int studentWidth = TBSGraphics.studentNodeWidth 
+				+ verticalBar.getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
+		int width = model.getApplet().getWidth() - studentWidth;
+		int x = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-verticalBar.getWidth());
+		
 		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
 		int yVal = model.getApplet().getHeight() - (TBSGraphics.buttonsHeight * (lines.size()+1));
 		for(String line : lines) {
-			TBSGraphics.drawCenteredString(g2, line, 0, yVal, width, yStep, TBSGraphics.emptyNodeColor);
+			Dimension d = TBSGraphics.getStringBounds(g2, line);
+			TBSGraphics.drawCenteredString(g2, line, x-(d.width/2), yVal, d.width, yStep, TBSGraphics.emptyNodeColor);
 			yVal += yStep;
 		}
 	}
