@@ -103,6 +103,18 @@ public class HelpPrompt extends Prompt
 				instructions = TBSGraphics.breakStringByLineWidth(g2,
 						instrProps.getProperty("instrDir"),
 						promptSize.width - padding.width * 2);
+
+		      List<String> directions2 = TBSGraphics.breakStringByLineWidth(g2,
+            		instrProps.getProperty("instrDir2"),
+            		promptSize.width - padding.width * 2);
+      		List<String> directions3 = TBSGraphics.breakStringByLineWidth(g2,
+            		instrProps.getProperty("instrDir3"),
+        	   	 	promptSize.width - padding.width * 2);
+      		instructions.add("\n");
+				instructions.addAll(directions2);
+      		instructions.add("\n");
+      		instructions.addAll(directions3);
+
 			}
 			text = instructions;
 			totalLines += text.size() + 2;

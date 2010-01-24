@@ -36,8 +36,8 @@ import tbs.view.prompt.Prompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
 /**
-* TBSController contains the methods allowing the user to manipulate the
-* data stored in the data model.
+* StudentController contains the methods used by the student in
+* contructing a TBS tree. 
 **/
 public class StudentController extends TBSController
 {
@@ -61,14 +61,26 @@ public class StudentController extends TBSController
 		}
 	}
 	
+	/**
+	* Used in automated testing: prints KeyEvent to the console
+	* {@see StudentControllerTest}
+	*/
 	public void printKeyEvent(KeyEvent e) {
 		System.out.println(e.toString());
 	}
 	
+	/**
+	* Returns true if a label is being edited. Provided for automated
+	* testing. 
+	* {@see StudentControllerTest}
+	*/
 	public boolean getLabelingInProgress() {
 		return labelingInProgress;
 	}
 	
+	/**
+	* Constructor
+	*/
 	public StudentController(StudentModel m, StudentView v) {
     	model = m;
     	view = v;
@@ -80,6 +92,16 @@ public class StudentController extends TBSController
  		draggedNode=null;
     }
 	
+	/**
+	* Handles keyPressed events. This method handles several contexts in
+	* which keyboard entry is significant. If there is an active Prompt
+	* object, the event is passed to that prompt's keyPressed() method.
+	* If there is a Node being labelled, then keystrokes are forwarded to
+	* the keyPressed() method of {@link getTextEntryBox}, where they are
+	* handled. 
+	* Otherwise, the F1 key starts the test-bot and Delete triggers a Delete
+	* event (much like pressing the Delete button). 
+	*/
 	public void keyPressed(KeyEvent e) {
 		printKeyEvent(e);
 		if(model.getPrompt() != null) {
@@ -116,8 +138,17 @@ public class StudentController extends TBSController
 				model.getTextEntryBox().keyPressed(e);
 		}
 	}
-		
+
+/**
+* Not implemented
+*/		
 	public void keyReleased(KeyEvent e) {}
+
+/**
+* keyTyped events are passed to the currently active Prompt or to the
+* node being labelled, if any. If no active prompt and no node being
+* labelled, the event is discarded. 
+*/
 	public void keyTyped(KeyEvent e) {
 		printKeyEvent(e);
 		if(model.getPrompt() != null) {
@@ -132,9 +163,19 @@ public class StudentController extends TBSController
 			model.getTextEntryBox().keyTyped(e);
 	}
 		
+/**
+* Not implemented
+*/		
 	public void mouseEntered(MouseEvent e){}
+
+/**
+* Not implemented
+*/		
 	public void mouseExited(MouseEvent e){}
 	
+/**
+* NOT YET DOCUMENTED
+*/
 	public void mouseMoved(MouseEvent e){
 		printMouseEvent(e);
 		Prompt prompt = model.getPrompt();
@@ -196,6 +237,10 @@ public class StudentController extends TBSController
 	}
 	
 	// No need to use since mousePressed is used instead
+
+/**
+* Inline comment indicates this method is deprecated. Should be removed?
+*/
 	public void mouseClicked(MouseEvent e) {
 		printMouseEvent(e);
 		if(model.getPrompt() != null)
@@ -345,11 +390,19 @@ public class StudentController extends TBSController
 			draggedNode=null;
 		}
 	}
-	
+
+	/**
+	* Return the {@link TBSButtonType} of the button most recently
+	* clicked. WHERE USED?
+	*/	
 	public TBSButtonType getButtonClicked() {
 		return buttonClicked;
 	}
 	
+
+	/**
+	* Returns draggedNode. WHERE USED?
+	*/
 	public Node getDraggedNode(){
 		return draggedNode;
 	}
@@ -366,6 +419,9 @@ public class StudentController extends TBSController
 		return maxIndex;
 	}
     
+	/**
+	* Returns the identity of the node at (x,y).
+	*/
     public Node elementMouseIsHoveringOver(int x, int y){
     	Node nodeHovered = null;
 	    int yOffset = 0;
@@ -378,7 +434,10 @@ public class StudentController extends TBSController
 	    
 	    return nodeHovered;
     }
-    
+   
+	/**
+	* returns the identity of the ModelElement at (x,y)
+	*/ 
     public ModelElement elementMouseIsOver(int x, int y) {
     	ModelElement topElement = null;
 	    List<ModelElement> selectedTwoWay = new LinkedList<ModelElement>();
@@ -401,23 +460,42 @@ public class StudentController extends TBSController
 	}   
     
     
+
+	// Handles attempts to place nodes outside of the applet's area. 
+	
     private void modifyOutOfBounds(Node n){
-    	if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
-    		n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
-    	if(n.isInTree()) {
-    		if(n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
-    			n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+    	if((n.getX()+n.getWidth()) > 
+				view.getWidth() - view.getVerticalBar().getWidth())
+  		{
+	  		n.setX(view.getWidth() - n.getWidth() - 
+				view.getVerticalBar().getWidth());
+		} 
+   	if(n.isInTree()) 
+		{
+    		if (n.getY() <= view.getYOffset() + 
+				TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
+    		{	
+				n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + 
+					TBSGraphics.buttonsYPadding);
+			}
     		if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
     			n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
     		
-    	} else {
+    	} else 
+		{
     		if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
+			{
     			n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
+			}
+
     		if((n.getY() + n.getHeight()) > view.getHeight())
+			{
     			n.setY(view.getHeight()-n.getHeight());   		
+			}
     	}
     }
     
+
     private void cancelConnection() {
 		view.setConnInProgress(null);
     }
@@ -455,6 +533,7 @@ public class StudentController extends TBSController
     		selectedElement = en;
     	}
     }
+
     
     private void setSelectedElement(ModelElement me) {
     	unselectPrevious();
@@ -463,6 +542,7 @@ public class StudentController extends TBSController
     }
 
     // unselect previously selected element, otherwise will keep green box
+
     private void unselectPrevious(){
     	model.setSelectedModelElement(null);
     	selectedElement = null;
@@ -481,12 +561,23 @@ public class StudentController extends TBSController
 		unselectPrevious();
 		itemDeleted = true;
     }
-    
+
+	/**
+	* Called by () to return to a null state: no connections in progress
+	* and no nodes being labelled. 
+	* This method just calls {@ link cancelConnection} and {@link cancelLabel}; 
+	* it has nologic of its own.
+	*/    
     public void clearCurrentActions() {
 		cancelConnection();
 		cancelLabel();
     }
-    
+   
+
+	/**
+ 	* This method provides some of the logic for directing mouse clicks.
+ 	* {@see handleMousePressed}
+	*/
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
@@ -556,7 +647,8 @@ public class StudentController extends TBSController
 			break;
 		case UNDO:
 			if(!model.getHistory().isEmpty()){
-				view.setScreenString(String.format(getStatus(TBSButtonType.UNDO), model.getHistory().peek().toString()));
+				view.setScreenString(String.format(getStatus(TBSButtonType.UNDO),
+						model.getHistory().peek().toString()));
 				model.removeActionFromHistory().undo(model);
 			}
 			break;
@@ -571,8 +663,17 @@ public class StudentController extends TBSController
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
     
+
+	/**
+	* Calls up a dialog box for the question selected by the user. 
+	* @param x x coordinate of mouse click
+	* @param y y coordinate of mouse click
+	* {@see viewOpenResponse}
+	*/
     private void handleMouseQuestionPressed(int x, int y) {
-    	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
+    	int buttonIndex = 
+			(x - TBSGraphics.questionButtonsStart) / 
+			TBSGraphics.questionButtonsWidth;
 		if(buttonIndex >= OpenQuestionButtonType.values().length) return;
 		questionClicked = OpenQuestionButtonType.values()[buttonIndex];
 		System.out.println(questionClicked.toString());
@@ -580,7 +681,11 @@ public class StudentController extends TBSController
 		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
-    
+
+	/**
+	* Handles the rest of the mouse-clicking behavior. 
+	* {@see handleMouseButtonPressed}
+	*/    
     public void handleMousePressed(int x, int y) {
     	ModelElement clickedElement = elementMouseIsOver(x, y);
     	// clicking on empty space always cancels connection

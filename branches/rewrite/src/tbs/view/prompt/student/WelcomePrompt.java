@@ -71,10 +71,10 @@ public class WelcomePrompt extends Prompt
 			introString = welcomeMessage(incompletedItems);	
 		List<String> introduction = TBSGraphics.breakStringByLineWidth(g2,introString,
 				promptSize.width - padding.width * 2);
+	
 		List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
-				instrProps.getProperty("instrDir"),
+				instrProps.getProperty("welcome_instr"),
 				promptSize.width - padding.width * 2);
-
 		calculateValues(introduction.size() + directions.size() + 5);
 		drawBox();
 		TBSGraphics.drawCloseButton(g2, closeButton);
