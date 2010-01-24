@@ -233,12 +233,12 @@ public class TBSApplet extends JApplet {
 			parameterInfo = new String[4][];
 			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
 			parameterInfo[1] = new String[]{"StudentCount", "Integer", "In admin mode this parameter tells the applet how many 'Student' parameters to get"};
-			parameterInfo[2] = new String[]{"Student(#)", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for each student"};
+			parameterInfo[2] = new String[]{"Student(#)", "String", "This contains the student data(name, last update date, tree, open-responses, section [used for has arrows or not]) for each student"};
 			parameterInfo[3] = new String[]{"Browser", "String", "This contains information about the browser that has accessed this applet"};
 		}else{
 			parameterInfo = new String[3][];
 			parameterInfo[0] = new String[]{"Admin", "Boolean", "This tells the applet to run the admin version if true & the student version if false"};
-			parameterInfo[1] = new String[]{"Student", "String", "This contains the student data(name, last update date, tree, open-responses, has arrows or not) for this student"};
+			parameterInfo[1] = new String[]{"Student", "String", "This contains the student data(name, last update date, tree, open-responses, section [used for has arrows or not]) for this student"};
 			parameterInfo[2] = new String[]{"Browser", "String", "This contains information about the browser that has accessed this applet"};
 		}
 		return parameterInfo;

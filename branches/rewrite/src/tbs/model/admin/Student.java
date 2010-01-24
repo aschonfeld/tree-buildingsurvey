@@ -23,6 +23,7 @@ public class Student {
 	private SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMMM yyyy h:mm a");
 	private String tree;
 	private Map<OpenQuestionButtonType, Response> openResponses;
+	private String section;
 	private Boolean arrows;
 	private int height;
 	private int width;
@@ -50,12 +51,26 @@ public class Student {
 				openResponses.put(response, new WrittenResponse(studentData[splitIndex].substring(1).trim()));
 			splitIndex++;
 		}
-		String arrowsString = studentData[6].substring(1).trim();
-		arrowsString = arrowsString.trim();
-		if(arrowsString == null || arrowsString == "")
+		section = studentData[6].substring(1).trim();
+		if(section == null || section.length() == 0)
 			arrows = true;
-		else
-			arrows = Boolean.parseBoolean(arrowsString);
+		else{
+			String[] sectionSplit = section.split(" ");
+			if(sectionSplit.length < 2)
+				arrows = true;
+			else{
+				try{
+					int sectionNum = Integer.parseInt(sectionSplit[1]);
+					if(sectionNum%2 == 0)
+						arrows = true;
+					else
+						arrows = false;
+				}catch(NumberFormatException e){
+					System.out.println("Error parsing section number (" + section + ") defaulting arrows to true");
+					arrows = true;
+				}
+			}
+		}
 		Dimension d = TBSGraphics.getStringBounds(g2, name);
 		width = d.width;
 		height = d.height;
@@ -108,6 +123,10 @@ public class Student {
 	
 	public Map<OpenQuestionButtonType, Response> getResponses(){
 		return openResponses;
+	}
+
+	public String getSection() {
+		return section;
 	}
 
 	public Boolean hasArrows() {
