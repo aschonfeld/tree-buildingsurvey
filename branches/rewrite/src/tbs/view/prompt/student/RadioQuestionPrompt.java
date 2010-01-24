@@ -132,7 +132,7 @@ public class RadioQuestionPrompt extends Prompt{
 		questionStringY = anchorPoint.y;
 		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentRadioQuestion.getAdminText(),
 				anchorPoint.x + padding.width, questionStringY,width,
-				buttonHeight,TBSGraphics.emptyNodeColor);
+				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		questionStringY += buttonHeight;
 
 		drawWritten(text);
@@ -196,7 +196,7 @@ public class RadioQuestionPrompt extends Prompt{
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.selectedPromptTextColor : Color.BLACK);
 	}
 
 	public void drawButtons()

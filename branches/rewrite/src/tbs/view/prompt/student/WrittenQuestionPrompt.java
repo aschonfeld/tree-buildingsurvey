@@ -31,6 +31,9 @@ import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
+/**
+* Creates a text-entry box for an open-response question.
+*/
 public class WrittenQuestionPrompt extends Prompt{
 
 	//Information to be used by all prompt types
@@ -85,9 +88,12 @@ public class WrittenQuestionPrompt extends Prompt{
 		pressedKeys.add(KeyEvent.VK_LEFT);
 	}
 
+
+	
 	public void mousePressed(MouseEvent e){
 		if(buttonsArea.contains(e.getPoint())){
-			int index = (int) ((e.getX() - buttonsArea.getX()) * buttons.size()) / promptSize.width;
+			int index = (int) ((e.getX() - buttonsArea.getX()) * 
+						buttons.size()) / promptSize.width;
 			OpenQuestionPromptButtonType buttonClicked = buttons.get(index);
 			if(OpenQuestionPromptButtonType.SUBMIT.equals(buttonClicked)){
 				model.getStudent().getResponse(currentQuestion).updateText(convertLinesToUserInput());
@@ -226,7 +232,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		questionStringY = anchorPoint.y;
 		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentQuestion.getAdminText(),
 				anchorPoint.x + padding.width, questionStringY,width,
-				buttonHeight,TBSGraphics.emptyNodeColor);
+				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		questionStringY += buttonHeight;
 
 		drawWritten(text);
@@ -335,7 +341,7 @@ public class WrittenQuestionPrompt extends Prompt{
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.selectedPromptTextColor : Color.BLACK);
 	}
 
 	public void drawButtons()

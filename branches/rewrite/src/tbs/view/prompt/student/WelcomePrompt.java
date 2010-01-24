@@ -20,6 +20,10 @@ import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 
+
+/**
+* Displays a welcome message on starting up the applet.
+*/
 public class WelcomePrompt extends Prompt
 {
 
@@ -46,11 +50,21 @@ public class WelcomePrompt extends Prompt
 		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
 	}
 
-
+	/**
+	* This Prompt does not handle keyboard input
+	*/
 	public void keyPressed(KeyEvent e){}
 
+	/**
+	* This Prompt does not handle keyboard input
+	*/
 	public void keyTyped(KeyEvent e){}
 
+	/**
+	* Checks whether any mouse clicks occurred within the start button or
+	* the close button; if so, calls {@link setFinished} to close this
+	* Prompt. 
+	*/
 	public void mousePressed(MouseEvent e) {
 		if(startButton.contains(e.getPoint()))
 				setFinished(true);
@@ -58,6 +72,9 @@ public class WelcomePrompt extends Prompt
 				setFinished(true);
 	}
 
+	/**
+	* Instructions for rendering this Prompt
+	*/
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
@@ -83,18 +100,23 @@ public class WelcomePrompt extends Prompt
 		TBSGraphics.drawCenteredString(g2,"Welcome",
 				anchorPoint.x + padding.width, welcomeStringY,
 				promptSize.width - padding.width * 2,
-				buttonHeight,TBSGraphics.emptyNodeColor);
+				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		welcomeStringY += buttonHeight;
 		drawText(introduction);
 		welcomeStringY += TBSGraphics.textHeight + padding.height;
 		TBSGraphics.drawCenteredString(g2, instrProps.getProperty("instrHeader"),
 				anchorPoint.x + padding.width, welcomeStringY,
 				promptSize.width - padding.width * 2,
-				TBSGraphics.textHeight,TBSGraphics.emptyNodeColor);
+				TBSGraphics.textHeight,TBSGraphics.selectedPromptTextColor);
 		welcomeStringY += (TBSGraphics.textHeight + padding.height) * 2;
 		drawText(directions);
 	}
 
+
+	/**
+	* Calculates sundry useful numbers, including applet's center point,
+	* top left corner of Prompt, and locations of buttons.
+	*/
 	public void calculateValues(int lineCount) {
 		buttonHeight = TBSGraphics.textHeight + padding.height;
 		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
@@ -109,6 +131,9 @@ public class WelcomePrompt extends Prompt
 					promptSize.width, buttonHeight);
 	}
 
+	/**
+	* Draws the frame for this Prompt
+	*/
 	public void drawBox() {
 		Rectangle box = new Rectangle(anchorPoint.x-2, anchorPoint.y-2, promptSize.width+4, promptSize.height+4);
 		g2.setColor(Color.lightGray);
@@ -119,6 +144,9 @@ public class WelcomePrompt extends Prompt
 		g2.setStroke(new BasicStroke());
 	}
 
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public void drawText(List<String> lines) {
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
@@ -127,9 +155,12 @@ public class WelcomePrompt extends Prompt
 		}
 	}
 	
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public void drawText(List<String> lines, String header) {
 		int startX = anchorPoint.x + padding.width;
-		TBSGraphics.drawCenteredString(g2, header, startX, welcomeStringY, 0, TBSGraphics.textHeight, TBSGraphics.emptyNodeColor);
+		TBSGraphics.drawCenteredString(g2, header, startX, welcomeStringY, 0, TBSGraphics.textHeight, TBSGraphics.selectedPromptTextColor);
 		startX += TBSGraphics.buttonsWidth;
 		for(String line : lines){
 			drawString(line, startX, welcomeStringY);
@@ -137,16 +168,25 @@ public class WelcomePrompt extends Prompt
 		}
 	}
 
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public void drawString(String s, int x, int y){
 		drawString(s, x, y, false);
 	}
 
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
 			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
-					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+					isSelected ? TBSGraphics.selectedPromptTextColor : Color.BLACK);
 	}
 
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public void drawButtons()
 	{		
 		TBSGraphics.renderButtonBackground(g2, startButton, false);
@@ -157,6 +197,9 @@ public class WelcomePrompt extends Prompt
 	}
 
 
+	/**
+	* Probably this could be moved up to Prompt.java
+	*/
 	public boolean isOverButton(MouseEvent e){
 		if(startButton.contains(e.getPoint()))
 				return true;
@@ -165,6 +208,10 @@ public class WelcomePrompt extends Prompt
 		return false;
 	}
 	
+	/**
+	* Calculates the welcome message for the student, based on the state
+	* of the Model.
+	*/
 	private String welcomeMessage(List<String> incompletedItems){
 		Student student = model.getStudent();
 		String name = student.getName();

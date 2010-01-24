@@ -21,6 +21,18 @@ import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.HelpPromptButtonType;
 
+/**
+* HelpPrompt is called when the Help button is pressed; it displays a
+* help window which can be switched between several categories of help.
+* The help strings are read from several .properties files, and can be
+* changed by modifying those files. <br>
+* "Introduction" is read from "instructions.properties", property name
+* "instrIntro"
+* "Instructions" tab is read from "instructions.properties", properties
+* "InstrDir", "InstrDir2", and "InstrDir3".
+* "Button Info" is read from "help.properties". 
+* "Survey Status" is generated based on the current state of the Model. 
+*/
 public class HelpPrompt extends Prompt
 {
 
@@ -60,18 +72,33 @@ public class HelpPrompt extends Prompt
 		buttonInfo = new LinkedList<String[]>();
 		for(TBSButtonType bt : TBSButtonType.values()){
 			if(!bt.isAdmin() && !TBSButtonType.HELP.equals(bt))
-				buttonInfo.add(new String[]{bt.getText(), helpProps.getProperty("help_" + bt.getText())});
+			{
+				buttonInfo.add(new String[]{bt.getText(), 
+					helpProps.getProperty("help_" + bt.getText())});
+			}
 		}
 		buttonInfo.add(new String[]{"1,2,3", helpProps.getProperty("help_123")});
 		buttonHeaders = new LinkedList<String>();
 		buttonTexts = new LinkedList<List<String>>();
 	}
 
-
+	/**
+	* This prompt does not accept keyboard input
+	*/
 	public void keyPressed(KeyEvent e){}
 
+	/**
+	* This prompt does not accept keyboard input
+	*/
 	public void keyTyped(KeyEvent e){}
 
+	/**
+	* On a mouse click, this method checks whether the event occurred
+	* within a button. If it occurred within the close button, the {@link
+	* setFinished} method is used to tell the prompt to close itself. If
+	* the event is located within one of the selector buttons, that
+	* option is displayed.
+	*/
 	public void mousePressed(MouseEvent e) {
 		if(closeButton.contains(e.getPoint()))
 			setFinished(true);
@@ -83,6 +110,9 @@ public class HelpPrompt extends Prompt
 		}
 	}
 
+	/**
+	* Instructions for rendering this object. 
+	*/
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
@@ -147,7 +177,7 @@ public class HelpPrompt extends Prompt
 		TBSGraphics.drawCenteredString(g2,"Help - " + selectedOption.getText(),
 				anchorPoint.x + padding.width, helpStringY,
 				promptSize.width - padding.width * 2,
-				buttonHeight,TBSGraphics.emptyNodeColor);
+				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		helpStringY += buttonHeight;
 		
 		if(HelpPromptButtonType.BUTTON_INFO.equals(selectedOption)){
@@ -157,6 +187,11 @@ public class HelpPrompt extends Prompt
 			drawText(text);
 	}
 
+	/**
+	* Determines values of several interesting numbers, including the
+	* center point of the applet, an anchor point for the top left corner
+	* of the Prompt and locations of the close and selector buttons. 
+	*/
 	public void calculateValues(int lineCount) {
 		buttonHeight = TBSGraphics.textHeight + padding.height;
 		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
@@ -165,12 +200,16 @@ public class HelpPrompt extends Prompt
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), 
 				centerY - (promptSize.height / 2));
-		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
-				buttonHeight, buttonHeight);
-		helpOptions = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
-				promptSize.width, buttonHeight);
+		closeButton = new Rectangle((anchorPoint.x + promptSize.width) -
+			buttonHeight, anchorPoint.y,buttonHeight, buttonHeight);
+		helpOptions = new Rectangle(anchorPoint.x, 
+			anchorPoint.y + (promptSize.height - buttonHeight),
+			promptSize.width, buttonHeight);
 	}
 
+	/**
+	* Creates the frame for this Prompt
+	*/
 	public void drawBox() {
 		Rectangle box = new Rectangle(anchorPoint.x-2, anchorPoint.y-2, promptSize.width+4, promptSize.height+4);
 		g2.setColor(Color.lightGray);
@@ -181,6 +220,9 @@ public class HelpPrompt extends Prompt
 		g2.setStroke(new BasicStroke());
 	}
 
+	/**
+	* Draws an array of Strings to the screen
+	*/
 	public void drawText(List<String> lines) {
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
@@ -188,10 +230,13 @@ public class HelpPrompt extends Prompt
 			helpStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
-	
+
+	/**
+	* Draws an array of Strings to the screen, plus a header
+	*/	
 	public void drawText(List<String> lines, String header) {
 		int startX = anchorPoint.x + padding.width;
-		TBSGraphics.drawCenteredString(g2, header, startX, helpStringY, 0, TBSGraphics.textHeight, TBSGraphics.emptyNodeColor);
+		TBSGraphics.drawCenteredString(g2, header, startX, helpStringY, 0, TBSGraphics.textHeight, TBSGraphics.selectedPromptTextColor);
 		startX += TBSGraphics.buttonsWidth;
 		for(String line : lines){
 			drawString(line, startX, helpStringY);
@@ -199,16 +244,30 @@ public class HelpPrompt extends Prompt
 		}
 	}
 
+	/**
+	*	Passes s, x, and y to drawString(String s, int x, int y, boolean
+	*	isSelected) with "false" as the final value.
+	*/
 	public void drawString(String s, int x, int y){
 		drawString(s, x, y, false);
 	}
 
+	/**
+	* Calls the drawCenteredString method from {@link TBSGraphics} to put
+	* a string on the screen. Default color for selected text is the same
+	* as used for EmptyNode, but this can be changed. 
+	*/
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
 			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
-					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+					isSelected ? TBSGraphics.selectedPromptTextColor : Color.BLACK);
 	}
 
+	/**
+	* Draws the close button and selector buttons. Buttons, as elsewhere
+	* in TBS, are not objects, but are simply painted on the screen and
+	* checked by contains() methods. 
+	*/
 	public void drawButtons()
 	{
 		Rectangle buttonRect = new Rectangle(helpOptions.x, helpOptions.y,
@@ -227,6 +286,10 @@ public class HelpPrompt extends Prompt
 	}
 
 
+	/**
+	* Returns true if {@link MouseEvent} e occurs within the boundaries
+	* of any of this Prompt's buttons. 
+	*/
 	public boolean isOverButton(MouseEvent e){
 		if(closeButton.contains(e.getPoint()))
 			return true;
