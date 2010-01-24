@@ -38,7 +38,6 @@ public class YesNoPrompt extends Prompt{
 	int questionStringY;
 	Rectangle buttonsArea;
 	int buttonHeight;
-	int textHeight;
 	
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
@@ -74,7 +73,7 @@ public class YesNoPrompt extends Prompt{
 	
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
-		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
+		TBSGraphics.textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		lineBrokenQuestion = new LinkedList<String>();
 		int questionLength = 0;
 		lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
@@ -82,18 +81,18 @@ public class YesNoPrompt extends Prompt{
 		calculateValues();
 		drawBox();
 		drawText(lineBrokenQuestion, questionLength);
-		questionStringY += ((textHeight+4) * lineBrokenQuestion.size());
+		questionStringY += ((TBSGraphics.textHeight+4) * lineBrokenQuestion.size());
 		drawButtons();
 	}
 	
 	public void calculateValues() {
 		int lineCount = 2 + lineBrokenQuestion.size();
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + (padding.height * (lineCount + 1)));
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + (padding.height * (lineCount + 1)));
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), centerY - (promptSize.height / 2));
 		questionStringY = anchorPoint.y;
-		buttonHeight = textHeight + padding.height;
+		buttonHeight = TBSGraphics.textHeight + padding.height;
 		buttonsArea = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
 				promptSize.width, buttonHeight);
 	}
@@ -114,13 +113,13 @@ public class YesNoPrompt extends Prompt{
 		int startX = anchorPoint.x + padding.width;
 		for(int i=0;i<lines.size();i++){
 			drawString(lines.get(i), startX, startY);
-			startY += textHeight + 4;
+			startY += TBSGraphics.textHeight + 4;
 		}
 	}
 	
 	public void drawString(String s, int x, int y){
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight + 4, Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, Color.BLACK);
 	}
 	
 	public void drawButtons()

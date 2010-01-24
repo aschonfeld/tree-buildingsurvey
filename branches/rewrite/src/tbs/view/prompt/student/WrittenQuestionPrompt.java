@@ -66,8 +66,7 @@ public class WrittenQuestionPrompt extends Prompt{
 	Rectangle buttonsArea;
 	Rectangle closeButton;
 	int buttonHeight;
-	int textHeight;
-
+	
 	//Question Text
 	Map<OpenQuestionButtonType, List<String>> questionTexts;
 
@@ -78,7 +77,6 @@ public class WrittenQuestionPrompt extends Prompt{
 		this.model = model;
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
 		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
-		textHeight = 0;
 		pressedKeys = new LinkedList<Integer>();
 		pressedKeys.add(KeyEvent.VK_DELETE);
 		pressedKeys.add(KeyEvent.VK_UP);
@@ -211,8 +209,6 @@ public class WrittenQuestionPrompt extends Prompt{
 
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
-		if(textHeight == 0)
-			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		lineBrokenQuestion = new LinkedList<String>();
 		List<String> text = new LinkedList<String>();
 		int totalLines = 0;
@@ -234,7 +230,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		questionStringY += buttonHeight;
 
 		drawWritten(text);
-		questionStringY += textHeight + padding.height;
+		questionStringY += TBSGraphics.textHeight + padding.height;
 		String line = "";
 		for(int i=0;i<userInputLines.size();i++){
 			line = userInputLines.get(i);
@@ -242,7 +238,7 @@ public class WrittenQuestionPrompt extends Prompt{
 				if(ableToBeLayout(line))
 					drawWritten(TBSGraphics.breakStringByLineWidth(g2,line,width));
 				else
-					questionStringY += textHeight + padding.height;
+					questionStringY += TBSGraphics.textHeight + padding.height;
 			}else{
 				TextLayout layout;
 				int x, y;
@@ -262,11 +258,11 @@ public class WrittenQuestionPrompt extends Prompt{
 						if(adjCursorIndex <= tempLine.length() && cursorLineIndex == 0){
 							cursorLine = tempLine;
 							cursorY = questionStringY;
-							questionStringY += textHeight + padding.height;
+							questionStringY += TBSGraphics.textHeight + padding.height;
 							cursorLineIndex = j;
 						}else{
 							drawString(tempLine, anchorPoint.x + padding.width, questionStringY);
-							questionStringY += textHeight + padding.height;
+							questionStringY += TBSGraphics.textHeight + padding.height;
 							currentSize += tempLine.length();
 							if(j>=cursorLineIndex)
 								adjCursorIndex -= tempLine.length();
@@ -276,7 +272,7 @@ public class WrittenQuestionPrompt extends Prompt{
 				}
 				// calculate dimensions of String s
 				x = anchorPoint.x + padding.width;
-				y = cursorY + textHeight;
+				y = cursorY + TBSGraphics.textHeight;
 				boolean cursorWithinName = adjCursorIndex < cursorLine.length();
 				String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
 				int cursorX = x;
@@ -294,21 +290,21 @@ public class WrittenQuestionPrompt extends Prompt{
 						layout.draw(g2, cursorX + cursorWidth, y);
 					}
 				}
-				drawCursor(g2, new Point(cursorX,cursorY), new Point(cursorWidth, textHeight));
+				drawCursor(g2, new Point(cursorX,cursorY), new Point(cursorWidth, TBSGraphics.textHeight));
 				if(adjCursorIndex != cursorIndex)
-					questionStringY += textHeight + padding.height;
+					questionStringY += TBSGraphics.textHeight + padding.height;
 			}	
 		}
 	}
 
 	public void calculateValues(int lineCount) {
-		buttonHeight = textHeight + padding.height;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) +
+		buttonHeight = TBSGraphics.textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) +
 				(padding.height * (lineCount + 1))  + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), centerY - (promptSize.height / 2));
-		buttonHeight = textHeight + padding.height;
+		buttonHeight = TBSGraphics.textHeight + padding.height;
 		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
 				buttonHeight, buttonHeight);
 		buttonsArea = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
@@ -329,7 +325,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, questionStringY);
-			questionStringY += textHeight + padding.height;
+			questionStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -339,7 +335,7 @@ public class WrittenQuestionPrompt extends Prompt{
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 
 	public void drawButtons()

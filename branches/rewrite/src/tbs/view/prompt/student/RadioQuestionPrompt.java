@@ -46,8 +46,7 @@ public class RadioQuestionPrompt extends Prompt{
 	Rectangle buttonsArea;
 	Rectangle closeButton;
 	int buttonHeight;
-	int textHeight;
-
+	
 	//Question Text
 	List<String> questionText;
 	List<String[]> radioText;
@@ -66,7 +65,6 @@ public class RadioQuestionPrompt extends Prompt{
 		questionProps = model.getProperties(PropertyType.QUESTIONS);
 		questionText = new LinkedList<String>();
 		radioText = new LinkedList<String[]>();
-		textHeight = 0;
 		questionCount = 0;
 	}
 
@@ -99,8 +97,6 @@ public class RadioQuestionPrompt extends Prompt{
 
 	public void paintComponent(Graphics2D g2) {
 		this.g2 = g2;
-		if(textHeight == 0)
-			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		lineBrokenQuestion = new LinkedList<String>();
 		List<String> text = new LinkedList<String>();
 		int totalLines = 0;
@@ -140,21 +136,21 @@ public class RadioQuestionPrompt extends Prompt{
 		questionStringY += buttonHeight;
 
 		drawWritten(text);
-		questionStringY += textHeight + padding.height;
+		questionStringY += TBSGraphics.textHeight + padding.height;
 		radioQuestionSelection = new Rectangle(anchorPoint.x + padding.width, questionStringY,
-				TBSGraphics.questionButtonsWidth, response.getQuestionCount() * (textHeight + padding.height));
+				TBSGraphics.questionButtonsWidth, response.getQuestionCount() * (TBSGraphics.textHeight + padding.height));
 		drawRadioSelectionButtons();
 		drawRadio(radioText);
 	}
 
 	public void calculateValues(int lineCount) {
-		buttonHeight = textHeight + padding.height;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) +
+		buttonHeight = TBSGraphics.textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) +
 				(padding.height * (lineCount + 1))  + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), centerY - (promptSize.height / 2));
-		buttonHeight = textHeight + padding.height;
+		buttonHeight = TBSGraphics.textHeight + padding.height;
 		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
 				buttonHeight, buttonHeight);
 		buttonsArea = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
@@ -175,7 +171,7 @@ public class RadioQuestionPrompt extends Prompt{
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, questionStringY);
-			questionStringY += textHeight + padding.height;
+			questionStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -189,7 +185,7 @@ public class RadioQuestionPrompt extends Prompt{
 			drawString(line[0], questionX, questionStringY, selected);
 			int answerWidth = TBSGraphics.getStringBounds(g2,line[1]).width + 4;
 			drawString(line[1], answerX-answerWidth, questionStringY, selected);
-			questionStringY += textHeight + padding.height;
+			questionStringY += TBSGraphics.textHeight + padding.height;
 			i++;
 		}
 	}
@@ -200,7 +196,7 @@ public class RadioQuestionPrompt extends Prompt{
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 
 	public void drawButtons()

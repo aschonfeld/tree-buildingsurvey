@@ -31,8 +31,7 @@ public class AnalysisPrompt extends Prompt
 	Rectangle closeButton;
 	Rectangle startButton;
 	int buttonHeight;
-	int textHeight = -1;
-	
+
 	String instrString;
 	String welcomeMessage;
 
@@ -54,8 +53,6 @@ public class AnalysisPrompt extends Prompt
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
-		if(textHeight == -1)
-			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		int width = 600;
 		promptSize.setSize(width + padding.width * 2, 0);
 		
@@ -73,13 +70,13 @@ public class AnalysisPrompt extends Prompt
 	}
 
 	public void calculateValues(int lineCount) {
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)));
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), 
 				centerY - (promptSize.height / 2));
-		buttonHeight = textHeight + padding.height;
+		buttonHeight = TBSGraphics.textHeight + padding.height;
 		closeButton = new Rectangle((anchorPoint.x + promptSize.width)-buttonHeight, anchorPoint.y,
 				buttonHeight, buttonHeight);
 	}
@@ -98,7 +95,7 @@ public class AnalysisPrompt extends Prompt
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, analysisStringY,  answer);
-			analysisStringY += textHeight + padding.height;
+			analysisStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 	
@@ -109,7 +106,7 @@ public class AnalysisPrompt extends Prompt
 			drawString(line[0], questionX, analysisStringY);
 			int answerWidth = TBSGraphics.getStringBounds(g2,line[1]).width + 4;
 			drawString(line[1], answerX-answerWidth, analysisStringY, true);
-			analysisStringY += textHeight + padding.height;
+			analysisStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 	
@@ -121,7 +118,7 @@ public class AnalysisPrompt extends Prompt
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight, 
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
 					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 

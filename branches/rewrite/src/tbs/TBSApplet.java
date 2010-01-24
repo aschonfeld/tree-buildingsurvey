@@ -67,6 +67,7 @@ public class TBSApplet extends JApplet {
  			RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
  			g2.setRenderingHints(rh);
  			g2.setFont(TBSGraphics.font);
+ 			TBSGraphics.textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
  			Map<PropertyType, Properties> propertiesMap = new TreeMap<PropertyType, Properties>();
  			for(PropertyType pt : PropertyType.values()){
  				if(pt.isLoadedToModel())

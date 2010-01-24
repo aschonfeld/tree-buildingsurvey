@@ -40,8 +40,7 @@ public class HelpPrompt extends Prompt
 	HelpPromptButtonType[] options = HelpPromptButtonType.values();
 	HelpPromptButtonType selectedOption;
 	int buttonHeight;
-	int textHeight = -1;
-
+	
 	List<String> introduction;
 	List<String> instructions;
 	
@@ -87,8 +86,6 @@ public class HelpPrompt extends Prompt
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
-		if(textHeight == -1)
-			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		promptSize.setSize(800 + padding.width * 2, 0);
 		List<String> text = new LinkedList<String>();
 		int totalLines = 0;
@@ -149,8 +146,8 @@ public class HelpPrompt extends Prompt
 	}
 
 	public void calculateValues(int lineCount) {
-		buttonHeight = textHeight + padding.height;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
+		buttonHeight = TBSGraphics.textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)) + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
@@ -176,17 +173,17 @@ public class HelpPrompt extends Prompt
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, helpStringY);
-			helpStringY += textHeight + padding.height;
+			helpStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 	
 	public void drawText(List<String> lines, String header) {
 		int startX = anchorPoint.x + padding.width;
-		TBSGraphics.drawCenteredString(g2, header, startX, helpStringY, 0, textHeight, TBSGraphics.emptyNodeColor);
+		TBSGraphics.drawCenteredString(g2, header, startX, helpStringY, 0, TBSGraphics.textHeight, TBSGraphics.emptyNodeColor);
 		startX += TBSGraphics.buttonsWidth;
 		for(String line : lines){
 			drawString(line, startX, helpStringY);
-			helpStringY += textHeight + padding.height;
+			helpStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -196,7 +193,7 @@ public class HelpPrompt extends Prompt
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight, 
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
 					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 

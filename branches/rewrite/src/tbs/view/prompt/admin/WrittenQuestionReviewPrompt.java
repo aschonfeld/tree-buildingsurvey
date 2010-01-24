@@ -36,7 +36,6 @@ public class WrittenQuestionReviewPrompt extends Prompt
 	Rectangle closeButton;
 	Rectangle pageButtons = new Rectangle();
 	int buttonHeight;
-	int textHeight = -1;
 	List<OpenQuestionButtonType> writtenQuestions = OpenQuestionButtonType.getWrittenButtons();
 	List<List<String>> writtenQuestionTexts;
 	int maxLinesOfQuestionText;
@@ -74,8 +73,6 @@ public class WrittenQuestionReviewPrompt extends Prompt
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
-		if(textHeight == -1)
-			textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		calculateValues();
 		drawBox();
 		TBSGraphics.drawCloseButton(g2, closeButton);
@@ -96,7 +93,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 			writtenAnswerText = TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
 					promptSize.width - padding.width * 2);
 			drawWritten(writtenAnswerText, true);
-			responseStringY += (textHeight + padding.height)*(TBSGraphics.maxLinesOfWrittenText-writtenAnswerText.size());
+			responseStringY += (TBSGraphics.textHeight + padding.height)*(TBSGraphics.maxLinesOfWrittenText-writtenAnswerText.size());
 		}
 	}
 
@@ -113,8 +110,8 @@ public class WrittenQuestionReviewPrompt extends Prompt
 			}
 		}
 		lineCount += maxLinesOfQuestionText*2;
-		buttonHeight = textHeight + padding.height;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
+		buttonHeight = TBSGraphics.textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)) + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
@@ -151,7 +148,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, responseStringY,  answer);
-			responseStringY += textHeight + padding.height;
+			responseStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -162,7 +159,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 			drawString(line[0], questionX, responseStringY);
 			int answerWidth = TBSGraphics.getStringBounds(g2,line[1]).width + 4;
 			drawString(line[1], answerX-answerWidth, responseStringY, true);
-			responseStringY += textHeight + padding.height;
+			responseStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -174,7 +171,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight, 
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
 					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 

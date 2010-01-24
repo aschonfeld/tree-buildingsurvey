@@ -36,8 +36,7 @@ public class WelcomePrompt extends Prompt
 	Rectangle closeButton;
 	Rectangle startButton;
 	int buttonHeight;
-	int textHeight;
-
+	
 	String instrString;
 	String welcomeMessage;
 
@@ -62,7 +61,7 @@ public class WelcomePrompt extends Prompt
 	public void paintComponent(Graphics2D g2) 
 	{
 		this.g2 = g2;
-		textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
+		TBSGraphics.textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 		List<String> incompletedItems = model.incompletedItems();
 		String introString = "";
 		if(incompletedItems.size() == OpenQuestionButtonType.values().length+1)
@@ -87,18 +86,18 @@ public class WelcomePrompt extends Prompt
 				buttonHeight,TBSGraphics.emptyNodeColor);
 		welcomeStringY += buttonHeight;
 		drawText(introduction);
-		welcomeStringY += textHeight + padding.height;
+		welcomeStringY += TBSGraphics.textHeight + padding.height;
 		TBSGraphics.drawCenteredString(g2, instrProps.getProperty("instrHeader"),
 				anchorPoint.x + padding.width, welcomeStringY,
 				promptSize.width - padding.width * 2,
-				textHeight,TBSGraphics.emptyNodeColor);
-		welcomeStringY += (textHeight + padding.height) * 2;
+				TBSGraphics.textHeight,TBSGraphics.emptyNodeColor);
+		welcomeStringY += (TBSGraphics.textHeight + padding.height) * 2;
 		drawText(directions);
 	}
 
 	public void calculateValues(int lineCount) {
-		buttonHeight = textHeight + padding.height;
-		promptSize.setSize(promptSize.width, (textHeight * lineCount) + 
+		buttonHeight = TBSGraphics.textHeight + padding.height;
+		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)) + buttonHeight);
 		int centerX = model.getApplet().getWidth() / 2;
 		int centerY = model.getApplet().getHeight() / 2;
@@ -124,17 +123,17 @@ public class WelcomePrompt extends Prompt
 		int startX = anchorPoint.x + padding.width;
 		for(String line : lines){
 			drawString(line, startX, welcomeStringY);
-			welcomeStringY += textHeight + padding.height;
+			welcomeStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 	
 	public void drawText(List<String> lines, String header) {
 		int startX = anchorPoint.x + padding.width;
-		TBSGraphics.drawCenteredString(g2, header, startX, welcomeStringY, 0, textHeight, TBSGraphics.emptyNodeColor);
+		TBSGraphics.drawCenteredString(g2, header, startX, welcomeStringY, 0, TBSGraphics.textHeight, TBSGraphics.emptyNodeColor);
 		startX += TBSGraphics.buttonsWidth;
 		for(String line : lines){
 			drawString(line, startX, welcomeStringY);
-			welcomeStringY += textHeight + padding.height;
+			welcomeStringY += TBSGraphics.textHeight + padding.height;
 		}
 	}
 
@@ -144,7 +143,7 @@ public class WelcomePrompt extends Prompt
 
 	public void drawString(String s, int x, int y, boolean isSelected) {
 		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, textHeight, 
+			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight, 
 					isSelected ? TBSGraphics.emptyNodeColor : Color.BLACK);
 	}
 

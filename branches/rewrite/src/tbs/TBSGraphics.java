@@ -105,7 +105,7 @@ public class TBSGraphics {
 	* The fixed width of all OrganismNodes. Value is calculated in
 	* TBSModel.createModelElements (CHECK THIS)
 	*/ 
-	public static int studentNodeWidth = 0;
+	public static int studentNodeWidth = 165;
 
 	/**
 	* The fixed height of all OrganismNodes. Value is calculated in
@@ -257,6 +257,8 @@ public class TBSGraphics {
 	public static int questionButtonsStart = 0;
 	
 	public static Stroke closeButtonStroke = null;
+	
+	public static int textHeight = 0;
 	
 	public static Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
 		public int compare( ModelElement o1, ModelElement o2 ) {
