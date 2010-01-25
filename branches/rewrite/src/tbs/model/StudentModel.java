@@ -7,12 +7,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
@@ -303,11 +301,7 @@ public class StudentModel implements TBSModel
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
 	
-	//	ArrayList <String> thisIsAHack = new ArrayList<String>();
-	//	thisIsAHack.add("Questions");	
-//		buttonDimensions = TBSGraphics.get2DStringBounds(g2, thisIsAHack);
-		buttonDimensions = TBSGraphics.get2DStringBounds(g2, 
-			Arrays.asList(OpenQuestionButtonType.values()));
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
 		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + checkDimension.width +
 				TBSGraphics.buttonsXPadding * 2;

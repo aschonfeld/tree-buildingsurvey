@@ -150,21 +150,19 @@ public class StudentView extends JComponent implements Printable {
 		Prompt prompt = model.getPrompt();
 		Student student = model.getStudent();
 		String buttonString;
-		OpenQuestionButtonType q = OpenQuestionButtonType.ONE;
-			if((prompt != null) && (prompt instanceof WrittenQuestionPrompt)
-					&&  q.equals(((WrittenQuestionPrompt)prompt).getCurrentQuestion()))
-				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
-			else
-				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			buttonString = "Questions";
-			if(student.getResponse(OpenQuestionButtonType.ONE).isCompleted() && 
+		if((prompt != null) && prompt instanceof WrittenQuestionPrompt)
+			TBSGraphics.renderButtonBackground(g2, buttonRect, true);
+		else
+			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+		g2.setColor(Color.gray);
+		g2.draw(buttonRect);
+		buttonString = "Questions";
+		if(student.getResponse(OpenQuestionButtonType.ONE).isCompleted() && 
 				student.getResponse(OpenQuestionButtonType.TWO).isCompleted())
-				buttonString += " \u2713";
-			TBSGraphics.drawCenteredString(g2, buttonString,
-					buttonRect.x, upperY, buttonRect.width, 0);
-			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
+			buttonString += " \u2713";
+		TBSGraphics.drawCenteredString(g2, buttonString,
+				buttonRect.x, upperY, buttonRect.width, 0);
+		buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
 	
 	}
 
