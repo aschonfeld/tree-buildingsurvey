@@ -105,7 +105,7 @@ public class WrittenQuestionPrompt extends Prompt{
 			}
 		}else if(closeButton.contains(e.getPoint()))
 			setFinished(true);
-		if(timer.isRunning())
+		if(isFinished())
 			timer.stop();
 	}
 
