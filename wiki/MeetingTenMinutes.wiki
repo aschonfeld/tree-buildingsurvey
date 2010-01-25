@@ -16,6 +16,7 @@ The team has submitted a version of the product that has about 90% of the functi
 
   Next up, we gave a Professor White a demosstration of the new and improved Administrator Version of the product.  Originally, for every student that had submitted a survey Professor White would have had to login with the admin password, observe that student's saved work, logout and then repeat those steps again.  Our new version of the admin product required no excessive logging in & logging out.  All of his students and their saved data is easily displayed(see image below) for quick analysis.  This new functionality was met with much excitement.
 
+http://upload.wikimedia.org/wikipedia/commons/7/72/New_Admin_Version.gif
 
 *What Happens Next?*
   Next up, we discussed what still needs to be completed for February 1st.  These things were as follows:
