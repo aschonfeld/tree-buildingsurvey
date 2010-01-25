@@ -42,8 +42,8 @@ import tbs.view.prompt.student.WrittenQuestionPrompt;
 import tbs.view.prompt.student.WelcomePrompt;
 
 /**
-* TBSView contains the logic for rendering the information contained in
-* the data model.
+* StudentView represents the model for a test subject, displaying controls for building and
+* manipulating a tree.
 **/
 public class StudentView extends JComponent implements Printable {
 
@@ -150,7 +150,7 @@ public class StudentView extends JComponent implements Printable {
 		Prompt prompt = model.getPrompt();
 		Student student = model.getStudent();
 		String buttonString;
-		for(OpenQuestionButtonType q: OpenQuestionButtonType.values()) {
+		OpenQuestionButtonType q = OpenQuestionButtonType.ONE;
 			if((prompt != null) && (prompt instanceof WrittenQuestionPrompt)
 					&&  q.equals(((WrittenQuestionPrompt)prompt).getCurrentQuestion()))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
@@ -158,13 +158,14 @@ public class StudentView extends JComponent implements Printable {
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			buttonString = q.toString();
-			if(student.getResponse(q).isCompleted())
+			buttonString = "Questions";
+			if(student.getResponse(OpenQuestionButtonType.ONE).isCompleted() && 
+				student.getResponse(OpenQuestionButtonType.TWO).isCompleted())
 				buttonString += " \u2713";
 			TBSGraphics.drawCenteredString(g2, buttonString,
 					buttonRect.x, upperY, buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
-		}
+	
 	}
 
 	/**

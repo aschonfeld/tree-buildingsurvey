@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
@@ -301,9 +302,10 @@ public class StudentModel implements TBSModel
 				TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
-		
-		buttonDimensions = TBSGraphics.get2DStringBounds(g2,
-				Arrays.asList(OpenQuestionButtonType.values()));
+	
+		ArrayList <String> thisIsAHack = new ArrayList<String>();
+		thisIsAHack.add("Questions");	
+		buttonDimensions = TBSGraphics.get2DStringBounds(g2, thisIsAHack);
 		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + checkDimension.width +
 				TBSGraphics.buttonsXPadding * 2;

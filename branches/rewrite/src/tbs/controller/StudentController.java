@@ -63,7 +63,7 @@ public class StudentController extends TBSController
 	
 	/**
 	* Used in automated testing: prints KeyEvent to the console
-	* {@see StudentControllerTest}
+	* (See {@see StudentControllerTest})
 	*/
 	public void printKeyEvent(KeyEvent e) {
 		System.out.println(e.toString());
@@ -71,8 +71,8 @@ public class StudentController extends TBSController
 	
 	/**
 	* Returns true if a label is being edited. Provided for automated
-	* testing. 
-	* {@see StudentControllerTest}
+   * testing. 
+	* (See {@see StudentControllerTest})
 	*/
 	public boolean getLabelingInProgress() {
 		return labelingInProgress;
@@ -164,12 +164,12 @@ public class StudentController extends TBSController
 	}
 		
 /**
-* Not implemented
+* mouseEntered events are not used in TBS
 */		
 	public void mouseEntered(MouseEvent e){}
 
 /**
-* Not implemented
+* mouseExited events are not used in TBS
 */		
 	public void mouseExited(MouseEvent e){}
 	

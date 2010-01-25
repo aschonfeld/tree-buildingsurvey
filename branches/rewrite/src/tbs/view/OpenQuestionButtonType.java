@@ -7,6 +7,7 @@ public enum OpenQuestionButtonType {
 
 	ONE("1", "Question 1", "questionOne", false, -1),
 	TWO("2", "Question 2", "questionTwo", false, -1);
+
 	/*
 	 * We are eliminating the radio question, until Professor White
 	 * says otherwise. Here is the code to add it:
