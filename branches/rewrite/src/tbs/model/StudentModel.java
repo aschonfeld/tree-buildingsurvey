@@ -303,9 +303,11 @@ public class StudentModel implements TBSModel
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
 				TBSGraphics.buttonsYPadding * 2;
 	
-		ArrayList <String> thisIsAHack = new ArrayList<String>();
-		thisIsAHack.add("Questions");	
-		buttonDimensions = TBSGraphics.get2DStringBounds(g2, thisIsAHack);
+	//	ArrayList <String> thisIsAHack = new ArrayList<String>();
+	//	thisIsAHack.add("Questions");	
+//		buttonDimensions = TBSGraphics.get2DStringBounds(g2, thisIsAHack);
+		buttonDimensions = TBSGraphics.get2DStringBounds(g2, 
+			Arrays.asList(OpenQuestionButtonType.values()));
 		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + checkDimension.width +
 				TBSGraphics.buttonsXPadding * 2;

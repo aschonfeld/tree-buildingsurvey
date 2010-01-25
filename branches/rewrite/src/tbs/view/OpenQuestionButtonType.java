@@ -5,8 +5,8 @@ import java.util.List;
 
 public enum OpenQuestionButtonType {
 
-	ONE("1", "Question 1", "questionOne", false, -1),
-	TWO("2", "Question 2", "questionTwo", false, -1);
+	ONE("Questions", "Question 1", "questionOne", false, -1),
+	TWO("Questions", "Question 2", "questionTwo", false, -1);
 
 	/*
 	 * We are eliminating the radio question, until Professor White
