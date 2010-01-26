@@ -99,7 +99,8 @@ public class RadioQuestionReviewPrompt extends Prompt
 		drawButtons();
 		
 		responseStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Open Responses - " + currentRadioQuestion.getAdminText(),
+		TBSGraphics.drawCenteredString(g2,
+				new StringBuffer("Open Responses - ").append(currentRadioQuestion.getAdminText()).toString(),
 				anchorPoint.x + padding.width, responseStringY,
 				promptSize.width - padding.width * 2,
 				buttonHeight,TBSGraphics.emptyNodeColor);

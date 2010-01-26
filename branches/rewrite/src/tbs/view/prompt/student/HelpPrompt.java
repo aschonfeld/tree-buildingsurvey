@@ -120,12 +120,12 @@ public class HelpPrompt extends Prompt
 		List<String> text = new LinkedList<String>();
 		int totalLines = 0;
 		if(HelpPromptButtonType.SURVEY_STATUS.equals(selectedOption)){
-			String status = model.surveyStatus();
-			if(status == "")
-				status = "Currently you have created a tree and entered " + 
-				"responses to all the open-response questions. " +
-				"You are ready to submit your survey.";
-			text = TBSGraphics.breakStringByLineWidth(g2,status,
+			StringBuffer status = new StringBuffer(model.surveyStatus());
+			if(status.length() == 0)
+				status.append("Currently you have created a tree and entered ") 
+				.append("responses to all the open-response questions. ")
+				.append("You are ready to submit your survey.");
+			text = TBSGraphics.breakStringByLineWidth(g2,status.toString(),
 					promptSize.width - padding.width * 2);
 			totalLines += text.size() + 2;
 		}else if(HelpPromptButtonType.INSTRUCTIONS.equals(selectedOption)){
@@ -174,7 +174,8 @@ public class HelpPrompt extends Prompt
 		TBSGraphics.drawCloseButton(g2, closeButton);
 		drawButtons();
 		helpStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Help - " + selectedOption.getText(),
+		TBSGraphics.drawCenteredString(g2,
+				new StringBuffer("Help - ").append(selectedOption.getText()).toString(),
 				anchorPoint.x + padding.width, helpStringY,
 				promptSize.width - padding.width * 2,
 				buttonHeight,TBSGraphics.selectedPromptTextColor);

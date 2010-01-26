@@ -230,7 +230,8 @@ public class WrittenQuestionPrompt extends Prompt{
 		drawButtons();
 
 		questionStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentQuestion.getAdminText(),
+		TBSGraphics.drawCenteredString(g2,
+				new StringBuffer("Open Response - ").append(currentQuestion.getAdminText()).toString(),
 				anchorPoint.x + padding.width, questionStringY,width,
 				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		questionStringY += buttonHeight;

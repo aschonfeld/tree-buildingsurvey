@@ -130,7 +130,8 @@ public class RadioQuestionPrompt extends Prompt{
 		drawButtons();
 
 		questionStringY = anchorPoint.y;
-		TBSGraphics.drawCenteredString(g2,"Open Response - " + currentRadioQuestion.getAdminText(),
+		TBSGraphics.drawCenteredString(g2,
+				new StringBuffer("Open Response - ").append(currentRadioQuestion.getAdminText()).toString(),
 				anchorPoint.x + padding.width, questionStringY,width,
 				buttonHeight,TBSGraphics.selectedPromptTextColor);
 		questionStringY += buttonHeight;
@@ -223,7 +224,7 @@ public class RadioQuestionPrompt extends Prompt{
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, "" + (i+1), buttonRect.x,
+			TBSGraphics.drawCenteredString(g2,new StringBuffer(i+1).toString(), buttonRect.x,
 					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x, buttonRect.y + (radioQuestionSelection.height/questionCount));
 		}

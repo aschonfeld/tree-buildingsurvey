@@ -91,7 +91,7 @@ public class TBSApplet extends JApplet {
  				try{
  					studentCt = Integer.parseInt(numOfStudents);
  				} catch(NumberFormatException e) {
- 					System.out.println("TBSApplet:Error parsing student count(value-" + numOfStudents + ")");
+ 					System.out.println(new StringBuffer("TBSApplet:Error parsing student count(value-").append(numOfStudents).append(")").toString());
  				}
  				List<String> students = new LinkedList<String>();
  				for(int i=1; i<=studentCt; i++){
@@ -137,7 +137,7 @@ public class TBSApplet extends JApplet {
 				name = entry.getKey().toString().replace("_", " ");
 				value = entry.getValue().toString();
 				splitValue = value.split(",");
-				imageFilename = "images/" + splitValue[0];
+				imageFilename = new StringBuffer("images/").append(splitValue[0]).toString();
 				URL imageURL = this.getClass().getResource(imageFilename);
 				URLConnection imageconn=
 					(URLConnection) imageURL.openConnection(); 
@@ -149,7 +149,8 @@ public class TBSApplet extends JApplet {
 				imageis.close();
 			}
  		} catch (Exception e){
- 			System.out.println("Error loading image " + imageFilename + ": " + e);
+ 			System.out.println(new StringBuffer("Error loading image ")
+ 			.append(imageFilename).append(": ").append(e).toString());
  			return organismNameToImage;
  		} 
  		return organismNameToImage;
@@ -227,7 +228,8 @@ public class TBSApplet extends JApplet {
 			props.load(this.getClass().getResource(filename).openStream());
 			return props;
 		}catch(Exception e){
-			System.out.println("Unable to load " + filename + ": " + e);
+			System.out.println(new StringBuffer("Unable to load ")
+			.append(filename).append(": ").append(e).toString());
 			return new Properties();
 		}
 	}

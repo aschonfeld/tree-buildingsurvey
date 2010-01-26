@@ -220,7 +220,7 @@ public class WelcomePrompt extends Prompt
 		if(incompletedItems.size() < OpenQuestionButtonType.values().length+1)
 			welcome.append(" back");
 		if(name != "")
-			welcome.append(", "+name+", ");
+			welcome.append(", ").append(name).append(", ");
 		welcome.append(" to the Diversity Of Life Survey! ");
 		if(lastUpdate != null && lastUpdate.length() != 0){
 			if(incompletedItems.isEmpty())
@@ -236,7 +236,7 @@ public class WelcomePrompt extends Prompt
 					String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
 					for(String s : incompletedItems)
 						welcome.append(", ").append(s);
-					welcome.append(" & " + statusEnd + ". ");
+					welcome.append(" & ").append(statusEnd).append(". ");
 				}
 			}
 		}

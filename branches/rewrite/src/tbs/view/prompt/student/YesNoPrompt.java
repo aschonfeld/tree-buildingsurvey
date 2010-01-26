@@ -45,8 +45,8 @@ public class YesNoPrompt extends Prompt{
 		super();
 		this.model = model;
 		this.promptType = promptType;
-		question = "Are you sure you want to " + promptType.getText() +
-			"? You will not be able to undo.";
+		question = new StringBuffer("Are you sure you want to ").append(promptType.getText())
+			.append("? You will not be able to undo.").toString();
 		buttons = YesNoButtonType.values();
 	}
 	

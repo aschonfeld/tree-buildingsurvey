@@ -81,7 +81,9 @@ public class WrittenQuestionReviewPrompt extends Prompt
 
 		responseStringY = anchorPoint.y;
 		int maxQuestion = currentPage * 2;
-		TBSGraphics.drawCenteredString(g2,"Open Responses - Questions " + (maxQuestion-1) + " & " + maxQuestion,
+		TBSGraphics.drawCenteredString(g2,
+				new StringBuffer("Open Responses - Questions ").append(maxQuestion-1)
+				.append(" & ").append(maxQuestion).toString(),
 				anchorPoint.x + padding.width, responseStringY,
 				promptSize.width - padding.width * 2,
 				buttonHeight,TBSGraphics.emptyNodeColor);

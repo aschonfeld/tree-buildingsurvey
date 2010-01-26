@@ -17,9 +17,9 @@ public class RadioResponse extends Response{
 	}
 	
 	public String getText() {
-		String radioAnswersToString = "";
+		StringBuffer radioAnswersToString = new StringBuffer();
 		for(OpenQuestionPromptButtonType answer : radioAnswers)
-			radioAnswersToString += "" + answer.ordinal()+",";
+			radioAnswersToString.append("").append(answer.ordinal()).append(",");
 		return radioAnswersToString.substring(0, radioAnswersToString.length()-1);
 	}
 	

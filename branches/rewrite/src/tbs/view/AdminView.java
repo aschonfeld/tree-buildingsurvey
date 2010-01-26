@@ -311,18 +311,18 @@ public class AdminView extends JComponent implements Printable {
         	buttonClicked = TBSButtonType.TREE;
 		
         Properties adminProps = model.getProperties(PropertyType.ADMIN);
-		String screenString = String.format(adminProps.getProperty(buttonClicked.name()), model.getStudent().getName());
+		StringBuffer screenString = new StringBuffer(String.format(adminProps.getProperty(buttonClicked.name()), model.getStudent().getName()));
 		if(TBSButtonType.TREE.equals(buttonClicked)){
 			String lastUpdate = model.getStudent().getLastUpdate();
 			if(lastUpdate != null && lastUpdate.length() > 0)
-				screenString += "(Last Update: " + lastUpdate + ")";
+				screenString.append("(Last Update: ").append(lastUpdate).append(")");
 		}
 		int studentWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth + 
 				+ verticalBar.getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
 		int width = model.getApplet().getWidth() - studentWidth;
 		int x = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-verticalBar.getWidth());
 		
-		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
+		List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString.toString(), width);
 		int yVal = model.getApplet().getHeight() - (TBSGraphics.buttonsHeight * (lines.size()+1));
 		for(String line : lines) {
 			Dimension d = TBSGraphics.getStringBounds(g2, line);
