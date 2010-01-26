@@ -513,6 +513,8 @@ public class AdminModel implements TBSModel
 	public void questionReview() {
 		if(writtenQuestionReviewPrompt == null)
 			writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
+		else
+			writtenQuestionReviewPrompt.setFinished(false);
 		this.prompt = writtenQuestionReviewPrompt;
 		view.refreshGraphics();
 	}
@@ -520,6 +522,8 @@ public class AdminModel implements TBSModel
 	public void analyze(){
 		if(analysisPrompt == null)
 			analysisPrompt = new AnalysisPrompt(this);
+		else
+			analysisPrompt.setFinished(false);
 		this.prompt = analysisPrompt;
 		view.refreshGraphics();
 	}
