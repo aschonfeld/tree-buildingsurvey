@@ -717,6 +717,7 @@ public class StudentModel implements TBSModel
 	}
 	
 	public void helpUser() {
+		helpPrompt.setFinished(false);
 		this.prompt = helpPrompt;
 		view.refreshGraphics();
 	}
