@@ -68,8 +68,9 @@ public class Connection extends ModelElement implements Cloneable
 	}
 
 	public StringBuffer dump() {
-		String ret = "C:%d:%d:%d";
-		return new StringBuffer(String.format(ret, this.getId(),
-				this.from.getId(), this.to.getId()));
+		return new StringBuffer("C:")
+			.append(this.getId()).append(":")
+			.append(this.from.getId()).append(":")
+			.append(this.to.getId());
 	}
 }

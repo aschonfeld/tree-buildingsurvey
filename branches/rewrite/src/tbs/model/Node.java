@@ -178,15 +178,16 @@ public abstract class Node extends ModelElement implements Cloneable
 	{
 		StringBuffer ret;
 		ret =new StringBuffer( (this instanceof OrganismNode)?"O:":"E:");
-		ret.append(this.getId()+":");
-		ret.append(this.getName()+":");
-		ret.append(this.getX()+":" + this.getY()+":");
-		ret.append(this.isInTree()+":(");
+		ret.append(this.getId()).append(":");
+		ret.append(this.getName()).append(":");
+		ret.append(this.getX()).append(":");
+		ret.append(this.getY()).append(":");
+		ret.append(this.isInTree()).append(":(");
 		for (Node toNode : this.getConnectedTo())
-			ret.append(toNode.getId()+",");
+			ret.append(toNode.getId()).append(",");
 		ret.append("):(");
 		for (Node fromNode : this.getConnectedFrom())
-			ret.append(fromNode.getId()+",");	
+			ret.append(fromNode.getId()).append(",");	
 		ret.append("):");
 		return ret;
 	}
@@ -223,8 +224,8 @@ public abstract class Node extends ModelElement implements Cloneable
 		}else
 			connectedTo.add(n);
 		
-		System.out.println("AddConnection: connected" + getName() + " to " +
-				n.getName());
+		System.out.println(new StringBuffer("AddConnection: connected").append(getName())
+				.append(" to ").append(n.getName()).toString());
 	}
 
 	public void removeConnectionTo(Node n)

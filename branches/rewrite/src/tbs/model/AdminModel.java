@@ -409,8 +409,9 @@ public class AdminModel implements TBSModel
 			MESerialNumber = savedTree.size()+1;
 			System.out.println("loadTree: end");
 		}catch(NumberFormatException e){
-			System.out.println("There was an error parsing saved tree for " + selectedStudent.getName() + ". " + 
-			"This tree has been reset.");
+			System.out.println(new StringBuffer("There was an error parsing saved tree for ")
+			.append(selectedStudent.getName()).append(". ")
+			.append("This tree has been reset.").toString());
 		}
 	}
 
@@ -429,8 +430,8 @@ public class AdminModel implements TBSModel
 			x = Integer.parseInt(data[3]);
 			y = Integer.parseInt(data[4]);
 		}catch(NumberFormatException e){
-			System.out.println("StudentModel:loadOrganismNode:Error parsing organism data (id:" + data[1] +
-					",x:" + data[3] + "y:" + data[4]+")");
+			System.out.println(new StringBuffer("StudentModel:loadOrganismNode:Error parsing organism data (id:")
+			.append(data[1]).append(",x:").append(data[3]).append("y:").append(data[4]).append(")").toString());
 			throw e;
 		}
 		ModelElement me = getElementBySN(id);
@@ -476,8 +477,8 @@ public class AdminModel implements TBSModel
 			from = Integer.parseInt(data[2]);
 			to = Integer.parseInt(data[3]);
 		}catch(NumberFormatException e){
-			System.out.println("StudentModel:loadConnection:Error parsing connection data (id:" + data[1] +
-					",from id:" + data[2] + "to id:" + data[3]+")");
+			System.out.println(new StringBuffer("StudentModel:loadConnection:Error parsing connection data (id:").append(data[1])
+					.append(",from id:").append(data[2]).append("to id:").append(data[3]).append(")").toString());
 			throw e;
 		}
 		int fromIndex = findIndexById(from, parsedElements);
@@ -490,9 +491,9 @@ public class AdminModel implements TBSModel
 	}
 
 	public String exportTree(){
-		StringBuilder export = new StringBuilder();
+		StringBuffer export = new StringBuffer();
 		for(ModelElement m : modelElements)
-			export.append(m.dump() + "#");
+			export.append(m.dump()).append("#");
 		return export.toString();
 
 	}
