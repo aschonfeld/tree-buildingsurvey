@@ -174,21 +174,20 @@ public abstract class Node extends ModelElement implements Cloneable
 	*	improved.
 	*	Make suggestions. 
 	*/
-	public String dump()
+	public StringBuffer dump()
 	{
-		String ret;
-		ret = (this instanceof OrganismNode)?"O:":"E:";
-		ret = ret + this.getId()+":";
-		ret = ret + this.getName()+":";
-		//ret = ret + this.getImgFileName()+":";
-		ret = ret + this.getX()+":" + this.getY()+":";
-		ret = ret + this.isInTree()+":(";
+		StringBuffer ret;
+		ret =new StringBuffer( (this instanceof OrganismNode)?"O:":"E:");
+		ret.append(this.getId()+":");
+		ret.append(this.getName()+":");
+		ret.append(this.getX()+":" + this.getY()+":");
+		ret.append(this.isInTree()+":(");
 		for (Node toNode : this.getConnectedTo())
-			ret = ret + toNode.getId()+",";
-		ret = ret +"):(";
+			ret.append(toNode.getId()+",");
+		ret.append("):(");
 		for (Node fromNode : this.getConnectedFrom())
-			ret = ret + fromNode.getId()+",";	
-		ret = ret +"):";
+			ret.append(fromNode.getId()+",");	
+		ret.append("):");
 		return ret;
 	}
 
