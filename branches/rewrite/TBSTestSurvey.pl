@@ -308,7 +308,7 @@ sub load_student_survey {
   	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
   	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
   	print "<tr><td valign=\"top\"><center>\n";
-    print "<input type=\"button\" value=\"Logout\" onclick=\"window.navigate('$script_url');\">\n";
+    print "<input type=\"button\" value=\"Logout\" onclick=\"window.location = '$script_url';\">\n";
     print "</center></td></tr>\n";
     print "<tr><td><center>\n";
     print "<font size=+1>Diversity of Life<br> Survey<br> for<br> $name</font><br>\n";
@@ -402,7 +402,7 @@ sub load_admin_survey {
   	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
   	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
   	print "<tr><td valign=\"top\"><center>\n";
-  	print "<input type=\"button\" value=\"Logout\" onclick=\"window.navigate('$script_url');\">\n";
+  	print "<input type=\"button\" value=\"Logout\" onclick=\"window.location = '$script_url';\">\n";
   	print "</center></td></tr>\n";
   	print "<tr><td><center>\n";
   	print "<font size=+1>Diversity of Life<br> Survey<br> Administrator Version</font><br>\n";
