@@ -27,7 +27,6 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.Timer;
-import javax.swing.text.View;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -163,7 +162,8 @@ public class AdminView extends JComponent implements Printable {
 			buttonClicked = TBSButtonType.TREE;
 		Graphics2D g2 = (Graphics2D) g;
 		List<TBSButtonType> buttons = model.getButtons();
-		int studentWidth = TBSGraphics.studentNodeWidth 
+		int characterWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+		int studentWidth = characterWidth +
 		+ verticalBar.getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
 		TBSGraphics.questionButtonsStart = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-verticalBar.getWidth())
 		- ((TBSGraphics.buttonsWidth*buttons.size())/2);
@@ -234,9 +234,8 @@ public class AdminView extends JComponent implements Printable {
 	public void renderStudents(Graphics2D g2){
 		String selectedStudentName = model.getStudent().getName();
 		int x,y,width;
-		width = TBSGraphics.studentNodeWidth;
-		Dimension d = TBSGraphics.getStringBounds(g2, " \u2713");
-		width -= d.width + TBSGraphics.paddingWidth;
+		int characterWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+		width = TBSGraphics.maxStudentNameWidth - TBSGraphics.paddingWidth;
 		for(Student student : model.getStudents()){
 			if(student.getName().equals(selectedStudentName))
 				g2.setColor(Color.GREEN);
@@ -245,11 +244,17 @@ public class AdminView extends JComponent implements Printable {
 			x = student.getAnchorPoint().x + studentBar.getWidth();
 			y = student.getAnchorPoint().y - studentYOffset;
 			g2.fillRect(x, y,
-					TBSGraphics.studentNodeWidth, TBSGraphics.studentNodeHeight);
+					characterWidth, TBSGraphics.studentNodeHeight);
+			String studentIndicators = "";
+			int indicatorsWidth = TBSGraphics.arrowWidth + TBSGraphics.checkWidth;
+			if(student.hasArrows())
+				studentIndicators += " \u2192";
 			String lastUpdate = student.getLastUpdate();
 			if(lastUpdate != null && lastUpdate.length() != 0)
-				TBSGraphics.drawCenteredString(g2, " \u2713",
-						x + width, y, d.width + TBSGraphics.paddingWidth,
+				studentIndicators += " \u2713";
+			if(studentIndicators.length() > 0)
+				TBSGraphics.drawCenteredString(g2, studentIndicators,
+						x + width, y, indicatorsWidth + TBSGraphics.paddingWidth,
 						TBSGraphics.studentNodeHeight,
 						Color.BLACK);
 			y += TBSGraphics.paddingWidth;
@@ -312,7 +317,7 @@ public class AdminView extends JComponent implements Printable {
 			if(lastUpdate != null && lastUpdate.length() > 0)
 				screenString += "(Last Update: " + lastUpdate + ")";
 		}
-		int studentWidth = TBSGraphics.studentNodeWidth 
+		int studentWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth + 
 				+ verticalBar.getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
 		int width = model.getApplet().getWidth() - studentWidth;
 		int x = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-verticalBar.getWidth());

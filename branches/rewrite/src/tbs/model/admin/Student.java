@@ -74,7 +74,7 @@ public class Student {
 		Dimension d = TBSGraphics.getStringBounds(g2, name);
 		width = d.width;
 		height = d.height;
-		nodeName = TBSGraphics.breakStringByLineWidth(g2, name, 150);
+		nodeName = TBSGraphics.breakStringByLineWidth(g2, name, TBSGraphics.maxStudentNameWidth);
 	}
 	
 	public String toString(){

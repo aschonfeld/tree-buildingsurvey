@@ -94,7 +94,9 @@ public class AdminController extends TBSController
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
-		if (x > scrollWidth && x < TBSGraphics.studentNodeWidth){
+		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+        
+		if (x > scrollWidth && x < (studentButtonWidth+scrollWidth)){
 			int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -158,7 +160,8 @@ public class AdminController extends TBSController
 		view.requestFocusInWindow();
         // if mouse is in button bar
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
-        if (x > scrollWidth && x < TBSGraphics.studentNodeWidth)
+		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+        if (x > scrollWidth && x < (studentButtonWidth+scrollWidth))
 			handleStudentPressed(x, y);
 	}
 	

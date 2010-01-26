@@ -105,7 +105,10 @@ public class TBSGraphics {
 	* The fixed width of all OrganismNodes. Value is calculated in
 	* TBSModel.createModelElements (CHECK THIS)
 	*/ 
-	public static int studentNodeWidth = 165;
+	public static int maxStudentNameWidth = 150;
+	public static int checkWidth = 0;
+	public static int arrowWidth = 0;
+	
 
 	/**
 	* The fixed height of all OrganismNodes. Value is calculated in
