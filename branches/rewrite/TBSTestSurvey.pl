@@ -53,6 +53,13 @@ sub login_page {
 	print "  return true;\n";
 	print "}\n";
 	print "function checkLogin() {\n";
+	print " if(!document.form.AdminCB.checked) {\n";
+	print " 	var user = document.form.Name.value;\n";
+	print " 	if(user == \"\") {\n";
+	print "    		alert(\"You must select a username!\");\n";
+	print "    		return false;\n";
+	print "  	}\n";
+	print " }\n";
 	print " var pass = document.form.Passwd.value;\n";
 	print " if(pass == \"\") {\n";
 	print "    alert(\"You must enter a password!\");\n";
@@ -158,7 +165,7 @@ sub load_survey {
 		$pw = $result[0];
 		$dbh->disconnect();
 		
-		if(&decrypt_pw($pw,$password) != 1){
+		if(&decrypt_pw($pw,$password) == 1){
 			&load_student_survey;
 		}else{
 		   print "Content-type: text/html\n\n";
@@ -412,7 +419,6 @@ sub load_admin_survey {
 }
 
 sub decrypt_pw {
-
 	my $cryptpw = $_[0];
 	my $pw = $_[1];
 	my $isok = 0;
