@@ -7,10 +7,10 @@ use treeDB;
 
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
-$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
-#$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
-$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
-#$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
+#$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
+$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
+#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
 $admin_pw = "lab09acce55";
 $too_late_month = 12;
 $too_late_day = 12;
@@ -110,7 +110,7 @@ sub login_page {
     print "<input type=\"checkbox\" name=\"AdminCB\" onclick=\"return updateView();\"><br><br>\n";
 	print "<div id=\"NameSelection\">\n";
 	print "Choose your name from this list:<br>\n";
-    print "<select name=\"Name\" size=6 style=\"width:200px;\">\n";
+    print "<select name=\"Name\" size=10 style=\"width:200px;\">\n";
     foreach $name (sort keys %name_grade_hash) {
          print "<option value=\"$name\">$name</option>\n";
     }
