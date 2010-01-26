@@ -129,6 +129,7 @@ public class AdminController extends TBSController
 	* ALSO: This is where you get the result of a prompt
 	*/
 	public void mousePressed(MouseEvent e){
+		view.requestFocusInWindow();
 		int x = e.getX();
         int y = e.getY();
 		if(y < TBSGraphics.buttonsHeight) {
@@ -157,7 +158,6 @@ public class AdminController extends TBSController
 			return;
 		}
 		
-		view.requestFocusInWindow();
         // if mouse is in button bar
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
 		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
