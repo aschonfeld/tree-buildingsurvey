@@ -241,7 +241,7 @@ public class AdminView extends JComponent implements Printable {
 				g2.setColor(Color.GREEN);
 			else
 				g2.setColor(Color.WHITE);
-			x = student.getAnchorPoint().x + studentBar.getWidth();
+			x = student.getAnchorPoint().x + (hasStudentScroll ? studentBar.getWidth() : 0);
 			y = student.getAnchorPoint().y - studentYOffset;
 			g2.fillRect(x, y,
 					characterWidth, TBSGraphics.studentNodeHeight);
@@ -307,7 +307,7 @@ public class AdminView extends JComponent implements Printable {
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
 		int yStep = TBSGraphics.buttonsHeight;
         
-        if(buttonClicked == null)
+        if(buttonClicked == null || model.getPrompt() == null)
         	buttonClicked = TBSButtonType.TREE;
 		
         Properties adminProps = model.getProperties(PropertyType.ADMIN);

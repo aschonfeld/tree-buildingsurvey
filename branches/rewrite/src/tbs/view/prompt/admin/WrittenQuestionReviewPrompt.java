@@ -17,6 +17,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.AdminModel;
 import tbs.properties.PropertyType;
+import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 
@@ -113,7 +114,12 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		buttonHeight = TBSGraphics.textHeight + padding.height;
 		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + 
 				(padding.height * (lineCount + 1)) + buttonHeight);
-		int centerX = model.getApplet().getWidth() / 2;
+		AdminView view = (AdminView) model.getView();
+		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
+		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+        int adminWidth = model.getApplet().getWidth() - (view.getVerticalBar().getWidth() + scrollWidth + studentButtonWidth);
+        
+		int centerX = (adminWidth / 2) + scrollWidth + studentButtonWidth;
 		int centerY = model.getApplet().getHeight() / 2;
 		anchorPoint = new Point(centerX - (promptSize.width / 2), 
 				centerY - (promptSize.height / 2));
