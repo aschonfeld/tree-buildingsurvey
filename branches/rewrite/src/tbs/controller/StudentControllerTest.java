@@ -34,11 +34,14 @@ public class StudentControllerTest
 	private Point mouseLocation = new Point(300, 300);
 	//private Point minLocation = new Point(minX, minY);
 	//private Point maxLocation = new Point(maxX, maxY);
-	private int minDelta = 3;
+	private int minDelta = 8;
 	private int maxDelta = 10;
 	private Random randomGenerator;
 	private String actionString = "NONE";
+	private ArrayList<Point> returnPoints; 
 	private boolean doTest = true;
+	private SpecialPoint lastSpecialPoint = SpecialPoint.SELECT;
+	private int lineOfDeath = 180;
 	
 	private Timer timer;
 	private ActionListener fireNextEvent = new ActionListener() {
@@ -118,14 +121,16 @@ public class StudentControllerTest
 		timer = new Timer(timerMillis, fireNextEvent);
  		timer.start();
  		randomGenerator = new Random(System.currentTimeMillis());
+ 		returnPoints = new ArrayList<Point>();
+ 		returnPoints.add(new Point(300, 300));
     }
 	
 	private void nextEvent() {
 		if (eventStack.empty()) {
 			if(!doTest) return;
-			insertWait(100);
+			//insertWait(10);
 			nextUserAction();
-			insertWait(100);
+			//insertWait(10);
 		} else {
 			executeNextSystemEvent();
 		}
@@ -161,6 +166,7 @@ public class StudentControllerTest
 	}
 	
 	private void nextUserAction() {
+		removeRandomReturnPoint();
 		if(sc.getLabelingInProgress()) {
 			pressKey();
 			return;
@@ -172,10 +178,6 @@ public class StudentControllerTest
 		}
 		if(randVal < 80.0) {
 			dragMouseTo();
-			return;
-		}
-		if(randVal < 90.0) {
-			clickMouse();
 			return;
 		}
 		pressButton();
@@ -195,21 +197,34 @@ public class StudentControllerTest
 	}
 	
 	private void pressButton() {
-		pressButton(getRandomButton());
+		lastSpecialPoint = getRandomButton();
+		pressButton(lastSpecialPoint);
     }
 	
 	private void pressButton(SpecialPoint button) {
-		clickMouse();
 		moveMouseTo(button.getPoint());
+		clickMouse();
+		moveMouseToReverse(mouseLocation);
     }
+	
+	private Point getRandomReturnPoint() {
+		int index = randomGenerator.nextInt(returnPoints.size());
+		return returnPoints.get(index);
+	}
+	
+	private void removeRandomReturnPoint() {
+		//if(returnPoints.size() < 3) return;
+		//int index = randomGenerator.nextInt(returnPoints.size());
+		//returnPoints.remove(index);
+	}
 	
 	private SpecialPoint getRandomButton() {
 		double randVal = Math.random() * 100.0;
 		if  (randVal < 10.0) return SpecialPoint.SELECT;
 		if  (randVal < 15.0) return SpecialPoint.ADD;
 		if  (randVal < 20.0) return SpecialPoint.DELETE;
-		if  (randVal < 80.0) return SpecialPoint.LINK;
-		if  (randVal < 95.0) return SpecialPoint.LABEL;
+		if  (randVal < 60.0) return SpecialPoint.LINK;
+		if  (randVal < 85.0) return SpecialPoint.LABEL;
 		return SpecialPoint.UNDO;
     }
 	
@@ -221,17 +236,39 @@ public class StudentControllerTest
 	}
 	
 	private void clickMouse() {
-		insertWait(1000);
+		insertWait(100);
 		eventStack.push(new SystemEvent(SystemEventType.MOUSE_CLICKED));
 		eventStack.push(new SystemEvent(SystemEventType.MOUSE_RELEASED));
 		insertWait(200);
 		eventStack.push(new SystemEvent(SystemEventType.MOUSE_PRESSED));
-		insertWait(1000);	
+		insertWait(100);	
 	}
 	
-	// move mouse to random point
+	// increased probability of link and label
+	private void randomHelper() {
+		Point location = getRandomReturnPoint();
+		while(location.x < lineOfDeath) location = getRandomReturnPoint();
+		moveMouseTo(location);
+	}
+		
+	// move mouse to random point or previous point
 	private void moveMouseTo() {
-		moveMouseTo(getRandomCoordinate());
+		Point location = getRandomCoordinate();
+		double randVal = Math.random() * 100.0;
+		if(randVal < 75.0) {
+			if(lastSpecialPoint == SpecialPoint.LABEL) {
+				randomHelper();
+				return;
+			}
+			if(lastSpecialPoint == SpecialPoint.LINK) {
+				randomHelper();
+				return;
+			}			
+			moveMouseTo(location);
+			returnPoints.add(location);
+		} else {
+			location = getRandomReturnPoint(); 
+		}
 	}
 	
 	// move mouse to newPoint
@@ -239,6 +276,14 @@ public class StudentControllerTest
 		ArrayList<Point> coordinates = getMouseCoordinates(newPoint);
 		for(int index = coordinates.size() - 1; index > 0; index--) {
 			Point current = coordinates.get(index - 1);
+			eventStack.push(new SystemEvent(SystemEventType.MOUSE_MOVED, current));
+		}
+	}
+	
+	private void moveMouseToReverse(Point newPoint) {
+		ArrayList<Point> coordinates = getMouseCoordinates(newPoint);
+		for(int index = 0; index < coordinates.size(); index++) {
+			Point current = coordinates.get(index);
 			eventStack.push(new SystemEvent(SystemEventType.MOUSE_MOVED, current));
 		}
 	}

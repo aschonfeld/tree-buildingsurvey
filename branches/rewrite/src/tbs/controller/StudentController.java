@@ -66,7 +66,7 @@ public class StudentController extends TBSController
 	* (See {@see StudentControllerTest})
 	*/
 	public void printKeyEvent(KeyEvent e) {
-		System.out.println(e.toString());
+		//System.out.println(e.toString());
 	}
 	
 	/**
