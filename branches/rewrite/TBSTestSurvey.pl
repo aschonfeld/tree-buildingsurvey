@@ -7,10 +7,10 @@ use treeDB;
 
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
-#$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
-$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
-#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
-$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
+$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
+#$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
+$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+#$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
 $admin_pw = "lab09acce55";
 $too_late_month = 12;
 $too_late_day = 12;
@@ -41,6 +41,7 @@ exit 1;
 #------------------
 
 sub login_page {
+	$invalidLogin = $_[0];
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Login to the TBS Survey</title>\n";
@@ -68,6 +69,15 @@ sub login_page {
 	print "  return true;\n";
 	print "}\n";
 	print "function updateView() {\n";
+	print " if(document.layers) {\n";
+	print "        if(document.InvalidLogin) {\n";
+	print "				document.InvalidLogin.display = 'none';\n";
+	print "        }\n";
+	print "  } else {\n";
+	print "        if(document.all.InvalidLogin) {\n";
+	print "				document.all.InvalidLogin.style.display = 'none';\n";
+	print "        }\n";
+	print " }\n";
 	print " if(document.form.AdminCB.checked) {\n";
 	print "    if(document.layers){\n";
 	print "        document.NameSelection.display = 'none';\n";
@@ -94,12 +104,6 @@ sub login_page {
 	print "</head>\n";
 	print "<body bgcolor=\"#808000\">\n";
 	
-	if ($too_late == 1) {
-	     print "<center><table><tr><td bgcolor=red><font color=black><font size=+3>\n";
-	     print "<center>It is too late to complete the survey.</font><br>\n";
-	     print "Sorry.</font></center></td></tr></table></center>\n";	
-	}
-	
 	print "<form action=\"$script_url\" method=\"POST\" onsubmit=\"return getAdminValue();\" ";
   	print "name=\"form\">\n";
   	
@@ -117,11 +121,22 @@ sub login_page {
     print "<input type=\"checkbox\" name=\"AdminCB\" onclick=\"return updateView();\"><br><br>\n";
 	print "<div id=\"NameSelection\">\n";
 	print "Choose your name from this list:<br>\n";
+	if ($too_late == 1) {
+		print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td>\n";
+	}
     print "<select name=\"Name\" size=10 style=\"width:200px;\">\n";
     foreach $name (sort keys %name_grade_hash) {
          print "<option value=\"$name\">$name</option>\n";
     }
-    print "</select><br>\n";
+    print "</select>\n";
+    if ($too_late == 1) {
+    	 print "</td><td height=100%>\n";
+    	 print "<table bgcolor=yellow height=100% style=\"width:200px;\"><tr><td style=\"font-weight:bold;\"><center>\n";
+		 print "The submission deadline has passed!</center></td></tr><tr><td><center>\n";
+		 print "You can submit a survey but you will not recieve 15 points.<br>\n";
+		 print "Thanks!</center></td></tr></table>\n";
+		 print "</td></tr></table>\n";
+    }
     print "</div>\n";
     print "<div id=\"StudentPassText\">\n";
     #print "Enter your 8-digit UMS ID # (leave off the UMS):\n";
@@ -130,11 +145,17 @@ sub login_page {
     print "<div id=\"AdminPassText\" style=\"display:none\">\n";
     print "Enter administrator password:\n";
     print "</div>\n";
-    print "<input type=\"password\" name=\"Passwd\" size=20><br><br>\n";
+    print "<input type=\"password\" name=\"Passwd\" size=20><br>\n";
+    if($invalidLogin eq 'true'){
+    	print "<div id=\"InvalidLogin\" style=\"display:block\">\n";
+  		print "Invalid Password!<br>\n";
+  		print "</div>\n";
+  	}
+  	print "<br>\n";
   	print "<input type=\"submit\" value=\"Login\" onclick=\"return checkLogin();\">\n";
-    print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
+  	print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
     print "<input type=\"hidden\" name=\"Browser\" value=\"\">\n";
-	print "</form>\n";
+    print "</form>\n";
 	print "<hr>\n";
 	print "</body></html>\n";
 }
@@ -168,27 +189,13 @@ sub load_survey {
 		if(&decrypt_pw($pw,$password) == 1){
 			&load_student_survey;
 		}else{
-		   print "Content-type: text/html\n\n";
-		   print "<html><head>\n";
-		   print "<title>Diversity of Life Survey - Login Failed</title>\n";
-		   print "<body bgcolor=#FF8080>\n";
-	  	   print "<br><font color=green><b>Error: Password incorrect for $name.</b></font><br>\n";
-	   	   print "<a href=\"$script_url\">Click here to return to login screen</a>.\n";
-	   	   print "</body></html>\n";
-	   	   exit 1;
+		   &login_page('true');
 		}
 	}else{
 		if($admin_pw eq $password){
 			&load_admin_survey;
 		}else{
-			print "Content-type: text/html\n\n";
-			print "<html><head>\n";
-			print "<title>Diversity of Life Survey - Administrator Version - Login Failed</title>\n";
-			print "<body bgcolor=#FF8080>\n";
-			print "<br><font color=green><b>Error: Administrator Password Incorrect.</b></font><br>\n";
-			print "<a href=\"$script_url\">Click here to return to login screen</a>.\n";
-			print "</body></html>\n";
-			exit 1;
+			&login_page('true');
 		}
 	}
 }
@@ -203,18 +210,10 @@ sub load_student_survey {
 	$treeXML = $query->param('treeXML');
 	$lastUpdate = $query->param('lastUpdate');
 	$browser = $query->param('Browser');
-
+	
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Diversity of Life Survey for $name</title>\n";
-	
-	
-	if ($too_late == 1) {
-		print "<body bgcolor=#FF8080>\n";
-  	    print "<br><font color=green><b>Sorry, it is too late to complete the survey.</b></font><br>";
-   		print "</body></html>\n";
-   		exit 1;
-	}
 	
 	#see if there's already an entry for this student
 	$dbh = treeDB::connect();
@@ -235,9 +234,22 @@ sub load_student_survey {
 	    $sth = $dbh->prepare($statement);
 	    $sth->execute($Q1, $Q2, $Q3, $treeXML, $name);
 	    $sth->finish();
-	    print "<body bgcolor=#FF8080>\n";
-  	    print "<br><font color=green><b>$name, thank you for your survey submission.</b></font><br>";
-   	    print "<a href=\"$script_url\">Click here to return to login screen</a>.\n";
+	    print "<body bgcolor=\"lightblue\">\n";
+  	    print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
+  	    if ($too_late != 1) {
+  	    	print "<br><center><font size=+1>You have recieved 15 points.</font><br>";
+  	    }
+  	    print "<form action=\"$script_url\" method=\"POST\" name=\"form\">\n";
+  	    print "<table><tr><td>\n";
+  	    print "<input type=\"button\" value=\"Return To Login\" onclick=\"window.location = '$script_url';\">\n";
+  	    print "</td><td>\n";
+  	    print "<input type=\"submit\" value=\"Return To Survey\">\n";
+  	    print "</td></tr></table>\n";
+   	    print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
+    	print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
+    	print "<input type=\"hidden\" name=\"Passwd\" value=\"$password\">\n";
+    	print "<input type=\"hidden\" name=\"Browser\" value=\"$browser\">\n";
+    	print "</form></center>\n";
    		print "</body></html>\n";
    		exit 1;
 	} else {
@@ -252,39 +264,49 @@ sub load_student_survey {
 	
 	$dbh->disconnect();
 	
+	$dbh = GradeDB::connect();
+	$statement = "SELECT section,$assignment_index from $student_info WHERE name=?";
+	$sth = $dbh->prepare($statement);
+	$sth->execute($name);
+	($section,$grade) = $sth->fetchrow();
+	$sth->finish();
+	
 	#If Professor White requests the radio question be put back into
 	#the open-response section, then reinstitute this line of code and
 	#comment out the one underneath it.
 	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
-		
-	if (($Q1 eq "") || ($Q2 eq "")) {
-	     $complete = 0;
-	} else {
-	     $complete = 1;
+	
+	if($grade eq 15){
+		$complete  = 1;
 	}
-	
-	$dbh = GradeDB::connect();
-	$statement = "SELECT section from $student_info WHERE name=?";
-	$sth = $dbh->prepare($statement);
-	$sth->execute($name);
-	$section = $sth->fetchrow();
-	$sth->finish();
-	
+	else{
+		if (($Q1 eq "") || ($Q2 eq "")) {
+		     $complete = 0;
+		} else {
+		     $complete = 1;
+		}
+	}
 	print "<SCRIPT language=\"JavaScript\">\n";
 	print "function isComplete() {\n";
+	print " var qip = document.TreeApplet.questionInProgress();\n";
+	print " if(qip != ''){\n";
+	print " 	if(confirm(\"Would you like to save your changes to question \" + qip + \"?\")){\n";
+	print "			document.TreeApplet.acceptQuestionInProgress();\n";
+	print "		}\n";
+	print " }\n";
 	print " var status = document.TreeApplet.getStatus();\n";
 	print " document.forms[0].treeXML.value = document.TreeApplet.getTree();\n";
 	print " document.forms[0].Q1.value = document.TreeApplet.getQ1(); \n";
 	print " document.forms[0].Q2.value = document.TreeApplet.getQ2(); \n";
-	print " document.forms[0].Q3.value = document.TreeApplet.getQ3(); \n";
+	#print " document.forms[0].Q3.value = document.TreeApplet.getQ3(); \n";
 	print " if(status != \"\"){ \n";
-	print "   return confirm(status + \" Are you sure you want to continue?\");\n";
+	print "   return confirm(status + \" Is it ok to save?\");\n";
 	print " } \n";
 	print " return true; \n";
 	print "}\n";
 	print "</script>\n";
 	print "</head>\n";
-	print "<body bgcolor = \"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
+	print "<body bgcolor=\"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
 	
 	if ($complete != 0) {
 	     #enter the grade
@@ -312,16 +334,23 @@ sub load_student_survey {
     print "</center></td></tr>\n";
     print "<tr><td><center>\n";
     print "<font size=+1>Diversity of Life<br> Survey<br> for<br> $name</font><br>\n";
-    if ($complete == 0) {
-	     print "<table bgcolor=red><tr><td style=\"font-weight:bold;\"><center>\n";
-	     print "Your survey is not complete!</center></td></tr><tr><td><center>\n";
-	     print "You will not receive<br> any credit unless<br> you answer all the questions.<br>\n";
-	     print "Thanks!</center></td></tr></table>\n";
-	} else {
-	     print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
-	     print "Your survey is complete!</center></td></tr><tr><td><center>\n";
-	     print "You have received<br> 15 points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
-	     print "Thanks!</center></td></tr></table>\n";	
+    if ($too_late == 1) {
+    	print "<table bgcolor=yellow><tr><td style=\"font-weight:bold;\"><center>\n";
+		print "The submission deadline<br> has passed!</center></td></tr><tr><td><center>\n";
+		print "You can submit a survey<br>but you will not<br> recieve 15 points.<br>\n";
+		print "Thanks!</center></td></tr></table>\n";
+	}else{
+	    if ($complete == 0) {
+		     print "<table bgcolor=red><tr><td style=\"font-weight:bold;\"><center>\n";
+		     print "Your survey is not complete!</center></td></tr><tr><td><center>\n";
+		     print "You will not receive<br> any credit unless<br> you answer all the questions.<br>\n";
+		     print "Thanks!</center></td></tr></table>\n";
+		} else {
+		     print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
+		     print "Your survey is complete!</center></td></tr><tr><td><center>\n";
+		     print "You have received<br> 15 points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
+		     print "Thanks!</center></td></tr></table>\n";	
+		}
 	}
     print "<input type=\"hidden\" name=\"AdminValue\" value=\"$admin\">\n";
     print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
