@@ -178,6 +178,8 @@ public class StudentController extends TBSController
 */
 	public void mouseMoved(MouseEvent e){
 		printMouseEvent(e);
+		if(buttonClicked != null && TBSButtonType.PRINT.equals(buttonClicked))
+			buttonClicked = TBSButtonType.SELECT;
 		Prompt prompt = model.getPrompt();
 		if(prompt != null){
 			if(prompt.isOverButton(e))
