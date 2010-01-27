@@ -217,8 +217,13 @@ public class TBSApplet extends JApplet {
 	public String getStatus(){
 		if(admin)
 			return "";
-		else
+		else{
+			StudentModel m = (StudentModel)model;
+			StringBuffer status = new StringBuffer(m.surveyStatus());
+			if(status.length() > 0)
+				status.append("\n\n").append(m.unusedOrganisms());
 			return ((StudentModel)model).surveyStatus();
+		}
 	}
 	
 	private Properties loadPropertyFile(PropertyType pt){
