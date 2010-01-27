@@ -290,7 +290,7 @@ sub load_student_survey {
 	print "function isComplete() {\n";
 	print " var qip = document.TreeApplet.questionInProgress();\n";
 	print " if(qip != ''){\n";
-	print " 	if(confirm(\"Would you like to save your changes to question \" + qip + \"?\")){\n";
+	print " 	if(confirm(\"Is it ok to save your changes to question \" + qip + \"?\")){\n";
 	print "			document.TreeApplet.acceptQuestionInProgress();\n";
 	print "		}\n";
 	print " }\n";
