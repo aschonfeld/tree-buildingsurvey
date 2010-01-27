@@ -108,6 +108,7 @@ public class StudentController extends TBSController
 			model.getPrompt().keyPressed(e);
 			return;
 		}
+		/*
 		if(e.getKeyCode() == KeyEvent.VK_F1) {
 			if(model.getStudentControllerTest() == null) {
 				model.setStudentControllerTest(new StudentControllerTest(this, model.getView()));
@@ -115,6 +116,7 @@ public class StudentController extends TBSController
 				model.getStudentControllerTest().toggleTest();
 			}
 		}
+		*/
 		if(statusString == null)
 			statusString = new String();
 		
