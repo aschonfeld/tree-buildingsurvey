@@ -5,8 +5,8 @@ import java.util.List;
 
 public enum OpenQuestionButtonType {
 
-	ONE("Question 1", "questionOne", false, -1),
-	TWO("Question 2", "questionTwo", false, -1);
+	ONE("1", "Question 1", "questionOne", false, -1),
+	TWO("2", "Question 2", "questionTwo", false, -1);
 
 	/*
 	 * We are eliminating the radio question, until Professor White
@@ -14,6 +14,7 @@ public enum OpenQuestionButtonType {
 	 * THREE("Question 3", "questionThree",true, 13);
 	 * To add any more just write the same thing with new information.
 	 */
+	private String text;
 	
 	private String adminText;
 	
@@ -23,12 +24,17 @@ public enum OpenQuestionButtonType {
 	
 	private int radioQuestionCount;
 	
-	private OpenQuestionButtonType(String adminText,
+	private OpenQuestionButtonType(String text, String adminText,
 			String questionKey, boolean radio, int radioQuestionCount){
+		this.text = text;
 		this.adminText = adminText;
 		this.questionKey = questionKey;
 		this.radio = radio;
 		this.radioQuestionCount = radioQuestionCount;
+	}
+	
+	public String getText(){
+		return text;	
 	}
 	
 	public String getAdminText(){
@@ -48,7 +54,7 @@ public enum OpenQuestionButtonType {
 	}
 	
 	public String toString(){
-		return adminText;
+		return text;
 	}
 	
 	public static List<OpenQuestionButtonType> getRadioButtons(){

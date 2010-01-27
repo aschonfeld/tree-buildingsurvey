@@ -768,14 +768,14 @@ public class StudentModel implements TBSModel
 	
 	public String unusedOrganisms(){
 		StringBuffer unusedString = new StringBuffer();
-		StringBuffer unusedStartString = new StringBuffer("You have not used the following organisms:\n\n");
+		StringBuffer unusedStartString = new StringBuffer();
 		for(int i=0;i<TBSGraphics.numOfOrganisms;i++){
 			OrganismNode o = (OrganismNode) modelElements.get(i);
 			if(!o.isInTree())
-				unusedString.append(o.getName()).append("\n");
+				unusedString.append("\t").append(o.getName()).append("\n");
 		}
 		if(unusedString.length() > 0)
-			return unusedStartString.append(unusedString).toString();
+			return unusedStartString.append(unusedString).append("\n").toString();
 		return "";
 	}
 	

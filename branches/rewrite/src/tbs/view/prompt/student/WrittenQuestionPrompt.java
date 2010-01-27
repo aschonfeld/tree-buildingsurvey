@@ -430,5 +430,10 @@ public class WrittenQuestionPrompt extends Prompt{
 			return returnString.substring(0, returnString.length()-1).toString();
 		return "";
 	}
+	
+	public void forceAcceptChanges(){
+		model.getStudent().getResponse(currentQuestion).updateText(convertLinesToUserInput());
+		setFinished(true);
+	}
 
 }

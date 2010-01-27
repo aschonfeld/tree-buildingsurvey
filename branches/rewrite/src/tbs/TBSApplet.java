@@ -29,6 +29,8 @@ import tbs.model.TBSModel;
 import tbs.model.admin.Response;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
+import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.WrittenQuestionPrompt;
 
 /**
 * TBSApplet is the frame in which the Tree-Building System runs. Its
@@ -220,10 +222,29 @@ public class TBSApplet extends JApplet {
 		else{
 			StudentModel m = (StudentModel)model;
 			StringBuffer status = new StringBuffer(m.surveyStatus());
-			if(status.length() > 0)
-				status.append("\n\n").append(m.unusedOrganisms());
-			return ((StudentModel)model).surveyStatus();
+			String unusedOrganisms = m.unusedOrganisms();
+			if(status.length() > 0){
+				status.append("\n\n");
+				if(unusedOrganisms.length() > 0)
+					status.append("Also, you have not used the following organisms:\n").append(m.unusedOrganisms());
+			}else{
+				if(unusedOrganisms.length() > 0)
+					status.append("You have not used the following organisms:\n").append(m.unusedOrganisms());
+			}
+			return status.toString();
 		}
+	}
+	
+	public String questionInProgress(){
+		Prompt p = model.getPrompt();
+		if(p instanceof WrittenQuestionPrompt)
+			return ((WrittenQuestionPrompt)p).getCurrentQuestion().getText();
+		return "";
+	}
+	
+	public void acceptQuestionInProgress(){
+		WrittenQuestionPrompt p = (WrittenQuestionPrompt) model.getPrompt();
+		p.forceAcceptChanges();
 	}
 	
 	private Properties loadPropertyFile(PropertyType pt){
