@@ -83,9 +83,9 @@ public class StudentModel implements TBSModel
 			int inTreeElementCount = inTreeElements().size();
 			if(inTreeElementCount > 0){
 				buttonStates.put(TBSButtonType.DELETE, true);
+				buttonStates.put(TBSButtonType.CLEAR, true);
 				if(inTreeElementCount > 1){
 					buttonStates.put(TBSButtonType.LINK, true);
-					buttonStates.put(TBSButtonType.CLEAR, true);
 					if(hasEmptyNodes())
 						buttonStates.put(TBSButtonType.LABEL, true);
 					if(hasConnections())
@@ -764,6 +764,19 @@ public class StudentModel implements TBSModel
 				incompletedItems.add(q.getAdminText());
 		}
 		return incompletedItems;
+	}
+	
+	public String unusedOrganisms(){
+		StringBuffer unusedString = new StringBuffer();
+		StringBuffer unusedStartString = new StringBuffer("You have not used the following organisms:\n\n");
+		for(int i=0;i<TBSGraphics.numOfOrganisms;i++){
+			OrganismNode o = (OrganismNode) modelElements.get(i);
+			if(!o.isInTree())
+				unusedString.append(o.getName()).append("\n");
+		}
+		if(unusedString.length() > 0)
+			return unusedStartString.append(unusedString).toString();
+		return "";
 	}
 	
 	public String surveyStatus(){
