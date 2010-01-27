@@ -18,6 +18,8 @@ public class WrittenResponse extends Response{
 		text = input;
 		if(input != null && input.length() > 0)
 			setCompleted(true);
+		else
+			setCompleted(false);
 	}
 	
 	private void initWritten(String input){
