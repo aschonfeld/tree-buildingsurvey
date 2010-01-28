@@ -77,7 +77,7 @@ public class HelpPrompt extends Prompt
 					helpProps.getProperty("help_" + bt.getText())});
 			}
 		}
-		buttonInfo.add(new String[]{"1,2,3", helpProps.getProperty("help_123")});
+		buttonInfo.add(new String[]{"Questions", helpProps.getProperty("help_123")});
 		buttonHeaders = new LinkedList<String>();
 		buttonTexts = new LinkedList<List<String>>();
 	}

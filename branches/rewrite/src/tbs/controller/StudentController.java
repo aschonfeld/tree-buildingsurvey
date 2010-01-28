@@ -237,13 +237,13 @@ public class StudentController extends TBSController
 				view.setConnInProgress(
 		    		new Line2D.Double(((Node) selectedElement).getCenter(),
 		    				new Point(e.getX(), e.getY() + view.getYOffset())));
+			view.setScreenString(getStatus(TBSButtonType.LINK));
 		}
 	}
 	
-	// No need to use since mousePressed is used instead
 
 /**
-* Inline comment indicates this method is deprecated. Should be removed?
+* More mousehandling
 */
 	public void mouseClicked(MouseEvent e) {
 		printMouseEvent(e);
@@ -261,7 +261,7 @@ public class StudentController extends TBSController
 		}
 		
 	}
-	
+
 	/**
 	* Handle mousePressed events: if the mouse is over an object, select it.
 	* ALSO: This is where you get the result of a prompt
@@ -381,10 +381,13 @@ public class StudentController extends TBSController
 					break;
 				}
 			}
-			if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH )
+			if ((draggedNode.getX()-draggedNode.getWidth()) <= 
+								TBSGraphics.LINE_OF_DEATH )
 				model.removeFromTree(draggedNode);
 			else{
-				if (!draggedNode.isInTree() && (draggedNode.getX()-draggedNode.getWidth()) > TBSGraphics.LINE_OF_DEATH ) {
+				if (!draggedNode.isInTree() && 
+						(draggedNode.getX()-draggedNode.getWidth()) > 
+						TBSGraphics.LINE_OF_DEATH ) {
 					model.addToTree(draggedNode); 
 				} else {
 					((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
@@ -502,6 +505,7 @@ public class StudentController extends TBSController
 
     private void cancelConnection() {
 		view.setConnInProgress(null);
+		view.setScreenString(null);
     }
     
     // creates a connection if conditions are correct
@@ -555,6 +559,7 @@ public class StudentController extends TBSController
     public void handleDelete() {
 		if(selectedElement == null) 
 			return;
+		view.setScreenString(null);
 		clearCurrentActions();
 		if(model.getSelectedTwoWay() != null){
 			for(ModelElement tw : model.getSelectedTwoWay())
@@ -793,7 +798,9 @@ public class StudentController extends TBSController
 		} else // default set selectedElement = clickedElement
     		setSelectedElement(clickedElement);
 	}		
-    
+   
+
+ 
     public String getStatus(TBSButtonType button){
     	StringBuffer statusKey = new StringBuffer(buttonClicked.name());
 		if(buttonClicked.isItemSelectionBased()){

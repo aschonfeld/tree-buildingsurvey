@@ -453,6 +453,8 @@ public class StudentModel implements TBSModel
 		Unlink unlink = new Unlink();
 		List<Connection> connections = new LinkedList<Connection>();
 		Connection c;
+
+
 		for (ModelElement me: modelElements)
 		{
 			if(me instanceof Connection){
@@ -490,6 +492,8 @@ public class StudentModel implements TBSModel
 			c.getTo().getConnectedFrom().remove(c.getFrom());
 			modelElements.remove(c);
 		}
+				updateButtonStatesAfterRemove();
+	
 	}
 
 	public void removeFromTree(ModelElement m){

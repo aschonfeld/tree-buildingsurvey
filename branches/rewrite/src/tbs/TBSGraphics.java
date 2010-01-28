@@ -145,7 +145,7 @@ public class TBSGraphics {
 	/**
 	 * Label for immortal empty node
 	 */
-	public static String immortalNodeLabel = "Empty Node";
+	public static String immortalNodeLabel = "Branch Point";
 	
 	
 	/**
