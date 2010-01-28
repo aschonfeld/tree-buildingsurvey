@@ -13,8 +13,8 @@ $admin_pw = "lab09acce55";
 $too_late_month = 12;
 $too_late_day = 12;
 $name_of_survey_field_in_assignments_txt = "Diversity of Life Survey (15)";
-$student_info = "test_students";
-$survey_info = "student_testdata";
+$student_info = "students";
+$survey_info = "student_data";
 $assignment_index = "";
 
 
