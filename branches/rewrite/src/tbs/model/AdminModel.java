@@ -397,9 +397,7 @@ public class AdminModel implements TBSModel
 				if (data[0].equals("O"))
 					loadOrganismNode(data, savedTree);
 				else if (data[0].equals("E")){
-					ModelElement temp = loadEmptyNode(data);
-					if(((EmptyNode) temp).isInTree())
-						savedTree.add(temp);
+					loadEmptyNode(data, savedTree);
 				}else if (data[0].equals("C"))
 					savedTree.add(loadConnection(data, savedTree));
 				else
@@ -431,17 +429,17 @@ public class AdminModel implements TBSModel
 	 */
 	public void loadOrganismNode(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
 		int id=0,x=0,y=0;
-		try{
-			id = Integer.parseInt(data[1]);
-			x = Integer.parseInt(data[3]);
-			y = Integer.parseInt(data[4]);
-		}catch(NumberFormatException e){
-			System.out.println(new StringBuffer("StudentModel:loadOrganismNode:Error parsing organism data (id:")
-			.append(data[1]).append(",x:").append(data[3]).append("y:").append(data[4]).append(")").toString());
-			throw e;
-		}
 		boolean inTree = Boolean.parseBoolean(data[5]);
 		if(inTree){
+			try{
+				id = Integer.parseInt(data[1]);
+				x = Integer.parseInt(data[3]);
+				y = Integer.parseInt(data[4]);
+			}catch(NumberFormatException e){
+				System.out.println(new StringBuffer("StudentModel:loadOrganismNode:Error parsing organism data (id:")
+				.append(data[1]).append(",x:").append(data[3]).append("y:").append(data[4]).append(")").toString());
+				throw e;
+			}
 			int elementIndex = findIndexById(id, tempTree);
 			OrganismNode node = (OrganismNode) tempTree.get(elementIndex);
 			Point pt = new Point(x,y);
@@ -455,27 +453,27 @@ public class AdminModel implements TBSModel
 	 * Load an EmptyNode. Might be possible to combine this with
 	 * loadOrganismNode().
 	 */
-	public ModelElement loadEmptyNode(String[] data) throws NumberFormatException {
-		String name = data[2];
+	public void loadEmptyNode(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
 		int id=0,x=0,y=0;
-		try{
-			id = Integer.parseInt(data[1]);
-			x = Integer.parseInt(data[3]);
-			y = Integer.parseInt(data[4]);
-		}catch(NumberFormatException e){
-			System.out.println("StudentModel:loadEmptyNode:Error parsing empty node (" +
-					name + ") data (id:" + data[1] +
-					",x:" + data[3] + "y:" + data[4]+")");
-			throw e;
+		boolean inTree = Boolean.parseBoolean(data[5]);
+		if(inTree){
+			String name = data[2];
+			try{
+				id = Integer.parseInt(data[1]);
+				x = Integer.parseInt(data[3]);
+				y = Integer.parseInt(data[4]);
+			}catch(NumberFormatException e){
+				System.out.println("StudentModel:loadEmptyNode:Error parsing empty node (" +
+						name + ") data (id:" + data[1] +
+						",x:" + data[3] + "y:" + data[4]+")");
+				throw e;
+			}
+			Point pt = new Point(x,y);
+			EmptyNode node = new EmptyNode(id, pt);
+			node.rename(name);
+			node.setInTree(inTree);
+			tempTree.add(node);
 		}
-		Point pt = new Point(x,y);
-		Boolean in = (data[5].equals("true")?true:false);
-		if(!in)
-			pt = new Point();
-		EmptyNode node = new EmptyNode(id, pt);
-		node.rename(name);
-		node.setInTree(in);
-		return (ModelElement) node;
 	}
 
 	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements) 
