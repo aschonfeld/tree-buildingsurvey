@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.model.StudentModel;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyType;
@@ -219,10 +220,10 @@ public class WelcomePrompt extends Prompt
 		StringBuffer welcome = new StringBuffer("Welcome");
 		if(incompletedItems.size() < OpenQuestionButtonType.values().length+1)
 			welcome.append(" back");
-		if(name != "")
+		if(!TBSUtils.isStringEmpty(name))
 			welcome.append(", ").append(name).append(", ");
 		welcome.append(" to the Diversity Of Life Survey! ");
-		if(lastUpdate != null && lastUpdate.length() != 0){
+		if(!TBSUtils.isStringEmpty(lastUpdate)){
 			if(incompletedItems.isEmpty())
 				welcome.append("You have completed the survey and recieved 15 points. ");
 			else{

@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import javax.swing.Timer;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.model.TBSModel;
 import tbs.properties.PropertyType;
 import tbs.view.OpenQuestionButtonType;
@@ -242,7 +243,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		for(int i=0;i<userInputLines.size();i++){
 			line = userInputLines.get(i);
 			if(i != lineIndex){
-				if(ableToBeLayout(line))
+				if(!TBSUtils.isStringEmpty(line))
 					drawWritten(TBSGraphics.breakStringByLineWidth(g2,line,width));
 				else
 					questionStringY += TBSGraphics.textHeight + padding.height;
@@ -283,7 +284,7 @@ public class WrittenQuestionPrompt extends Prompt{
 				boolean cursorWithinName = adjCursorIndex < cursorLine.length();
 				String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
 				int cursorX = x;
-				if(ableToBeLayout(beforeCursor)){
+				if(!TBSUtils.isStringEmpty(beforeCursor)){
 					layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
 					layout.draw(g2, x, y);
 					cursorX += ((int) layout.getBounds().getWidth() + 2);
@@ -292,7 +293,7 @@ public class WrittenQuestionPrompt extends Prompt{
 					cursorX += 2;
 				if(cursorWithinName){
 					String afterCursor = cursorLine.substring(adjCursorIndex);
-					if(ableToBeLayout(afterCursor)){
+					if(!TBSUtils.isStringEmpty(afterCursor)){
 						layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
 						layout.draw(g2, cursorX + cursorWidth, y);
 					}
@@ -403,7 +404,7 @@ public class WrittenQuestionPrompt extends Prompt{
 		}else{
 			lineIndex = size-1;
 			String temp = userInputLines.get(lineIndex);
-			if(ableToBeLayout(temp))
+			if(!TBSUtils.isStringEmpty(temp))
 				cursorIndex = temp.length();
 			else
 				cursorIndex = 0;
@@ -417,16 +418,12 @@ public class WrittenQuestionPrompt extends Prompt{
 		return closeButton.contains(e.getPoint());
 	}
 
-	private boolean ableToBeLayout(String s){
-		return (s != null && s.length() != 0);
-	}
-
 	private String convertLinesToUserInput(){
 		StringBuffer returnString = new StringBuffer("");
 		for(String line : userInputLines)
 			returnString.append(line).append("\n");
 
-		if(ableToBeLayout(returnString.toString()))
+		if(!TBSUtils.isStringEmpty(returnString.toString()))
 			return returnString.substring(0, returnString.length()-1).toString();
 		return "";
 	}

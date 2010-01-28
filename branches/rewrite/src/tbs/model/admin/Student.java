@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.view.OpenQuestionButtonType;
 
 public class Student {
@@ -32,7 +33,7 @@ public class Student {
 
 	public Student(Graphics2D g2, String studentDataString){
 		openResponses = new HashMap<OpenQuestionButtonType, Response>();
-		if(studentDataString == null || studentDataString == ""){
+		if(TBSUtils.isStringEmpty(studentDataString)){
 			createNewStudent();
 			return;
 		}
@@ -53,7 +54,7 @@ public class Student {
 			splitIndex++;
 		}
 		section = studentData[6].substring(1).trim();
-		if(section == null || section.length() == 0)
+		if(TBSUtils.isStringEmpty(section))
 			arrows = true;
 		else{
 			String[] sectionSplit = section.split(" ");
@@ -98,7 +99,7 @@ public class Student {
 	}
 
 	public String getLastUpdate() {
-		if(lastUpdate != null && lastUpdate.length() != 0 && lastUpdateTimestamp != null)
+		if(!TBSUtils.isStringEmpty(lastUpdate) && lastUpdateTimestamp != null)
 			return displayFormat.format(lastUpdateTimestamp);
 		return lastUpdate;
 	}
@@ -120,7 +121,7 @@ public class Student {
 	}
 
 	public void setTree(String treeInput){
-		if(treeInput == null || treeInput.length() == 0){
+		if(TBSUtils.isStringEmpty(treeInput)){
 			tree = "";
 			return;
 		}

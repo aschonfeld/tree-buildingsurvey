@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import javax.swing.Timer;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.model.EmptyNode;
 
 public class TextEntryBox {
@@ -45,7 +46,7 @@ public class TextEntryBox {
 	public TextEntryBox(EmptyNode node) {
 		this.node = node;
 		name= node.getName();
-		if(name == null || name == "")
+		if(TBSUtils.isStringEmpty(name))
 			cursorIndex = 0;
 		else
 			cursorIndex = name.length();	
@@ -119,7 +120,7 @@ public class TextEntryBox {
 		int upperY = node.getAnchorPoint().y - yOffset;
 		Dimension d;
 		TextLayout layout;
-		if(ableToBeLayout(name)){
+		if(!TBSUtils.isStringEmpty(name)){
 			layout = new TextLayout(name, g2.getFont(), g2.getFontRenderContext());
 			Rectangle2D bounds = layout.getBounds();
 			d = new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
@@ -147,7 +148,7 @@ public class TextEntryBox {
 		boolean cursorWithinName = cursorIndex < name.length();
 		String beforeCursor = cursorWithinName ? name.substring(0, cursorIndex) : name;
 		int cursorX = x;
-		if(ableToBeLayout(beforeCursor)){
+		if(!TBSUtils.isStringEmpty(beforeCursor)){
 			layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
 			layout.draw(g2, x, y);
 			cursorX += ((int) layout.getBounds().getWidth() + 2);
@@ -156,7 +157,7 @@ public class TextEntryBox {
 			cursorX += 2;
 		if(cursorWithinName){
 			String afterCursor = name.substring(cursorIndex);
-			if(ableToBeLayout(afterCursor)){
+			if(!TBSUtils.isStringEmpty(afterCursor)){
 				layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
 				layout.draw(g2, cursorX + cursorWidth, y);
 			}
@@ -169,10 +170,6 @@ public class TextEntryBox {
 		if(width > boxWidth)
 			boxWidth = width;
 		g2.drawRect(leftX, upperY, boxWidth, height);
-	}
-	
-	public boolean ableToBeLayout(String s){
-		return (s != null && s != "" && s.length() != 0);
 	}
 	
 }

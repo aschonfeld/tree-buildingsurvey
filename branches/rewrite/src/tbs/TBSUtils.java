@@ -88,5 +88,8 @@ public class TBSUtils {
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
 	}
+	public static boolean isStringEmpty(String s){
+		return (s == null || s.length() == 0);
+	}
 
 }

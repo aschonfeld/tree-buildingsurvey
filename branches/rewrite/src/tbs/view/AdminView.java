@@ -250,7 +250,7 @@ public class AdminView extends JComponent implements Printable {
 			if(student.hasArrows())
 				studentIndicators += " \u2192";
 			String lastUpdate = student.getLastUpdate();
-			if(lastUpdate != null && lastUpdate.length() != 0)
+			if(!TBSUtils.isStringEmpty(lastUpdate))
 				studentIndicators += " \u2713";
 			if(studentIndicators.length() > 0)
 				TBSGraphics.drawCenteredString(g2, studentIndicators,

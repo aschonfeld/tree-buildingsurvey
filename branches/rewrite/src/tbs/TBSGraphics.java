@@ -274,7 +274,7 @@ public class TBSGraphics {
 	* Returns the @Rectangle2D surrounding a piece of text
 	*/
 	public static Dimension getStringBounds(Graphics2D g2, String s) {
-		if(s == null || s == "" || s.length() == 0)
+		if(TBSUtils.isStringEmpty(s))
 			return new Dimension();
 		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
@@ -325,7 +325,7 @@ public class TBSGraphics {
 	public static void drawCenteredString(Graphics2D g2, String s, 
 				int leftX, int upperY, int width, int height, Color c, Font f) 
 	{
-		if(s == null || s.length() == 0)
+		if(TBSUtils.isStringEmpty(s))
 			return;
 		g2.setColor(c);
    		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
@@ -383,7 +383,7 @@ public class TBSGraphics {
 	public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
 		String currentLine = "";
 		List<String> widthBrokenString = new LinkedList<String>();
-		if(s == null || s.length() == 0){
+		if(TBSUtils.isStringEmpty(s)){
 			widthBrokenString.add("");
 			return widthBrokenString;
 		}

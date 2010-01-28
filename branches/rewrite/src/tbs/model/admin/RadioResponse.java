@@ -3,6 +3,7 @@ package tbs.model.admin;
 import java.util.LinkedList;
 import java.util.List;
 
+import tbs.TBSUtils;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
 
 public class RadioResponse extends Response{
@@ -32,7 +33,7 @@ public class RadioResponse extends Response{
 		System.out.println("Radio response:" + input);
 		radioAnswers = new LinkedList<OpenQuestionPromptButtonType>();
 		String answerText = input == null ? "" : input.trim();
-		if(answerText == null || answerText.length() == 0){
+		if(TBSUtils.isStringEmpty(answerText)){
 			for(int i=0;i<questionCount;i++)
 				radioAnswers.add(OpenQuestionPromptButtonType.SUBMIT);
 		}else{

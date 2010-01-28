@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.controller.StudentController;
 import tbs.controller.StudentControllerTest;
 import tbs.controller.TBSController;
@@ -79,7 +80,7 @@ public class StudentModel implements TBSModel
 			buttonStates.put(b, b.isActiveWhenCreated());
 		student = new Student(g2, studentString);
 		String tree = student.getTree();
-		if(tree != null && tree.length() != 0){
+		if(!TBSUtils.isStringEmpty(tree)){
 			loadTree(tree);
 			int inTreeElementCount = inTreeElements().size();
 			if(inTreeElementCount > 0){

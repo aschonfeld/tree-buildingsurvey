@@ -18,6 +18,7 @@ import javax.swing.JComponent;
 
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.controller.AdminController;
 import tbs.controller.TBSController;
 import tbs.model.admin.Student;
@@ -59,7 +60,7 @@ public class AdminModel implements TBSModel
 		createStudents(g2, students);
 		selectedStudent = this.students.get(0);
 		String tree = selectedStudent.getTree();
-		if(tree != null && tree.length() != 0)
+		if(!TBSUtils.isStringEmpty(tree))
 			loadTree(tree);
 		writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
 		/*
@@ -82,7 +83,7 @@ public class AdminModel implements TBSModel
 			System.out.println("Selected Student:" + selectedStudent.getName());
 			String tree = selectedStudent.getTree();
 			resetModel();
-			if(tree != null && tree.length() != 0)
+			if(!TBSUtils.isStringEmpty(tree))
 				loadTree(tree);
 			writtenQuestionReviewPrompt = null;
 			analysisPrompt = null;
