@@ -7,9 +7,11 @@ use treeDB;
 
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
-$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
+$script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
+#$script_url = "http://localhost:8080/PhylogenySurveyWeb/cgi-bin/TBSTestSurvey.pl";
 #$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TBSTestSurvey.pl";
-$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
+#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
 #$jar_loc = "http://cluster.bio.whe.umb.edu/Test/TBSRun.jar";
 $admin_pw = "lab09acce55";
 $too_late_month = 12;
