@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public class Student {
 	private int height;
 	private int width;
 	private Point anchorPoint;
-	
+
 	public Student(Graphics2D g2, String studentDataString){
 		openResponses = new HashMap<OpenQuestionButtonType, Response>();
 		if(studentDataString == null || studentDataString == ""){
@@ -42,7 +43,7 @@ public class Student {
 		}
 		setName(studentData[0].trim());
 		setLastUpdate(studentData[1].substring(1).trim());
-		tree = studentData[2].substring(1).trim();
+		setTree(studentData[2].substring(1).trim());
 		int splitIndex = 3;
 		for(OpenQuestionButtonType response : OpenQuestionButtonType.values()){
 			if(response.isRadio())
@@ -76,11 +77,11 @@ public class Student {
 		height = d.height;
 		nodeName = TBSGraphics.breakStringByLineWidth(g2, name, TBSGraphics.maxStudentNameWidth);
 	}
-	
+
 	public String toString(){
 		return name;
 	}
-	
+
 	public void setName(String nameInput){
 		if(nameInput != null && nameInput.length() > 0){
 			String[] splitName = nameInput.split(",");
@@ -113,14 +114,32 @@ public class Student {
 			}
 		}
 	}
+
 	public String getTree() {
 		return tree;
+	}
+
+	public void setTree(String treeInput){
+		if(treeInput == null || treeInput.length() == 0){
+			tree = "";
+			return;
+		}
+		//This code eliminates duplicate records caused from previous problematic code
+		List<String> parsedElements = new LinkedList<String>();
+		StringBuffer adjTreeString = new StringBuffer();
+		for(String element : treeInput.split("#")){
+			if(!parsedElements.contains(element)){
+				parsedElements.add(element);
+				adjTreeString.append(element).append("#");
+			}
+		}
+		tree = adjTreeString.toString();
 	}
 
 	public Response getResponse(OpenQuestionButtonType responseType) {
 		return openResponses.get(responseType);
 	}
-	
+
 	public Map<OpenQuestionButtonType, Response> getResponses(){
 		return openResponses;
 	}
@@ -156,7 +175,7 @@ public class Student {
 	public void setAnchorPoint(Point anchorPoint) {
 		this.anchorPoint = anchorPoint;
 	}
-	
+
 	private void createNewStudent(){
 		lastUpdate = "";
 		tree = "";
@@ -173,5 +192,5 @@ public class Student {
 	public List<String> getNodeName() {
 		return nodeName;
 	}
-	
+
 }

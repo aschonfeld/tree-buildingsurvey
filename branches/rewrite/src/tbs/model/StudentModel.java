@@ -62,7 +62,7 @@ public class StudentModel implements TBSModel
 	private Map<TBSButtonType, Boolean> buttonStates;
 	private Student student;
 	private StudentControllerTest sct;
-	
+
 	public StudentModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
 			String studentString, Map<PropertyType, Properties> propertiesMap) {
@@ -78,8 +78,9 @@ public class StudentModel implements TBSModel
 		for(TBSButtonType b : buttons)
 			buttonStates.put(b, b.isActiveWhenCreated());
 		student = new Student(g2, studentString);
-		if(!"".equals(student.getTree())){
-			loadTree(student.getTree());
+		String tree = student.getTree();
+		if(tree != null && tree.length() != 0){
+			loadTree(tree);
 			int inTreeElementCount = inTreeElements().size();
 			if(inTreeElementCount > 0){
 				buttonStates.put(TBSButtonType.DELETE, true);
@@ -110,7 +111,7 @@ public class StudentModel implements TBSModel
 	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
 	}
-	
+
 	public void resetModel(){
 		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
 			removeFromTree(modelElements.get(modelElements.size()-1));
@@ -122,33 +123,33 @@ public class StudentModel implements TBSModel
 		history = new Stack<Command>();
 		buttonStates.put(TBSButtonType.UNDO, false);
 	}
-	
+
 	/**
-	* Returns a handle for the View associated with this Model
-   */
+	 * Returns a handle for the View associated with this Model
+	 */
 	public JComponent getView() {
 		return view;
 	}
-	
+
 	/**
-	* Returns a handle for the Controller associated with this Model.
-	*/
+	 * Returns a handle for the Controller associated with this Model.
+	 */
 	public TBSController getController() {
 		return controller;
 	}
-	
+
 	/**
-	* Returns a handle for the Applet.
-	*/
+	 * Returns a handle for the Applet.
+	 */
 	public TBSApplet getApplet() {
 		return applet;
 	}	
-	
+
 	/**
-	* Returns a serial number for a model element. Serial numbers start
-	* at 0 and simply increment; they are unique within a tree, but not
-	* outside it.
-	*/
+	 * Returns a serial number for a model element. Serial numbers start
+	 * at 0 and simply increment; they are unique within a tree, but not
+	 * outside it.
+	 */
 	public int getSerial()
 	{
 		int sn = MESerialNumber;
@@ -158,16 +159,16 @@ public class StudentModel implements TBSModel
 	}
 
 	/**
-	* Adds a ModelElement to the ArrayList of items this Model knows
-	* about.
-	*/
+	 * Adds a ModelElement to the ArrayList of items this Model knows
+	 * about.
+	 */
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
 	}	
-	
+
 	/**
-	* returns the ith ModelElement in the list.
-	*/
+	 * returns the ith ModelElement in the list.
+	 */
 	public ModelElement getElement(int i) {
 		return modelElements.get(i);
 	}
@@ -175,7 +176,7 @@ public class StudentModel implements TBSModel
 	public void removeElement(int i) {
 		modelElements.remove(i);
 	}
-	
+
 	public int findIndexByElement(ModelElement m){
 		/*
 		 * For OrganismNodes we can just use serialId
@@ -187,12 +188,12 @@ public class StudentModel implements TBSModel
 		else
 			return modelElements.indexOf(m);
 	}
-	
+
 	//findIndexById method that is called when a saved tree is not being loaded
 	public int findIndexById(Integer id){
 		return findIndexById(id, null);
 	}
-	
+
 	public int findIndexById(Integer id, List<ModelElement> parsedElements){
 		if(id <= TBSGraphics.numOfOrganisms)
 			return (id);
@@ -215,11 +216,11 @@ public class StudentModel implements TBSModel
 	}	
 
 	/**
-	* Returns the ModelElement with a given serial number
-	* This method relies on the fact that objects are added in serial#
-	* order, and remain sorted, although they may be deleted. If this
-	* assumption ceases to be true, this method will fail. 
-	*/
+	 * Returns the ModelElement with a given serial number
+	 * This method relies on the fact that objects are added in serial#
+	 * order, and remain sorted, although they may be deleted. If this
+	 * assumption ceases to be true, this method will fail. 
+	 */
 	public ModelElement getElementBySN(int sn)
 	{
 		ModelElement me;
@@ -227,21 +228,21 @@ public class StudentModel implements TBSModel
 		List<ModelElement> model = modelElements;
 		do 
 		{
-			 me = (ModelElement)model.get(checknum);
+			me = (ModelElement)model.get(checknum);
 			if (me.getId() == sn)
 				return me;
 			checknum--;
 		} while (checknum >= me.getId());
 		return null;
 	}
-	
+
 	/**
-	* returns the complete List of Model Elements.
-	*/
+	 * returns the complete List of Model Elements.
+	 */
 	public List<ModelElement> getElements() {
 		return modelElements;
 	}
-	
+
 	public ModelElement getSelectedModelElement() {
 		return selectedModelElement;
 	}
@@ -259,8 +260,8 @@ public class StudentModel implements TBSModel
 	}
 
 	/**
-	* Assigns value me to the ith member of the list. 
-	*/
+	 * Assigns value me to the ith member of the list. 
+	 */
 	public void setElement(int i, ModelElement me) {
 		modelElements.set(i, me);
 	}
@@ -268,7 +269,7 @@ public class StudentModel implements TBSModel
 	public EmptyNode getImmortalEmptyNode() {
 		return immortalEmptyNode;
 	}
-	
+
 	public Stack<Command> getHistory() {
 		return history;
 	}
@@ -276,7 +277,7 @@ public class StudentModel implements TBSModel
 	public void setHistory(Stack<Command> history) {
 		this.history = history;
 	}
-	
+
 	public void addActionToHistory(Command c){
 		if(history.isEmpty())
 			buttonStates.put(TBSButtonType.UNDO, true);
@@ -284,7 +285,7 @@ public class StudentModel implements TBSModel
 		System.out.println(new StringBuffer("Added action(").append(c.toString())
 				.append(") to history.").toString());
 	}
-	
+
 	public Command removeActionFromHistory(){
 		Command c = history.pop();
 		if(c instanceof Unlink)
@@ -293,37 +294,37 @@ public class StudentModel implements TBSModel
 			buttonStates.put(TBSButtonType.UNDO, false);
 		return c;
 	}
-	
+
 	public void createButtons(Graphics2D g2)
 	{
 		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,buttons);
 		TBSGraphics.buttonsWidth = buttonDimensions.width + 
-				TBSGraphics.buttonsXPadding * 2;
+		TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
-				TBSGraphics.buttonsYPadding * 2;
-	
+		TBSGraphics.buttonsYPadding * 2;
+
 		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
 		Dimension checkDimension = TBSGraphics.getStringBounds(g2, " \u2713");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + checkDimension.width +
-				TBSGraphics.buttonsXPadding * 2;
+		TBSGraphics.buttonsXPadding * 2;
 	}
-	
+
 	// called during setup to create organism nodes
 	protected void createModelElements(Graphics2D g2, 
-				TreeMap<String, BufferedImage> organismNameToImage) {
+			TreeMap<String, BufferedImage> organismNameToImage) {
 		EmptyNode.g2 = g2;
 		int currentY = TBSGraphics.buttonsHeight + 10;
 		Dimension stringDimensions = TBSGraphics.get2DStringBounds(g2, organismNameToImage.keySet());
 		Dimension imageDimensions = TBSGraphics.get2DImageBounds(g2, organismNameToImage.values());
 		TBSGraphics.organismNodeWidth = stringDimensions.width + imageDimensions.width + 
-				TBSGraphics.paddingWidth * 2;
+		TBSGraphics.paddingWidth * 2;
 		if(stringDimensions.height > imageDimensions.height)
 			TBSGraphics.organismNodeHeight = stringDimensions.height;
 		else
 			TBSGraphics.organismNodeHeight = imageDimensions.height;
 		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
 			addElement(new OrganismNode( getSerial(), e.getKey(), 
-				new Point(0, currentY), e.getValue()));
+					new Point(0, currentY), e.getValue()));
 			currentY += TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing;
 		}
 
@@ -331,19 +332,19 @@ public class StudentModel implements TBSModel
 		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
 		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
 		TBSGraphics.emptyNodeUpperY = currentY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
-		
+
 		immortalEmptyNode = new EmptyNode(getSerial());
 		addElement(immortalEmptyNode);
 	}	
 
 	/**
-	* PrintConnections() prints out a list of all connections in each
-	* model element. 
-	* Connection to a Node (toConnection) is indicated by ->
-	* Trace connection from a Node (fromConnection) indicated by <-
-	* Written for testing connections; functionality may not have
-	* survived rewrite of connections methodology.
-	*/
+	 * PrintConnections() prints out a list of all connections in each
+	 * model element. 
+	 * Connection to a Node (toConnection) is indicated by ->
+	 * Trace connection from a Node (fromConnection) indicated by <-
+	 * Written for testing connections; functionality may not have
+	 * survived rewrite of connections methodology.
+	 */
 	public void printConnections()
 	{
 		Node n;
@@ -373,10 +374,10 @@ public class StudentModel implements TBSModel
 		}
 		return false;
 	}
-	
+
 	/**
-	* Returns the list of active elements
-	*/	
+	 * Returns the list of active elements
+	 */	
 	public List<Node> inTreeElements(){
 		List<Node> inTreeElements = new LinkedList<Node>();
 		for(ModelElement m : modelElements){
@@ -388,7 +389,7 @@ public class StudentModel implements TBSModel
 		}
 		return inTreeElements;
 	}
-	
+
 	public void addToTree(Node n)
 	{
 		Node newNode;
@@ -413,11 +414,11 @@ public class StudentModel implements TBSModel
 			buttonStates.put(TBSButtonType.LINK, true);
 		buttonStates.put(TBSButtonType.CLEAR, true);
 	}
-	
+
 	public void addConnection(Node from, Node to){
 		addConnection(from, to, -1);
 	}
-	
+
 	public void addConnection(Node from, Node to, int id)
 	{
 		Connection newConn = new Connection(id == -1 ? getSerial() : id, from, to);
@@ -442,7 +443,7 @@ public class StudentModel implements TBSModel
 		}
 		buttonStates.put(TBSButtonType.UNLINK, true);
 	}
-	
+
 	public Properties getProperties(PropertyType pt) {
 		return propertiesMap.get(pt);
 	}
@@ -470,11 +471,11 @@ public class StudentModel implements TBSModel
 		}
 		return connections;
 	}
-	
+
 	/**
-	* Unlink had to live in Model when connections were
-	* one-way. Now, this simply calls the Node-based two-way unlink.
-	*/
+	 * Unlink had to live in Model when connections were
+	 * one-way. Now, this simply calls the Node-based two-way unlink.
+	 */
 	public void unlink(Node n)
 	{
 		List<Connection> connections = getConnectionsByNode(n);
@@ -489,7 +490,7 @@ public class StudentModel implements TBSModel
 			modelElements.remove(c);
 		}
 	}
-	
+
 	public void removeFromTree(ModelElement m){
 		if(m == null)
 			return;
@@ -549,7 +550,7 @@ public class StudentModel implements TBSModel
 		modelElements.remove(m);
 		updateButtonStatesAfterRemove();
 	}
-	
+
 	public void updateButtonStatesAfterRemove(){
 		if(!hasConnections())
 			buttonStates.put(TBSButtonType.UNLINK, false);
@@ -566,13 +567,13 @@ public class StudentModel implements TBSModel
 	}
 
 	/**
-	* Take a list of strings extracted from a file by
-	* the perl script contained within the website, and recreate the stored tree.
-	* Two passes: first pass recreates nodes, second makes connections. 
-	*/
+	 * Take a list of strings extracted from a file by
+	 * the perl script contained within the website, and recreate the stored tree.
+	 * Two passes: first pass recreates nodes, second makes connections. 
+	 */
 	public void loadTree(String tree)
 	{
-		List<ModelElement> savedTree = new LinkedList<ModelElement>();
+		List<ModelElement> savedTree = modelElements;
 		EmptyNode savedImmortalEmptyNode = null;
 		String[] treeItems = tree.split("#");
 		try{
@@ -580,7 +581,7 @@ public class StudentModel implements TBSModel
 			{
 				String data[] = item.split(":");
 				if (data[0].equals("O"))
-					savedTree.add(loadOrganismNode(data));
+					loadOrganismNode(data,savedTree);
 				else if (data[0].equals("E")){
 					ModelElement temp = loadEmptyNode(data);
 					if(!((EmptyNode) temp).isInTree())
@@ -614,7 +615,7 @@ public class StudentModel implements TBSModel
 	 * reloading the image files, but it means we have to always use the
 	 * same set of organisms. 
 	 */
-	public ModelElement loadOrganismNode(String[] data) throws NumberFormatException {
+	public void loadOrganismNode(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
 		int id=0,x=0,y=0;
 		try{
 			id = Integer.parseInt(data[1]);
@@ -625,12 +626,15 @@ public class StudentModel implements TBSModel
 			.append(data[1]).append(",x:").append(data[3]).append("y:").append(data[4]).append(")").toString());
 			throw e;
 		}
-		ModelElement me = getElementBySN(id);
-		OrganismNode node = (OrganismNode) me;
-		Point pt = new Point(x,y);
-		node.setAnchorPoint(pt);
-		node.setInTree(Boolean.parseBoolean(data[5]));
-		return (ModelElement) node;
+		boolean inTree = Boolean.parseBoolean(data[5]);
+		if(inTree){
+			int elementIndex = findIndexById(id, tempTree);
+			OrganismNode node = (OrganismNode) tempTree.get(elementIndex);
+			Point pt = new Point(x,y);
+			node.setAnchorPoint(pt);
+			node.setInTree(inTree);
+			tempTree.set(elementIndex, node);
+		}
 	}
 
 	/**
@@ -670,7 +674,7 @@ public class StudentModel implements TBSModel
 			to = Integer.parseInt(data[3]);
 		}catch(NumberFormatException e){
 			System.out.println(new StringBuffer("StudentModel:loadConnection:Error parsing connection data (id:")
-				.append(data[1]).append(",from id:").append(data[2]).append("to id:").append(data[3]).append(")").toString());
+			.append(data[1]).append(",from id:").append(data[2]).append("to id:").append(data[3]).append(")").toString());
 			throw e;
 		}
 		int fromIndex = findIndexById(from, parsedElements);
@@ -689,15 +693,15 @@ public class StudentModel implements TBSModel
 		return export.toString();
 
 	}
-	
+
 	public Prompt getPrompt() {
 		return prompt;
 	}
-	
+
 	public void clearPrompt() {
 		this.prompt = null;
 	}
-	
+
 	public void viewOpenResponse(OpenQuestionButtonType currentQuestion) {
 		if(currentQuestion.isRadio()){
 			radioQuestionPrompt.setCurrentQuestion(currentQuestion);
@@ -710,12 +714,12 @@ public class StudentModel implements TBSModel
 		}
 		view.refreshGraphics();
 	}
-	
+
 	public void viewPrompt(Prompt prompt){
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
-	
+
 	public void helpUser() {
 		helpPrompt.setFinished(false);
 		this.prompt = helpPrompt;
@@ -725,12 +729,12 @@ public class StudentModel implements TBSModel
 	public Student getStudent(){
 		return student;
 	}
-	
-	
+
+
 	public Map<TBSButtonType, Boolean> getButtonStates() {
 		return buttonStates;
 	}
-	
+
 	public Boolean isButtonActive(TBSButtonType button){
 		return buttonStates.get(button);
 	}
@@ -746,15 +750,15 @@ public class StudentModel implements TBSModel
 	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}
-	
+
 	public StudentControllerTest getStudentControllerTest() {
 		return sct;
 	}
-	
+
 	public void setStudentControllerTest(StudentControllerTest sct) {
 		this.sct = sct;
 	}
-	
+
 	public List<String> incompletedItems(){
 		List<String> incompletedItems = new LinkedList<String>();
 		if(inTreeElements().isEmpty())
@@ -765,7 +769,7 @@ public class StudentModel implements TBSModel
 		}
 		return incompletedItems;
 	}
-	
+
 	public String unusedOrganisms(){
 		StringBuffer unusedString = new StringBuffer();
 		StringBuffer unusedStartString = new StringBuffer();
@@ -778,7 +782,7 @@ public class StudentModel implements TBSModel
 			return unusedStartString.append(unusedString).append("\n").toString();
 		return "";
 	}
-	
+
 	public String surveyStatus(){
 		StringBuffer statusString = new StringBuffer("");
 		List<String> incompletedItems = incompletedItems();
@@ -799,5 +803,5 @@ public class StudentModel implements TBSModel
 		}
 		return statusString.toString();
 	}
-	
+
 }

@@ -46,7 +46,7 @@ public class AdminModel implements TBSModel
 	private Map<PropertyType, Properties> propertiesMap;
 	private List<Student> students;
 	private Student selectedStudent;
-	
+
 	public AdminModel(TBSApplet app, Graphics2D g2,
 			TreeMap<String, BufferedImage> organismNameToImage,
 			List<String> students, Map<PropertyType, Properties> propertiesMap) {
@@ -58,8 +58,9 @@ public class AdminModel implements TBSModel
 		createModelElements(g2, organismNameToImage);
 		createStudents(g2, students);
 		selectedStudent = this.students.get(0);
-		if(!"".equals(selectedStudent.getTree()))
-			loadTree(selectedStudent.getTree());
+		String tree = selectedStudent.getTree();
+		if(tree != null && tree.length() != 0)
+			loadTree(tree);
 		writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
 		/*
 		 * Until Professor White says otherwise we will be eliminating the radio
@@ -69,32 +70,36 @@ public class AdminModel implements TBSModel
 		view = new AdminView(this);
 		controller = new AdminController(this, view);
 	}
-	
+
 	public void changeSavedTree(int studentIndex){
 		/*
 		 * Make sure your don't re-calculate the selected student's
 		 * information
 		 */
+		System.out.println("Selected Index:" + studentIndex);
 		if(studentIndex != students.indexOf(selectedStudent)){
 			selectedStudent = students.get(studentIndex);
-			if(!"".equals(selectedStudent.getTree()))
-				loadTree(selectedStudent.getTree());
-			else
-				resetModel();
+			System.out.println("Selected Student:" + selectedStudent.getName());
+			String tree = selectedStudent.getTree();
+			resetModel();
+			if(tree != null && tree.length() != 0)
+				loadTree(tree);
 			writtenQuestionReviewPrompt = null;
 			analysisPrompt = null;
 		}
 	}
-	
+
 	public void resetModel(){
-		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
-			removeFromTree(modelElements.get(modelElements.size()-1));
-		List<Node> inTreeElements = inTreeElements();
-		for(Node n : inTreeElements){
-			removeFromTree(n);
+		int size = modelElements.size();
+		while(size > TBSGraphics.numOfOrganisms+1){
+			removeFromTree(modelElements.get(size-1));
+			size = modelElements.size();
 		}
+		List<Node> inTreeElements = inTreeElements();
+		for(Node n : inTreeElements)
+			removeFromTree(n);
 	}
-	
+
 	public void removeFromTree(ModelElement m){
 		if(m == null)
 			return;
@@ -113,11 +118,11 @@ public class AdminModel implements TBSModel
 		}
 		modelElements.remove(m);
 	}
-	
+
 	/**
-	* Unlink had to live in Model when connections were
-	* one-way. Now, this simply calls the Node-based two-way unlink.
-	*/
+	 * Unlink had to live in Model when connections were
+	 * one-way. Now, this simply calls the Node-based two-way unlink.
+	 */
 	public void unlink(Node n)
 	{
 		List<Connection> connections = getConnectionsByNode(n);
@@ -127,41 +132,41 @@ public class AdminModel implements TBSModel
 			modelElements.remove(c);
 		}
 	}
-	
+
 	public void setModelElements(List<ModelElement> newList){
 		modelElements = newList;
 	}
-	
+
 	public List<Student> getStudents(){
 		return students;
 	}
-	
+
 	/**
-	* Returns a handle for the View associated with this Model
-   */
+	 * Returns a handle for the View associated with this Model
+	 */
 	public JComponent getView() {
 		return view;
 	}
-	
+
 	/**
-	* Returns a handle for the Controller associated with this Model.
-	*/
+	 * Returns a handle for the Controller associated with this Model.
+	 */
 	public TBSController getController() {
 		return controller;
 	}
-	
+
 	/**
-	* Returns a handle for the Applet.
-	*/
+	 * Returns a handle for the Applet.
+	 */
 	public TBSApplet getApplet() {
 		return applet;
 	}	
-	
+
 	/**
-	* Returns a serial number for a model element. Serial numbers start
-	* at 0 and simply increment; they are unique within a tree, but not
-	* outside it.
-	*/
+	 * Returns a serial number for a model element. Serial numbers start
+	 * at 0 and simply increment; they are unique within a tree, but not
+	 * outside it.
+	 */
 	public int getSerial()
 	{
 		int sn = MESerialNumber;
@@ -171,16 +176,16 @@ public class AdminModel implements TBSModel
 	}
 
 	/**
-	* Adds a ModelElement to the ArrayList of items this Model knows
-	* about.
-	*/
+	 * Adds a ModelElement to the ArrayList of items this Model knows
+	 * about.
+	 */
 	public void addElement(ModelElement m) {
 		modelElements.add(m);
 	}	
-	
+
 	/**
-	* returns the ith ModelElement in the list.
-	*/
+	 * returns the ith ModelElement in the list.
+	 */
 	public ModelElement getElement(int i) {
 		return modelElements.get(i);
 	}
@@ -188,7 +193,7 @@ public class AdminModel implements TBSModel
 	public void removeElement(int i) {
 		modelElements.remove(i);
 	}
-	
+
 	public int findIndexByElement(ModelElement m){
 		/*
 		 * For OrganismNodes we can just use serialId
@@ -200,12 +205,12 @@ public class AdminModel implements TBSModel
 		else
 			return modelElements.indexOf(m);
 	}
-	
+
 	//findIndexById method that is called when a saved tree is not being loaded
 	public int findIndexById(Integer id){
 		return findIndexById(id, null);
 	}
-	
+
 	public int findIndexById(Integer id, List<ModelElement> parsedElements){
 		if(id <= TBSGraphics.numOfOrganisms)
 			return (id);
@@ -228,11 +233,11 @@ public class AdminModel implements TBSModel
 	}	
 
 	/**
-	* Returns the ModelElement with a given serial number
-	* This method relies on the fact that objects are added in serial#
-	* order, and remain sorted, although they may be deleted. If this
-	* assumption ceases to be true, this method will fail. 
-	*/
+	 * Returns the ModelElement with a given serial number
+	 * This method relies on the fact that objects are added in serial#
+	 * order, and remain sorted, although they may be deleted. If this
+	 * assumption ceases to be true, this method will fail. 
+	 */
 	public ModelElement getElementBySN(int sn)
 	{
 		ModelElement me;
@@ -240,24 +245,24 @@ public class AdminModel implements TBSModel
 		List<ModelElement> model = modelElements;
 		do 
 		{
-			 me = (ModelElement)model.get(checknum);
+			me = (ModelElement)model.get(checknum);
 			if (me.getId() == sn)
 				return me;
 			checknum--;
 		} while (checknum >= me.getId());
 		return null;
 	}
-	
+
 	/**
-	* returns the complete List of Model Elements.
-	*/
+	 * returns the complete List of Model Elements.
+	 */
 	public List<ModelElement> getElements() {
 		return modelElements;
 	}
 
 	/**
-	* Assigns value me to the ith member of the list. 
-	*/
+	 * Assigns value me to the ith member of the list. 
+	 */
 	public void setElement(int i, ModelElement me) {
 		modelElements.set(i, me);
 	}
@@ -266,24 +271,24 @@ public class AdminModel implements TBSModel
 	{
 		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,buttons);
 		TBSGraphics.buttonsWidth = buttonDimensions.width + 
-				TBSGraphics.buttonsXPadding * 2;
+		TBSGraphics.buttonsXPadding * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + 
-				TBSGraphics.buttonsYPadding * 2;
+		TBSGraphics.buttonsYPadding * 2;
 	}
-	
+
 	// called during setup to create organism nodes
 	protected void createModelElements(Graphics2D g2, 
-				TreeMap<String, BufferedImage> organismNameToImage) {
+			TreeMap<String, BufferedImage> organismNameToImage) {
 		EmptyNode.g2 = g2;
 		for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
 			addElement(new OrganismNode( getSerial(), e.getKey(), 
-				new Point(), e.getValue()));
+					new Point(), e.getValue()));
 		}
 
 		TBSGraphics.emptyNodeLeftX = 0;
 		TBSGraphics.emptyNodeUpperY = 0;
 	}
-	
+
 	protected void createStudents(Graphics2D g2, List<String>  studentStringArrays) {
 		int currentY = 0;
 		TBSGraphics.studentNodeHeight = 0;
@@ -304,13 +309,13 @@ public class AdminModel implements TBSModel
 	}	
 
 	/**
-	* PrintConnections() prints out a list of all connections in each
-	* model element. 
-	* Connection to a Node (toConnection) is indicated by ->
-	* Trace connection from a Node (fromConnection) indicated by <-
-	* Written for testing connections; functionality may not have
-	* survived rewrite of connections methodology.
-	*/
+	 * PrintConnections() prints out a list of all connections in each
+	 * model element. 
+	 * Connection to a Node (toConnection) is indicated by ->
+	 * Trace connection from a Node (fromConnection) indicated by <-
+	 * Written for testing connections; functionality may not have
+	 * survived rewrite of connections methodology.
+	 */
 	public void printConnections()
 	{
 		Node n;
@@ -332,7 +337,7 @@ public class AdminModel implements TBSModel
 		}
 		return false;
 	}
-	
+
 	public boolean hasEmptyNodes(){
 		for(int i=(TBSGraphics.numOfOrganisms-1);i<modelElements.size();i++){
 			if(modelElements.get(i) instanceof EmptyNode)
@@ -340,10 +345,10 @@ public class AdminModel implements TBSModel
 		}
 		return false;
 	}
-	
+
 	/**
-	* Returns the list of active elements
-	*/	
+	 * Returns the list of active elements
+	 */	
 	public List<Node> inTreeElements(){
 		List<Node> inTreeElements = new LinkedList<Node>();
 		for(ModelElement m : modelElements){
@@ -355,7 +360,7 @@ public class AdminModel implements TBSModel
 		}
 		return inTreeElements;
 	}
-	
+
 	public Properties getProperties(PropertyType pt) {
 		return propertiesMap.get(pt);
 	}
@@ -376,20 +381,20 @@ public class AdminModel implements TBSModel
 	}
 
 	/**
-	* Take a list of strings extracted from a file by
-	* the perl script contained within the website, and recreate the stored tree.
-	* Two passes: first pass recreates nodes, second makes connections. 
-	*/
+	 * Take a list of strings extracted from a file by
+	 * the perl script contained within the website, and recreate the stored tree.
+	 * Two passes: first pass recreates nodes, second makes connections. 
+	 */
 	public void loadTree(String tree)
 	{
-		List<ModelElement> savedTree = new LinkedList<ModelElement>();
+		List<ModelElement> savedTree = modelElements;
 		String[] treeItems = tree.split("#");
 		try{
 			for(String item : treeItems)
 			{
 				String data[] = item.split(":");
 				if (data[0].equals("O"))
-					savedTree.add(loadOrganismNode(data));
+					loadOrganismNode(data, savedTree);
 				else if (data[0].equals("E")){
 					ModelElement temp = loadEmptyNode(data);
 					if(((EmptyNode) temp).isInTree())
@@ -423,7 +428,7 @@ public class AdminModel implements TBSModel
 	 * reloading the image files, but it means we have to always use the
 	 * same set of organisms. 
 	 */
-	public ModelElement loadOrganismNode(String[] data) throws NumberFormatException {
+	public void loadOrganismNode(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
 		int id=0,x=0,y=0;
 		try{
 			id = Integer.parseInt(data[1]);
@@ -434,12 +439,15 @@ public class AdminModel implements TBSModel
 			.append(data[1]).append(",x:").append(data[3]).append("y:").append(data[4]).append(")").toString());
 			throw e;
 		}
-		ModelElement me = getElementBySN(id);
-		OrganismNode node = (OrganismNode) me;
-		Point pt = new Point(x,y);
-		node.setAnchorPoint(pt);
-		node.setInTree(Boolean.parseBoolean(data[5]));
-		return (ModelElement) node;
+		boolean inTree = Boolean.parseBoolean(data[5]);
+		if(inTree){
+			int elementIndex = findIndexById(id, tempTree);
+			OrganismNode node = (OrganismNode) tempTree.get(elementIndex);
+			Point pt = new Point(x,y);
+			node.setAnchorPoint(pt);
+			node.setInTree(inTree);
+			tempTree.set(elementIndex, node);
+		}
 	}
 
 	/**
@@ -497,20 +505,20 @@ public class AdminModel implements TBSModel
 		return export.toString();
 
 	}
-	
+
 	public Prompt getPrompt() {
 		return prompt;
 	}
-	
+
 	public void clearPrompt() {
 		this.prompt = null;
 	}
-	
+
 	public void promptUser(Prompt prompt) {
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
-	
+
 	public void questionReview() {
 		if(writtenQuestionReviewPrompt == null)
 			writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
@@ -519,7 +527,7 @@ public class AdminModel implements TBSModel
 		this.prompt = writtenQuestionReviewPrompt;
 		view.refreshGraphics();
 	}
-	
+
 	public void analyze(){
 		if(analysisPrompt == null)
 			analysisPrompt = new AnalysisPrompt(this);
@@ -536,7 +544,7 @@ public class AdminModel implements TBSModel
 	public void setTextEntryBox(TextEntryBox textEntryBox) {
 		this.textEntryBox = textEntryBox;
 	}
-	
+
 	public List<TBSButtonType> getButtons() {
 		return buttons;
 	}
