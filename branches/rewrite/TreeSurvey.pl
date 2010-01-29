@@ -10,6 +10,7 @@ $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "https://www.securebio.umb.edu/cgi-bin/TreeSurvey.pl";
 $jar_loc = "https://www.securebio.umb.edu/TBSRun.jar";
 $admin_pw = "lab09acce55";
+$survey_points = "10";
 $too_late_month = 12;
 $too_late_day = 12;
 $name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
@@ -131,7 +132,7 @@ sub login_page {
     	 print "</td><td height=100%>\n";
     	 print "<table bgcolor=yellow height=100% style=\"width:200px;\"><tr><td style=\"font-weight:bold;\"><center>\n";
 		 print "The submission deadline has passed!</center></td></tr><tr><td><center>\n";
-		 print "You can submit a survey but you will not recieve 15 points.<br>\n";
+		 print "You can submit a survey but you will not recieve $survey_points points.<br>\n";
 		 print "Thanks!</center></td></tr></table>\n";
 		 print "</td></tr></table>\n";
     }
@@ -215,14 +216,13 @@ sub load_student_survey {
 	
 	#see if there's already an entry for this student
 	$dbh = treeDB::connect();
-	$statement = "SELECT count(*) from $survey_info WHERE name=?";
+	$statement = "SELECT count(*) from student_testdata WHERE name=?";
 	$sth = $dbh->prepare($statement);
 	$sth->execute($name);
 	$rowcount = $sth->fetchrow();
 	$sth->finish();
 	$dbh->disconnect();
-
-
+	
 	$dbh = GradeDB::connect();
 	$statement = "SELECT section,$assignment_index from $student_info WHERE name=?";
 	$sth = $dbh->prepare($statement);
@@ -236,7 +236,7 @@ sub load_student_survey {
 	#comment out the one underneath it.
 	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
 	
-	if($grade eq 15){
+	if($grade eq $survey_points){
 		$complete  = 1;
 	}
 	else{
@@ -246,11 +246,18 @@ sub load_student_survey {
 		     $complete = 1;
 		}
 	}
+	if ($complete != 0) {
+	     #enter the grade
+	     $dbh = GradeDB::connect();
+		 $statement = "UPDATE $student_info SET $assignment_index=? WHERE name=?";
+         $sth = $dbh->prepare($statement);
+         $sth->execute($survey_points,$name);
+	     $dbh->disconnect();
+	}
 	
 	#see if they're entering data
+	$dbh = treeDB::connect();
 	if ($treeXML ne "") {
-	
-	    $dbh = treeDB::connect();
 	
 	    if ($rowcount == 0) {
 	        $statement = "INSERT INTO $survey_info (Q1, Q2, Q3, tree, date, name) VALUES (?,?,?,?,NOW(),?)";
@@ -260,20 +267,10 @@ sub load_student_survey {
 	    $sth = $dbh->prepare($statement);
 	    $sth->execute($Q1, $Q2, $Q3, $treeXML, $name);
 	    $sth->finish();
-	    $dbh->disconnect();
-	    
-	    if ($complete != 0) {
-	     	#enter the grade
-	     	$dbh = GradeDB::connect();
-		 	$statement = "UPDATE $student_info SET $assignment_index = \"15\" WHERE name=\"$name\"";
-         	$sth = $dbh->prepare($statement);
-         	$sth->execute();
-	     	$dbh->disconnect();
-	    }
 	    print "<body bgcolor=\"lightblue\">\n";
   	    print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
   	    if ($too_late != 1) {
-  	    	print "<br><center><font size=+1>You have recieved 15 points.</font><br>";
+  	    	print "<br><center><font size=+1>You have recieved $survey_points points.</font><br>";
   	    }
   	    print "<form action=\"$script_url\" method=\"POST\" name=\"form\">\n";
   	    print "<table><tr><td>\n";
@@ -291,15 +288,14 @@ sub load_student_survey {
 	} else {
 	    # if there's already data there, get it
 	    if ($rowcount != 0) {
-	        $dbh = treeDB::connect();
 	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM $survey_info WHERE name=?");
 	        $sth->execute($name);
 	        ($Q1, $Q2, $Q3, $treeXML, $lastUpdate) = $sth->fetchrow_array();
 	        $sth->finish();
-	        $dbh->disconnect();
 	    }
 	}
 	
+	$dbh->disconnect();
 	
 	print "<SCRIPT language=\"JavaScript\">\n";
 	print "function isComplete() {\n";
@@ -343,7 +339,7 @@ sub load_student_survey {
     if ($too_late == 1) {
     	print "<table bgcolor=yellow><tr><td style=\"font-weight:bold;\"><center>\n";
 		print "The submission deadline<br> has passed!</center></td></tr><tr><td><center>\n";
-		print "You can submit a survey<br>but you will not<br> recieve 15 points.<br>\n";
+		print "You can submit a survey<br>but you will not<br> recieve $survey_points points.<br>\n";
 		print "Thanks!</center></td></tr></table>\n";
 	}else{
 	    if ($complete == 0) {
@@ -354,7 +350,7 @@ sub load_student_survey {
 		} else {
 		     print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
 		     print "Your survey is complete!</center></td></tr><tr><td><center>\n";
-		     print "You have received<br> 15 points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
+		     print "You have received<br> $survey_points points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
 		     print "Thanks!</center></td></tr></table>\n";	
 		}
 	}
