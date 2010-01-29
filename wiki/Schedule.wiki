@@ -1,77 +1,39 @@
-#summary The projected course of development of the tree-building survey.
+#summary Schedule of deliverables - Spring Semester
 #labels Featured
 
 == Introduction ==
+The schedule for the spring semester will be couched in terms of deliverables per week. Responsibility for deliverables will be taken at team meetings. 
 
-This is a first draft of the schedule. Team members, please modify the format in any way that you think useful. Also, of course the data. <br>
-Dates are guesses in some instances, or ???? if I don't have enough data to usefully guess. <br>
-"Track" is my notion for identifying dependencies. We know that there are two parallel tracks already: projecting and prioritizing features to be developed ("features") and refactoring the current code ("refactor"). "Main" indicates items relevant to both tracks. This is probably not the right way to do this, it's just the way I thought of.  <br>
-"Preliminary schedule" will be done when we have all signed off on this schedule page, and each of the ???? items has at least one finite, boolean subtask with a definite near-term (<2 weeks) completion date. I suggest that the short stories may qualify as a subtask for "client meeting". 
-
-== Details ==
-
-||Due Date||Short name||Responsibility||Track||Date Completed||
-||9/30/09||set up google code page||Andrew||main||9/30/09||
-||9/30/09||post BW's code||Jon||main||9/30/09||
-||10/8/09||[http://cluster.bio.whe.umb.edu/cgi-bin/TreeSurvey.pl Current Version] up and running somewhere||Andrew||main||10/8/09||
-||10/8/09||[Schedule Preliminary schedule]||team consensus||main||10/8/09||
-||10/8/09||[VisionStatement Vision Statement]||Andrew||main||10/8/09||
-||10/9/09||[Technology_Stack Downloaded, Installed, & Configured Technology Stack]||Andrew||main||10/9/09||
-||10/11/09||Setup local version of the Professor White's code||Andrew||main||10/11/09||
-||10/13/09||1 story from each team member||team||[Features features]||10/13/09||
-||10/13/09||All members of team have local builds||team||build||Completed||
-||10/15/09||[UI_Options UI options] prepared for team approval||Jon||UI||10/13/09||
-||10/15/09||[VisionStatement Vision statement approved by client]||team||main||10/15/09||
-||10/15/09||architecture of redesigned code||Glenn||main||10/15/09||
-||10/18/09||develop build system||Andrew||main||10/17/09||
-||10/20/09||A selection of logos to choose from||Jon||marketing||10/16/09||
-||10/22/09||Post original [Applets applet] to wiki||Andrew||main||10/20/09||
-||10/26/09||Applet Version 0.1||team||[Versioning Versions]||10/26/09||
-||10/29/09||Applet Version 0.2||team||[Versioning Versions]||10/29/09||
-||11/01/09||Applet Version 0.3||team||[Versioning Versions]||11/01/09||
-||11/09/09||Applet Version 0.4||team||[Versioning Versions]||11/09/09||
-||11/10/09||Client meeting||team||Features/UI||11/10/09||
-||11/12/09||Applet Version 0.5||team||[Versioning Versions]||Skipped||
-||11/12/09||Venture Capital presentation||team||main||11/12/09||
-||11/15/09||First draft of javadoc||Jon||main||11/15/09||
-||11/15/09||Applet Version 0.6||team||[Versioning Versions]||11/23/09||
-||12/01/09||Applet Version 1.0||team||[Versioning Versions]||12/08/09||
-||12/10/09||Finalized List of Features Scheduled for Spring Semester Deliverable||team||[MeetingEightMinutes Meeting 8]||12/10/09||
-||12/14/09||Applet Version 1.1||team||[Versioning Versions]||12/14/09||
-||12/15/09||Finalized Requirements Document Due||team||[http://code.google.com/p/tree-buildingsurvey/downloads/list TBS_BRD-1.doc]||12/15/09||
-||1/15/10||Applet Version Including [MeetingEightMinutes New Features] Ready For Testing||team||[SpringFeatureProgress Feature Progress]||||
-||11/20/09||Rewrite applet testing protocols - draft|| Jon||[AppletGUITesting] ||||
-||12/31/09||Add front (login) and back (post-test) screens||team||main||||
-||1/30/10||Functioning program with full feature set||team||main||||
+In order to ensure orderly development, code submissions should be in fulfillment of schedule items or in response to items on the issues list. 
 
 
-== Discussion ==
-11/24 - the testing protocols are behind schedule. This is partly due to my failure to manage my time effectively, and partly due to over-optimistic scheduling. 
-Progress on this front would be facilitated by some specification of features and interface, or even stability of those elements from iteration to iteration. -jpk
-11/12 - Venture cap meeting. Expecting trailer truck loaded with bales of money, any day now. Added some writing assignments for myself. No outlook for version 0.6 yet, or scheduled release - should have that soon. 
-11/08 - Productive meeting, see minutes. 
-10/20 - We did not discuss the question of further feature development in class today, so that's a missed schedule item (and it's even one that we rolled back, for shame).
-I suggest we carry on that discussion via the wiki for the moment, over on the [Features features] page. 
-On the other hand, we did get a logo selected and posted, so hurray for us. New schedule items are up, and one is completed - sort of - before it's posted.
+The schedule for the fall semester has been moved [FallSchedule here].
 
-Later: test cases for toy GUI are posted, please review and approve or suggest changes. 
+== Outstanding Items ==
+Week 1: (1/29 - 2/4)
+  * Glenn: Load tree into a graph. Deliverable: load a tree and traverse it.
+
+  * Andrew: Refactor Model. Deliverable: Simplicity
+  * Andrew: Study feasability of logging. Deliverable: written report, aye or nay and why
+  
+  * Jon:  Unit tests for White's scoring items 
+  * Jon: Begin Controller refactor: decompose switch
+  * Jon: Begin Controller refactor: write unit tests for testable methods
+
+Week 2: (2/4-2/11)
+  * Glenn: Implement White's tests
+  * Andrew: Refactor Prompts
+  * Jon: Continue Controller refactor
+Week 3: (2/11-2/18)
+  * Glenn: Collect statistics on multiple graphs
+  * Andrew: Refactor View
+  * Jon: Continue adding unit tests
+Week 4: (2/18-2/25)
+  * Glenn: Student trees searchable by graph features
+  * Andrew: If feasible, logging. Otherwise, a new deliverable here.
+  * Jon: Continue adding unit tests
 
 
-10/15
-I assume that Professor White's vision statement is acceptable to all of us - accepted by acclamation, without dissent. 
-Andrew, if you agree that you're the lead on "develop build system", please erase the question mark. If not, we need to address that item. 
+== Delivered Items ==
 
 
-10/08 - I'm checking off two of the items for today as done. We have finite schedule items under "client meeting" (develop user stories) and "build" (local builds by Tuesday), and a terminal date for the refactor track (11/05). As for the vision statement, we have one. It's probably not one that will be signed off on, so it still needs work, but it's there. Next step is to make it approvable by next Thursday. <br>
-
-1/14/09 - (From Brian White) Here are the deadlines for the survey:
-<ul>
-  <li>I will get you a list of student names and ID#s (to use as passwords) by Feb 1</li>
-  <li>Students will start doing the survey on Friday Feb 5</li>
-  <li>Students must complete the survey by noon on monday feb 8</li>
-  <li>On mon feb 8, I will need to be able to:</li>
-    <ul>
-      <li>view any survey I like and print it as a pdf</li>
-      <li>get a list of which students completed the survey</li>
-    </ul>
-</ul>
