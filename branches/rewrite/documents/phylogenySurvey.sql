@@ -18,6 +18,7 @@ name varchar(30) null);
 
 -- insert row for "Diversity of Life Survey (15)" project[this will be used by TreeSurvey.pl]
 insert into assignments (name) values ("Diversity of Life Survey (15)");
+insert into assignments (number, name) values (1, "Genetics Survey (10)");
 
 -- create instructors table
 create table instructors (name varchar(30) not null primary key default '',

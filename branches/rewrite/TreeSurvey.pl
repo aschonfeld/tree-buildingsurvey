@@ -7,12 +7,12 @@ use treeDB;
 
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
-$script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
-$jar_loc = "http://$ENV{'HTTP_HOST'}/TBSRun.jar";
+$script_url = "https://www.securebio.umb.edu/cgi-bin/TreeSurvey.pl";
+$jar_loc = "https://www.securebio.umb.edu/TBSRun.jar";
 $admin_pw = "lab09acce55";
 $too_late_month = 12;
 $too_late_day = 12;
-$name_of_survey_field_in_assignments_txt = "Diversity of Life Survey (15)";
+$name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
 $student_info = "students";
 $survey_info = "student_data";
 $assignment_index = "";
@@ -215,14 +215,42 @@ sub load_student_survey {
 	
 	#see if there's already an entry for this student
 	$dbh = treeDB::connect();
-	$statement = "SELECT count(*) from student_testdata WHERE name=?";
+	$statement = "SELECT count(*) from $survey_info WHERE name=?";
 	$sth = $dbh->prepare($statement);
 	$sth->execute($name);
 	$rowcount = $sth->fetchrow();
 	$sth->finish();
+	$dbh->disconnect();
 
+
+	$dbh = GradeDB::connect();
+	$statement = "SELECT section,$assignment_index from $student_info WHERE name=?";
+	$sth = $dbh->prepare($statement);
+	$sth->execute($name);
+	($section,$grade) = $sth->fetchrow();
+	$sth->finish();
+	$dbh->disconnect();
+	
+	#If Professor White requests the radio question be put back into
+	#the open-response section, then reinstitute this line of code and
+	#comment out the one underneath it.
+	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
+	
+	if($grade eq 15){
+		$complete  = 1;
+	}
+	else{
+		if (($Q1 eq "") || ($Q2 eq "")) {
+		     $complete = 0;
+		} else {
+		     $complete = 1;
+		}
+	}
+	
 	#see if they're entering data
 	if ($treeXML ne "") {
+	
+	    $dbh = treeDB::connect();
 	
 	    if ($rowcount == 0) {
 	        $statement = "INSERT INTO $survey_info (Q1, Q2, Q3, tree, date, name) VALUES (?,?,?,?,NOW(),?)";
@@ -232,6 +260,16 @@ sub load_student_survey {
 	    $sth = $dbh->prepare($statement);
 	    $sth->execute($Q1, $Q2, $Q3, $treeXML, $name);
 	    $sth->finish();
+	    $dbh->disconnect();
+	    
+	    if ($complete != 0) {
+	     	#enter the grade
+	     	$dbh = GradeDB::connect();
+		 	$statement = "UPDATE $student_info SET $assignment_index = \"15\" WHERE name=\"$name\"";
+         	$sth = $dbh->prepare($statement);
+         	$sth->execute();
+	     	$dbh->disconnect();
+	    }
 	    print "<body bgcolor=\"lightblue\">\n";
   	    print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
   	    if ($too_late != 1) {
@@ -253,37 +291,16 @@ sub load_student_survey {
 	} else {
 	    # if there's already data there, get it
 	    if ($rowcount != 0) {
+	        $dbh = treeDB::connect();
 	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM $survey_info WHERE name=?");
 	        $sth->execute($name);
 	        ($Q1, $Q2, $Q3, $treeXML, $lastUpdate) = $sth->fetchrow_array();
 	        $sth->finish();
+	        $dbh->disconnect();
 	    }
 	}
 	
-	$dbh->disconnect();
 	
-	$dbh = GradeDB::connect();
-	$statement = "SELECT section,$assignment_index from $student_info WHERE name=?";
-	$sth = $dbh->prepare($statement);
-	$sth->execute($name);
-	($section,$grade) = $sth->fetchrow();
-	$sth->finish();
-	
-	#If Professor White requests the radio question be put back into
-	#the open-response section, then reinstitute this line of code and
-	#comment out the one underneath it.
-	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
-	
-	if($grade eq 15){
-		$complete  = 1;
-	}
-	else{
-		if (($Q1 eq "") || ($Q2 eq "")) {
-		     $complete = 0;
-		} else {
-		     $complete = 1;
-		}
-	}
 	print "<SCRIPT language=\"JavaScript\">\n";
 	print "function isComplete() {\n";
 	print " var qip = document.TreeApplet.questionInProgress();\n";
@@ -305,15 +322,6 @@ sub load_student_survey {
 	print "</script>\n";
 	print "</head>\n";
 	print "<body bgcolor=\"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
-	
-	if ($complete != 0) {
-	     #enter the grade
-	     $dbh = GradeDB::connect();
-		 $statement = "UPDATE $student_info SET $assignment_index = \"15\" WHERE name=\"$name\"";
-         $sth = $dbh->prepare($statement);
-         $sth->execute();
-	     $dbh->disconnect();
-	}
 	print "<form action=\"$script_url\" method=\"POST\" name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
   	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\"> \n";
   	print "<tr>\n";
