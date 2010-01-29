@@ -8,8 +8,7 @@ use treeDB;
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
-$jar_loc = "http://$ENV{'HTTP_HOST'}/PhylogenySurveyWeb/TBSRun.jar";
-#$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
+$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
 $admin_pw = "lab09acce55";
 $survey_points = "10";
 $too_late_month = 12;
@@ -217,14 +216,13 @@ sub load_student_survey {
 	
 	#see if there's already an entry for this student
 	$dbh = treeDB::connect();
-	$statement = "SELECT count(*) from $survey_info WHERE name=?";
+	$statement = "SELECT count(*) from student_testdata WHERE name=?";
 	$sth = $dbh->prepare($statement);
 	$sth->execute($name);
 	$rowcount = $sth->fetchrow();
 	$sth->finish();
 	$dbh->disconnect();
-
-
+	
 	$dbh = GradeDB::connect();
 	$statement = "SELECT section,$assignment_index from $student_info WHERE name=?";
 	$sth = $dbh->prepare($statement);
@@ -248,11 +246,18 @@ sub load_student_survey {
 		     $complete = 1;
 		}
 	}
+	if ($complete != 0) {
+	     #enter the grade
+	     $dbh = GradeDB::connect();
+		 $statement = "UPDATE $student_info SET $assignment_index=? WHERE name=?";
+         $sth = $dbh->prepare($statement);
+         $sth->execute($survey_points,$name);
+	     $dbh->disconnect();
+	}
 	
 	#see if they're entering data
+	$dbh = treeDB::connect();
 	if ($treeXML ne "") {
-	
-	    $dbh = treeDB::connect();
 	
 	    if ($rowcount == 0) {
 	        $statement = "INSERT INTO $survey_info (Q1, Q2, Q3, tree, date, name) VALUES (?,?,?,?,NOW(),?)";
@@ -262,16 +267,6 @@ sub load_student_survey {
 	    $sth = $dbh->prepare($statement);
 	    $sth->execute($Q1, $Q2, $Q3, $treeXML, $name);
 	    $sth->finish();
-	    $dbh->disconnect();
-	    
-	    if ($complete != 0) {
-	     	#enter the grade
-	     	$dbh = GradeDB::connect();
-		 	$statement = "UPDATE $student_info SET $assignment_index = \"$survey_points\" WHERE name=\"$name\"";
-         	$sth = $dbh->prepare($statement);
-         	$sth->execute();
-	     	$dbh->disconnect();
-	    }
 	    print "<body bgcolor=\"lightblue\">\n";
   	    print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
   	    if ($too_late != 1) {
@@ -293,15 +288,14 @@ sub load_student_survey {
 	} else {
 	    # if there's already data there, get it
 	    if ($rowcount != 0) {
-	        $dbh = treeDB::connect();
 	        $sth = $dbh->prepare("SELECT Q1, Q2, Q3, tree, date FROM $survey_info WHERE name=?");
 	        $sth->execute($name);
 	        ($Q1, $Q2, $Q3, $treeXML, $lastUpdate) = $sth->fetchrow_array();
 	        $sth->finish();
-	        $dbh->disconnect();
 	    }
 	}
 	
+	$dbh->disconnect();
 	
 	print "<SCRIPT language=\"JavaScript\">\n";
 	print "function isComplete() {\n";
