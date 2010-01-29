@@ -12,10 +12,8 @@ The schedule for the fall semester has been moved [FallSchedule here].
 == Outstanding Items ==
 Week 1: (1/29 - 2/4)
   * Glenn: Load tree into a graph. Deliverable: load a tree and traverse it.
-
   * Andrew: Refactor Model. Deliverable: Simplicity
   * Andrew: Study feasability of logging. Deliverable: written report, aye or nay and why
-  
   * Jon:  Unit tests for White's scoring items 
   * Jon: Begin Controller refactor: decompose switch
   * Jon: Begin Controller refactor: write unit tests for testable methods
@@ -23,11 +21,13 @@ Week 1: (1/29 - 2/4)
 Week 2: (2/4-2/11)
   * Glenn: Implement White's tests
   * Andrew: Refactor Prompts
-  * Jon: Continue Controller refactor
+  * Jon: Finish Controller refactor
+   
 Week 3: (2/11-2/18)
   * Glenn: Collect statistics on multiple graphs
   * Andrew: Refactor View
   * Jon: Continue adding unit tests
+
 Week 4: (2/18-2/25)
   * Glenn: Student trees searchable by graph features
   * Andrew: If feasible, logging. Otherwise, a new deliverable here.
@@ -35,5 +35,3 @@ Week 4: (2/18-2/25)
 
 
 == Delivered Items ==
-
-
