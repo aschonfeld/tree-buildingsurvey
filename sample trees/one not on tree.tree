@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<State>
+  <Items>
+    <OrganismLabel Name="Bat" ImageFileName="bat.gif" Type="Mammal" X="575" Y="61" />
+    <OrganismLabel Name="Beetle" ImageFileName="beetle.gif" Type="Invert" X="573" Y="97" />
+    <OrganismLabel Name="Bird" ImageFileName="bird.gif" Type="NMV" X="573" Y="129" />
+    <OrganismLabel Name="Butterfly" ImageFileName="butterfly.gif" Type="Invert" X="574" Y="183" />
+    <OrganismLabel Name="Crocodile" ImageFileName="crocodile.gif" Type="NMV" X="574" Y="217" />
+    <OrganismLabel Name="Fish" ImageFileName="fish.gif" Type="NMV" X="574" Y="251" />
+    <OrganismLabel Name="Horseshoe Crab" ImageFileName="horseshoeCrab.gif" Type="Invert" X="574" Y="285" />
+    <OrganismLabel Name="Human" ImageFileName="human.gif" Type="Mammal" X="575" Y="329" />
+    <OrganismLabel Name="Jellyfish" ImageFileName="jellyfish.gif" Type="Invert" X="579" Y="372" />
+    <OrganismLabel Name="Leech" ImageFileName="leech.gif" Type="Invert" X="580" Y="409" />
+    <OrganismLabel Name="Lizard" ImageFileName="lizard.gif" Type="NMV" X="581" Y="445" />
+    <OrganismLabel Name="Millipede" ImageFileName="millipede.gif" Type="Invert" X="579" Y="477" />
+    <OrganismLabel Name="Rat" ImageFileName="rat.gif" Type="Mammal" X="581" Y="514" />
+    <OrganismLabel Name="Starfish" ImageFileName="seaStar.gif" Type="Invert" X="581" Y="549" />
+    <OrganismLabel Name="Shark" ImageFileName="shark.gif" Type="NMV" X="585" Y="585" />
+    <OrganismLabel Name="Snail" ImageFileName="snail.gif" Type="Invert" X="583" Y="621" />
+    <OrganismLabel Name="Spider" ImageFileName="spider.gif" Type="Invert" X="581" Y="654" />
+    <OrganismLabel Name="Squirrel" ImageFileName="squirrel.gif" Type="Mammal" X="581" Y="688" />
+    <OrganismLabel Name="Turtle" ImageFileName="turtle.gif" Type="NMV" X="584" Y="725" />
+    <OrganismLabel Name="Whale" ImageFileName="whale.gif" Type="Mammal" X="520" Y="8" />
+    <Node Id="0" X="518" Y="108" />
+    <Node Id="1" X="506" Y="250" />
+    <Node Id="2" X="434" Y="185" />
+    <Node Id="3" X="372" Y="286" />
+    <Node Id="4" X="430" Y="409" />
+    <Node Id="5" X="438" Y="481" />
+    <Node Id="6" X="440" Y="577" />
+    <Node Id="7" X="302" Y="534" />
+    <Node Id="8" X="201" Y="397" />
+  </Items>
+  <Links>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Bat" ImageFileName="bat.gif" Type="Mammal" X="575" Y="61" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="0" X="518" Y="108" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="0" X="518" Y="108" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Beetle" ImageFileName="beetle.gif" Type="Invert" X="573" Y="97" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Bird" ImageFileName="bird.gif" Type="NMV" X="573" Y="129" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="0" X="518" Y="108" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Butterfly" ImageFileName="butterfly.gif" Type="Invert" X="574" Y="183" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="1" X="506" Y="250" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="1" X="506" Y="250" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Crocodile" ImageFileName="crocodile.gif" Type="NMV" X="574" Y="217" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Fish" ImageFileName="fish.gif" Type="NMV" X="574" Y="251" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="1" X="506" Y="250" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="1" X="506" Y="250" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Horseshoe Crab" ImageFileName="horseshoeCrab.gif" Type="Invert" X="574" Y="285" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="2" X="434" Y="185" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="1" X="506" Y="250" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="0" X="518" Y="108" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="2" X="434" Y="185" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="2" X="434" Y="185" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="3" X="372" Y="286" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="3" X="372" Y="286" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Human" ImageFileName="human.gif" Type="Mammal" X="575" Y="329" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="2" X="434" Y="185" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Whale" ImageFileName="whale.gif" Type="Mammal" X="520" Y="8" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="4" X="430" Y="409" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Jellyfish" ImageFileName="jellyfish.gif" Type="Invert" X="579" Y="372" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Leech" ImageFileName="leech.gif" Type="Invert" X="580" Y="409" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="4" X="430" Y="409" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="5" X="438" Y="481" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Lizard" ImageFileName="lizard.gif" Type="NMV" X="581" Y="445" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Millipede" ImageFileName="millipede.gif" Type="Invert" X="579" Y="477" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="5" X="438" Y="481" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="5" X="438" Y="481" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Rat" ImageFileName="rat.gif" Type="Mammal" X="581" Y="514" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="6" X="440" Y="577" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Starfish" ImageFileName="seaStar.gif" Type="Invert" X="581" Y="549" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Shark" ImageFileName="shark.gif" Type="NMV" X="585" Y="585" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="6" X="440" Y="577" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="6" X="440" Y="577" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Snail" ImageFileName="snail.gif" Type="Invert" X="583" Y="621" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <OrganismLabel Name="Spider" ImageFileName="spider.gif" Type="Invert" X="581" Y="654" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="6" X="440" Y="577" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="6" X="440" Y="577" />
+      </FirstSLO>
+      <SecondSLO>
+        <OrganismLabel Name="Squirrel" ImageFileName="squirrel.gif" Type="Mammal" X="581" Y="688" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="7" X="302" Y="534" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="4" X="430" Y="409" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="5" X="438" Y="481" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="7" X="302" Y="534" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="7" X="302" Y="534" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="6" X="440" Y="577" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="7" X="302" Y="534" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="8" X="201" Y="397" />
+      </SecondSLO>
+    </Link>
+    <Link>
+      <FirstSLO>
+        <Node Id="8" X="201" Y="397" />
+      </FirstSLO>
+      <SecondSLO>
+        <Node Id="3" X="372" Y="286" />
+      </SecondSLO>
+    </Link>
+  </Links>
+</State>
+
