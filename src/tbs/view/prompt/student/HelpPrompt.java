@@ -16,7 +16,7 @@ import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.StudentModel;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.HelpPromptButtonType;
@@ -64,8 +64,8 @@ public class HelpPrompt extends Prompt
 	public HelpPrompt(StudentModel model) {
 		super();
 		this.model = model;
-		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
-		helpProps = model.getProperties(PropertyType.HELP);
+		instrProps = PropertyLoader.getProperties("instructions");
+		helpProps = PropertyLoader.getProperties("help");
 		selectedOption = HelpPromptButtonType.BUTTON_INFO;
 		introduction = new LinkedList<String>();
 		instructions = new LinkedList<String>();

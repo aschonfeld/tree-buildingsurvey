@@ -114,7 +114,7 @@ public class AdminController extends TBSController
 				OrganismNode o = (OrganismNode) m;
 				if(o.isInTree()){
 					view.updateTooltip(o.getName(),
-							new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
+							new Point(o.getX() + (o.getWidth()/2), o.getY()));
 				}
 			}
 		}
@@ -200,9 +200,9 @@ public class AdminController extends TBSController
 
     public void handleMouseButtonPressed(int x, int y) {
     	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= model.getButtons().size())
+		if(buttonIndex >= view.getButtons().size())
 			return;
-		buttonClicked = model.getButtons().get(buttonIndex);
+		buttonClicked = view.getButtons().get(buttonIndex);
 		System.out.println(buttonClicked.toString());
 		switch (buttonClicked) {
 		case TREE:

@@ -16,7 +16,7 @@ import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.AdminModel;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
@@ -47,7 +47,7 @@ public class WrittenQuestionReviewPrompt extends Prompt
 	public WrittenQuestionReviewPrompt(AdminModel model) {
 		super();
 		this.model = model;
-		questionProps = model.getProperties(PropertyType.QUESTIONS);
+		questionProps = PropertyLoader.getProperties("questions");
 		writtenQuestionTexts = new LinkedList<List<String>>();
 		maxLinesOfQuestionText = 0;
 		currentPage = 1;

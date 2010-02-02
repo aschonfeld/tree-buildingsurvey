@@ -19,7 +19,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.AdminModel;
 import tbs.model.admin.RadioResponse;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
@@ -49,7 +49,7 @@ public class RadioQuestionReviewPrompt extends Prompt
 		this.model = model;
 		radioQuestions = OpenQuestionButtonType.getRadioButtons();
 		currentRadioQuestion = radioQuestions.get(0);
-		questionProps = model.getProperties(PropertyType.QUESTIONS);
+		questionProps = PropertyLoader.getProperties("questions");
 		
 		radioQuestionTexts = new HashMap<OpenQuestionButtonType, List<String[]>>();
 		List<String[]> radioQuestionText;

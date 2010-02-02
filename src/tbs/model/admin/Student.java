@@ -1,7 +1,5 @@
 package tbs.model.admin;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +15,7 @@ import tbs.view.OpenQuestionButtonType;
 
 public class Student {
 
+	private int index;
 	private String name;
 	private List<String> nodeName;
 	private String lastUpdate;
@@ -27,11 +26,9 @@ public class Student {
 	private Map<OpenQuestionButtonType, Response> openResponses;
 	private String section;
 	private Boolean arrows;
-	private int height;
-	private int width;
 	private Point anchorPoint;
 
-	public Student(Graphics2D g2, String studentDataString){
+	public Student(String studentDataString, int index){
 		openResponses = new HashMap<OpenQuestionButtonType, Response>();
 		if(TBSUtils.isStringEmpty(studentDataString)){
 			createNewStudent();
@@ -73,10 +70,8 @@ public class Student {
 				}
 			}
 		}
-		Dimension d = TBSGraphics.getStringBounds(g2, name);
-		width = d.width;
-		height = d.height;
-		nodeName = TBSGraphics.breakStringByLineWidth(g2, name, TBSGraphics.maxStudentNameWidth);
+		this.index = index;
+		nodeName = new LinkedList<String>();
 	}
 
 	public String toString(){
@@ -153,28 +148,10 @@ public class Student {
 		return arrows;
 	}
 
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
 	public Point getAnchorPoint() {
+		if(anchorPoint == null)
+			anchorPoint = new Point(0,index * (TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing));
 		return anchorPoint;
-	}
-
-	public void setAnchorPoint(Point anchorPoint) {
-		this.anchorPoint = anchorPoint;
 	}
 
 	private void createNewStudent(){
@@ -192,6 +169,10 @@ public class Student {
 
 	public List<String> getNodeName() {
 		return nodeName;
+	}
+	
+	public void setNodeName(List<String> nodeName){
+		this.nodeName = nodeName;
 	}
 
 }

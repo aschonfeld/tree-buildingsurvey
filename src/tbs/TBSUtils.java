@@ -88,6 +88,33 @@ public class TBSUtils {
 			return new Point2D.Double((float)(px+z*rx), (float)(py+z*ry));
 		}
 	}
+	
+	/**
+	 * Draw the arrowhead at the end of a connection.
+	 */
+	public static Line2D getArrowHead(Line2D conn, double angle) {
+		double dx = TBSUtils.dx(conn);
+		double dy = TBSUtils.dy(conn);
+		double dArrowX = Math.round(dx * Math.cos(angle) + dy * Math.sin(angle));
+		double dArrowY = Math.round(dy * Math.cos(angle) - dx * Math.sin(angle));
+		double arrowLength = Math.sqrt(dx * dx + dy * dy);
+		dArrowX /= arrowLength * TBSGraphics.arrowLength;
+		dArrowY /= arrowLength * TBSGraphics.arrowLength;
+		int arrowX = (int) Math.round(dArrowX);
+		int arrowY = (int) Math.round(dArrowY);
+		return new Line2D.Double(
+				conn.getP2().getX(),
+				conn.getP2().getY(),
+				conn.getP2().getX() + arrowX,
+				conn.getP2().getY() + arrowY);
+	}
+	
+	public static Line2D scrollAdjust(Line2D l, int yOffset) {
+		double y1 = l.getY1() - yOffset;
+		double y2 = l.getY2() - yOffset;
+		return new Line2D.Double(l.getX1(), y1, l.getX2(), y2);
+	}
+  
 	public static boolean isStringEmpty(String s){
 		return (s == null || s.length() == 0);
 	}

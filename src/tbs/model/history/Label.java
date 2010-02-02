@@ -9,20 +9,24 @@ public class Label extends Command{
 	private Integer nodeId;
 	
 	private String labelBefore;
+	private int widthBefore;
 	
 	private String labelAfter;
+	private int widthAfter;
  	
-	public Label(Integer nodeId, String labelBefore){
+	public Label(Integer nodeId, String labelBefore, int widthBefore){
 		this.nodeId = nodeId;
 		this.labelBefore = labelBefore;
+		this.widthBefore = widthBefore;
 	}
 
 	public String getLabelAfter() {
 		return labelAfter;
 	}
 
-	public void setLabelAfter(String labelAfter) {
+	public void setLabelAfter(String labelAfter, int widthAfter) {
 		this.labelAfter = labelAfter;
+		this.widthAfter = widthAfter;
 	}
 
 	public String getLabelBefore() {
@@ -33,8 +37,10 @@ public class Label extends Command{
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
 			ModelElement selection = model.getElement(index);
-			if(selection instanceof EmptyNode)
-				((EmptyNode) selection).rename(labelAfter);
+			if(selection instanceof EmptyNode){
+				((EmptyNode) selection).setName(labelAfter);
+				((EmptyNode) selection).setAlteredWidth(widthAfter);
+			}
 		}
 	}
 	
@@ -43,8 +49,10 @@ public class Label extends Command{
 		int index = model.findIndexById(nodeId);
 		if(index >= 0){
 			ModelElement selection = model.getElement(index);
-			if(selection instanceof EmptyNode)
-				((EmptyNode) selection).rename(labelBefore);	
+			if(selection instanceof EmptyNode){
+				((EmptyNode) selection).setName(labelBefore);
+				((EmptyNode) selection).setAlteredWidth(widthBefore);
+			}
 		}
 	}
 

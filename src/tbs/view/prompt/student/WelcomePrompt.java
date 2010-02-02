@@ -17,7 +17,7 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.StudentModel;
 import tbs.model.admin.Student;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 
@@ -48,7 +48,8 @@ public class WelcomePrompt extends Prompt
 	public WelcomePrompt(StudentModel model) {
 		super();
 		this.model = model;
-		instrProps = model.getProperties(PropertyType.INSTRUCTIONS);
+		instrProps = PropertyLoader.getProperties("instructions");
+    startButton = new Rectangle();
 	}
 
 	/**

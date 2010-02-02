@@ -18,7 +18,7 @@ import java.util.Properties;
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
 import tbs.model.admin.RadioResponse;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
@@ -62,7 +62,7 @@ public class RadioQuestionPrompt extends Prompt{
 		super();
 		this.model = model;
 		buttons = OpenQuestionPromptButtonType.getRadioButtons();
-		questionProps = model.getProperties(PropertyType.QUESTIONS);
+		questionProps = PropertyLoader.getProperties("questions");
 		questionText = new LinkedList<String>();
 		radioText = new LinkedList<String[]>();
 		questionCount = 0;
