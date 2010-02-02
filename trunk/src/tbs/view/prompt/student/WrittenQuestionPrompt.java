@@ -27,7 +27,7 @@ import javax.swing.Timer;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.TBSModel;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.OpenQuestionPromptButtonType;
@@ -79,7 +79,7 @@ public class WrittenQuestionPrompt extends Prompt{
 	public WrittenQuestionPrompt(TBSModel model) {
 		super();
 		this.model = model;
-		questionProps = model.getProperties(PropertyType.QUESTIONS);
+		questionProps = PropertyLoader.getProperties("questions");
 		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
 		pressedKeys = new LinkedList<Integer>();
 		pressedKeys.add(KeyEvent.VK_DELETE);

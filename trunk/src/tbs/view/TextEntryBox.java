@@ -29,6 +29,7 @@ public class TextEntryBox {
 		}
 	};
 	private EmptyNode node;
+	private Graphics2D g2 = null;
 	private String name;
 	private int cursorIndex;
 	private int leftX;
@@ -50,7 +51,7 @@ public class TextEntryBox {
 			cursorIndex = 0;
 		else
 			cursorIndex = name.length();	
-		leftX = node.getAnchorPoint().x;
+		leftX = node.getX();
 		width = node.getWidth();
 		height = node.getHeight();
 		pressedKeys = new LinkedList<Integer>();
@@ -102,7 +103,17 @@ public class TextEntryBox {
 	}
 	
 	public void finishLabeling(){
-		node.rename(name);
+		if(name.length()==0 || name.length() > TBSGraphics.maxNameLength)
+			node.setAlteredWidth(-1);
+		else{
+			Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
+			int testWidth = stringBounds.width + 2 * TBSGraphics.emptyNodePadding;
+			if (testWidth > TBSGraphics.emptyNodeWidth)
+				node.setAlteredWidth(testWidth);
+			else
+				node.setAlteredWidth(-1);
+			node.setName(name);
+		}
 		node.setBeingLabeled(false);
 		timer.stop();
 	}
@@ -117,7 +128,8 @@ public class TextEntryBox {
 	
 	public void renderTextEntryBox(Graphics2D g2, int yOffset) 
 	{
-		int upperY = node.getAnchorPoint().y - yOffset;
+		this.g2 = g2;
+		int upperY = node.getY() - yOffset;
 		Dimension d;
 		TextLayout layout;
 		if(!TBSUtils.isStringEmpty(name)){

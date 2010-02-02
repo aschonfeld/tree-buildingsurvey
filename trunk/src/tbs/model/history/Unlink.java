@@ -28,8 +28,18 @@ public class Unlink extends Command{
 		this.connections = connections;
 	}
 	
-	public void addConnection(Connection c){
-		connections.add(c);
+  public void addConnection(Connection c){
+    connections.add(c);
+  }
+  
+	public void addConnections(List<Connection> connections){
+	  for(Connection c : connections){
+	    try{
+	      connections.add((Connection) c.clone());
+	    }catch(CloneNotSupportedException e){
+	      System.out.println("Unable to create connection clone.");
+	    }
+	  }
 	}
 
 	public void execute(StudentModel model) {

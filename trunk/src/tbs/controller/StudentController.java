@@ -15,6 +15,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import tbs.TBSGraphics;
 import tbs.model.Connection;
@@ -24,10 +25,11 @@ import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 import tbs.model.history.Add;
+import tbs.model.history.Command;
 import tbs.model.history.Drag;
 import tbs.model.history.Label;
 import tbs.model.history.Unlink;
-import tbs.properties.PropertyType;
+import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
@@ -132,7 +134,8 @@ public class StudentController extends TBSController
 			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 				model.getTextEntryBox().finishLabeling();
 				cancelLabel();
-				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName());
+				((Label) model.getHistory().peek()).setLabelAfter(((Node)selectedElement).getName(),
+						((Node)selectedElement).getWidth());
 				System.out.println("Added command(label) to history.");
 				setSelectedElement(null);
 				buttonClicked = TBSButtonType.SELECT;
@@ -203,8 +206,8 @@ public class StudentController extends TBSController
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			} else {
 				buttonIndex = x / TBSGraphics.buttonsWidth;
-				if(buttonIndex < model.getButtons().size()) {
-					TBSButtonType temp = model.getButtons().get(buttonIndex);
+				if(buttonIndex < view.getButtons().size()) {
+					TBSButtonType temp = view.getButtons().get(buttonIndex);
 					if(model.isButtonActive(temp))
 						c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 					else
@@ -224,7 +227,7 @@ public class StudentController extends TBSController
 						c = DragSource.DefaultMoveNoDrop;
 					OrganismNode o = (OrganismNode) n;
 					view.updateTooltip(o.getName(),
-							new Point(o.getAnchorPoint().x + (o.getWidth()/2), o.getAnchorPoint().y));
+							new Point(o.getX() + (o.getWidth()/2), o.getY()));
 				}
 			}
 		}
@@ -283,6 +286,8 @@ public class StudentController extends TBSController
 							if(temp.getResponse().getValue()){
 								view.setScreenString(getStatus(temp.getPromptType()));
 								model.resetModel();
+								model.setHistory(new Stack<Command>());
+								model.getButtonStates().put(TBSButtonType.UNDO, false);
 								buttonClicked = TBSButtonType.SELECT;
 							}
 							break;
@@ -333,9 +338,10 @@ public class StudentController extends TBSController
 			// Move Node
 			Node node = (Node) selected;
 			if(lastPosition == null){
-				lastPosition = new Point(node.getX(), node.getY());
+				lastPosition = node.getAnchorPoint();
 				model.addActionToHistory(new Drag(node.getId(), node.getAnchorPoint()));
 			}
+			node.setBeingDragged(true);
 			draggedNode = node;
 			if(node.isInTree()) {
 				node.move(deltaX, deltaY);
@@ -376,24 +382,20 @@ public class StudentController extends TBSController
 				draggedNode.setY(draggedNode.getY() + view.getYOffset());
 			for(Node n : inTreeElements){
 				if(!n.equals(draggedNode) && draggedNode.collidesWith(n)){
-					draggedNode.setX(lastPosition.x);
-					draggedNode.setY(lastPosition.y);
+					draggedNode.setAnchorPoint(lastPosition);
 					break;
 				}
 			}
-			if ((draggedNode.getX()-draggedNode.getWidth()) <= 
-								TBSGraphics.LINE_OF_DEATH )
+			if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH ){
 				model.removeFromTree(draggedNode);
-			else{
-				if (!draggedNode.isInTree() && 
-						(draggedNode.getX()-draggedNode.getWidth()) > 
-						TBSGraphics.LINE_OF_DEATH ) {
+			}else{
+				if (!draggedNode.isInTree() && (draggedNode.getX()-draggedNode.getWidth()) > TBSGraphics.LINE_OF_DEATH )
 					model.addToTree(draggedNode); 
-				} else {
+				else 
 					((Drag) model.getHistory().peek()).setPointAfter(draggedNode.getAnchorPoint());
-				}
 			}
 			lastPosition = null;
+			draggedNode.setBeingDragged(false);
 			draggedNode=null;
 		}
 	}
@@ -536,8 +538,7 @@ public class StudentController extends TBSController
     		labelingInProgress = true;
     		en.setBeingLabeled(true);
     		model.setTextEntryBox(new TextEntryBox(en));
-    		model.addActionToHistory(new Label(en.getId(), en.getName()));
-    		en.rename(en.getName());
+    		model.addActionToHistory(new Label(en.getId(), en.getName(), en.getWidth()));
     		selectedElement = en;
     	}
     }
@@ -545,14 +546,14 @@ public class StudentController extends TBSController
     
     private void setSelectedElement(ModelElement me) {
     	unselectPrevious();
-    	model.setSelectedModelElement(me);
+    	model.setSelectedElement(me);
         selectedElement = me;
     }
 
     // unselect previously selected element, otherwise will keep green box
 
     private void unselectPrevious(){
-    	model.setSelectedModelElement(null);
+    	model.setSelectedElement(null);
     	selectedElement = null;
     }
  
@@ -590,9 +591,9 @@ public class StudentController extends TBSController
     public void handleMouseButtonPressed(int x, int y) {
     	clearCurrentActions();
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= model.getButtons().size())
+		if(buttonIndex >= view.getButtons().size())
 			return;
-		buttonClicked = model.getButtons().get(buttonIndex);
+		buttonClicked = view.getButtons().get(buttonIndex);
 		System.out.println(buttonClicked.toString());
 		if(!buttonClicked.isConfirmation())
 			view.setScreenString(getStatus(buttonClicked));
@@ -662,7 +663,7 @@ public class StudentController extends TBSController
 			}
 			break;
 		case CLEAR:
-			model.viewPrompt(new YesNoPrompt(model, TBSButtonType.CLEAR));
+			model.viewPrompt(TBSButtonType.CLEAR);
 			break;
 		case HELP:
 			model.helpUser();
@@ -686,7 +687,7 @@ public class StudentController extends TBSController
 		if(buttonIndex >= OpenQuestionButtonType.values().length) return;
 		questionClicked = OpenQuestionButtonType.values()[buttonIndex];
 		System.out.println(questionClicked.toString());
-		model.viewOpenResponse(questionClicked);
+		model.viewPrompt(questionClicked);
 		setSelectedElement(null);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
@@ -712,7 +713,9 @@ public class StudentController extends TBSController
 			if(clickedElement == null) {
 				if(x > view.getWidth() - view.getVerticalBar().getWidth()) 
 					x = view.getWidth() - view.getVerticalBar().getWidth();
-				Node newNode = new EmptyNode(model.getSerial(), new Point(x, y + view.getYOffset()));
+				Node newNode = new EmptyNode(model.getSerial());
+				newNode.setAnchorPoint(new Point(x, y + view.getYOffset()));
+				newNode.setInTree(true);
 				for(Node n : model.inTreeElements()){
 					// make sure not putting it on top of another item
 					if(n.collidesWith(newNode)){
@@ -812,6 +815,6 @@ public class StudentController extends TBSController
 		statusKey.append("_");
 		Boolean buttonState = model.getButtonStates().get(buttonClicked);
 		statusKey.append(buttonState.toString());
-		return model.getProperties(PropertyType.STATUS).getProperty(statusKey.toString());
-    }    
+		return PropertyLoader.getProperties("status").getProperty(statusKey.toString());
+	}    
 }

@@ -17,45 +17,46 @@ import java.util.List;
 public abstract class Node extends ModelElement implements Cloneable
 {	
 	private String name;
-	private int height;
-	private int width;
 	private Point anchorPoint;
 	private boolean inTree;
-	private int maxNameLength = 30;
-	protected String imgFileName;
-
+	private boolean beingDragged;
+	
 	//connections to and from other ModelElements, respectively
 	private List<Node> connectedFrom = new LinkedList<Node>();
 	private List<Node> connectedTo = new LinkedList<Node>();
 
-	public Node(int id, String name, Point anchorPoint, int height, int width){
+	public Node(int id, String name){
 		super(id);
 		this.name = name;
-		this.height = height;
-		this.width = width;
-		this.anchorPoint = anchorPoint;
-		this.inTree = false;
+		anchorPoint = new Point();
+		inTree = false;
+		beingDragged = false;
 	}
+	
 	/**
 	* Node locations are given by their upper left corner; this method
 	* returns that value as a Point.
 	*/
-	public Point getAnchorPoint()
-	{
-		return anchorPoint;	
+	public Point getAnchorPoint(){
+		if(inTree || beingDragged)
+			return anchorPoint;
+		else
+			return getDefaultPoint();
 	}
+	
+	public abstract Point getDefaultPoint();
 
 	/**
 	* Returns the rectangle defined by this Node.
 	*/	
-	public Rectangle getRectangle(){
+	public Rectangle getRectangle() {
 		return new Rectangle(getX(), getY(), getWidth(), getHeight());
 	}
 	
 	/**
 	*	Returns the rectangle defined by this Node with 4 pixels of padding on each side	
 	*/
-	public Rectangle getPaddedRectangle(){
+	public Rectangle getPaddedRectangle() {
 		return new Rectangle(getX()-4, getY()-4, getWidth()+8, getHeight()+8);
 	}
 	
@@ -63,15 +64,19 @@ public abstract class Node extends ModelElement implements Cloneable
 	* Node locations are given by their upper left corner; this method
 	* returns that value as a Point.
 	*/
-	public void setAnchorPoint(Point anchorPoint)
-	{
+	public void setAnchorPoint(Point anchorPoint){
 		this.anchorPoint = anchorPoint;
 	}
 	
 	/**
 	* Returns X coordinate of Node's location (upper left corner)
 	*/
-	public int getX() {return anchorPoint.x;}
+	public int getX() {
+		if(inTree || beingDragged)
+			return anchorPoint.x;
+		else
+			return getDefaultPoint().x;
+	}
 	
 	/**
 	* Sets X coordinate of Node's location (upper left corner)
@@ -79,9 +84,14 @@ public abstract class Node extends ModelElement implements Cloneable
 	public void setX(int x){this.anchorPoint.x = x;}
 	
 	/**
-	* Returns Y coordinatei of Node's location (upper left corner)
+	* Returns Y coordinate of Node's location (upper left corner)
 	*/
-	public int getY() {return anchorPoint.y;}
+	public int getY() {
+		if(inTree || beingDragged)
+			return anchorPoint.y;
+		else
+			return getDefaultPoint().y;
+	}
 
 	/**
 	* Sets Y coordinate of Node's location (upper left corner)
@@ -90,44 +100,14 @@ public abstract class Node extends ModelElement implements Cloneable
 	
 	public abstract int getHeight();
 	
-	public int getDefaultHeight() {
-		return height;
-	}
-	
-	public void setHeight(int height) {
-		this.height = height;
-	}
-	
 	public abstract int getWidth();
-	
-	public int getDefaultWidth() {
-		return width;
-	}
-	
-	public void setWidth(int width) {
-		this.width = width;
-	}
 	
 	/**
 	* Returns this Node's name.
 	*/
 	public String getName() {return name;}
 	
-	public void setName(String s) {
-		if(this instanceof EmptyNode) {
-			if(s.length() < maxNameLength) {
-				name = s;
-			}
-		}
-	}
-
-	/**
-	* Returns the name of the image file associated with this object
-	*/
-	public String getImgFileName()
-	{
-		return imgFileName;
-	}	
+	public void setName(String name) {this.name = name;}	
 	
 	/**
 	* Adjusts the object's position by the indicated amount
@@ -147,8 +127,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	* Returns true if the node thinks it should accept connections and
 	* selected status. 
 	*/
-	public boolean isInTree()
-	{ 
+	public boolean isInTree(){ 
 		return inTree;
 	}
 	
@@ -159,10 +138,18 @@ public abstract class Node extends ModelElement implements Cloneable
 	* field, setInTree(false) would be the correct way to ensure that the
 	* object knows it is not to connect to other objects.
 	*/ 
-	public void setInTree(boolean inTree)
-	{ 
+	public void setInTree(boolean inTree){ 
 		this.inTree = inTree;
 	}
+	
+	public boolean isBeingDragged(){ 
+		return beingDragged;
+	}
+	
+	public void setBeingDragged(boolean beingDragged){ 
+		this.beingDragged = beingDragged;
+	}
+	
 
 	/**
 	*	creates a string describing all the parameter of this object for
@@ -216,8 +203,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	/**
 	* Establish a directional link between this object and another.
 	*/
-	public void addConnectionTo(Node n)
-	{
+	public void addConnectionTo(Node n){
 		if (this.connectedTo.contains(n)){
 			System.out.println("AddConnection error: already connected");
 			return;
@@ -228,16 +214,14 @@ public abstract class Node extends ModelElement implements Cloneable
 				.append(" to ").append(n.getName()).toString());
 	}
 
-	public void removeConnectionTo(Node n)
-	{
+	public void removeConnectionTo(Node n){
 		connectedTo.remove(n);
 	}
 
 	/**
 	* Add n to this Node's list of objects connecting to it.
 	*/
-	public void addConnectionFrom(Node n)
-	{
+	public void addConnectionFrom(Node n){
 		if (connectedFrom.contains(n)){	
 			System.out.println("connectFrom error: already connected");
 			 return;
@@ -248,8 +232,7 @@ public abstract class Node extends ModelElement implements Cloneable
 				n.getName());
 	}
 
-	public void removeConnectionFrom(Node n)
-	{
+	public void removeConnectionFrom(Node n){
 		connectedFrom.remove(n);
 	}
 
@@ -271,16 +254,14 @@ public abstract class Node extends ModelElement implements Cloneable
 		return this.getRectangle().contains(new Point(x,y));
 	}
 	
-	public Point getCenter(){
-		return new Point(anchorPoint.x + (getWidth()/2),anchorPoint.y + (getHeight()/2));	
+	public Point getCenter() {
+		return new Point(getX() + (getWidth()/2),getY() + (getHeight()/2));	
 	}
 	
 	public Object clone() throws CloneNotSupportedException {
 		Node copy = (Node) super.clone();
 		copy.setName(getName());
 		copy.setAnchorPoint(anchorPoint);
-		copy.setHeight(height);
-		copy.setWidth(width);
 		return copy;
 	}
 	
