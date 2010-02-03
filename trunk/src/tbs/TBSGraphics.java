@@ -139,7 +139,7 @@ public class TBSGraphics {
 	 * entered when labeling an empty node
 	 */
 	public static Pattern emptyNodePattern = Pattern.compile("[0-9a-zA-Z' ']");
-	public static Pattern writtenResponseIllegalCharacters = Pattern.compile("[+=]");
+	public static Pattern writtenResponseIllegalCharacters = Pattern.compile("[+=\"]");
 
 	public static int maxLinesOfWrittenText = 8;
 
