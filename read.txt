@@ -1,3 +1,0 @@
-I am read.txt
-If you see this message
-You are reading me from the directory that TBSRun.jar is in.

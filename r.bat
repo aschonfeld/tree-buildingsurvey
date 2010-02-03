@@ -1,1 +1,0 @@
-appletviewer applet.html
