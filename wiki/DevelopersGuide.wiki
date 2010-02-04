@@ -1,0 +1,15 @@
+#summary INCOMPLETE: A detailed class-level guide to the TBS code
+
+= Introduction =
+The TBS applet consists of N separate interacting classes. Internal structure has (NOT YET) been simplified as much as possible to make these interactions clear. This document serves as an English-language gloss to the code. 
+
+= Client Perspective =
+The applet is designed to present students with a simple task and to present their responses to this task in a useful manner. The task is to build a tree expressing the relationships among a number of "Organisms". 
+The client's goal in presenting this task to his students is two-fold. The task elicits individual students' impressions of the phylogenetic relations among organisms generally, providing a snapshot of an introductory class' starting point. This allows more tailored teaching to the actual level of the student's understanding, and improves educational outcomes. The second purpose is to map and explore conceptions and misconceptions of phylogeny among the population of introductory biology students as a larger group. Seeing clusters of mistakes and misconceptions allows the biology educator to spot and to remedy these errors. 
+
+= Overall Architecture =
+The TBS applet is built on a Model-View-Controller (MVC) pattern. In this pattern, functionality is separated into three overall areas. Ideally, these are perfectly split in the way suggested by the pattern's name: the Model defines the objects with which the user interacts, the Controller specifies the ways in which the user can interact with them, and the View presents the objects to the user. In this idealized view, these are individually substitutable: a Model of a set of data can be presented by one View as a graph, by another as a set of charts, and by a third as an abstract painting. Controllers, likewise, could be swapped out: an MVC application might load different controllers for different users in order to enforce restrictions on user actions, for example. 
+
+The TBS applet has not achieved this level of separation; there is some mixing of functions across classes. However, it will be easiest to understand design decisions in terms of this framework. 
+
+The entry point for the java portion of applet is the [TBSApplet.java TBSApplet] class. Depending on the identity of the user, TBSApplet loads either a student or an admin version of Model, View, and Controller.The Student version contains the functionality necessary for construction a tree and answering some questions about the task. When completed, this version of the applet saves a student's responses to the professor's database. The Admin version is used for examining the trees constructed by the students, and performs some scoring and statistics on these trees. 
