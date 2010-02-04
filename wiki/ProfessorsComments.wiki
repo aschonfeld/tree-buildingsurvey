@@ -2,6 +2,11 @@
 
 = Comments and questions from the professor = 
 
+=== February 4 ===
+
+Good start on first sprint. (For your team it's actually the second sprint.)
+
+I looked briefly at class StudentControllerTest.java. Interesting. Running it should be part of your build. I'd like to see what test output looks like.
 
 === January 24 ===
 
