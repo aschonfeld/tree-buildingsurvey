@@ -50,4 +50,3 @@
     * [TestServerDeployment Deploying to Professor White's Test Server]
   * [Resources Resources]
   * [RequirementsDiscussion Requirements Discussion]
-  * [Status Status]
