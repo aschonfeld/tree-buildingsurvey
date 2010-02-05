@@ -1,26 +1,4 @@
 #summary Vision Statement
 #labels Featured
 
-=Professor White's Proposed Vision Statement =
-
    Evolution is the core of modern biology. Students at all levels need to have an understanding of evolution. Developing effective teaching tools requires evaluation instruments that measure students' understanding of key concepts.  One key part of evolutionary biology is phylogenetic trees which show the evolutionary history and degree of relatedness of organisms.  Our goal is to produce an applet-based survey to assess students' ability to construct correct evolutionary trees of familiar organisms. This applet will allow students to construct a tree based on familiar organisms, edit this tree, and save it to a server.  The applet will also allow for automatic scoring of several key features of these trees. 
-
-=Proposed Vision Statement =
-
-
-   The TBS group envisions a world in which research in biology education is facilitated by appropriate software tools for eliciting students' intuitions on biological classifications.
- 
-Revision, if desired: add to above "..., an area of importance in both practical teaching of biology and in broader understanding of the popular conception of the evolutionary relationships between diverse organisms."
-
-=Previous proposal:=
-
-  Our group's vision is to become a leader in software development.  Being a leader means gaining client satisfaction by providing on-time delivery of innovative, up-to-date, under budget, working software applications.*
-
-
-= Discussion = 
-  * Prof. Bolker's objections seem to stem from the fact that this doesn't actually relate to the product. Since this group exists precisely and solely to work on this project, that seems a valid objection. "Your vision statement should describe your vision for the deliverable." Well and good, my attempt is above. Please amend. -jpk
-  * Seems fine to me. Apparently my understanding of the vision statements of Coca-Cola, General Motors and McDonald's was pretty far off.  Thanks for taking the reins on it. -as
-
-   * I still don't like it. Why must it use the passive voice ("is facilitated by")? Evolution is a controversial subject in society and a central one in biology. I think the vision statement should acknowledge that (at least implicitly). The current version never even uses the word. I hope Prof White doesn't say what you have is fine. -eb
- 
-  * The passive voice is an appropriate construction for the context, as it puts the attention on "research in biology education" - the real concern for example, of a potential funder, or indeed of the client - over the software, which is mostly interesting to us. However, it can be restated in the active -  "a world in which appropriate software tools facilitate research in biology education" - without damage to the sense. As for evolution, the addition suggested above might meet your concerns. 
