@@ -17,7 +17,7 @@ $name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
 $student_info = "test_students";
 $survey_info = "student_testdata";
 $assignment_index = "";
-$revno = "REVNO";
+$revno = REVNO;
 
 @date = localtime(time);
 $too_late = 0;
@@ -368,6 +368,7 @@ sub load_student_survey {
     print "<tfoot><tr><td valign=\"bottom\">\n";
     print "<center>For any issues<br> with this site<br> click here<br> \n";
     print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"></center> \n";
+	 print "<center>TBSAPPLET REVNO $revno <br> </center>\n";
     print "</td></tr></tfoot>\n";
     print "</table>\n";
     print "</td></tr></table>\n";
