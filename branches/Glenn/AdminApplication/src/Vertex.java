@@ -14,6 +14,7 @@ public class Vertex implements Renderable {
     private Point upperLeft;
     private String name;
     private ArrayList<Vertex> toVertices;
+    private ArrayList<Vertex> fromVertices;
     
     Graphics2D g2 = null;
 	Rectangle r1 = null;
@@ -24,6 +25,7 @@ public class Vertex implements Renderable {
     	this.upperLeft = upperLeft;
     	this.img = null;
     	toVertices = new ArrayList<Vertex>();
+    	fromVertices = new ArrayList<Vertex>();
     }
     
     Vertex(String name, Point upperLeft, BufferedImage img) {
@@ -31,12 +33,41 @@ public class Vertex implements Renderable {
     	this.upperLeft = upperLeft;
     	this.img = img;
     	toVertices = new ArrayList<Vertex>();
+    	fromVertices = new ArrayList<Vertex>();
     }
     
-    public void addEdge(Vertex toVertex) {
+    public void addFrom(Vertex fromVertex) {
+    	if(!fromVertices.contains(fromVertex)) {
+    		fromVertices.add(fromVertex); 
+    	}
+    }
+    
+    public void addTo(Vertex toVertex) {
     	if(!toVertices.contains(toVertex)) {
     		toVertices.add(toVertex); 
     	}
+    }
+    
+    public ArrayList<Vertex> getFrom() {
+    	return fromVertices; 
+    }
+    
+    public ArrayList<Vertex> getTo() {
+    	return toVertices;
+    }
+    
+    public ArrayList<Vertex> getAdjVertices(boolean directional) {
+    	ArrayList<Vertex> returnVal = new ArrayList<Vertex>();
+    	if(directional) {
+    		return toVertices;
+    	} else {
+    		returnVal.addAll(toVertices);
+    		for(Vertex v: fromVertices) {
+    			// check for bidirectional links
+    			if(!toVertices.contains(v)) returnVal.add(v);
+    		}
+    	}
+    	return returnVal;
     }
     
     public void render(Graphics g, Point offset) {
@@ -54,31 +85,10 @@ public class Vertex implements Renderable {
     }
 
     private void renderVertexWithImage() {
-    	//g2.setColor(Color.white);
-		//g2.fillRect((int) Math.random() * 600, (int) Math.random() * 600, 20, 20);
-        Color stringColor = Common.organismStringColor;
-        int stringWidth = 0;
-        int imageWidth = 0;
-        int imageStartX = 0;
-        stringWidth = (int) Common.getStringBounds(g2, name).getWidth();
-        imageWidth = img.getWidth();
-        // center image and text
-        //int imageXOffset = (Common.organismNodeWidth - imageWidth - stringWidth) / 2;
-        imageStartX = upperLeftAdj.x; // + imageXOffset;
-        int stringAreaLeftX = imageStartX + imageWidth + Common.paddingWidth;
-        int stringAreaWidth = stringWidth;
-        int stringAreaUpperY = upperLeftAdj.y;
-        int stringAreaHeight = Common.organismNodeHeight;
-        //g2.setColor(Common.organismBoxColor);
-        //g2.fillRect(upperLeftAdj.x, upperLeftAdj.y, Common.organismNodeWidth, Common.organismNodeHeight);
-        //Common.drawCenteredString(g2, name, stringAreaLeftX, stringAreaUpperY, stringAreaWidth, stringAreaHeight, stringColor);
-        //g2.drawImage(img, imageStartX, upperLeftAdj.y, null);
         g2.drawImage(img, upperLeftAdj.x, upperLeftAdj.y, null);
     }
     
 	private void renderVertex() {
-    	//g2.setColor(Color.white);
-		//g2.fillRect((int) Math.random() * 600, (int) Math.random() * 600, 20, 20);
 		g2.setColor(Common.emptyNodeColor);
 		Rectangle bounds = getVertexBounds();
 		g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -87,7 +97,6 @@ public class Vertex implements Renderable {
 	
 	private Rectangle getVertexBounds() {
 		if(this.img != null) {
-			//return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, Common.organismNodeWidth, Common.organismNodeHeight);
 			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, img.getWidth(), img.getHeight());
 		} else {
 			if(Common.isStringEmpty(name)) {
@@ -117,7 +126,7 @@ public class Vertex implements Renderable {
 	}
 	
 	public String toString() {
-		return new String("VERTEX: " + name + " + img: " + (img != null) + ", location: " + upperLeft.x + "," + upperLeft);
+		return new String("VERTEX: " + name + " + img: " + (img != null) + ", location: " + upperLeft.x + "," + upperLeft.y);
 	}
 
 }

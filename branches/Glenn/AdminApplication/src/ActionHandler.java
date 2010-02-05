@@ -14,7 +14,10 @@ public class ActionHandler extends JPanel {
 	 */
 	private static final long serialVersionUID = 0x60655B840361BFA4L;
 	
-	public static Action exitAction;
+	public Action exitAction;
+	public Action printAction;
+	public AdminApplication parent;
+	
 	
 	public class ExitAction extends AbstractAction {
 
@@ -30,13 +33,33 @@ public class ActionHandler extends JPanel {
 		}
 	}
 	
+	public class PrintAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1740545338294704279L;
+
+		public PrintAction() {
+			super("Print To Console");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			parent.printGraphInfo();
+		}
+	}
+	
     public ActionHandler() {
         exitAction = new ExitAction();
+        printAction = new PrintAction();
+    }
+    
+    public void setParent(AdminApplication parent) {
+    	this.parent = parent;
     }
     
     public JMenuBar createMenuBar() {
         JMenuBar menuBar;
         JMenu fileMenu;
+        JMenuItem printItem;
         JMenuItem exitItem;
         
         //Create the menu bar.
@@ -45,7 +68,9 @@ public class ActionHandler extends JPanel {
         menuBar.add(fileMenu);
 
         //a group of JMenuItems
+        printItem = new JMenuItem(printAction);
         exitItem = new JMenuItem(exitAction);
+        fileMenu.add(printItem);
         fileMenu.add(exitItem);
 
        return menuBar;

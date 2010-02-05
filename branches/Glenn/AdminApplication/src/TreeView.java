@@ -1,14 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 
 import javax.swing.JComponent;
 
 
 public class TreeView extends JComponent {
 	
-	AdminApplication frame = null;
+	private AdminApplication parent;
 	/**
 	 * 
 	 */
@@ -17,8 +16,8 @@ public class TreeView extends JComponent {
 	TreeView() {
 	}
 	
-	public void setFrame(AdminApplication frame) {
-		this.frame = frame;
+	public void setParent(AdminApplication parent) {
+		this.parent = parent;
 	}
 	
 	/**
@@ -33,11 +32,11 @@ public class TreeView extends JComponent {
 	*/
 	// this is what the applet calls to refresh the screen
 	public void paintComponent(Graphics g) {
-		frame.initGraphics(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.black);
 		g2.fillRect(0, 0, getWidth(), getHeight());
-		frame.drawCurrentGraph(g);
+		if(parent == null) return;
+		parent.drawCurrentGraph(g);
 		return;
 	}
 }
