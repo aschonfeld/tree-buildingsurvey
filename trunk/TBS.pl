@@ -17,7 +17,7 @@ $name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
 $student_info = "test_students";
 $survey_info = "student_testdata";
 $assignment_index = "";
-$revno = "768";
+$revno = "REVNO";
 
 @date = localtime(time);
 $too_late = 0;
