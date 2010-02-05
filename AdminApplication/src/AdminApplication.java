@@ -1,7 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -9,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,6 +17,10 @@ import javax.swing.JFrame;
 
 public class AdminApplication extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8731793917007308006L;
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
@@ -31,7 +33,8 @@ public class AdminApplication extends JFrame {
     	actionHandler = new ActionHandler();
     	treeView = new TreeView();
     	treeController = new TreeController();
-        setSize(1000, 600);
+    	initCommonVertices();
+    	loadTreesFromDirectory();
         treeView.setBackground(Color.black);
         add(treeView);
         addMouseListener(treeController);
@@ -47,11 +50,11 @@ public class AdminApplication extends JFrame {
     private static void createAndShowGUI() {
         //Create and set up the window.
     	AdminApplication frame = new AdminApplication();
-    	treeView.setFrame(frame);
+    	treeView.setParent(frame);
+    	actionHandler.setParent(frame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        
     }
 
     public static void main(String[] args) {
@@ -64,25 +67,34 @@ public class AdminApplication extends JFrame {
         });
     }
     
+    public void printGraphInfo() {
+    	Graph currentGraph = null;
+    	for(Graph graph: studentNameToTree.values()) {
+    		currentGraph = graph;
+    		break;
+    	}
+    	System.out.println(currentGraph.getInfo());
+    }
+    
     public void drawCurrentGraph(Graphics g) {
     	if(g == null) return;
-    	if(studentNameToTree == null) {
-    		initGraphics(g);
-    		loadTreesFromDirectory();
-        	for(String key: studentNameToTree.keySet()) {
-        		System.out.println(key);
-        	}
-        	for(Graph graph: studentNameToTree.values()) {
-        		//System.out.println(graph);
-        	}	
-    	}
     	for(Graph graph: studentNameToTree.values()) {
     		graph.render(g, new Point(0,0));
     		break;
     	}
     }
+    
+    private static void initCommonVertices() {
+    	TreeMap<String, BufferedImage> organismNameToImage = loadVerticesFromDirectory();
+		commonVertices = new ArrayList<Vertex>();
+		commonImages = new ArrayList<BufferedImage>();
+    	for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
+            commonVertices.add(new Vertex(e.getKey(), new Point(0,0), e.getValue()));
+            commonImages.add(e.getValue());
+    	}
+    }
 
-    public static TreeMap<String, BufferedImage> loadOrganismsFromDirectory() {
+    public static TreeMap<String, BufferedImage> loadVerticesFromDirectory() {
         TreeMap<String, BufferedImage> organismNameToImage = new TreeMap<String, BufferedImage>();
         try {
         	// read names of organisms and image file names from list.txt in "/images"
@@ -117,6 +129,7 @@ public class AdminApplication extends JFrame {
         try {
         	File treeDirectory = new File("trees");
         	for(File f: treeDirectory.listFiles()) {
+        		if(f.getName().contains(".svn")) continue;
         		System.out.println("trees/" + f.getName());
         		String filePath = "trees/" + f.getName();
         		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
@@ -175,31 +188,4 @@ public class AdminApplication extends JFrame {
         }
     }
     
-    public static void initGraphics(Graphics g) {
-    	if(g == null) return;
-    	if (commonVertices == null) {
-    		commonVertices = new ArrayList<Vertex>();
-    		commonImages = new ArrayList<BufferedImage>();
-    		initCommonVertices(g, loadOrganismsFromDirectory());
-    	}
-    }
-    
-    private static void initCommonVertices(Graphics g, TreeMap<String, BufferedImage> organismNameToImage) {
-    	Graphics2D g2 = (Graphics2D) g;
-    	int currentY = 0;
-    	Dimension stringDimensions = Common.get2DStringBounds(g2, organismNameToImage.keySet());
-    	Dimension imageDimensions = Common.get2DImageBounds(g2, organismNameToImage.values());
-    	Common.organismNodeWidth = stringDimensions.width + imageDimensions.width + Common.paddingWidth * 2;
-    	if(stringDimensions.height > imageDimensions.height) {
-            Common.organismNodeHeight = stringDimensions.height;
-    	} else {
-            Common.organismNodeHeight = imageDimensions.height;
-    	}
-    	for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
-            commonVertices.add(new Vertex(e.getKey(), new Point(0, currentY), e.getValue()));
-            commonImages.add(e.getValue());
-            currentY += Common.organismNodeHeight + Common.ySpacing;
-    	}
-    }
-
 }

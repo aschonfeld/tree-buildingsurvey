@@ -24,11 +24,26 @@ public class Graph implements Renderable {
 	public void addEdge(Edge e) {
 		System.out.println("ADDED EDGE " + e);
 		edges.add(e);
-		e.getV1().addEdge(e.getV2());
+		e.getV1().addTo(e.getV2());
+		e.getV2().addFrom(e.getV1());
 	}
 	
 	public Vertex getVertexByID(int id) {
 		return idToVertex.get(new Integer(id));
+	}
+	
+	public String getInfo() {
+		StringBuffer sb = new StringBuffer();
+		for(Vertex v: vertices) {
+			sb.append("START:" + v + "\n");
+			for(Vertex from: v.getFrom()) {
+				sb.append("    FROM: " + from.toString() + "\n");
+			}
+			for(Vertex to: v.getTo()) {
+				sb.append("    TO: " + to.toString() + "\n");
+			}
+		}
+		return sb.toString();
 	}
 	
 	public void render(Graphics g, Point offset) {
