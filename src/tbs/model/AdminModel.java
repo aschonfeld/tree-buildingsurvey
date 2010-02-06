@@ -3,14 +3,11 @@
 
 package tbs.model;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import tbs.TBSApplet;
-import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.admin.Student;
-import tbs.view.TextEntryBox;
 import tbs.view.prompt.admin.AnalysisPrompt;
 import tbs.view.prompt.admin.RadioQuestionReviewPrompt;
 import tbs.view.prompt.admin.WrittenQuestionReviewPrompt;
@@ -54,32 +51,6 @@ public class AdminModel extends TBSModel
 			writtenQuestionReviewPrompt = null;
 			analysisPrompt = null;
 		}
-	}
-
-	public void removeFromTree(ModelElement m){
-		if(m == null)
-			return;
-		if(m instanceof Node){
-			Node n = (Node) m;
-			unlink(n);
-			if(n instanceof OrganismNode)
-				((OrganismNode) n).reset();
-			else
-				removeElement(m);
-		}
-		else
-			removeConnection((Connection) m);
-	}
-
-	/**
-	 * Unlink had to live in Model when connections were
-	 * one-way. Now, this simply calls the Node-based two-way unlink.
-	 */
-	public void unlink(Node n)
-	{
-		List<Connection> connections = getConnectionsByNode(n);
-		for(Connection c : connections)
-			removeConnection(c);
 	}
 
 	public List<Student> getStudents(){

@@ -48,4 +48,12 @@ public class EmptyNode extends Node
 	public Point getDefaultPoint() {
 		return new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY);
 	}
+	
+	public String toString(){
+		if(getName() == null || getName().length() == 0)
+			return "Branch Node";
+		else
+			return getName() + "Node";
+	}
+
 }

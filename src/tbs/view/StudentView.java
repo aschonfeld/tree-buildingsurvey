@@ -17,10 +17,10 @@ import java.util.List;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
-import tbs.controller.StudentController;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
+import tbs.model.ModelUtils;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
@@ -253,6 +253,10 @@ public class StudentView extends TBSView {
 	public void setScreenString(String s) {
 		screenString = s;
 	}
+	
+	public String getScreenString() {
+		return screenString;
+	}
 
 	/**
 	 * Draw the statusString. 	
@@ -291,20 +295,14 @@ public class StudentView extends TBSView {
 			renderScreenString(g2);
 		}
 		if(prompt == null){
-			Node draggedNode = ((StudentController) model.getController()).getDraggedNode();
 			renderUnselectedModelElements(g2, model.getElements());
 
-			List<ModelElement> selectedTwoWay = model.getSelectedTwoWay();
-			if(selectedTwoWay != null)
-				for(ModelElement m : selectedTwoWay)
-					renderSelectedModelElement(g2,m);
-			else{
-				ModelElement selected = model.getSelectedElement();
-				if(selected == null){
-					if(draggedNode != null)
-						selected = draggedNode;
-				}
-				if(selected != null)
+			ModelElement selected = model.getSelectedElement();
+			if(selected != null){
+				if(selected instanceof Connection){
+					for(Connection c : ModelUtils.getConnectionsByNodes(((Connection)selected).getFrom(), ((Connection)selected).getTo(), model))
+						renderSelectedModelElement(g2,c);
+				}else
 					renderSelectedModelElement(g2,selected);
 			}
 			if(connInProgress != null){
@@ -351,6 +349,6 @@ public class StudentView extends TBSView {
 
 		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + TBSGraphics.checkWidth +
-		TBSGraphics.buttonsXPadding * 2;
+			TBSGraphics.buttonsXPadding * 2;
 	}
 }

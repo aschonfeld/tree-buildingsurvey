@@ -58,5 +58,9 @@ public class OrganismNode extends Node
 	public boolean isBeingLabeled() {return false;}
 
 	public void setBeingLabeled(boolean beingLabeled) {}
+	
+	public String toString(){
+		return getName() + " Node";
+	}
 
 }
