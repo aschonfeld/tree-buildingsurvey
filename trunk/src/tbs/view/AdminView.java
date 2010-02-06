@@ -15,7 +15,6 @@ import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 
 import tbs.TBSGraphics;

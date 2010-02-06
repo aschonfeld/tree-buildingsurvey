@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tbs.model.Connection;
+import tbs.model.ModelElement;
+import tbs.model.ModelUtils;
 import tbs.model.Node;
 import tbs.model.StudentModel;
 
@@ -11,35 +13,24 @@ public class Unlink extends Command{
 
 	private List<Connection> connections;
 	
-	public Unlink(){
+	public Unlink(ModelElement element, StudentModel model){
 		this.connections = new LinkedList<Connection>();
+		if(element instanceof Node)
+			connections.addAll(ModelUtils.getConnectionsByNode((Node) element, model));
+		else{
+			Connection c = (Connection) element;
+			connections.addAll(ModelUtils.getConnectionsByNodes(c.getTo(), c.getFrom(), model));
+		}
 	}
 	
-	public Unlink(Connection c){
-		this();
-		this.connections.add(c);
-	}
-	
-	public List<Connection> getConnections() {
-		return connections;
-	}
-
-	public void setConnections(List<Connection> connections) {
-		this.connections = connections;
-	}
-	
-  public void addConnection(Connection c){
-    connections.add(c);
-  }
-  
 	public void addConnections(List<Connection> connections){
-	  for(Connection c : connections){
-	    try{
-	      connections.add((Connection) c.clone());
-	    }catch(CloneNotSupportedException e){
-	      System.out.println("Unable to create connection clone.");
-	    }
-	  }
+		for(Connection c : connections){
+			try{
+				this.connections.add((Connection) c.clone());
+			}catch(CloneNotSupportedException e){
+				System.out.println("Unable to create connection clone.");
+			}
+		}
 	}
 
 	public void execute(StudentModel model) {
@@ -58,7 +49,7 @@ public class Unlink extends Command{
 				Node from = (Node) model.getElement(model.findIndexById(id));
 				id = c.getTo().getId();
 				Node to = (Node) model.getElement(model.findIndexById(id));
-				model.addConnection(from,to,c.getId());
+				ModelUtils.addConnection(from,to,c.getId(), model, true);
 		}
 	}
 

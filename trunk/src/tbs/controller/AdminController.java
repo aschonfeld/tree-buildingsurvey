@@ -11,12 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.util.LinkedList;
 import java.util.List;
 
 import tbs.TBSGraphics;
 import tbs.model.AdminModel;
-import tbs.model.Connection;
 import tbs.model.ModelElement;
 import tbs.model.OrganismNode;
 import tbs.model.admin.Student;
@@ -184,15 +182,11 @@ public class AdminController extends TBSController
 	
 	public ModelElement elementMouseIsOver(int x, int y) {
     	ModelElement topElement = null;
-	    List<ModelElement> selectedTwoWay = new LinkedList<ModelElement>();
 	    int yOffset = 0;
 	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
 	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y + yOffset)){
+		    if(me.contains(x, y + yOffset))
 		    	topElement = me;
-		    	if(me instanceof Connection)
-		    		selectedTwoWay.add(me);
-		    }
 		}
 	    	
 	    return topElement;

@@ -24,14 +24,22 @@ public abstract class TBSModel
 	private TBSController controller;
 	private Prompt prompt;
 	private Student student;
+	private ModelElement selectedElement;
 	private List<ModelElement> elements;
 	private int MESerialNumber;
+	private boolean elementsInTree;
+	private boolean emptyNodesInTree;
+	private boolean connectionsInTree;
 
 	public TBSModel(TBSApplet applet, List<OrganismNode> organisms){
 		this.applet = applet;
+		selectedElement = null;
 		elements = new LinkedList<ModelElement>();
 		elements.addAll(organisms);
 		refreshSerial();
+		elementsInTree = false;
+		emptyNodesInTree = false;
+		connectionsInTree = false;
 	}
 
 	/**
@@ -110,6 +118,14 @@ public abstract class TBSModel
 	public void refreshSerial(){
 		MESerialNumber = elements.size();
 	}
+	
+	public ModelElement getSelectedElement() {
+		return selectedElement;
+	}
+
+	public void setSelectedElement(ModelElement selectedModelElement) {
+		this.selectedElement = selectedModelElement;
+	}
 
 	/**
 	 * returns the complete List of Model Elements.
@@ -131,13 +147,6 @@ public abstract class TBSModel
 	 */
 	public ModelElement getElement(int index){
 		return elements.get(index);
-	}
-
-	/**
-	 * Assigns value me to the ith member of the list. 
-	 */
-	public void setElement(int i, ModelElement m) {
-		elements.set(i, m);
 	}
 
 	/**
@@ -163,24 +172,19 @@ public abstract class TBSModel
 	public void removeElement(int index){
 		elements.remove(index);
 	}
-  
-  public void removeConnection(Connection c){
-    c.getFrom().getConnectedTo().remove(c.getTo());
-    c.getTo().getConnectedFrom().remove(c.getFrom());
-    removeElement(c);
-  }
-  
-  public abstract void removeFromTree(ModelElement me);
-  
-  public void resetModel(){
-    List<ModelElement> modelElements = getElements();
-    while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
-      removeFromTree(modelElements.get(modelElements.size()-1));
-    List<Node> inTreeElements = inTreeElements();
-    for(Node n : inTreeElements)
-      removeFromTree(n);
-    refreshSerial();
-  }
+
+	public void resetModel(){
+		List<ModelElement> modelElements = getElements();
+		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
+			ModelUtils.removeElement(modelElements.get(modelElements.size()-1), this, true);
+		List<Node> inTreeElements = inTreeElements();
+		for(Node n : inTreeElements)
+			ModelUtils.removeElement(n, this, true);
+		refreshSerial();
+		elementsInTree = false;
+		emptyNodesInTree = false;
+		connectionsInTree = false;
+	}
 
 	public int findIndexByElement(ModelElement m){
 		/*
@@ -242,17 +246,24 @@ public abstract class TBSModel
 	}
 
 	public boolean hasConnections(){
-		for(int i=TBSGraphics.numOfOrganisms;i<elements.size(); i++){
-			if(elements.get(i) instanceof Connection)
-				return true;
+		if(connectionsInTree){
+			for(int i=TBSGraphics.numOfOrganisms;i<elements.size(); i++){
+				if(elements.get(i) instanceof Connection){
+					return true;
+				}
+			}
+			connectionsInTree = false;
 		}
 		return false;
 	}
 
 	public boolean hasEmptyNodes(){
-		for(int i=(TBSGraphics.numOfOrganisms-1);i<elements.size();i++){
-			if(elements.get(i) instanceof EmptyNode)
-				return true;
+		if(emptyNodesInTree){
+			for(int i=(TBSGraphics.numOfOrganisms-1);i<elements.size();i++){
+				if(elements.get(i) instanceof EmptyNode)
+					return true;
+			}
+			emptyNodesInTree = false;
 		}
 		return false;
 	}
@@ -262,30 +273,45 @@ public abstract class TBSModel
 	 */ 
 	public List<Node> inTreeElements(){
 		List<Node> inTreeElements = new LinkedList<Node>();
-		for(ModelElement m : elements){
-			if(m instanceof Node){
-				Node n = (Node) m;
-				if(n.isInTree())
-					inTreeElements.add(n);
+		boolean tempElementsInTree = false;
+		if(elementsInTree){
+			for(ModelElement m : elements){
+				if(m instanceof Node){
+					Node n = (Node) m;
+					if(n.isInTree()){
+						inTreeElements.add(n);
+						tempElementsInTree = true;
+					}
+				}
 			}
+			elementsInTree = tempElementsInTree;
 		}
 		return inTreeElements;
 	}
-  
-  public List<Connection> getConnectionsByNode(Node n){
-    List<Connection> connections = new LinkedList<Connection>();
-    Connection c;
-    for (ModelElement me: elements)
-    {
-      if(me instanceof Connection){
-        c = (Connection) me;
-        if(c.hasNode(n)){
-          connections.add(c);
-        }
-      }
-    }
-    return connections;
-  }
+
+	public boolean isElementsInTree() {
+		return elementsInTree;
+	}
+
+	public void setElementsInTree(boolean elementsInTree) {
+		this.elementsInTree = elementsInTree;
+	}
+
+	public boolean isEmptyNodesInTree() {
+		return emptyNodesInTree;
+	}
+
+	public void setEmptyNodesInTree(boolean emptyNodesInTree) {
+		this.emptyNodesInTree = emptyNodesInTree;
+	}
+
+	public boolean isConnectionsInTree() {
+		return connectionsInTree;
+	}
+
+	public void setConnectionsInTree(boolean connectionsInTree) {
+		this.connectionsInTree = connectionsInTree;
+	}
 
 	/**
 	 * Take a list of strings extracted from a file by
@@ -302,11 +328,12 @@ public abstract class TBSModel
 				String data[] = item.split(":");
 				if (data[0].equals("O"))
 					loadOrganismNode(data, savedTree);
-				else if (data[0].equals("E")){
+				else if (data[0].equals("E"))
 					loadEmptyNode(data, savedTree);
-				}else if (data[0].equals("C"))
+				else if (data[0].equals("C")){
 					savedTree.add(loadConnection(data, savedTree));
-				else
+					connectionsInTree = true;
+				}else
 				{
 					System.out.println("Problem in loadTree");
 					break;
@@ -352,6 +379,7 @@ public abstract class TBSModel
 			node.setAnchorPoint(pt);
 			node.setInTree(inTree);
 			tempTree.set(elementIndex, node);
+			elementsInTree = true;
 		}
 	}
 
@@ -379,6 +407,7 @@ public abstract class TBSModel
 			node.setAnchorPoint(pt);
 			node.setInTree(inTree);
 			tempTree.add(node);
+			emptyNodesInTree = true;
 		}
 	}
 
