@@ -28,7 +28,7 @@ public class ActionHandler extends JPanel {
 			super("Exit");
 		}
 
-		@Override
+		//@0verride
 		public void actionPerformed(ActionEvent arg0) {
 			System.exit(0);
 		}
@@ -42,7 +42,7 @@ public class ActionHandler extends JPanel {
 			super("Print To Console");
 		}
 
-		@Override
+		//@0verride
 		public void actionPerformed(ActionEvent arg0) {
 			parent.printGraphInfo();
 		}
@@ -56,7 +56,7 @@ public class ActionHandler extends JPanel {
 			super("Next Graph");
 		}
 
-		@Override
+		//@0verride
 		public void actionPerformed(ActionEvent arg0) {
 			parent.nextGraph();
 		}
