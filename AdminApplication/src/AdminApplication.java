@@ -24,7 +24,7 @@ public class AdminApplication extends JFrame {
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
-	private static TreeMap<String, Graph> studentNameToTree = null;
+	public static TreeMap<String, Graph> studentNameToTree = null;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<BufferedImage> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;

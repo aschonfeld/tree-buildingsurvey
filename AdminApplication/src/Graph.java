@@ -54,7 +54,61 @@ public class Graph implements Renderable {
 			e.render(g, offset);
 		}
 	}
+
+
+	public boolean allOrganismsTerminal()	
+	{
+		return true;
+	}
 	
+	public boolean hasSingleCommonAncestor()
+	{
+		return true;
+	}
+
+	public boolean groupsAreLabelled()
+	{
+		return true;
+	}
+
+	public boolean includesAllOrganisms()
+	{
+		return true;
+	}
+
+
+	public boolean hasBranches()
+	{
+		return true;
+	}
+
+	public int hierarchy()
+	{
+		return 2;
+	}
+
+	public float groupingVertebrates()
+	{
+		return 2/3;
+	}
+
+	public float groupingInvertebrates()
+	{
+		return 1/2;
+	}
+
+	public float groupingMammals()
+	{		
+		return 4/5;
+	}
+
+	public float groupingNonmammals()
+	{
+		return 7/8;
+	}
+
+	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for(Vertex v: vertices) {
