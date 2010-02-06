@@ -27,6 +27,7 @@ public class AdminApplication extends JFrame {
 	private static TreeMap<String, Graph> studentNameToTree = null;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<BufferedImage> commonImages = null; //this simplifies things
+	private static int currentGraphIndex = 0;
 	
     AdminApplication() {
     	super("AdminApplication");
@@ -67,6 +68,15 @@ public class AdminApplication extends JFrame {
         });
     }
     
+    public void nextGraph() {
+    	if(currentGraphIndex < studentNameToTree.values().size()) {
+    		currentGraphIndex++;
+    	} else {
+    		currentGraphIndex = 0;
+    	}
+    	treeView.paintComponent();
+    }
+    
     public void printGraphInfo() {
     	Graph currentGraph = null;
     	for(Graph graph: studentNameToTree.values()) {
@@ -77,11 +87,17 @@ public class AdminApplication extends JFrame {
     }
     
     public void drawCurrentGraph(Graphics g) {
-    	if(g == null) return;
-    	for(Graph graph: studentNameToTree.values()) {
-    		graph.render(g, new Point(0,0));
-    		break;
+    	int index = 0;
+    	String studentName = "";
+    	for(String s : studentNameToTree.keySet()) {
+    		studentName = s;
+    		if (index==currentGraphIndex) break;
+    		index++;
     	}
+    	g.setColor(Color.white);
+    	g.drawString(studentName, 0, 50);
+    	Graph graph = studentNameToTree.get(studentName);
+    	graph.render(g, new Point(0,0));
     }
     
     private static void initCommonVertices() {
@@ -127,20 +143,14 @@ public class AdminApplication extends JFrame {
     public static void loadTreesFromDirectory() {
         studentNameToTree = new TreeMap<String, Graph>();
         try {
-        	File treeDirectory = new File("trees");
-        	for(File f: treeDirectory.listFiles()) {
-        		if(f.getName().contains(".svn")) continue;
-        		System.out.println("trees/" + f.getName());
-        		String filePath = "trees/" + f.getName();
-        		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
-        		String linein = reader.readLine();
-        		if(Common.isStringEmpty(linein)) continue;
-        		String[] studentData = linein.split("\\+");
-        		String studentName = studentData[0];
-        		System.out.println(studentName);
-        		String time = studentData[1].substring(1); // remove '=' at start
-        		System.out.println(time);
-        		String[] treeItems = studentData[2].substring(1).split("#"); // remove '=' at start
+        	String filePath = new String("trees/testTrees");
+    		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
+    		String linein = reader.readLine();
+        	while(linein != null) {
+        		String studentName = linein;
+        		System.out.println("STUDENT: " + studentName);
+        		linein = reader.readLine();
+        		String[] treeItems = linein.split("#"); // remove '=' at start
         		Graph graph = new Graph();
         		for(String elements: treeItems) {
         			// load vertices
@@ -152,7 +162,7 @@ public class AdminApplication extends JFrame {
         			int x = Integer.parseInt(attributes[3]);
         			int y = Integer.parseInt(attributes[4]);
         			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			System.out.println(type + "|" + id + "|" + elementName + "|" + x + "|" + y + "|" + inTree);
+        			//System.out.println(type + "|" + id + "|" + elementName + "|" + x + "|" + y + "|" + inTree);
         			if(type.equals("O")) {
         				if(inTree) {
         					graph.addVertex(
@@ -181,8 +191,9 @@ public class AdminApplication extends JFrame {
         			graph.addEdge(new Edge(v1, v2));
         		}
         		studentNameToTree.put(studentName, graph);
-        		reader.close();
+        		linein = reader.readLine();
         	}
+        	reader.close();
         } catch (Exception e) {
         	e.printStackTrace();
         }

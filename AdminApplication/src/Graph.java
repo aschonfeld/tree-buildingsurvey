@@ -16,13 +16,13 @@ public class Graph implements Renderable {
 	}
 	
 	public void addVertex(int id, Vertex v) {
-		System.out.println("ADDED VERTEX " + v);
+		//System.out.println("ADDED VERTEX " + v);
 		vertices.add(v);
 		idToVertex.put(new Integer(id), v);
 	}
 	
 	public void addEdge(Edge e) {
-		System.out.println("ADDED EDGE " + e);
+		//System.out.println("ADDED EDGE " + e);
 		edges.add(e);
 		e.getV1().addTo(e.getV2());
 		e.getV2().addFrom(e.getV1());
