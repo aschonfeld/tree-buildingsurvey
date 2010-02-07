@@ -2,7 +2,7 @@
 
 
 $str = `svn update lib`;
- split(/ /,$str);
+split(/ /,$str);
 chomp($revno = $_[2]);
 $revno =~ s/\.//;
 $revno ++;
@@ -13,7 +13,7 @@ open(SCRIPT, "TBS.pl") ||
 open (OUTFILE, ">TBSTestSurvey.pl");
 while (<SCRIPT>)
 {
-	s/REVNO/$revno/;
+	s/= REVNO/= $revno/;
 	print OUTFILE $_;
 }
 

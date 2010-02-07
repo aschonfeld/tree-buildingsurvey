@@ -367,7 +367,8 @@ sub load_student_survey {
     print "</center></td></tr> \n";
     print "<tfoot><tr><td valign=\"bottom\">\n";
     print "<center>For any issues<br> with this site<br> click here<br> \n";
-    print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"></center> \n";
+    print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"><br> \n";
+	print "TBSAPPLET REVNO $revno</center>\n";
     print "</td></tr></tfoot>\n";
     print "</table>\n";
     print "</td></tr></table>\n";
@@ -440,7 +441,8 @@ sub load_admin_survey {
   	print "</center></td></tr>\n";
   	print "<tfoot><tr><td valign=\"bottom\">\n";
   	print "<center>For any issues<br> with this site<br> click here<br>\n";
-  	print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"></center>\n";
+  	print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"><br>\n";
+  	print "TBSAPPLET REVNO $revno</center>\n";
   	print "</td></tr></tfoot>\n";
   	print "</table>\n";
   	print "</td>\n";
