@@ -1,11 +1,10 @@
 #! /usr/bin/perl
 
 
-$str = `svn update lib`;
-split(/ /,$str);
-chomp($revno = $_[2]);
-$revno =~ s/\.//;
-$revno ++;
+$str = `svnversion`;
+split(/:/,$str);
+chomp($revno = $_[1]);
+$revno =~ s/M//;
 
 open(SCRIPT, "TBS.pl") ||
 	die "Coudn't open TBSTestSurvey.pl";
