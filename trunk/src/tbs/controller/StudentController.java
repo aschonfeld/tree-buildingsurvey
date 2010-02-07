@@ -49,7 +49,6 @@ public class StudentController extends TBSController
 	private OpenQuestionButtonType questionClicked = null;
 	private boolean dragInProgress = false;
 	private boolean labelingInProgress = false;
-	private boolean itemDeleted = false;
 	
 	public void printMouseEvent(MouseEvent e) {
 		if(e.getID() == MouseEvent.MOUSE_CLICKED) {
@@ -120,7 +119,6 @@ public class StudentController extends TBSController
 				view.setScreenString("You have removed " + model.getSelectedElement().toString());
 				ModelUtils.removeElement(model.getSelectedElement(), model, false);
 				model.setSelectedElement(null);
-				itemDeleted = true;
 			}
 		}
 		
@@ -264,10 +262,6 @@ public class StudentController extends TBSController
 				buttonClicked = TBSButtonType.SELECT;
 			if(!model.isButtonActive(buttonClicked))
 				buttonClicked = TBSButtonType.SELECT;
-			if(TBSButtonType.DELETE.equals(buttonClicked) && itemDeleted){
-				buttonClicked = TBSButtonType.SELECT;
-				itemDeleted = false;
-			}
 		}
 		
 	}
@@ -547,7 +541,7 @@ public class StudentController extends TBSController
 				case DELETE:
 					clearCurrentActions();
 					ModelUtils.removeElement(model.getSelectedElement(), model, false);
-					itemDeleted = true;
+					buttonClicked = TBSButtonType.SELECT;
 					break;
 				case LINK:
 					if(model.getSelectedElement() instanceof Node)
@@ -652,7 +646,7 @@ public class StudentController extends TBSController
 					break;
 				case DELETE:
 					ModelUtils.removeElement(clickedElement, model, false);
-					itemDeleted = true;
+					buttonClicked = TBSButtonType.SELECT;
 					return;
 				case LINK:
 					if(clickedElement instanceof Node) {
