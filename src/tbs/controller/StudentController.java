@@ -232,7 +232,7 @@ public class StudentController extends TBSController
 							c = DragSource.DefaultMoveNoDrop;
 						OrganismNode o = (OrganismNode) n;
 						view.updateTooltip(o.getName(),
-								new Point(o.getX() + (o.getWidth()/2), o.getY()));
+								new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
 					}
 				}
 			}

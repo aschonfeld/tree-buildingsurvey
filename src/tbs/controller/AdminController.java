@@ -95,7 +95,7 @@ public class AdminController extends TBSController
 		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
         
 		if (x > scrollWidth && x < (studentButtonWidth+scrollWidth)){
-			int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
+			int studentIndex = (y + view.getStudentYOffset()) / (TBSGraphics.studentNodeHeight+TBSGraphics.ySpacing);
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(y < TBSGraphics.buttonsHeight)  {
@@ -112,7 +112,7 @@ public class AdminController extends TBSController
 				OrganismNode o = (OrganismNode) m;
 				if(o.isInTree()){
 					view.updateTooltip(o.getName(),
-							new Point(o.getX() + (o.getWidth()/2), o.getY()));
+							new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
 				}
 			}
 		}
@@ -213,7 +213,7 @@ public class AdminController extends TBSController
     }	
     
     private void handleStudentPressed(int x, int y) {
-    	int studentIndex = (y + view.getStudentYOffset()) / TBSGraphics.studentNodeHeight;
+    	int studentIndex = (y + view.getStudentYOffset()) / (TBSGraphics.studentNodeHeight+TBSGraphics.ySpacing);
 		if(studentIndex >= model.getStudents().size())
 			return;
 		model.changeSavedTree(studentIndex);
