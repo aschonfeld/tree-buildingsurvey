@@ -102,7 +102,6 @@ public class TBSView extends JComponent implements Printable{
 			int xVal = tooltipLocation.x;
 			int yVal = tooltipLocation.y;
 			yVal += yOffset;
-			yVal -= TBSGraphics.organismNodeHeight;
 			g2.setFont(TBSGraphics.tooltipFont);
 			xVal -= TBSGraphics.getStringBounds(g2, tooltipString).width/2;
 			TBSGraphics.drawCenteredString(g2, tooltipString, xVal, yVal, 0,
