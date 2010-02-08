@@ -97,6 +97,7 @@ public class AdminApplication extends JFrame {
     	g.setColor(Color.white);
     	g.drawString(studentName, 0, 50);
     	Graph graph = studentNameToTree.get(studentName);
+    	graph.loopCheck();
     	graph.render(g, new Point(0,0));
     }
     
