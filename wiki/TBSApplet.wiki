@@ -7,7 +7,40 @@
 See Javadoc documentation for further information.
 
 = Details =
-The TBSApplet class implements only the init() method of the standard Applet class methods. init() uses parameters from the frame page and from [TBSGraphics] 
+The TBSApplet class implements only the init() method of the standard Applet class methods. init() uses parameters from the frame page and from [TBSGraphics] to determine how the applet will run. 
+Information passed in from the user and environment ([TBSFrame]) includes:
+  * size of window
+  * current browser
+  * whether user is logging in as student or admin
+  * current student's tree or all student trees, depending on whether user is student or admin
+ 
+Information loaded from [TBSGraphics] includes
+  * text handling data 
+  * etc
+
+
+Init sets up the appropriate [TBSModel] for the user, either [StudentModel] or [AdminModel]. It also sets up a Graphics context for all drawing that will take place, and sets up an appropriate [TBSView View] and [TBSController Controller]. 
+
+
+= Other methods in TBSApplet.java =
+
+loadOrganisms()
+
+loadStudents()
+
+loadTreeFile()
+
+getTree()
+
+getQ1()
+getQ2()
+getQ3()
+getStatus()
+questionInProgress()
+acceptQuestionInProgress()
+getParameterInfo()
+getAppletInfo()
+Returns an outdated string with incorrect copyright information. MUSTFIX
 
 {{{
 
