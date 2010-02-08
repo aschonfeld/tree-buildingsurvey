@@ -5,6 +5,7 @@ $str = `svnversion`;
 split(/:/,$str);
 chomp($revno = $_[1]);
 $revno =~ s/M//;
+$revno++;
 
 open(SCRIPT, "TBS.pl") ||
 	die "Coudn't open TBSTestSurvey.pl";
