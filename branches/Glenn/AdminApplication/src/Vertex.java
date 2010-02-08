@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,6 +16,7 @@ public class Vertex implements Renderable {
     private String name;
     private ArrayList<Vertex> toVertices;
     private ArrayList<Vertex> fromVertices;
+    private boolean error = false;
     
     Graphics2D g2 = null;
 	Rectangle r1 = null;
@@ -70,6 +72,14 @@ public class Vertex implements Renderable {
     	return returnVal;
     }
     
+    public void setError(boolean error) {
+    	this.error = error;
+    }
+    
+    public boolean hasError() {
+    	return error;
+    }
+    
     public void render(Graphics g, Point offset) {
     	g2 = (Graphics2D) g;
     	upperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
@@ -78,6 +88,7 @@ public class Vertex implements Renderable {
     	} else {
     		renderVertex();
     	}
+    	renderError();
     }
     
     public ArrayList<Vertex> getAdjVertices() {
@@ -93,6 +104,16 @@ public class Vertex implements Renderable {
 		Rectangle bounds = getVertexBounds();
 		g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 		Common.drawCenteredString(g2, name, bounds.x, bounds.y, bounds.width, bounds.height, Color.black);
+	}
+
+	// draw a red box around vertex if has error
+	private void renderError() {
+		if(error) {
+			Rectangle bounds = getVertexBounds();
+			g2.setColor(Color.red);
+			g2.setStroke(new BasicStroke(3));
+			g2.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+		}
 	}
 	
 	private Rectangle getVertexBounds() {
