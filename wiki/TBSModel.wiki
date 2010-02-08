@@ -1,0 +1,12 @@
+#summary PLACEHOLDER Developer's Guide: TBSModel.java
+
+= Introduction =
+[TBSModel.java] is the superclass for the two Model objects representing the data under inspection. The two Models - [StudentModel] and [AdminModel] - have somewhat different ways of handling data due to the differing needs of the two classes of users. 
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
