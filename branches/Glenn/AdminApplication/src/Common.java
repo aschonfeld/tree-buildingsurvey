@@ -22,7 +22,7 @@ public class Common {
      */ 
     public static int organismNodeWidth = 0;
     public static int organismNodeHeight = 0;
-	public static int ySpacing = 1;
+	public static int ySpacing = 5;
 
 	/**
 	* The fixed width of all EmptyNodes. 

@@ -28,6 +28,30 @@ public class Graph implements Renderable {
 		e.getV2().addFrom(e.getV1());
 	}
 	
+	public boolean containsCycle() {
+		for(Vertex v: vertices) v.setMark(Vertex.Mark.WHITE);
+		for(Vertex v: vertices) {
+			if(v.getMark() == Vertex.Mark.WHITE) {
+				if(visit(v)) return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean visit(Vertex v) {
+		v.setMark(Vertex.Mark.GREY);
+		for(Vertex v2: v.getAdjVertices()) {
+			if (v2.getMark() == Vertex.Mark.GREY) {
+				return true;
+			} else if(v2.getMark() == Vertex.Mark.WHITE) {
+				if (visit(v2)) return true;
+			}
+		}
+		v.setMark(Vertex.Mark.BLACK);
+		return false;
+	}
+
+	
 	public void loopCheck() {
 		for(Vertex v: vertices) {
 			if(v.getAdjVertices().contains(v)) {

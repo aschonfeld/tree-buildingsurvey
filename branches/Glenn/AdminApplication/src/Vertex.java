@@ -17,11 +17,29 @@ public class Vertex implements Renderable {
     private ArrayList<Vertex> toVertices;
     private ArrayList<Vertex> fromVertices;
     private boolean error = false;
+    private Mark mark = Mark.WHITE;
     
     Graphics2D g2 = null;
 	Rectangle r1 = null;
 	Point upperLeftAdj = null; // adjusted by offset
-    
+	
+	// used for cycle detection algorithm
+	public enum Mark {
+		WHITE,
+		GREY,
+		BLACK;
+	}
+	
+	// used for cycle detection algorithm
+	public void setMark(Mark mark) {
+		this.mark = mark;
+	}
+	
+	// used for cycle detection algorithm
+	public Mark getMark() {
+		return mark;
+	}
+	
     Vertex(String name, Point upperLeft) {
     	this.name = name;
     	this.upperLeft = upperLeft;
