@@ -1,6 +1,6 @@
 #summary Analysis of Refactoring
 
-These are just some of the main things that I have accomplished in my refacotring of the Models & Student Controller:
+These are just some of the main things that I have accomplished in my refactoring of the Models & Student Controller:
 
 = Model =
   * Removed a lot of redundant code from the `Student` and `Admin` models and in turn moved it into the `TBSModel` superclass
