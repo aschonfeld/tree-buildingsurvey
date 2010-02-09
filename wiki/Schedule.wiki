@@ -12,8 +12,9 @@ The schedule for the fall semester has been moved [FallSchedule here].
 == Outstanding Items ==
 Week 1: (1/29 - 2/4)
   * Glenn: Load tree into a graph. Deliverable: load a tree and traverse it.
-  * Andrew: Refactor Model. Deliverable: Simplicity
+  * Andrew: Refactor Model. Deliverable: Simplicity ([RefactoringAnalysis Refactoring Analysis]
   * Andrew: Study feasability of logging. Deliverable: written report, aye or nay and why
+    * This feature will not be feasible, report coming
   * Jon:  Unit tests for White's scoring items 
   * Jon: Begin Controller refactor: decompose switch
   * Jon: Begin Controller refactor: write unit tests for testable methods
