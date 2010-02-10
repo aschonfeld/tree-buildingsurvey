@@ -245,6 +245,10 @@ public abstract class TBSModel
 		return null;
 	}
 
+	/**
+	* Returns true if there are any connections in the tree. 
+	* Consulted to determine whether "unlink" should be available. 
+	*/
 	public boolean hasConnections(){
 		if(connectionsInTree){
 			for(int i=TBSGraphics.numOfOrganisms;i<elements.size(); i++){
@@ -257,6 +261,11 @@ public abstract class TBSModel
 		return false;
 	}
 
+	/**
+	* Returns true if the tree has any empty nodes in it. 
+	* This is checked to determine whether the Label button should be
+	* available.
+	*/
 	public boolean hasEmptyNodes(){
 		if(emptyNodesInTree){
 			for(int i=(TBSGraphics.numOfOrganisms-1);i<elements.size();i++){
@@ -315,7 +324,8 @@ public abstract class TBSModel
 
 	/**
 	 * Take a list of strings extracted from a file by
-	 * the perl script contained within the website, and recreate the stored tree.
+	 * the perl script contained within the website, and recreate the stored 
+	 * tree.
 	 * Two passes: first pass recreates nodes, second makes connections. 
 	 */
 	public void loadTree(String tree)
@@ -454,9 +464,12 @@ public abstract class TBSModel
 		}
 	}
 
+	/**
+	* Construct and return the string representing this tree.
+	*/
 	public String exportTree(){
 		StringBuffer export = new StringBuffer();
-		for(ModelElement m : elements)
+		for(ModelElement m : inTreeElements())
 			export.append(m.dump()).append("#");
 		return export.toString();
 
