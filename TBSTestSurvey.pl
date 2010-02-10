@@ -9,15 +9,19 @@ use treeDB;
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
 $jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
+#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
 $admin_pw = "lab09acce55";
+$graphing_pw = "tester";
 $survey_points = "10";
 $too_late_month = 12;
 $too_late_day = 12;
 $name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
 $student_info = "test_students";
 $survey_info = "student_testdata";
+$graphing_info = "graphing_testdata";
 $assignment_index = "";
-$revno = 784;
+$revno = 801;
+
 
 @date = localtime(time);
 $too_late = 0;
@@ -50,10 +54,13 @@ sub login_page {
 	print " if(document.form.AdminCB.checked) {\n";
 	print "    document.form.AdminValue.value = \"true\";\n";
 	print "  }\n";
+	print " if(document.form.GraphingCB.checked) {\n";
+	print "    document.form.GraphingValue.value = \"true\";\n";
+	print "  }\n";
 	print "  return true;\n";
 	print "}\n";
 	print "function checkLogin() {\n";
-	print " if(!document.form.AdminCB.checked) {\n";
+	print " if(!document.form.AdminCB.checked && !document.form.GraphingCB.checked) {\n";
 	print " 	var user = document.form.Name.value;\n";
 	print " 	if(user == \"\") {\n";
 	print "    		alert(\"You must select a username!\");\n";
@@ -77,7 +84,7 @@ sub login_page {
 	print "				document.all.InvalidLogin.style.display = 'none';\n";
 	print "        }\n";
 	print " }\n";
-	print " if(document.form.AdminCB.checked) {\n";
+	print " if(document.form.AdminCB.checked || document.form.GraphingCB.checked) {\n";
 	print "    if(document.layers){\n";
 	print "        document.NameSelection.display = 'none';\n";
 	print "        document.AdminPassText.display = 'block';\n";
@@ -117,7 +124,9 @@ sub login_page {
 	$dbh->disconnect();
 	print "<font size=+3>Login to the diversity of life survey site</font><br>\n";
 	print "<br>Administrator?  \n";
-    print "<input type=\"checkbox\" name=\"AdminCB\" onclick=\"return updateView();\"><br><br>\n";
+    print "<input type=\"checkbox\" name=\"AdminCB\" onclick=\"return updateView();\"><br>\n";
+    print "Tree Analysis Testing?  \n";
+    print "<input type=\"checkbox\" name=\"GraphingCB\" onclick=\"return updateView();\"><br><br>\n";
 	print "<div id=\"NameSelection\">\n";
 	print "Choose your name from this list:<br>\n";
 	if ($too_late == 1) {
@@ -153,6 +162,7 @@ sub login_page {
   	print "<br>\n";
   	print "<input type=\"submit\" value=\"Login\" onclick=\"return checkLogin();\">\n";
   	print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
+  	print "<input type=\"hidden\" name=\"GraphingValue\" value=\"false\">\n";
     print "<input type=\"hidden\" name=\"Browser\" value=\"\">\n";
     print "</form>\n";
 	print "<hr>\n";
@@ -165,8 +175,22 @@ sub load_survey {
 	$name = $query->param('Name');
 	$password = $query->param('Passwd');
 	$admin = $query->param('AdminValue');
+	$graphing = $query->param('GraphingValue');
 	
-	if($admin eq 'false'){
+	if($graphing eq 'true') {
+		if($graphing_pw eq $password){
+			&load_graphing_survey;
+		}else{
+			&login_page('true');
+		}
+	} elsif($admin eq 'true') {
+		if($admin_pw eq $password){
+			&load_admin_survey;
+		}else{
+			&login_page('true');
+		}
+	} else {
+	
 		$dbh = GradeDB::connect();
 		
 		if($assignment_index eq ''){
@@ -190,13 +214,8 @@ sub load_survey {
 		}else{
 		   &login_page('true');
 		}
-	}else{
-		if($admin_pw eq $password){
-			&load_admin_survey;
-		}else{
-			&login_page('true');
-		}
 	}
+	
 }
 
 sub load_student_survey {
@@ -216,7 +235,7 @@ sub load_student_survey {
 	
 	#see if there's already an entry for this student
 	$dbh = treeDB::connect();
-	$statement = "SELECT count(*) from student_testdata WHERE name=?";
+	$statement = "SELECT count(*) from $survey_info WHERE name=?";
 	$sth = $dbh->prepare($statement);
 	$sth->execute($name);
 	$rowcount = $sth->fetchrow();
@@ -368,7 +387,7 @@ sub load_student_survey {
     print "<tfoot><tr><td valign=\"bottom\">\n";
     print "<center>For any issues<br> with this site<br> click here<br> \n";
     print "<input type=\"button\" value=\"Site Issues\" onclick=\"window.open('$googleCode_url','','fullscreen=yes,toolbar=yes,menubar=yes,status=yes,scrollbars=yes,directories=yes,resizable=yes');\"><br> \n";
-	print "TBSAPPLET REVNO $revno</center>\n";
+    print "TBSAPPLET REVNO $revno</center>\n";
     print "</td></tr></tfoot>\n";
     print "</table>\n";
     print "</td></tr></table>\n";
@@ -447,6 +466,82 @@ sub load_admin_survey {
   	print "</table>\n";
   	print "</td>\n";
   	print "</tr></table>\n";
+  	print "</form>\n";
+    print "</body></html>\n";
+}
+
+sub load_graphing_survey {
+	
+	$password = $query->param('Passwd');
+	$name = $query->param('Name');
+	$treeXML = $query->param('treeXML');
+	$lastUpdate = $query->param('lastUpdate');
+	$browser = $query->param('Browser');
+	
+	print "Content-type: text/html\n\n";
+	print "<html><head>\n";
+	print "<title>Diversity of Life Survey - Tree Analysis Testing</title>\n";
+	
+	#see if there's already an entry for this student
+	$dbh = treeDB::connect();
+	$statement = "SELECT count(*) from $graphing_info WHERE name=?";
+	$sth = $dbh->prepare($statement);
+	$sth->execute($name);
+	$rowcount = $sth->fetchrow();
+	$sth->finish();
+	$dbh->disconnect();
+	
+	#see if they're entering data
+	if ($treeXML ne "") {
+		$dbh = treeDB::connect();
+	    if ($rowcount == 0) {
+	        $statement = "INSERT INTO $graphing_info (tree, date, name) VALUES (?,NOW(),?)";
+	    }  else {
+	        $statement = "UPDATE $graphing_info SET tree = ?, date = NOW() WHERE name = ?";
+	    }
+	    $sth = $dbh->prepare($statement);
+	    $sth->execute($treeXML, $name);
+	    $sth->finish();
+		$dbh->disconnect();
+	}
+	
+	print "<SCRIPT language=\"JavaScript\">\n";
+	print "function viewTree() {\n";
+	print " var tree = document.TreeApplet.getTree();\n";
+	print " prompt(\"Here is you tree:\",tree);\n";
+	print " return true; \n";
+	print "}\n";
+	print "</script>\n";
+	print "</head>\n";
+	print "<body bgcolor=\"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
+	print "<form action=\"$script_url\" method=\"POST\" name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
+  	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\"> \n";
+  	print "<tr>\n";
+  	print "<td width=\"85%\">\n";
+	print "<applet code=\"tbs.TBSApplet.class\" archive=\"$jar_loc\" width=\"100%\" height=\"100%\" name=\"TreeApplet\"> \n";
+	print "<param name=\"Student\" value=\"+=+=+=+=+=+=+=\"> \n";
+  	print "<param name=\"Admin\" value=\"false\"> \n";
+  	print "<param name=\"Browser\" value=\"$browser\"> \n";
+  	print "You have to enable Java on your machine! \n";
+  	print "</applet>\n";
+  	print "</td>\n";
+  	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
+  	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
+  	print "<tr><td valign=\"top\"><center>\n";
+    print "<input type=\"button\" value=\"Logout\" onclick=\"window.location = '$script_url';\">\n";
+    print "</center></td></tr>\n";
+    print "<tr><td><center>\n";
+    print "<input type=\"hidden\" name=\"AdminValue\" value=\"$admin\">\n";
+    print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
+    print "<input type=\"hidden\" name=\"Passwd\" value=\"$password\">\n";
+    print "<input type=\"hidden\" name=\"lastUpdate\" value=\"$lastUpdate\">\n";
+    print "<input type=\"hidden\" name=\"treeXML\" value=\"$treeXML\">\n";
+    print "<input type=\"hidden\" name=\"Browser\" value=\"$browser\">\n";
+    print "<input type=\"button\" value=\"View Tree String\" onclick=\"return viewTree();\"><br> \n";
+    #print "<input type=\"submit\" value=\"Submit Survey\" onclick=\"return isComplete();\">\n";
+    print "</center></td></tr> \n";
+    print "</table>\n";
+    print "</td></tr></table>\n";
   	print "</form>\n";
     print "</body></html>\n";
 }
