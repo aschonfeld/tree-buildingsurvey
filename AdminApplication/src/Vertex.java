@@ -18,10 +18,22 @@ public class Vertex implements Renderable {
     private ArrayList<Vertex> fromVertices;
     private boolean error = false;
     private Mark mark = Mark.WHITE;
+    private Type type; // set by constructor
     
     Graphics2D g2 = null;
 	Rectangle r1 = null;
 	Point upperLeftAdj = null; // adjusted by offset
+	
+	// would lick to generalize these sometime, but use biology terms for now
+	public enum Type {
+		ORGANISM,
+		EMPTY;
+	}
+	
+	// set by constructor
+	public Type getType() {
+		return type;
+	}	
 	
 	// used for cycle detection algorithm
 	public enum Mark {
@@ -41,6 +53,7 @@ public class Vertex implements Renderable {
 	}
 	
     Vertex(String name, Point upperLeft) {
+    	this.type = Type.EMPTY;
     	this.name = name;
     	this.upperLeft = upperLeft;
     	this.img = null;
@@ -49,6 +62,7 @@ public class Vertex implements Renderable {
     }
     
     Vertex(String name, Point upperLeft, BufferedImage img) {
+    	this.type = Type.ORGANISM;
     	this.name = name;
     	this.upperLeft = upperLeft;
     	this.img = img;
@@ -88,6 +102,14 @@ public class Vertex implements Renderable {
     		}
     	}
     	return returnVal;
+    }
+    
+    public boolean isTerminal(boolean directional) {
+		if((toVertices.size() == 0) && (fromVertices.size() == 1)) return true;
+		if((toVertices.size() == 1) && (fromVertices.size() == 0)) return true;
+    	if(directional) return false;
+    	if((toVertices.size() == 1) && (fromVertices.size() == 1)) return true;
+    	return false;
     }
     
     public void setError(boolean error) {

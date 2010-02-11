@@ -57,6 +57,7 @@ public class AdminApplication extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        
     }
 
     public static void main(String[] args) {

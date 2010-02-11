@@ -8,6 +8,7 @@ public class Graph implements Renderable {
 	private ArrayList<Vertex> vertices;
 	private ArrayList<Edge> edges;
 	private TreeMap<Integer, Vertex> idToVertex;
+	private boolean directional = true;
 	
 	Graph() {
 		vertices = new ArrayList<Vertex>();
@@ -51,38 +52,6 @@ public class Graph implements Renderable {
 		return false;
 	}
 
-	
-	public void loopCheck() {
-		for(Vertex v: vertices) {
-			if(v.getAdjVertices().contains(v)) {
-				v.setError(true);
-				continue;
-			}
-			if(hasLoop(v)) v.setError(true);
-		}
-	}
-	
-	// find all vertices reachable from v
-	public boolean hasLoop(Vertex v) {
-		ArrayList<Vertex> adjVertices = v.getAdjVertices();
-		ArrayList<Vertex> visited = new ArrayList<Vertex>();
-		visited.add(v);
-		for(Vertex adj: adjVertices) {
-			return hasLoop(visited, adj);
-		}
-		return false;
-	}
-	
-	public boolean hasLoop (ArrayList<Vertex> visited, Vertex v) {
-		ArrayList<Vertex> adjVertices = v.getAdjVertices();
-		visited.add(v);
-		for(Vertex adj: adjVertices) {
-			if(visited.contains(adj)) return true;
-			return hasLoop(visited, adj);
-		}
-		return false;
-	}
-	
 	public Vertex getVertexByID(int id) {
 		return idToVertex.get(new Integer(id));
 	}
@@ -113,6 +82,11 @@ public class Graph implements Renderable {
 
 	public boolean allOrganismsTerminal()	
 	{
+		for(Vertex v: vertices) {
+			if(v.getType() == Vertex.Type.ORGANISM) {
+				if(!v.isTerminal(directional)) return false;
+			}
+		}
 		return true;
 	}
 	
