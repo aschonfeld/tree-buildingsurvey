@@ -16,7 +16,7 @@
   * [VisionStatement Vision Statement]
   * [BugPolicy Bug List Policy]
   * [Testing Info For Testers]
-  * [TBSExperiment Initial Experimentation]
+  * [TBSExperiment Scoring Parameters]
   * [Versioning Applet Versioning]
   * [AppletGUITesting Applet GUI Testing]
   * [Applets Test Applets]
