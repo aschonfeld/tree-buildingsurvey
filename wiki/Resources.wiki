@@ -23,6 +23,21 @@ More on subversion: To connect to the new branch as a separate project in Eclips
 =JDOM=
 JDOM API: http://www.jdom.org/docs/apidocs/index.html
 
+
+= [http://tortoisesvn.net/downloads SVN Tortoise Client] =
+
+= [https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewProductDetail-Start?ProductRef=jre-6u16-oth-JPR@CDS-CDS_Developer Java 1.6] =
+   [http://java.sun.com/javase/6/webnotes/install/jre/install-windows.html Installation Notes]
+
+= [http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/galileo/SR1/eclipse-jee-galileo-SR1-win32.zip Eclipse 3.4] =
+   [http://wiki.eclipse.org/FAQ_Where_do_I_get_and_install_Eclipse%3F Installation Notes]
+
+= [http://dev.mysql.com/downloads/mysql/5.1.html MySQL 5.1.39] =
+
+= [http://www.activestate.com/activeperl/ ActivePerl 5.10.1] =
+
+= [http://tomcat.apache.org/download-60.cgi Tomcat 6.0.20] =
+
 =Model - View - Controller=
 
 Professor White's code starts with the assumption that every object of biological interest _is_ a graphics object. That's a serious design error. 
