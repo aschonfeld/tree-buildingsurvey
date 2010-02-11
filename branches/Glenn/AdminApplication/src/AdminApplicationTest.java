@@ -16,7 +16,7 @@ public class AdminApplicationTest extends TestCase {
 
 
 
-	public void testOrganismsTerminal()
+	@Test public void testOrganismsTerminal()
 	{
 		g1 = app.studentNameToTree.get("Organisms_Terminal_True1");
 		g2 = app.studentNameToTree.get("Organisms_Terminal_True2");
