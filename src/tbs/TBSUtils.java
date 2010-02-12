@@ -108,12 +108,6 @@ public class TBSUtils {
 				conn.getP2().getX() + arrowX,
 				conn.getP2().getY() + arrowY);
 	}
-	
-	public static Line2D scrollAdjust(Line2D l, int yOffset) {
-		double y1 = l.getY1() - yOffset;
-		double y2 = l.getY2() - yOffset;
-		return new Line2D.Double(l.getX1(), y1, l.getX2(), y2);
-	}
   
 	public static boolean isStringEmpty(String s){
 		return (s == null || s.length() == 0);

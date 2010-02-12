@@ -12,6 +12,7 @@ import java.util.Map;
 import tbs.TBSGraphics;
 import tbs.model.history.Add;
 import tbs.model.history.Delete;
+import tbs.model.history.Label;
 import tbs.model.history.Link;
 import tbs.model.history.Unlink;
 import tbs.view.TBSButtonType;
@@ -167,7 +168,16 @@ public class ModelUtils {
 
   public static void unlinkConnection(Connection c, TBSModel model){
 	  removeConnections(getConnectionsByNodes(c.getFrom(), c.getTo(),model), model);
-  }  
+  }
+  
+  public static void labelEmptyNode(EmptyNode en, StudentModel model){
+    EmptyNode temp;
+    if(en != null)
+      model.setSelectedElement(en);
+    temp = (EmptyNode) model.getSelectedElement();
+    model.addActionToHistory(new Label(temp.getId(), temp.getName(), temp.getWidth()));
+    model.viewPrompt(TBSButtonType.LABEL);
+  }
   
   public static List<Connection> getConnectionsByNode(Node n, TBSModel model){
     List<Connection> connections = new LinkedList<Connection>();

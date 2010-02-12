@@ -177,9 +177,11 @@ public abstract class TBSModel
 		List<ModelElement> modelElements = getElements();
 		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
 			ModelUtils.removeElement(modelElements.get(modelElements.size()-1), this, true);
-		List<Node> inTreeElements = inTreeElements();
-		for(Node n : inTreeElements)
-			ModelUtils.removeElement(n, this, true);
+		List<ModelElement> inTreeElements = inTreeElements();
+		for(ModelElement me : inTreeElements){
+      if(me instanceof Node)
+        ModelUtils.removeElement(me, this, true);
+    }
 		refreshSerial();
 		elementsInTree = false;
 		emptyNodesInTree = false;
@@ -277,26 +279,38 @@ public abstract class TBSModel
 		return false;
 	}
 
-	/**
+  /**
 	 * Returns the list of active elements
-	 */ 
-	public List<Node> inTreeElements(){
-		List<Node> inTreeElements = new LinkedList<Node>();
-		boolean tempElementsInTree = false;
-		if(elementsInTree){
-			for(ModelElement m : elements){
-				if(m instanceof Node){
-					Node n = (Node) m;
-					if(n.isInTree()){
-						inTreeElements.add(n);
-						tempElementsInTree = true;
-					}
-				}
-			}
-			elementsInTree = tempElementsInTree;
-		}
-		return inTreeElements;
+	 */
+	public List<ModelElement> inTreeElements(){
+	  List<ModelElement> inTreeElements = new LinkedList<ModelElement>();
+	  boolean tempElementsInTree = false;
+	  if(elementsInTree){
+	    for(ModelElement m : elements){
+	      if(m.isInTree()){
+	        if(m instanceof Node)
+            tempElementsInTree = true;
+	        inTreeElements.add(m);
+	      }
+	    }
+	  }
+	  elementsInTree = tempElementsInTree;
+	  return inTreeElements;
 	}
+  
+  /**
+   * Returns the list of inactive elements
+   */
+  public List<ModelElement> outOfTreeElements(){
+    List<ModelElement> outOfTreeElements = new LinkedList<ModelElement>();
+    if(elementsInTree){
+      for(ModelElement m : elements){
+        if(!m.isInTree())
+          outOfTreeElements.add(m);
+      }
+    }
+    return outOfTreeElements;
+  }
 
 	public boolean isElementsInTree() {
 		return elementsInTree;

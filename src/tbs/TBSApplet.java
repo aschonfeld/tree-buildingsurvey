@@ -171,7 +171,7 @@ public class TBSApplet extends JApplet {
 					TBSGraphics.maxOrganismImageWidth = img.getWidth();
 				if(img.getHeight() > TBSGraphics.maxOrganismImageHeight) 
 					TBSGraphics.maxOrganismImageHeight = img.getHeight();
-				organisms.add(new OrganismNode( i, name, new Point(), img));
+				organisms.add(new OrganismNode( i, name, new Point(), img, d.width));
 				imageis.close();
 				i++;
 			}
@@ -197,7 +197,7 @@ public class TBSApplet extends JApplet {
 			students.add(temp);
 		}
 		TBSGraphics.studentNodeHeight = lines * TBSGraphics.textHeight;
-		TBSGraphics.studentNodeHeight += TBSGraphics.paddingWidth * 2;
+		TBSGraphics.studentNodeHeight += TBSGraphics.padding.width * 2;
 		return students;
 	}
 

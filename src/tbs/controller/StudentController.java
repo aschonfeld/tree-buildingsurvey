@@ -6,8 +6,6 @@ package tbs.controller;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -25,13 +23,12 @@ import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
 import tbs.model.history.Command;
 import tbs.model.history.Drag;
-import tbs.model.history.Label;
 import tbs.properties.PropertyLoader;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
-import tbs.view.TextEntryBox;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.TextEntryBox;
 import tbs.view.prompt.student.YesNoPrompt;
 
 /**
@@ -45,11 +42,9 @@ public class StudentController extends TBSController
 	private StudentView view;
 	private int previousX, previousY; 
 	private Point lastPosition = null;
-	private TBSButtonType buttonClicked = TBSButtonType.SELECT;
 	private OpenQuestionButtonType questionClicked = null;
 	private boolean dragInProgress = false;
-	private boolean labelingInProgress = false;
-	
+  
 	public void printMouseEvent(MouseEvent e) {
 		if(e.getID() == MouseEvent.MOUSE_CLICKED) {
 			//System.out.println(e.toString());
@@ -65,25 +60,12 @@ public class StudentController extends TBSController
 	}
 	
 	/**
-	* Returns true if a label is being edited. Provided for automated
-   * testing. 
-	* (See {@see StudentControllerTest})
-	*/
-	public boolean getLabelingInProgress() {
-		return labelingInProgress;
-	}
-	
-	/**
 	* Constructor
 	*/
-	public StudentController(StudentModel m, StudentView v) {
-    	model = m;
-    	view = v;
-    	view.getVerticalBar().addAdjustmentListener(new AdjustmentListener() {
- 			public void adjustmentValueChanged(AdjustmentEvent e) {
- 				view.setYOffset((e.getValue() * view.getHeight()) / 100);
- 			}
- 		});
+	public StudentController(StudentModel model, StudentView view) {
+      super(model, view, TBSButtonType.SELECT);
+    	this.model = model;
+    	this.view = view;
     }
 	
 	/**
@@ -98,8 +80,13 @@ public class StudentController extends TBSController
 	 */
 	public void keyPressed(KeyEvent e) {
 		printKeyEvent(e);
-		if(model.getPrompt() != null) {
-			model.getPrompt().keyPressed(e);
+    	Prompt p = model.getPrompt();
+		if(p != null) {
+			p.keyPressed(e);
+      		if(p instanceof TextEntryBox && e.getKeyCode() == KeyEvent.VK_ENTER){
+        		setButtonClicked(TBSButtonType.SELECT);
+        		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      		}
 			return;
 		}
 		/*
@@ -112,34 +99,17 @@ public class StudentController extends TBSController
 		}
 		 */
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-			if(!labelingInProgress){
-				if(model.getSelectedElement() == null) 
+			if(model.getSelectedElement() == null) 
 					return;
 				clearCurrentActions();
 				view.setScreenString("You have removed " + model.getSelectedElement().toString());
 				ModelUtils.removeElement(model.getSelectedElement(), model, false);
 				model.setSelectedElement(null);
-			}
 		}
 		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			if(TBSButtonType.ADD.equals(buttonClicked)){
-				buttonClicked = TBSButtonType.SELECT;
-			}
-		}
-
-		if(labelingInProgress) {
-			if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-				model.getTextEntryBox().finishLabeling();
-				labelingInProgress = false;
-				((Label) model.getHistory().peek()).setLabelAfter(((Node)model.getSelectedElement()).getName(),
-						((Node)model.getSelectedElement()).getWidth());
-				System.out.println("Added command(label) to history.");
-				model.setSelectedElement(null);
-				buttonClicked = TBSButtonType.SELECT;
-				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			}else
-				model.getTextEntryBox().keyPressed(e);
+			if(TBSButtonType.ADD.equals(getButtonClicked()))
+        setButtonClicked(TBSButtonType.SELECT);
 		}
 	}
 
@@ -163,8 +133,6 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() == null)
 			return;
 
-		if(labelingInProgress)
-			model.getTextEntryBox().keyTyped(e);
 	}
 
 	/**
@@ -184,23 +152,18 @@ public class StudentController extends TBSController
 		printMouseEvent(e);
 		if(dragInProgress)
 			return;
-		if(buttonClicked != null && TBSButtonType.PRINT.equals(buttonClicked))
-			buttonClicked = TBSButtonType.SELECT;
+		if(TBSButtonType.PRINT.equals(getButtonClicked()))
+      setButtonClicked(TBSButtonType.SELECT);
 		Prompt prompt = model.getPrompt();
 		if(prompt != null){
-			if(prompt.isOverButton(e))
-				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			else
-				view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			view.setAppletCursor(prompt.getCursor(e));
 			return;
 		}
 		int x,y,buttonIndex;
 		x = e.getX();
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-		if(labelingInProgress)
-			c = DragSource.DefaultMoveNoDrop;
-		else if(y < TBSGraphics.buttonsHeight) {
+		if(y < TBSGraphics.buttonsHeight) {
 			if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 				if(buttonIndex < 1)
@@ -215,20 +178,20 @@ public class StudentController extends TBSController
 						c = DragSource.DefaultMoveNoDrop;
 				}
 			}
-		} else if(!view.isTooltipRunning() || buttonClicked.isCursorVariant()) {
+		} else if(!view.isTooltipRunning() || getButtonClicked().isCursorVariant()) {
 			if (x <= TBSGraphics.LINE_OF_DEATH){
-				if(buttonClicked.ordinal() >= 1 && buttonClicked.ordinal() <= 5)
+				if(getButtonClicked().ordinal() >= 1 && getButtonClicked().ordinal() <= 5)
 					c = DragSource.DefaultMoveNoDrop;
 			}else{
 				Node n = elementMouseIsHoveringOver(x,y);
 				if(n != null){
-					if(TBSButtonType.UNLINK.equals(buttonClicked)){
+					if(TBSButtonType.UNLINK.equals(getButtonClicked())){
 						if(n.getConnectedTo().size() == 0 &&
 								n.getConnectedFrom().size() == 0)
 							c = DragSource.DefaultMoveNoDrop;
 					}
 					if(n instanceof OrganismNode){
-						if(TBSButtonType.LABEL.equals(buttonClicked))
+						if(TBSButtonType.LABEL.equals(getButtonClicked()))
 							c = DragSource.DefaultMoveNoDrop;
 						OrganismNode o = (OrganismNode) n;
 						view.updateTooltip(o.getName(),
@@ -242,7 +205,7 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() == null)
 			return;
 		if(model.getSelectedElement() instanceof Node) {
-			if(TBSButtonType.LINK.equals(buttonClicked))
+			if(TBSButtonType.LINK.equals(getButtonClicked()))
 				view.setConnInProgress(
 		    		new Line2D.Double(((Node) model.getSelectedElement()).getCenter(),
 		    				new Point(e.getX(), e.getY() + view.getYOffset())));
@@ -257,11 +220,11 @@ public class StudentController extends TBSController
 		printMouseEvent(e);
 		if(model.getPrompt() != null)
 			return;
-		if(buttonClicked != null){
-			if(!buttonClicked.isMode())
-				buttonClicked = TBSButtonType.SELECT;
-			if(!model.isButtonActive(buttonClicked))
-				buttonClicked = TBSButtonType.SELECT;
+		if(getButtonClicked() != null){
+			if(!getButtonClicked().isMode())
+        setButtonClicked(TBSButtonType.SELECT);
+			if(!model.isButtonActive(getButtonClicked()))
+        setButtonClicked(TBSButtonType.SELECT);
 		}
 		
 	}
@@ -272,8 +235,6 @@ public class StudentController extends TBSController
 	*/
 	public void mousePressed(MouseEvent e){
 		printMouseEvent(e);
-		if(labelingInProgress)
-			return;
 		Prompt prompt = model.getPrompt();
 		if(prompt != null) {
 			prompt.mousePressed(e);
@@ -288,7 +249,7 @@ public class StudentController extends TBSController
 								model.resetModel();
 								model.setHistory(new Stack<Command>());
 								model.getButtonStates().put(TBSButtonType.UNDO, false);
-								buttonClicked = TBSButtonType.SELECT;
+                setButtonClicked(TBSButtonType.SELECT);
 							}
 							break;
 					}
@@ -311,7 +272,7 @@ public class StudentController extends TBSController
 		} else if (x > TBSGraphics.LINE_OF_DEATH)
 			handleMousePressed(x, y);
 		else {
-			if(buttonClicked.ordinal() == 0){
+			if(getButtonClicked().ordinal() == 0){
 				int index = indexMouseIsOver(x,y);
 				if(index >= 0){
 					model.setSelectedElement(model.getElement(index));
@@ -333,7 +294,7 @@ public class StudentController extends TBSController
 	*/
 	public void mouseDragged(MouseEvent e){
 		printMouseEvent(e);
-		if(labelingInProgress || model.getPrompt() != null)
+		if(model.getPrompt() != null)
 			return;
 		dragInProgress = true;
 		int x = e.getX();
@@ -380,14 +341,16 @@ public class StudentController extends TBSController
 				Node draggedNode = (Node) model.getSelectedElement();
 				//Node dragged to point out of bounds
 				modifyOutOfBounds(draggedNode);
-				List<Node> inTreeElements = model.inTreeElements();
+				List<ModelElement> inTreeElements = model.inTreeElements();
 				if(!draggedNode.isInTree())
 					draggedNode.setY(draggedNode.getY() + view.getYOffset());
-				for(Node inTreeElement : inTreeElements){
-					if(!inTreeElement.equals(draggedNode) && inTreeElement.collidesWith(draggedNode)){
-						draggedNode.setAnchorPoint(lastPosition);
-						break;
-					}
+				for(ModelElement inTreeElement : inTreeElements){
+				  if(!inTreeElement.equals(draggedNode)){
+				    if(inTreeElement instanceof Node && inTreeElement.collidesWith(draggedNode)){
+				      draggedNode.setAnchorPoint(lastPosition);
+				      break;
+				    }
+				  }
 				}
 				if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH )
 					ModelUtils.removeElement(draggedNode, model, false);
@@ -403,75 +366,10 @@ public class StudentController extends TBSController
 			}
 			dragInProgress = false;
 		}
-	}
-
-	/**
-	* Return the {@link TBSButtonType} of the button most recently
-	* clicked. WHERE USED?
-	*/	
-	public TBSButtonType getButtonClicked() {
-		return buttonClicked;
-	}
-	
-
-	private int indexMouseIsOver(int x, int y) {
-	    int maxIndex = -1;
-	    int i = 0;
-	    int yOffset = 0;
-	    if(x > TBSGraphics.LINE_OF_DEATH) 
-	    	yOffset = view.getYOffset(); 
-	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y + yOffset))
-		    	maxIndex = i;
-		    i++;
-		}
-		return maxIndex;
-	}
-    
-	/**
-	* Returns the identity of the node at (x,y).
-	*/
-    public Node elementMouseIsHoveringOver(int x, int y){
-    	int yOffset = 0;
-	    if(x > TBSGraphics.LINE_OF_DEATH)
-	    	yOffset = view.getYOffset(); 	    
-	    for (Node n : model.inTreeElements()) {
-		    if(n.contains(x, y + yOffset))
-		    	return n;
-		}
-	    return null;
-    }
-   
-	/**
-	* returns the identity of the ModelElement at (x,y)
-	*/ 
-    public ModelElement elementMouseIsOver(int x, int y) {
-    	int index = indexMouseIsOver(x,y);
-    	if(index > 0)
-    		return model.getElement(index);
-	    return null;
-	}   
+	}  
     
     
 
-	// Handles attempts to place nodes outside of the applet's area. 
-	
-    private void modifyOutOfBounds(Node n){
-    	if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
-    		n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
-    	if(n.isInTree()){
-    		if (n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
-    			n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    		if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
-    			n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
-    	} else {
-    		if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding)
-    			n.setY(TBSGraphics.buttonsHeight + TBSGraphics.buttonsYPadding);
-    		if((n.getY() + n.getHeight()) > view.getHeight())
-    			n.setY(view.getHeight()-n.getHeight());   		
-    	}
-    }
-    
     // creates a connection if conditions are correct
     // returns true if connection created
     private boolean creatingConnection(Node n) {
@@ -487,16 +385,6 @@ public class StudentController extends TBSController
     	view.setConnInProgress(null);
         return false;
     }
-    
-    public void creatingLabel(EmptyNode en) {
-    	if(!labelingInProgress) {
-    		labelingInProgress = true;
-    		en.setBeingLabeled(true);
-    		model.setTextEntryBox(new TextEntryBox(en));
-    		model.addActionToHistory(new Label(en.getId(), en.getName(), en.getWidth()));
-    		model.setSelectedElement(en);
-    	}
-    }
 
     /**
 	* Called by () to return to a null state: no connections in progress
@@ -506,7 +394,6 @@ public class StudentController extends TBSController
 	*/    
     public void clearCurrentActions() {
     	view.setConnInProgress(null);
-    	labelingInProgress = false;
     }
    
 
@@ -519,29 +406,29 @@ public class StudentController extends TBSController
 		int buttonIndex = x / TBSGraphics.buttonsWidth;
 		if(buttonIndex >= view.getButtons().size())
 			return;
-		buttonClicked = view.getButtons().get(buttonIndex);
-		System.out.println(buttonClicked.toString());
-		if(!model.isButtonActive(buttonClicked)){
-			buttonClicked = TBSButtonType.SELECT;
+    setButtonClicked(view.getButtons().get(buttonIndex));
+		System.out.println(getButtonClicked().toString());
+		if(!model.isButtonActive(getButtonClicked())){
+      setButtonClicked(TBSButtonType.SELECT);
 			return;
 		}
-		if(!TBSButtonType.UNDO.equals(buttonClicked) && !buttonClicked.isConfirmation()){
-			if(TBSButtonType.SELECT.equals(buttonClicked)){
+		if(!TBSButtonType.UNDO.equals(getButtonClicked()) && !getButtonClicked().isConfirmation()){
+			if(TBSButtonType.SELECT.equals(getButtonClicked())){
 				if(model.inTreeElements().isEmpty())
 					view.setScreenString(null);
 				else
 					view.setScreenString(getStatus(TBSButtonType.SELECT));
 			}
-			view.setScreenString(getStatus(buttonClicked));
+			view.setScreenString(getStatus(getButtonClicked()));
 		}
-		if(buttonClicked.isConfirmation())
+		if(getButtonClicked().isConfirmation())
 			view.setScreenString(null);
 		if(model.getSelectedElement() != null){
-			switch (buttonClicked) {
+			switch (getButtonClicked()) {
 				case DELETE:
 					clearCurrentActions();
 					ModelUtils.removeElement(model.getSelectedElement(), model, false);
-					buttonClicked = TBSButtonType.SELECT;
+          setButtonClicked(TBSButtonType.SELECT);
 					break;
 				case LINK:
 					if(model.getSelectedElement() instanceof Node)
@@ -551,13 +438,13 @@ public class StudentController extends TBSController
 					break;
 				case LABEL:
 					if(model.getSelectedElement() instanceof EmptyNode){
-						creatingLabel((EmptyNode) model.getSelectedElement());
+					  	ModelUtils.labelEmptyNode(null, model);
 						return;
 					}
 					break;
 			}
 		}
-		switch(buttonClicked){
+		switch(getButtonClicked()){
 			case PRINT:
 				PrinterJob printJob = PrinterJob.getPrinterJob();
 				printJob.setPrintable(view);
@@ -614,29 +501,29 @@ public class StudentController extends TBSController
     	// clicking on empty space always cancels connection
     	if(clickedElement == null) {
     		model.setSelectedElement(null);
-    		if(!buttonClicked.equals(TBSButtonType.ADD)){
-    			buttonClicked = TBSButtonType.SELECT;
+    		if(!TBSButtonType.ADD.equals(getButtonClicked())){
+          setButtonClicked(TBSButtonType.SELECT);
     			clearCurrentActions();
     			if(model.inTreeElements().isEmpty())
-					view.setScreenString(null);
+    			  view.setScreenString(null);
 				else
 					view.setScreenString(getStatus(TBSButtonType.SELECT));
     			return;
     		}
     	}
 		
-		if(!TBSButtonType.SELECT.equals(buttonClicked)){
-			switch (buttonClicked) {
+		if(!TBSButtonType.SELECT.equals(getButtonClicked())){
+			switch (getButtonClicked()) {
 				case ADD:
 					if(x > view.getWidth() - view.getVerticalBar().getWidth()) 
 						x = view.getWidth() - view.getVerticalBar().getWidth();
 					EmptyNode newNode = new EmptyNode(model.getSerial());
 					newNode.setAnchorPoint(new Point(x, y + view.getYOffset()));
 					newNode.setInTree(true);
-					modifyOutOfBounds(newNode);
-					for(Node n : model.inTreeElements()){
+          			modifyOutOfBounds(newNode);
+					for(ModelElement me : model.inTreeElements()){
 						// make sure not putting it on top of another item
-						if(n.collidesWith(newNode)){
+						if(me.collidesWith(newNode)){
 							newNode = null;
 							break;
 						}
@@ -646,7 +533,7 @@ public class StudentController extends TBSController
 					break;
 				case DELETE:
 					ModelUtils.removeElement(clickedElement, model, false);
-					buttonClicked = TBSButtonType.SELECT;
+          setButtonClicked(TBSButtonType.SELECT);
 					return;
 				case LINK:
 					if(clickedElement instanceof Node) {
@@ -662,7 +549,7 @@ public class StudentController extends TBSController
 					break;
 				case LABEL:
 					if(clickedElement instanceof EmptyNode)
-						creatingLabel((EmptyNode) clickedElement);
+            			ModelUtils.labelEmptyNode((EmptyNode) clickedElement, model);
 					break;
 			}
 		}
@@ -678,16 +565,33 @@ public class StudentController extends TBSController
 
  
     public String getStatus(TBSButtonType button){
-    	StringBuffer statusKey = new StringBuffer(buttonClicked.name());
-		if(buttonClicked.isItemSelectionBased()){
+    	StringBuffer statusKey = new StringBuffer(getButtonClicked().name());
+		if(getButtonClicked().isItemSelectionBased()){
 			if(model.getSelectedElement() == null)
 				statusKey.append("1");
 			else
 				statusKey.append("2");
 		}
 		statusKey.append("_");
-		Boolean buttonState = model.getButtonStates().get(buttonClicked);
+		Boolean buttonState = model.getButtonStates().get(getButtonClicked());
 		statusKey.append(buttonState.toString());
 		return PropertyLoader.getProperties("status").getProperty(statusKey.toString());
 	}    
+    
+    //Handles attempts to place nodes outside of the applet's area. 
+	public void modifyOutOfBounds(Node n){
+		if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
+			n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
+		if(n.isInTree()){
+			if (n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height)
+				n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height);
+			if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
+				n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
+		} else {
+			if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.padding.height)
+				n.setY(TBSGraphics.buttonsHeight + TBSGraphics.padding.height);
+			if((n.getY() + n.getHeight()) > view.getHeight())
+				n.setY(view.getHeight()-n.getHeight());       
+		}
+	}
 }

@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.font.TextLayout;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Comparator;
@@ -56,6 +55,15 @@ public class TBSGraphics {
 	 * portion. 
 	 */
 	public static int LINE_OF_DEATH = 180;
+  
+  /**
+   * Universal x & y padding dimensions for applet, used for:
+   *  -Minimum number of pixels around the right and left of an organism's name
+   *  -Vertical spacing of buttons
+   *  -Horizontal spacing of buttons
+   *  -Prompt padding
+   */
+  public static Dimension padding = new Dimension(10,5);
 
 	/**
 	 * Total number of Organisms contained in the applet, this will
@@ -185,11 +193,6 @@ public class TBSGraphics {
 	public static double arrowLength = 0.1;
 
 	/**
-	 * Minimum number of pixels around the right and left of an organism's name
-	 */
-	public static int paddingWidth = 5;
-
-	/**
 	 * Space between bottom and top of images [in the left-hand column] 
 	 */
 	public static int ySpacing = 1;
@@ -217,16 +220,6 @@ public class TBSGraphics {
 	 */
 	public static Color connectionSelectedColor = Color.GREEN;
 	public static Color selectedNodeBorderColor = Color.GREEN;
-
-	/**
-	 * Vertical spacing of buttons.
-	 */
-	public static int buttonsYPadding = 5;
-
-	/**
-	 * Horizontal spacing of buttons.
-	 */ 
-	public static int buttonsXPadding = 10;
 
 	/**
 	 * Height of buttons. Set in  [TBSModel.???]
@@ -400,21 +393,4 @@ public class TBSGraphics {
 		font = tempFont;
 		closeButtonStroke = stroke;
 	}
-
-	public static void drawCloseButton(Graphics2D g2, Rectangle closeButton){
-		TBSGraphics.renderButtonBackground(g2, closeButton, false);
-		g2.setColor(Color.BLACK);
-		g2.setStroke(closeButtonStroke);
-		g2.draw(closeButton);
-		int x,y,w,h;
-		x = closeButton.x+1;
-		y = closeButton.y+1;
-		w = closeButton.width-1;
-		h = closeButton.height-1;
-		g2.draw(new Line2D.Double(x,y,x+w,y+h));
-		g2.draw(new Line2D.Double(x,y+h,x+w,y));
-		g2.setStroke(new BasicStroke());
-	}
-
-
 }

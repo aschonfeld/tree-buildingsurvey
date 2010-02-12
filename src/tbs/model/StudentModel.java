@@ -18,9 +18,10 @@ import tbs.model.history.Command;
 import tbs.model.history.Unlink;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.TBSButtonType;
-import tbs.view.TextEntryBox;
+import tbs.view.prompt.Prompt;
 import tbs.view.prompt.student.HelpPrompt;
 import tbs.view.prompt.student.RadioQuestionPrompt;
+import tbs.view.prompt.student.TextEntryBox;
 import tbs.view.prompt.student.WrittenQuestionPrompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
@@ -61,6 +62,7 @@ public class StudentModel extends TBSModel
 		}
 		helpPrompt = new HelpPrompt(this);
 		writtenQuestionPrompt = new WrittenQuestionPrompt(this);
+    	textEntryBox = new TextEntryBox(this);
 		history = new Stack<Command>();
 		/*
 		 * Until Professor White says otherwise we will be eliminating the radio
@@ -98,7 +100,7 @@ public class StudentModel extends TBSModel
 	public void updateButtonStatesAfterRemove(){
 		if(!hasConnections())
 			buttonStates.put(TBSButtonType.UNLINK, false);
-		List<Node> inTree = inTreeElements();
+		List<ModelElement> inTree = inTreeElements();
 		if(inTree.isEmpty()){
 			buttonStates.put(TBSButtonType.LINK, false);
 			buttonStates.put(TBSButtonType.DELETE, false);
@@ -123,7 +125,14 @@ public class StudentModel extends TBSModel
 	}
 
 	public void viewPrompt(TBSButtonType button) {
-		setPrompt(new YesNoPrompt(this, TBSButtonType.CLEAR));
+    	Prompt p;
+    	if(TBSButtonType.LABEL.equals(button)){
+      		textEntryBox.initLabeling();
+      		textEntryBox.setFinished(false);
+      		p = textEntryBox;
+    	}else
+      		p = new YesNoPrompt(this, TBSButtonType.CLEAR);
+		setPrompt(p);
 	}
 
 	public void helpUser() {
@@ -137,15 +146,7 @@ public class StudentModel extends TBSModel
 	public Boolean isButtonActive(TBSButtonType button){
 		return buttonStates.get(button);
 	}
-
-	public TextEntryBox getTextEntryBox() {
-		return textEntryBox;
-	}
-
-	public void setTextEntryBox(TextEntryBox textEntryBox) {
-		this.textEntryBox = textEntryBox;
-	}
-
+  
 	public StudentControllerTest getStudentControllerTest() {
 		return sct;
 	}

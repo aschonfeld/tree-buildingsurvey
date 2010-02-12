@@ -1,13 +1,16 @@
 
-package tbs.view;
+package tbs.view.prompt.student;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
@@ -19,8 +22,12 @@ import javax.swing.Timer;
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.EmptyNode;
+import tbs.model.Node;
+import tbs.model.StudentModel;
+import tbs.model.history.Label;
+import tbs.view.prompt.Prompt;
 
-public class TextEntryBox {
+public class TextEntryBox extends Prompt{
 
 	private Timer timer;
 	private ActionListener hider = new ActionListener() {
@@ -28,6 +35,7 @@ public class TextEntryBox {
 			cursorIsOn = !cursorIsOn;
 		}
 	};
+	private StudentModel model;
 	private EmptyNode node;
 	private Graphics2D g2 = null;
 	private String name;
@@ -43,25 +51,32 @@ public class TextEntryBox {
 	private int cursorWidth = 2;
 	private boolean cursorIsOn = true;
 	private List<Integer> pressedKeys;
-	
-	public TextEntryBox(EmptyNode node) {
-		this.node = node;
-		name= node.getName();
-		if(TBSUtils.isStringEmpty(name))
-			cursorIndex = 0;
-		else
-			cursorIndex = name.length();	
-		leftX = node.getX();
-		width = node.getWidth();
-		height = node.getHeight();
+
+	public TextEntryBox(StudentModel model) {
+		super(true, true, new Dimension(), model);
+		this.model = model;
 		pressedKeys = new LinkedList<Integer>();
 		pressedKeys.add(KeyEvent.VK_DELETE);
 		pressedKeys.add(KeyEvent.VK_RIGHT);
 		pressedKeys.add(KeyEvent.VK_LEFT);
+		pressedKeys.add(KeyEvent.VK_ENTER);
 		timer = new Timer(500, hider);
- 		timer.start();
+		timer.start();
 	}
-	
+
+	public void initLabeling(){
+		this.node = (EmptyNode) model.getSelectedElement();
+		node.setBeingLabeled(true);
+		name= node.getName();
+		if(TBSUtils.isStringEmpty(name))
+			cursorIndex = 0;
+		else
+			cursorIndex = name.length();  
+		leftX = node.getX();
+		width = node.getWidth();
+		height = node.getHeight();
+	}
+
 	public void keyPressed(KeyEvent e) {
 		if(!pressedKeys.contains(e.getKeyCode()))
 			return;
@@ -78,10 +93,30 @@ public class TextEntryBox {
 		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 			if(cursorIndex < len)
 				cursorIndex++;
+		}else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if(name.length()==0 || name.length() > TBSGraphics.maxNameLength)
+				node.setAlteredWidth(-1);
+			else{
+				Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
+				int testWidth = stringBounds.width + 2 * TBSGraphics.emptyNodePadding;
+				if (testWidth > TBSGraphics.emptyNodeWidth)
+					node.setAlteredWidth(testWidth);
+				else
+					node.setAlteredWidth(-1);
+				node.setName(name);
+			}
+			node.setBeingLabeled(false);
+			timer.stop();
+			((Label) model.getHistory().peek()).setLabelAfter(((Node)model.getSelectedElement()).getName(),
+					((Node)model.getSelectedElement()).getWidth());
+			System.out.println("Added command(label) to history.");
+			model.setSelectedElement(null);
+			setFinished(true);
+			model.clearPrompt();
 		}
-			
+
 	}
-	
+
 	public void keyTyped(KeyEvent e){
 		if(pressedKeys.contains(e.getKeyCode()))
 			return;
@@ -101,23 +136,7 @@ public class TextEntryBox {
 		}
 		name = temp.toString();
 	}
-	
-	public void finishLabeling(){
-		if(name.length()==0 || name.length() > TBSGraphics.maxNameLength)
-			node.setAlteredWidth(-1);
-		else{
-			Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
-			int testWidth = stringBounds.width + 2 * TBSGraphics.emptyNodePadding;
-			if (testWidth > TBSGraphics.emptyNodeWidth)
-				node.setAlteredWidth(testWidth);
-			else
-				node.setAlteredWidth(-1);
-			node.setName(name);
-		}
-		node.setBeingLabeled(false);
-		timer.stop();
-	}
-	
+
 	public void renderCursor(Graphics2D g2, Point upperLeft, Point size) {
 		if(cursorIsOn) 
 			g2.setColor(onColor);
@@ -125,11 +144,11 @@ public class TextEntryBox {
 			g2.setColor(offColor);
 		g2.fillRect(upperLeft.x, upperLeft.y, size.x, size.y);
 	}
-	
-	public void renderTextEntryBox(Graphics2D g2, int yOffset) 
+
+	public void paintComponent(Graphics2D g2) 
 	{
-		this.g2 = g2;
-		int upperY = node.getY() - yOffset;
+		setGraphics(g2);
+		int upperY = node.getY() - model.getView().getYOffset();
 		Dimension d;
 		TextLayout layout;
 		if(!TBSUtils.isStringEmpty(name)){
@@ -147,7 +166,7 @@ public class TextEntryBox {
 			g2.drawRect(leftX - 1, upperY, width, height);
 			return;
 		}
-			
+
 		int x, y;
 		// draw background
 		g2.setColor(backgroundColor);
@@ -174,14 +193,20 @@ public class TextEntryBox {
 				layout.draw(g2, cursorX + cursorWidth, y);
 			}
 		}
-		
+
 		renderCursor(g2, new Point(cursorX, upperY), new Point(cursorWidth, height));
-		
+
 		g2.setColor(borderColor);
 		int boxWidth = (x + d.width + 2 + cursorWidth) - leftX;
 		if(width > boxWidth)
 			boxWidth = width;
 		g2.drawRect(leftX, upperY, boxWidth, height);
 	}
-	
+
+	public boolean isOverButton( MouseEvent e ) {return false;}
+
+	public Cursor getCursor( MouseEvent e ) {return DragSource.DefaultMoveNoDrop;}
+
+	public void mousePressed( MouseEvent e ) {}
+
 }
