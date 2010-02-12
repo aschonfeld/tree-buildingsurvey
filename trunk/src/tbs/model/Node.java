@@ -18,7 +18,7 @@ public abstract class Node extends ModelElement implements Cloneable
 {	
 	private String name;
 	private Point anchorPoint;
-	private boolean inTree;
+	private Boolean inTree;
 	private boolean beingDragged;
 	
 	//connections to and from other ModelElements, respectively
@@ -127,7 +127,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	* Returns true if the node thinks it should accept connections and
 	* selected status. 
 	*/
-	public boolean isInTree(){ 
+	public Boolean isInTree(){ 
 		return inTree;
 	}
 	
@@ -138,7 +138,7 @@ public abstract class Node extends ModelElement implements Cloneable
 	* field, setInTree(false) would be the correct way to ensure that the
 	* object knows it is not to connect to other objects.
 	*/ 
-	public void setInTree(boolean inTree){ 
+	public void setInTree(Boolean inTree){ 
 		this.inTree = inTree;
 	}
 	

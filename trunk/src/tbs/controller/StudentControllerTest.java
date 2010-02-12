@@ -14,6 +14,8 @@ import java.util.Stack;
 
 import javax.swing.Timer;
 
+import tbs.view.TBSButtonType;
+
 /**
 * Student Controller Randomly Simulates Student Behavior in Tree Creation Mode
 **/
@@ -167,7 +169,7 @@ public class StudentControllerTest
 	
 	private void nextUserAction() {
 		removeRandomReturnPoint();
-		if(sc.getLabelingInProgress()) {
+		if(TBSButtonType.LABEL.equals(sc.getButtonClicked())) {
 			pressKey();
 			return;
 		}

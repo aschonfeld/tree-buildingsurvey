@@ -3,15 +3,11 @@
 
 package tbs.view;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Properties;
 
@@ -27,7 +23,6 @@ import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyLoader;
-import tbs.view.prompt.Prompt;
 
 /**
  * TBSView contains the logic for rendering the information contained in
@@ -48,7 +43,7 @@ public class AdminView extends TBSView {
 	private int studentYOffset = 0;
 
 	public AdminView(Graphics2D g2, AdminModel m) {
-		super(true);
+		super(true, m);
 		model = m;
 		setLayout(new BorderLayout());
 		add(getVerticalBar(), BorderLayout.EAST);
@@ -85,20 +80,18 @@ public class AdminView extends TBSView {
 	/**
 	 * Displays the button bar.
 	 */
-	public void renderButtons(Graphics g)
+	public void renderButtons(Graphics2D g2)
 	{
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
 		if(buttonClicked == null || model.getPrompt() == null)
 			buttonClicked = TBSButtonType.TREE;
-		Graphics2D g2 = (Graphics2D) g;
 		int characterWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
-		int studentWidth = characterWidth +
-		+ getVerticalBar().getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
+		int studentWidth = characterWidth + getVerticalBar().getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
+		
 		TBSGraphics.questionButtonsStart = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-getVerticalBar().getWidth())
-		- ((TBSGraphics.buttonsWidth*getButtons().size())/2);
-		//TBSGraphics.questionButtonsStart = (model.getApplet().getWidth()/2) - ((TBSGraphics.buttonsWidth*buttons.size())/2);
+			- ((TBSGraphics.buttonsWidth*getButtons().size())/2);
 		Rectangle buttonRect = new Rectangle(TBSGraphics.questionButtonsStart,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
-		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.buttonsYPadding;
+		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.padding.height;
 		for(TBSButtonType b: getButtons()) {
 			if(b.equals(buttonClicked))
 				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
@@ -120,51 +113,24 @@ public class AdminView extends TBSView {
 		TBSGraphics.drawCenteredString(g2, "Print",
 				buttonRect.x, upperY, buttonRect.width, 0);
 	}
-
-	/**
-	 * draws a modelElement
-	 */
-	public void renderModelElement(Graphics2D g2, ModelElement me) {
-		if(me instanceof OrganismNode) 
-			renderOrganismNode(g2, (OrganismNode) me);
-		else if (me instanceof EmptyNode)
-		{
-			EmptyNode en = (EmptyNode) me;
-			String name = en.getName();
-			if(name == null)
-				name = "";
-			// make empty nodes light purple (like Prof. White's node.gif)
-			g2.setColor(TBSGraphics.emptyNodeColor);
-			Rectangle yAdjust = en.getRectangle();
-			yAdjust.setLocation(yAdjust.x, yAdjust.y - getYOffset());
-			g2.fill(yAdjust);
-			TBSGraphics.drawCenteredString(g2, name, en.getX(),
-					en.getY() - getYOffset(), en.getWidth(), en.getHeight());
-		}else if(me instanceof Connection){
-			Connection c = (Connection) me;
-			Line2D conn = TBSUtils.getConnectionBounds(c.getFrom() , 
-					c.getTo());
-			conn = TBSUtils.scrollAdjust(conn, getYOffset());
-			g2.setColor(TBSGraphics.connectionColor);
-			g2.setStroke(new BasicStroke(3));
-			g2.draw(conn);
-			if(model.getStudent().hasArrows()){
-				g2.draw(TBSUtils.getArrowHead(conn, 0.75 * Math.PI));
-				g2.draw(TBSUtils.getArrowHead(conn, 1.25 * Math.PI));
-			}
-			g2.setStroke(new BasicStroke());
+	
+	public void renderElements(Graphics2D g2) {
+		for(ModelElement m : model.inTreeElements()){
+			if(m instanceof Node){
+				if(m instanceof OrganismNode)
+						renderOrganismNode(g2, (OrganismNode) m);
+				else
+						renderEmptyNode(g2, (EmptyNode) m);
+			}else
+				renderConnection(g2, TBSUtils.getConnectionBounds(((Connection) m).getFrom(), ((Connection) m).getTo()), TBSGraphics.connectionColor);
 		}
-	}
-
-	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
-		g2.drawImage(on.getImage(), on.getX(), on.getY() - getYOffset(), null);
 	}
 
 	public void renderStudents(Graphics2D g2){
 		String selectedStudentName = model.getStudent().getName();
 		int x,y,width;
 		int characterWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
-		width = TBSGraphics.maxStudentNameWidth - TBSGraphics.paddingWidth;
+		width = TBSGraphics.maxStudentNameWidth - TBSGraphics.padding.width;
 		for(Student student : model.getStudents()){
 			if(student.getName().equals(selectedStudentName))
 				g2.setColor(Color.GREEN);
@@ -183,13 +149,13 @@ public class AdminView extends TBSView {
 				studentIndicators += " \u2713";
 			if(studentIndicators.length() > 0)
 				TBSGraphics.drawCenteredString(g2, studentIndicators,
-						x + width, y, indicatorsWidth + TBSGraphics.paddingWidth,
+						x + width, y, indicatorsWidth + TBSGraphics.padding.width,
 						TBSGraphics.studentNodeHeight,
 						Color.BLACK);
-			y += TBSGraphics.paddingWidth;
+			y += TBSGraphics.padding.width;
 			for(String nameString : student.getNodeName()){
 				TBSGraphics.drawCenteredString(g2, nameString,
-						x + TBSGraphics.paddingWidth, y,width, TBSGraphics.textHeight,
+						x + TBSGraphics.padding.width, y,width, TBSGraphics.textHeight,
 						Color.BLACK);
 				y += TBSGraphics.textHeight;
 			}
@@ -214,7 +180,7 @@ public class AdminView extends TBSView {
 				screenString.append("(Last Update: ").append(lastUpdate).append(")");
 		}
 		int studentWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth + 
-		+ getVerticalBar().getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
+			+ getVerticalBar().getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
 		int width = model.getApplet().getWidth() - studentWidth;
 		int x = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-getVerticalBar().getWidth());
 
@@ -227,43 +193,10 @@ public class AdminView extends TBSView {
 		}
 	}
 
-	/**
-	 * How to paint the screen.
-	 */
-	// this is what the applet calls to refresh the screen
-	public void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		RenderingHints rh = new RenderingHints(
-				RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2.setRenderingHints(rh);
-		g2.setFont(TBSGraphics.font);
-		Prompt prompt = model.getPrompt();
-		g2.setColor(Color.black);
-		g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
-		refreshGraphics();
-		if(prompt == null){
-			for(ModelElement m : model.getElements()){
-				if(m instanceof Connection)
-					renderModelElement(g2, m);
-				else if(((Node) m).isInTree())
-					renderModelElement(g2, m);
-			}
-		}else
-			prompt.paintComponent(g2);
-		renderButtons(g2);
-		renderStudents(g2);
-		renderScreenString(g2);
-		setCursor(getAppletCursor());
-		renderTooltip(g2);
-	}
-
 	private void positionButtons(Graphics2D g2)
 	{
 		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,TBSButtonType.getButtons(true));
-		TBSGraphics.buttonsWidth = buttonDimensions.width + 
-		TBSGraphics.buttonsXPadding * 2;
-		TBSGraphics.buttonsHeight = buttonDimensions.height + 
-		TBSGraphics.buttonsYPadding * 2;
+		TBSGraphics.buttonsWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
+		TBSGraphics.buttonsHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
 	}
 }

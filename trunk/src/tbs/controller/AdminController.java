@@ -15,7 +15,7 @@ import java.util.List;
 
 import tbs.TBSGraphics;
 import tbs.model.AdminModel;
-import tbs.model.ModelElement;
+import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.admin.Student;
 import tbs.view.AdminView;
@@ -32,23 +32,18 @@ public class AdminController extends TBSController
 	
 	private AdminModel model;
 	private AdminView view;
-	private TBSButtonType buttonClicked = TBSButtonType.TREE;
 	
 	
 	public AdminController(AdminModel m, AdminView v) {
-    	model = m;
-    	view = v;
- 		view.getVerticalBar().addAdjustmentListener(new AdjustmentListener() {
- 			public void adjustmentValueChanged(AdjustmentEvent e) {
- 				view.setYOffset((e.getValue() * view.getHeight()) / 100);
- 			}
- 		});
- 		view.getStudentBar().addAdjustmentListener(new AdjustmentListener() {
- 			public void adjustmentValueChanged(AdjustmentEvent e) {
- 				view.setStudentYOffset(e.getValue());
- 			}
- 		});
-    }
+	  super(m, v, TBSButtonType.TREE);
+	  model = m;
+	  view = v;
+	  view.getStudentBar().addAdjustmentListener(new AdjustmentListener() {
+	    public void adjustmentValueChanged(AdjustmentEvent e) {
+	      view.setStudentYOffset(e.getValue());
+	    }
+	  });
+	}
 	
 	public void handleMousePressed(int x, int y) {
 		handleStudentPressed(x, y);		
@@ -106,14 +101,12 @@ public class AdminController extends TBSController
 				if(buttonIndex < OpenQuestionButtonType.values().length)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			}
-		} else if(buttonClicked.equals(TBSButtonType.TREE) && !view.isTooltipRunning()){
-			ModelElement m = elementMouseIsOver(x,y);
-			if(m != null && m instanceof OrganismNode){
-				OrganismNode o = (OrganismNode) m;
-				if(o.isInTree()){
-					view.updateTooltip(o.getName(),
+		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.isTooltipRunning()){
+			Node n = elementMouseIsHoveringOver(x,y);
+			if(n != null && n instanceof OrganismNode){
+				OrganismNode o = (OrganismNode) n;
+				view.updateTooltip(o.getName(),
 							new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
-				}
 			}
 		}
 		view.setAppletCursor(c);
@@ -174,31 +167,15 @@ public class AdminController extends TBSController
 	* Handle mouseReleased events. Drop the object being dragged and
 	* correct its location if necessary. 
 	*/	
-	public void mouseReleased(MouseEvent e){}
-	
-	public TBSButtonType getButtonClicked() {
-		return buttonClicked;
-	}
-	
-	public ModelElement elementMouseIsOver(int x, int y) {
-    	ModelElement topElement = null;
-	    int yOffset = 0;
-	    if(x > TBSGraphics.LINE_OF_DEATH) yOffset = view.getYOffset(); 	    
-	    for (ModelElement me : model.getElements()) {
-		    if(me.contains(x, y + yOffset))
-		    	topElement = me;
-		}
-	    	
-	    return topElement;
-	}   
+	public void mouseReleased(MouseEvent e){}   
 
     public void handleMouseButtonPressed(int x, int y) {
     	int buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
 		if(buttonIndex >= view.getButtons().size())
 			return;
-		buttonClicked = view.getButtons().get(buttonIndex);
-		System.out.println(buttonClicked.toString());
-		switch (buttonClicked) {
+		setButtonClicked(view.getButtons().get(buttonIndex));
+		System.out.println(getButtonClicked().toString());
+		switch (getButtonClicked()) {
 		case TREE:
 			model.clearPrompt();
 			break;

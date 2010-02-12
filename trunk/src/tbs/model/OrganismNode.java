@@ -13,8 +13,11 @@ public class OrganismNode extends Node
 	private BufferedImage img;
 	private String imgFileName;
 	private Point defaultPoint;
+	private int stringWidth;
+	private int imageStartX = -1;
+	private int stringAreaLeftX = -1;
 
-	public OrganismNode(int id, String name, Point anchorPoint, BufferedImage i) 
+	public OrganismNode(int id, String name, Point anchorPoint, BufferedImage i, int stringWidth) 
 	{
 		super(id, name);
 		img = i;
@@ -23,6 +26,7 @@ public class OrganismNode extends Node
 		//rather than reverse engineering it from the name of the organisme. Works for now,
 		//though.
 		imgFileName = name.toLowerCase().replace(" ", "") +".gif";
+		this.stringWidth = stringWidth;
 	}
 
 	public BufferedImage getImage() {return img;}
@@ -59,6 +63,22 @@ public class OrganismNode extends Node
 
 	public void setBeingLabeled(boolean beingLabeled) {}
 	
+	public int getImageStartX() {
+		if(TBSGraphics.organismNodeWidth > 0 && imageStartX < 0)
+			imageStartX = getDefaultPoint().x + ((TBSGraphics.organismNodeWidth - (img.getWidth() + stringWidth)) / 2);
+		return imageStartX;
+	}
+
+	public int getStringAreaLeftX() {
+		if(stringAreaLeftX < 0)
+			stringAreaLeftX = getImageStartX() + img.getWidth() + TBSGraphics.padding.height;
+		return stringAreaLeftX;
+	}
+
+	public int getStringWidth() {
+		return stringWidth;
+	}
+
 	public String toString(){
 		return getName() + " Node";
 	}

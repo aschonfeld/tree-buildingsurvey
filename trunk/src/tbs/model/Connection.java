@@ -22,8 +22,8 @@ public class Connection extends ModelElement implements Cloneable
 		super(id);
 		this.from=from;
 		this.to=to;
-    from.addConnectionTo(to);
-    to.addConnectionFrom(from);
+		from.addConnectionTo(to);
+		to.addConnectionFrom(from);
 	}
 	
 	/**
@@ -79,4 +79,8 @@ public class Connection extends ModelElement implements Cloneable
 	public String toString(){
 		return "Connection from " + getFrom().getName() + " to " + getTo().getName();
 	}
+
+  public Boolean isInTree() {return true;}
+
+  public void setInTree( Boolean inTree ) {}
 }

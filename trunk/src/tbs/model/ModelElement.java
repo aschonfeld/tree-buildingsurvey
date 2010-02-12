@@ -7,11 +7,14 @@ package tbs.model;
 */
 public abstract class ModelElement {
 	
-	private Integer id;
+	private Integer id;  
 	
 	public ModelElement(int id){this.id = id;}
 	
 	public Integer getId(){return id;}
+  
+  public abstract Boolean isInTree();
+  public abstract void setInTree(Boolean inTree);
 	
 	/**
 	* CollidesWith should return true if this object overlaps with

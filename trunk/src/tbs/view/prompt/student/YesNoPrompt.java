@@ -1,15 +1,10 @@
 
 package tbs.view.prompt.student;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +18,6 @@ public class YesNoPrompt extends Prompt{
 	
 	//Information to be used by all prompt types
 	TBSModel model;
-	Graphics2D g2 = null;
 	TBSButtonType promptType;
 	String question;
 	YesNoButtonType response;
@@ -31,18 +25,12 @@ public class YesNoPrompt extends Prompt{
 	//Prompt sizing information
 	List<String> lineBrokenQuestion;
 	YesNoButtonType[] buttons;
-	int numLines = 8; // number of lines of text input
-	Dimension padding = new Dimension(10,5);
-	Dimension promptSize = new Dimension(320,0);
-	Point anchorPoint = null;
-	int questionStringY;
-	Rectangle buttonsArea;
 	int buttonHeight;
 	
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
 	public YesNoPrompt(TBSModel model, TBSButtonType promptType) {
-		super();
+		super(false, true, new Dimension(320,0), model);
 		this.model = model;
 		this.promptType = promptType;
 		question = new StringBuffer("Are you sure you want to ").append(promptType.getText())
@@ -59,9 +47,8 @@ public class YesNoPrompt extends Prompt{
 	}
 
 	public void mousePressed(MouseEvent e){
-		calculateValues();
-        if(buttonsArea.contains(e.getPoint())){
-        	int index = (int) ((e.getX() - buttonsArea.getX()) * buttons.length) / promptSize.width;
+		if(getBottomButtons().contains(e.getPoint())){
+        	int index = (int) ((e.getX() - getBottomButtons().getX()) * buttons.length) / getWidth();
         	response = buttons[index];
         	setFinished(true);
         }
@@ -72,72 +59,18 @@ public class YesNoPrompt extends Prompt{
 	public void keyTyped(KeyEvent e) {}
 	
 	public void paintComponent(Graphics2D g2) {
-		this.g2 = g2;
-		TBSGraphics.textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
+		setGraphics(g2);
 		lineBrokenQuestion = new LinkedList<String>();
-		int questionLength = 0;
 		lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					question, promptSize.width - padding.width * 2));
-		calculateValues();
+					question, getWidth() - TBSGraphics.padding.width * 2));
+		calculateValues(2 + lineBrokenQuestion.size(), false, true);
 		drawBox();
-		drawText(lineBrokenQuestion, questionLength);
-		questionStringY += ((TBSGraphics.textHeight+4) * lineBrokenQuestion.size());
-		drawButtons();
-	}
-	
-	public void calculateValues() {
-		int lineCount = 2 + lineBrokenQuestion.size();
-		promptSize.setSize(promptSize.width, (TBSGraphics.textHeight * lineCount) + (padding.height * (lineCount + 1)));
-		int centerX = model.getApplet().getWidth() / 2;
-		int centerY = model.getApplet().getHeight() / 2;
-		anchorPoint = new Point(centerX - (promptSize.width / 2), centerY - (promptSize.height / 2));
-		questionStringY = anchorPoint.y;
-		buttonHeight = TBSGraphics.textHeight + padding.height;
-		buttonsArea = new Rectangle(anchorPoint.x, anchorPoint.y + (promptSize.height - buttonHeight),
-				promptSize.width, buttonHeight);
-	}
-	
-	public void drawBox() {
-		Rectangle box = new Rectangle(anchorPoint.x-2, anchorPoint.y-2, promptSize.width+4, promptSize.height+4);
-		g2.setColor(Color.lightGray);
-		g2.fill(box);
-		g2.setColor(Color.white);
-		g2.setStroke(new BasicStroke(3));
-		g2.draw(new Rectangle2D.Double(box.x-1.5, box.y-1.5, box.width+3, box.getHeight()+3));
-		g2.setStroke(new BasicStroke());
-	}
-	public void drawText(List<String> lines){ drawText(lines, 1); }
-	
-	public void drawText(List<String> lines, int startAnswers) {
-		int startY = questionStringY;
-		int startX = anchorPoint.x + padding.width;
-		for(int i=0;i<lines.size();i++){
-			drawString(lines.get(i), startX, startY);
-			startY += TBSGraphics.textHeight + 4;
-		}
-	}
-	
-	public void drawString(String s, int x, int y){
-		if(s != null && s.length() > 0)
-			TBSGraphics.drawCenteredString(g2, s, x, y, 0, TBSGraphics.textHeight + 4, Color.BLACK);
-	}
-	
-	public void drawButtons()
-	{
-		Rectangle buttonRect = new Rectangle(buttonsArea.x, buttonsArea.y,
-				buttonsArea.width/buttons.length, buttonsArea.height);
-		for(YesNoButtonType button: buttons) {
-			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, button.toString(), buttonRect.x,
-					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
-			buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
-		}
+		drawButtons(buttons);
+		drawText(lineBrokenQuestion);
 	}
 	
 	public boolean isOverButton(MouseEvent e){
-		return buttonsArea.contains(e.getPoint());
+		return getBottomButtons().contains(e.getPoint());
 	}
-	
+
 }
