@@ -40,7 +40,6 @@
   * [Roadblocks Project Road Blocks]
   * [UI_Options UI Options]
   * [ProfessorsComments Professor Bolker's Comments]
-  * [Technology_Stack TBS Technology Stack]
   * Setup Information
     * [Subclipse_Setup Subclipse Setup]
     * [ApacheEclipseSetup Apache Eclipse Setup]
