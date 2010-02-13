@@ -9,6 +9,7 @@ public class Graph implements Renderable {
 	private ArrayList<Edge> edges;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
+	private boolean allOrgsInTree=false;
 	
 	Graph() {
 		vertices = new ArrayList<Vertex>();
@@ -17,9 +18,9 @@ public class Graph implements Renderable {
 	}
 	
 	public void addVertex(int id, Vertex v) {
-		//System.out.println("ADDED VERTEX " + v);
 		vertices.add(v);
 		idToVertex.put(new Integer(id), v);
+		System.out.println("ADDED VERTEX " + v);
 	}
 	
 	public void addEdge(Edge e) {
@@ -79,6 +80,39 @@ public class Graph implements Renderable {
 		}
 	}
 
+	public void setAllOrgsInTree(boolean bool)
+	{
+		allOrgsInTree=bool;
+	}
+	
+	public void	printReport()
+	{
+		System.out.println("All Organisms Terminal: " +
+			allOrganismsTerminal());
+
+		System.out.println("Tree has single common ancestor: " +
+			 hasSingleCommonAncestor());
+
+		System.out.println("Tree includes all Organisms: " +
+			includesAllOrganisms());
+
+		System.out.println("Tree has branches: " + hasBranches());
+		System.out.println("Groups are Labelled: " + groupsAreLabelled());
+
+		System.out.println("Degree of hierarchy: " + hierarchy());
+			
+		System.out.println("Vertebrates grouped: "+ groupingVertebrates());
+			
+		System.out.println("Invertebrates grouped: " +
+			groupingInvertebrates());
+
+		
+		System.out.println("Mammals grouped: " + groupingMammals());
+		
+		System.out.println("Non-mammals grouped " + groupingNonmammals());
+	
+	}
+
 
 	public boolean allOrganismsTerminal()	
 	{
@@ -102,7 +136,7 @@ public class Graph implements Renderable {
 
 	public boolean includesAllOrganisms()
 	{
-		return true;
+		return allOrgsInTree;
 	}
 
 

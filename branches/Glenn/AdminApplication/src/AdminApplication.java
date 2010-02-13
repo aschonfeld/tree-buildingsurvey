@@ -71,12 +71,13 @@ public class AdminApplication extends JFrame {
     }
     
     public void nextGraph() {
-    	if(currentGraphIndex < studentNameToTree.values().size()) {
-    		currentGraphIndex++;
-    	} else {
-    		currentGraphIndex = 0;
-    	}
+		
+		
+    	currentGraphIndex++;
+		currentGraphIndex %= studentNameToTree.values().size();
     	treeView.paintComponent();
+		
+		getCurrentGraph().printReport();
     }
     
     public void printGraphInfo() {
@@ -87,7 +88,19 @@ public class AdminApplication extends JFrame {
     	}
     	System.out.println(currentGraph.getInfo());
     }
-    
+   
+	public Graph getCurrentGraph()
+	{
+    	int index = 0;
+    	String studentName = "";
+    	for(String s : studentNameToTree.keySet()) {
+    		studentName = s;
+    		if (index==currentGraphIndex) break;
+    		index++;
+    	}
+		return studentNameToTree.get(studentName);
+	}
+ 
     public void drawCurrentGraph(Graphics g) {
     	Graphics2D g2 = (Graphics2D) g;
     	int index = 0;
@@ -100,7 +113,8 @@ public class AdminApplication extends JFrame {
     	g.setColor(Color.white);
     	g.drawString(studentName, 0, 50);
     	Graph graph = studentNameToTree.get(studentName);
-    	int y = Common.getStringBounds(g2, studentName).height + Common.ySpacing + 50;
+    	int y = Common.getStringBounds(g2, studentName).height + 
+				Common.ySpacing + 50;
     	if(graph.containsCycle()) {
         	g.setColor(Color.red);
         	g.drawString("LOOPS: TRUE", 0, y);		
@@ -112,20 +126,24 @@ public class AdminApplication extends JFrame {
     }
     
     private static void initCommonVertices() {
-    	TreeMap<String, BufferedImage> organismNameToImage = loadVerticesFromDirectory();
+    	TreeMap<String, BufferedImage> organismNameToImage = 
+				loadVerticesFromDirectory();
 		commonVertices = new ArrayList<Vertex>();
 		commonImages = new ArrayList<BufferedImage>();
     	for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
-            commonVertices.add(new Vertex(e.getKey(), new Point(0,0), e.getValue()));
+            commonVertices.add(new Vertex(e.getKey(), new Point(0,0), 
+					e.getValue()));
             commonImages.add(e.getValue());
     	}
     }
 
     public static TreeMap<String, BufferedImage> loadVerticesFromDirectory() {
-        TreeMap<String, BufferedImage> organismNameToImage = new TreeMap<String, BufferedImage>();
+        TreeMap<String, BufferedImage> organismNameToImage = 
+				new TreeMap<String, BufferedImage>();
         try {
-        	// read names of organisms and image file names from list.txt in "/images"
-        	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("images/list.txt")));
+        	// read names of organisms and image file names from list.txt
+        	BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream("images/list.txt")));
         	String line = null;
         	String[] parseLine = null;
         	String organismName = null;
@@ -155,7 +173,8 @@ public class AdminApplication extends JFrame {
         studentNameToTree = new TreeMap<String, Graph>();
         try {
         	String filePath = new String("trees/testTrees");
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
+    		BufferedReader reader = new BufferedReader(new 
+					InputStreamReader(new FileInputStream(filePath)));
     		String linein = reader.readLine();
         	while(linein != null) {
         		String studentName = linein;
@@ -163,7 +182,9 @@ public class AdminApplication extends JFrame {
         		linein = reader.readLine();
         		String[] treeItems = linein.split("#"); // remove '=' at start
         		Graph graph = new Graph();
-        		for(String elements: treeItems) {
+				int organismCounter=0;
+        		for(String elements: treeItems) 
+				{
         			// load vertices
         			String[] attributes = elements.split(":");
         			if(attributes.length < 6) continue;
@@ -173,23 +194,31 @@ public class AdminApplication extends JFrame {
         			int x = Integer.parseInt(attributes[3]);
         			int y = Integer.parseInt(attributes[4]);
         			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			//System.out.println(type + "|" + id + "|" + elementName + "|" + x + "|" + y + "|" + inTree);
-        			if(type.equals("O")) {
-        				if(inTree) {
+        			if(type.equals("O")) 
+					{
+        				if(inTree) 
+						{
         					graph.addVertex(
-        							id, new Vertex(elementName, new Point(x, y), commonImages.get(id)));
-        				} else {
-        					//graph.addVertex(id, commonVertices.get(id));
+        							id, new Vertex(elementName, new Point(x, y), 
+									commonImages.get(id)));
+							organismCounter++;
         				}
         			}
-        			if(type.equals("E")) {
+        			if(type.equals("E")) 
+					{
         				// only empty nodes in tree (exclude immortalNode)
-        				if(inTree) {
-        					graph.addVertex(id, new Vertex(elementName, new Point(x, y)));
+        				if(inTree) 
+						{
+        					graph.addVertex(id, new Vertex(elementName, 
+							new Point(x, y)));
         				}
         			}
+					System.out.println("OrganismCounter= "+organismCounter);
+					if (organismCounter==20)
+						graph.setAllOrgsInTree(true);
         		}
-        		for(String elements: treeItems) {
+        		for(String elements: treeItems) 
+				{
         			// load connections
         			String[] attributes = elements.split(":");
         			String type = attributes[0];

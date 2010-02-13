@@ -19,12 +19,15 @@ public class Vertex implements Renderable {
     private boolean error = false;
     private Mark mark = Mark.WHITE;
     private Type type; // set by constructor
-    
+	private ArrayList<Vertex> ancestors;
+	private ArrayList<Vertex> descendants;    
+
+
     Graphics2D g2 = null;
 	Rectangle r1 = null;
 	Point upperLeftAdj = null; // adjusted by offset
 	
-	// would lick to generalize these sometime, but use biology terms for now
+	// would like to generalize these sometime, but use biology terms for now
 	public enum Type {
 		ORGANISM,
 		EMPTY;
