@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JSplitPane;
 
 public class AdminApplication extends JFrame {
 	
@@ -25,6 +26,8 @@ public class AdminApplication extends JFrame {
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
+	private static StudentDataTable table = null;
+	private static JSplitPane splitPane;
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<BufferedImage> commonImages = null; //this simplifies things
@@ -38,7 +41,9 @@ public class AdminApplication extends JFrame {
     	initCommonVertices();
     	loadTreesFromDirectory();
         treeView.setBackground(Color.black);
-        add(treeView);
+        table = new StudentDataTable();
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, table, treeView);
+        add(splitPane);
         addMouseListener(treeController);
         setPreferredSize(new Dimension(928, 762));
         setJMenuBar(actionHandler.createMenuBar());
@@ -70,13 +75,34 @@ public class AdminApplication extends JFrame {
         });
     }
     
+    public String getStudent(int index) {
+    	for(String s : studentNameToTree.keySet()) {
+    		if (index==currentGraphIndex) return s;
+    		index++;
+    	}
+    	return "NOT FOUND";
+    }
+    
+    public Graph getGraph(int index) {
+    	if(getStudent(index).equals("NOT FOUND")) return new Graph();
+    	return studentNameToTree.get(getStudent(index));
+    }
+    
+    public int getNumStudents() {
+    	return studentNameToTree.size();
+    }
+    
+    public static void setCurrentGraph(int index) {
+    	currentGraphIndex = index;
+		currentGraphIndex %= studentNameToTree.values().size();
+    	treeView.paintComponent();
+		getCurrentGraph().printReport();  	
+    }
+    
     public void nextGraph() {
-		
-		
     	currentGraphIndex++;
 		currentGraphIndex %= studentNameToTree.values().size();
     	treeView.paintComponent();
-		
 		getCurrentGraph().printReport();
     }
     
@@ -89,7 +115,7 @@ public class AdminApplication extends JFrame {
     	System.out.println(currentGraph.getInfo());
     }
    
-	public Graph getCurrentGraph()
+	public static Graph getCurrentGraph()
 	{
     	int index = 0;
     	String studentName = "";
@@ -182,7 +208,6 @@ public class AdminApplication extends JFrame {
         		linein = reader.readLine();
         		String[] treeItems = linein.split("#"); // remove '=' at start
         		Graph graph = new Graph();
-				int organismCounter=0;
         		for(String elements: treeItems) 
 				{
         			// load vertices
@@ -201,7 +226,6 @@ public class AdminApplication extends JFrame {
         					graph.addVertex(
         							id, new Vertex(elementName, new Point(x, y), 
 									commonImages.get(id)));
-							organismCounter++;
         				}
         			}
         			if(type.equals("E")) 
@@ -213,9 +237,6 @@ public class AdminApplication extends JFrame {
 							new Point(x, y)));
         				}
         			}
-					System.out.println("OrganismCounter= "+organismCounter);
-					if (organismCounter==20)
-						graph.setAllOrgsInTree(true);
         		}
         		for(String elements: treeItems) 
 				{

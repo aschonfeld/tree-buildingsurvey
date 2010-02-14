@@ -9,7 +9,7 @@ public class Graph implements Renderable {
 	private ArrayList<Edge> edges;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
-	private boolean allOrgsInTree=false;
+	private Boolean allOrgsInTree = null;
 	
 	Graph() {
 		vertices = new ArrayList<Vertex>();
@@ -20,7 +20,7 @@ public class Graph implements Renderable {
 	public void addVertex(int id, Vertex v) {
 		vertices.add(v);
 		idToVertex.put(new Integer(id), v);
-		System.out.println("ADDED VERTEX " + v);
+		//System.out.println("ADDED VERTEX " + v);
 	}
 	
 	public void addEdge(Edge e) {
@@ -80,11 +80,6 @@ public class Graph implements Renderable {
 		}
 	}
 
-	public void setAllOrgsInTree(boolean bool)
-	{
-		allOrgsInTree=bool;
-	}
-	
 	public void	printReport()
 	{
 		System.out.println("All Organisms Terminal: " +
@@ -136,9 +131,20 @@ public class Graph implements Renderable {
 
 	public boolean includesAllOrganisms()
 	{
-		return allOrgsInTree;
+		if(allOrgsInTree != null) {
+			return allOrgsInTree.booleanValue();
+		}
+		int organismCounter = 0; 
+		for(Vertex v: vertices) {
+			if(v.getType() == Vertex.Type.ORGANISM) organismCounter++;
+		}
+		if(organismCounter == 20) {
+			allOrgsInTree = new Boolean(true);
+		} else {
+			allOrgsInTree = new Boolean(false);
+		}
+		return allOrgsInTree.booleanValue();
 	}
-
 
 	public boolean hasBranches()
 	{
