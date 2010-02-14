@@ -64,7 +64,7 @@ public class WrittenQuestionPrompt extends Prompt{
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
 	public WrittenQuestionPrompt(TBSModel model) {
-		super(false, true, new Dimension(770,0), model);
+		super(true, false, new Dimension(770,0), model);
 		this.model = model;
 		questionProps = PropertyLoader.getProperties("questions");
 		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
