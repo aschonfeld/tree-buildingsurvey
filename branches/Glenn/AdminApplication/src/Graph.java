@@ -1,7 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Graph implements Renderable {
 	
@@ -9,7 +8,7 @@ public class Graph implements Renderable {
 	private ArrayList<Edge> edges;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
-	private Boolean allOrgsInTree = null;
+	private boolean allOrgsInTree;
 	
 	Graph() {
 		vertices = new ArrayList<Vertex>();
@@ -30,14 +29,73 @@ public class Graph implements Renderable {
 		e.getV2().addFrom(e.getV1());
 	}
 	
-	public boolean containsCycle() {
+	public boolean containsCycle() 
+	{
 		for(Vertex v: vertices) v.setMark(Vertex.Mark.WHITE);
-		for(Vertex v: vertices) {
-			if(v.getMark() == Vertex.Mark.WHITE) {
+		for(Vertex v: vertices) 
+			if(v.getMark() == Vertex.Mark.WHITE) 
 				if(visit(v)) return true;
-			}
-		}
 		return false;
+	}
+
+
+	public void buildDescendantList(Vertex v)
+	{
+		if (v.visited) return;
+		v.visited = true;
+		v.addDescendants(v.getToVertices());
+		for (Vertex c: v.getToVertices())
+		{
+			buildDescendantList(c);
+			v.addDescendants(c.getDescendants());
+		}
+		for (Vertex p:v.getFromVertices())
+		{
+			buildDescendantList(p);
+		}
+	}
+
+	public void buildDescendantList()
+	{
+		//Doesn't matter where we start, so start at first vertex in the list
+		buildDescendantList(vertices.get(0));
+	}
+
+	public void buildAncestorList(Vertex v)
+	{
+		if (v.visited) return;
+		v.visited = true;
+		v.addAncestors(v.getFromVertices());
+		for (Vertex c: v.getFromVertices())
+		{
+			buildAncestorList(c);
+			v.addAncestors(c.getDescendants());
+		}
+		for (Vertex p:v.getToVertices())
+		{
+			buildAncestorList(p);
+		}
+	}
+
+	public void buildAncestorList()
+	{
+		//Doesn't matter where we start, so start at first vertex in the list
+		buildAncestorList(vertices.get(0));
+	}
+
+
+	public void showDescendants()
+	{
+	
+		for (Vertex v:vertices)
+		{
+			System.out.print(v.getName()+": ");
+			for (Vertex d:v.getDescendants())
+				System.out.print(d.getName()+": ");
+			System.out.println();
+		}
+
+
 	}
 
 	private boolean visit(Vertex v) {
@@ -71,7 +129,8 @@ public class Graph implements Renderable {
 		return sb.toString();
 	}
 	
-	public void render(Graphics g, Point offset) {
+	public void render(Graphics g, Point offset)
+	{
 		for(Vertex v: vertices) {
 			v.render(g, offset);
 		}
@@ -82,6 +141,7 @@ public class Graph implements Renderable {
 
 	public void	printReport()
 	{
+		System.out.println("------------ \nNext Graph:\n------------");
 		System.out.println("All Organisms Terminal: " +
 			allOrganismsTerminal());
 
@@ -91,21 +151,21 @@ public class Graph implements Renderable {
 		System.out.println("Tree includes all Organisms: " +
 			includesAllOrganisms());
 
-		System.out.println("Tree has branches: " + hasBranches());
-		System.out.println("Groups are Labelled: " + groupsAreLabelled());
+//		System.out.println("Tree has branches: " + hasBranches());
+//		System.out.println("Groups are Labelled: " + groupsAreLabelled());
 
-		System.out.println("Degree of hierarchy: " + hierarchy());
+//		System.out.println("Degree of hierarchy: " + hierarchy());
 			
-		System.out.println("Vertebrates grouped: "+ groupingVertebrates());
+//		System.out.println("Vertebrates grouped: "+ groupingVertebrates());
 			
-		System.out.println("Invertebrates grouped: " +
-			groupingInvertebrates());
+//		System.out.println("Invertebrates grouped: " +
+//			groupingInvertebrates());
 
 		
-		System.out.println("Mammals grouped: " + groupingMammals());
+//		System.out.println("Mammals grouped: " + groupingMammals());
 		
-		System.out.println("Non-mammals grouped " + groupingNonmammals());
-	
+//		System.out.println("Non-mammals grouped " + groupingNonmammals());
+		System.out.println("----------------");	
 	}
 
 
@@ -121,7 +181,19 @@ public class Graph implements Renderable {
 	
 	public boolean hasSingleCommonAncestor()
 	{
-		return true;
+		int commonAncestors=0;
+		for (Vertex v: vertices)
+		{
+			ArrayList <Vertex> checklist = new ArrayList<Vertex>();
+			checklist.addAll(vertices);
+			checklist.remove(v);
+			if ( (v.getFromVertices().size() == 0)  &&
+				  (v.getDescendants().containsAll(checklist)) )
+			{		
+				commonAncestors++;
+			}
+		}
+		return (commonAncestors==1);
 	}
 
 	public boolean groupsAreLabelled()
@@ -129,22 +201,19 @@ public class Graph implements Renderable {
 		return true;
 	}
 
-	public boolean includesAllOrganisms()
-	{
-		if(allOrgsInTree != null) {
-			return allOrgsInTree.booleanValue();
-		}
-		int organismCounter = 0; 
-		for(Vertex v: vertices) {
-			if(v.getType() == Vertex.Type.ORGANISM) organismCounter++;
-		}
-		if(organismCounter == 20) {
-			allOrgsInTree = new Boolean(true);
-		} else {
-			allOrgsInTree = new Boolean(false);
-		}
-		return allOrgsInTree.booleanValue();
-	}
+    public boolean includesAllOrganisms() {
+        int organismCounter = 0;
+        for(Vertex v: vertices) {
+            if(v.getType() == Vertex.Type.ORGANISM) organismCounter++;
+        }
+        if(organismCounter == 20) {
+            allOrgsInTree =true;
+        } else {
+            allOrgsInTree =false;
+        }
+        return allOrgsInTree;
+    }
+
 
 	public boolean hasBranches()
 	{
