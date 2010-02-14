@@ -104,6 +104,7 @@ public class AdminApplication extends JFrame {
 		currentGraphIndex %= studentNameToTree.values().size();
     	treeView.paintComponent();
 		getCurrentGraph().buildDescendantList();
+		getCurrentGraph().buildAncestorList();
 		getCurrentGraph().printReport();
     }
     
