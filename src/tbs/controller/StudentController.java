@@ -99,17 +99,17 @@ public class StudentController extends TBSController
 		}
 		 */
 		if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-			if(model.getSelectedElement() == null) 
-					return;
-				clearCurrentActions();
+			if(model.getSelectedElement() != null){ 
 				view.setScreenString("You have removed " + model.getSelectedElement().toString());
 				ModelUtils.removeElement(model.getSelectedElement(), model, false);
+				view.setConnInProgress(null);
 				model.setSelectedElement(null);
+			}
 		}
 		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			if(TBSButtonType.ADD.equals(getButtonClicked()))
-        setButtonClicked(TBSButtonType.SELECT);
+				setButtonClicked(TBSButtonType.SELECT);
 		}
 	}
 
@@ -120,19 +120,13 @@ public class StudentController extends TBSController
 
 	/**
 	 * keyTyped events are passed to the currently active Prompt or to the
-	 * node being labelled, if any. If no active prompt and no node being
-	 * labelled, the event is discarded. 
+	 * node being labeled, if any. If no active prompt and no node being
+	 * labeled, the event is discarded. 
 	 */
 	public void keyTyped(KeyEvent e) {
 		printKeyEvent(e);
-		if(model.getPrompt() != null) {
+		if(model.getPrompt() != null)
 			model.getPrompt().keyTyped(e);
-			return;
-		}
-
-		if(model.getSelectedElement() == null)
-			return;
-
 	}
 
 	/**
@@ -153,7 +147,7 @@ public class StudentController extends TBSController
 		if(dragInProgress)
 			return;
 		if(TBSButtonType.PRINT.equals(getButtonClicked()))
-      setButtonClicked(TBSButtonType.SELECT);
+			setButtonClicked(TBSButtonType.SELECT);
 		Prompt prompt = model.getPrompt();
 		if(prompt != null){
 			view.setAppletCursor(prompt.getCursor(e));
@@ -216,18 +210,7 @@ public class StudentController extends TBSController
 	/**
 	 * More mousehandling
 	 */
-	public void mouseClicked(MouseEvent e) {
-		printMouseEvent(e);
-		if(model.getPrompt() != null)
-			return;
-		if(getButtonClicked() != null){
-			if(!getButtonClicked().isMode())
-        setButtonClicked(TBSButtonType.SELECT);
-			if(!model.isButtonActive(getButtonClicked()))
-        setButtonClicked(TBSButtonType.SELECT);
-		}
-		
-	}
+	public void mouseClicked(MouseEvent e) {}
 
 	/**
 	* Handle mousePressed events: if the mouse is over an object, select it.
@@ -243,15 +226,15 @@ public class StudentController extends TBSController
 				if(prompt instanceof YesNoPrompt){
 					YesNoPrompt temp = (YesNoPrompt) prompt;
 					switch(temp.getPromptType()){
-						case CLEAR:
-							if(temp.getResponse().getValue()){
-								view.setScreenString(getStatus(temp.getPromptType())); 
-								model.resetModel();
-								model.setHistory(new Stack<Command>());
-								model.getButtonStates().put(TBSButtonType.UNDO, false);
-                setButtonClicked(TBSButtonType.SELECT);
-							}
-							break;
+					case CLEAR:
+						if(temp.getResponse().getValue()){
+							view.setScreenString(getStatus(temp.getPromptType())); 
+							model.resetModel();
+							model.setHistory(new Stack<Command>());
+							model.getButtonStates().put(TBSButtonType.UNDO, false);
+							setButtonClicked(TBSButtonType.SELECT);
+						}
+						break;
 					}
 					model.clearPrompt();
 				}else
@@ -286,6 +269,12 @@ public class StudentController extends TBSController
 				}
 			}
 		}
+		if(getButtonClicked() != null){
+			if(!getButtonClicked().isMode())
+				setButtonClicked(TBSButtonType.SELECT);
+			if(!model.isButtonActive(getButtonClicked()))
+				setButtonClicked(TBSButtonType.SELECT);
+		}		
 	}
 	
 	/**
@@ -296,7 +285,6 @@ public class StudentController extends TBSController
 		printMouseEvent(e);
 		if(model.getPrompt() != null)
 			return;
-		dragInProgress = true;
 		int x = e.getX();
 		int y = e.getY();
 		int deltaX = x - previousX;
@@ -304,6 +292,7 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() == null)
 			return;
 		if(model.getSelectedElement() instanceof Node) {
+			dragInProgress = true;
 			// Move Node
 			Node node = (Node) model.getSelectedElement();
 			if(lastPosition == null){
@@ -386,33 +375,22 @@ public class StudentController extends TBSController
         return false;
     }
 
-    /**
-	* Called by () to return to a null state: no connections in progress
-	* and no nodes being labeled. 
-	* This method just calls {@ link cancelConnection} and {@link cancelLabel}; 
-	* it has no logic of its own.
-	*/    
-    public void clearCurrentActions() {
-    	view.setConnInProgress(null);
-    }
-   
-
 	/**
  	* This method provides some of the logic for directing mouse clicks.
  	* {@see handleMousePressed}
 	*/
     public void handleMouseButtonPressed(int x, int y) {
-    	clearCurrentActions();
-		int buttonIndex = x / TBSGraphics.buttonsWidth;
-		if(buttonIndex >= view.getButtons().size())
-			return;
-    setButtonClicked(view.getButtons().get(buttonIndex));
-		System.out.println(getButtonClicked().toString());
-		if(!model.isButtonActive(getButtonClicked())){
-      setButtonClicked(TBSButtonType.SELECT);
-			return;
-		}
-		if(!TBSButtonType.UNDO.equals(getButtonClicked()) && !getButtonClicked().isConfirmation()){
+    	view.setConnInProgress(null);
+    	int buttonIndex = x / TBSGraphics.buttonsWidth;
+    	if(buttonIndex >= view.getButtons().size())
+    		return;
+    	setButtonClicked(view.getButtons().get(buttonIndex));
+    	System.out.println(getButtonClicked().toString());
+    	if(!model.isButtonActive(getButtonClicked())){
+    		setButtonClicked(TBSButtonType.SELECT);
+    		return;
+    	}
+    	if(!TBSButtonType.UNDO.equals(getButtonClicked()) && !getButtonClicked().isConfirmation()){
 			if(TBSButtonType.SELECT.equals(getButtonClicked())){
 				if(model.inTreeElements().isEmpty())
 					view.setScreenString(null);
@@ -426,7 +404,6 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() != null){
 			switch (getButtonClicked()) {
 				case DELETE:
-					clearCurrentActions();
 					ModelUtils.removeElement(model.getSelectedElement(), model, false);
           setButtonClicked(TBSButtonType.SELECT);
 					break;
@@ -502,12 +479,12 @@ public class StudentController extends TBSController
     	if(clickedElement == null) {
     		model.setSelectedElement(null);
     		if(!TBSButtonType.ADD.equals(getButtonClicked())){
-          setButtonClicked(TBSButtonType.SELECT);
-    			clearCurrentActions();
+    			setButtonClicked(TBSButtonType.SELECT);
+    			view.setConnInProgress(null);
     			if(model.inTreeElements().isEmpty())
-    			  view.setScreenString(null);
-				else
-					view.setScreenString(getStatus(TBSButtonType.SELECT));
+    				view.setScreenString(null);
+    			else
+    				view.setScreenString(getStatus(TBSButtonType.SELECT));
     			return;
     		}
     	}
