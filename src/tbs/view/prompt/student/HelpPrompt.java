@@ -90,10 +90,8 @@ public class HelpPrompt extends Prompt
 		if(getCloseButton().contains(e.getPoint()))
 			setFinished(true);
 		else{
-			if(getBottomButtons().contains(e.getPoint())){
-				int index = (int) ((e.getX() - getBottomButtons().getX()) * options.length) / getWidth();
-				selectedOption = options[index];
-			}
+			if(getBottomButtons().contains(e.getPoint()))
+				selectedOption = options[getSelectedButtonIndex(e.getX(),options.length)];
 		}
 	}
 
@@ -186,19 +184,6 @@ public class HelpPrompt extends Prompt
 			incrementStringY();
 		}
 		incrementStringY(TBSGraphics.padding.width);
-	}
-
-
-	/**
-	 * Returns true if {@link MouseEvent} e occurs within the boundaries
-	 * of any of this Prompt's buttons. 
-	 */
-	public boolean isOverButton(MouseEvent e){
-		if(getCloseButton().contains(e.getPoint()))
-			return true;
-		if(getBottomButtons().contains(e.getPoint()))
-			return true;
-		return false;
 	}
 }
 

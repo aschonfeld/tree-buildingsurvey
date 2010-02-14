@@ -71,10 +71,8 @@ public class RadioQuestionReviewPrompt extends Prompt
 		if(getCloseButton().contains(e.getPoint()))
 				setFinished(true);
 		else{
-			if(getBottomButtons().contains(e.getPoint())){
-	        	int index = (int) ((e.getX() - getBottomButtons().getX()) * radioQuestions.size()) / getWidth();
-	        	currentRadioQuestion = radioQuestions.get(index);
-	        }
+			if(getBottomButtons().contains(e.getPoint()))
+	        	currentRadioQuestion = radioQuestions.get(getSelectedButtonIndex(e.getX(),radioQuestions.size()));
 		}
 	}
 
@@ -103,10 +101,6 @@ public class RadioQuestionReviewPrompt extends Prompt
 			drawString(line[1], answerX-answerWidth, getStringY(), true);
 			incrementStringY();
 		}
-	}
-
-	public boolean isOverButton(MouseEvent e){
-		return (getCloseButton().contains(e.getPoint()) || getBottomButtons().contains(e.getPoint()));
 	}
 }
 

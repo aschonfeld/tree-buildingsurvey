@@ -53,10 +53,8 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		if(getCloseButton().contains(e.getPoint()))
 			setFinished(true);
 		else{
-			if(getBottomButtons().contains(e.getPoint())){
-				int index = (int) ((e.getX() - getBottomButtons().getX()) * writtenQuestions.size()) / getWidth();
-				currentPage = index+1;
-			}
+			if(getBottomButtons().contains(e.getPoint()))
+				currentPage = getSelectedButtonIndex(e.getX(),writtenQuestions.size())+1;
 		}
 	}
 
@@ -125,30 +123,6 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		setCloseButton(new Rectangle((getX() + getWidth())-buttonHeight, getY(),
 				buttonHeight, buttonHeight));
 		setStringY(getY());
-	}
-
-	/*public void drawButtons()
-	{
-		if(pageButtonText.size() > 0){
-			Rectangle buttonRect = new Rectangle(getBottomButtons().x, getBottomButtons().y,
-					getBottomButtons().width/pageButtonText.size(), getBottomButtons().height);
-			for(String page : pageButtonText) {
-				if(page.equals(Integer.toString(currentPage)))
-					TBSGraphics.renderButtonBackground(g2, buttonRect, true);
-				else
-					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-				g2.setColor(Color.gray);
-				g2.draw(buttonRect);
-				TBSGraphics.drawCenteredString(g2, page, buttonRect.x,
-						buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
-				buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
-			}
-		}
-	}*/
-
-
-	public boolean isOverButton(MouseEvent e){
-		return (getCloseButton().contains(e.getPoint()) || getBottomButtons().contains(e.getPoint()));
 	}
 }
 
