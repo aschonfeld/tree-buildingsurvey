@@ -30,7 +30,7 @@ public class YesNoPrompt extends Prompt{
 	// if buttons != null, value of button pressed is returned
 	// if buttons == null, text input is assumed
 	public YesNoPrompt(TBSModel model, TBSButtonType promptType) {
-		super(false, true, new Dimension(320,0), model);
+		super(true, true, new Dimension(320,0), model);
 		this.model = model;
 		this.promptType = promptType;
 		question = new StringBuffer("Are you sure you want to ").append(promptType.getText())
@@ -48,8 +48,7 @@ public class YesNoPrompt extends Prompt{
 
 	public void mousePressed(MouseEvent e){
 		if(getBottomButtons().contains(e.getPoint())){
-        	int index = (int) ((e.getX() - getBottomButtons().getX()) * buttons.length) / getWidth();
-        	response = buttons[index];
+        	response = buttons[getSelectedButtonIndex(e.getX(),buttons.length)];
         	setFinished(true);
         }
 	}
@@ -68,9 +67,4 @@ public class YesNoPrompt extends Prompt{
 		drawButtons(buttons);
 		drawText(lineBrokenQuestion);
 	}
-	
-	public boolean isOverButton(MouseEvent e){
-		return getBottomButtons().contains(e.getPoint());
-	}
-
 }

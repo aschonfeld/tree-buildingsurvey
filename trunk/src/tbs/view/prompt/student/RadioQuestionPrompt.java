@@ -24,8 +24,7 @@ public class RadioQuestionPrompt extends Prompt{
 
 	//Information to be used by all prompt types
 	TBSModel model;
-	Graphics2D g2 = null;
-
+	
 	Properties questionProps;
 	ArrayList<String> userInputLines;
 	RadioResponse response;
@@ -59,7 +58,7 @@ public class RadioQuestionPrompt extends Prompt{
 
 	public void mousePressed(MouseEvent e){
 		if(getBottomButtons().contains(e.getPoint())){
-			int index = (int) ((e.getX() - getBottomButtons().getX()) * buttons.size()) / getWidth();
+			int index = getSelectedButtonIndex(e.getX(),buttons.size());
 			OpenQuestionPromptButtonType buttonClicked = buttons.get(index);
 			if(OpenQuestionPromptButtonType.SUBMIT.equals(buttonClicked)){
 				List<OpenQuestionButtonType> radioQuestions = OpenQuestionButtonType.getRadioButtons();
@@ -137,7 +136,7 @@ public class RadioQuestionPrompt extends Prompt{
 		for(String[] line : lines){
 			selected = currentRadioSubQuestion == i && buttons.size() > 1;
 			drawString(line[0], questionX, getStringY(), selected);
-			int answerWidth = TBSGraphics.getStringBounds(g2,line[1]).width + 4;
+			int answerWidth = TBSGraphics.getStringBounds(getGraphics(),line[1]).width + 4;
 			drawString(line[1], answerX-answerWidth, getStringY(), selected);
 			incrementStringY();
 			i++;
@@ -149,12 +148,12 @@ public class RadioQuestionPrompt extends Prompt{
 				radioQuestionSelection.width, radioQuestionSelection.height/questionCount);
 		for(int i=0;i<questionCount;i++){
 			if(i == currentRadioSubQuestion) 
-				TBSGraphics.renderButtonBackground(g2, buttonRect, true);
+				TBSGraphics.renderButtonBackground(getGraphics(), buttonRect, true);
 			else
-				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2,new StringBuffer(i+1).toString(), buttonRect.x,
+				TBSGraphics.renderButtonBackground(getGraphics(), buttonRect, false);
+			getGraphics().setColor(Color.gray);
+			getGraphics().draw(buttonRect);
+			TBSGraphics.drawCenteredString(getGraphics(),new StringBuffer(i+1).toString(), buttonRect.x,
 					buttonRect.y + (buttonRect.height - 2), buttonRect.width, 0);
 			buttonRect.setLocation(buttonRect.x, buttonRect.y + (radioQuestionSelection.height/questionCount));
 		}
@@ -168,6 +167,11 @@ public class RadioQuestionPrompt extends Prompt{
 		currentRadioSubQuestion = 0;
 	}
 
+	/*
+	 * Must leave this code for isOverButton() here because of the addition of
+	 * radio question selection buttons, whereas all the other prompts only
+	 * contain close button and/or bottom buttons.
+	 */
 	public boolean isOverButton(MouseEvent e){
 		if(getBottomButtons().contains(e.getPoint()))
 			return true;

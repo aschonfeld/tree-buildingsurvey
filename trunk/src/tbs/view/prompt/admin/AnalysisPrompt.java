@@ -40,9 +40,5 @@ public class AnalysisPrompt extends Prompt
 		drawCloseButton();
 		drawHeader("Anaylsis - Currently Under Construction");
 	}
-
-	public boolean isOverButton(MouseEvent e){
-		return getCloseButton().contains(e.getPoint());
-	}
 }
 

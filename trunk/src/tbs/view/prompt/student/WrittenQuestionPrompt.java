@@ -80,9 +80,7 @@ public class WrittenQuestionPrompt extends Prompt{
 	
 	public void mousePressed(MouseEvent e){
 		if(getBottomButtons().contains(e.getPoint())){
-			int index = (int) ((e.getX() - getBottomButtons().getX()) * 
-						buttons.size()) / getWidth();
-			OpenQuestionPromptButtonType buttonClicked = buttons.get(index);
+			OpenQuestionPromptButtonType buttonClicked = buttons.get(getSelectedButtonIndex(e.getX(),buttons.size()));
 			if(OpenQuestionPromptButtonType.SUBMIT.equals(buttonClicked)){
 				model.getStudent().getResponse(currentQuestion).updateText(convertLinesToUserInput());
 				List<OpenQuestionButtonType> writtenQuestions = OpenQuestionButtonType.getWrittenButtons();
@@ -324,12 +322,6 @@ public class WrittenQuestionPrompt extends Prompt{
 				cursorIndex = 0;
 		}
 		timer.start();
-	}
-
-	public boolean isOverButton(MouseEvent e){
-		if(getBottomButtons().contains(e.getPoint()))
-			return true;
-		return getCloseButton().contains(e.getPoint());
 	}
 
 	private String convertLinesToUserInput(){

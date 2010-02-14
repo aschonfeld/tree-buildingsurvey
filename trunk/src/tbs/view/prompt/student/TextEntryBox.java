@@ -37,7 +37,6 @@ public class TextEntryBox extends Prompt{
 	};
 	private StudentModel model;
 	private EmptyNode node;
-	private Graphics2D g2 = null;
 	private String name;
 	private int cursorIndex;
 	private int leftX;
@@ -97,7 +96,7 @@ public class TextEntryBox extends Prompt{
 			if(name.length()==0 || name.length() > TBSGraphics.maxNameLength)
 				node.setAlteredWidth(-1);
 			else{
-				Dimension stringBounds = TBSGraphics.getStringBounds(g2, name);
+				Dimension stringBounds = TBSGraphics.getStringBounds(getGraphics(), name);
 				int testWidth = stringBounds.width + 2 * TBSGraphics.emptyNodePadding;
 				if (testWidth > TBSGraphics.emptyNodeWidth)
 					node.setAlteredWidth(testWidth);
@@ -202,8 +201,6 @@ public class TextEntryBox extends Prompt{
 			boxWidth = width;
 		g2.drawRect(leftX, upperY, boxWidth, height);
 	}
-
-	public boolean isOverButton( MouseEvent e ) {return false;}
 
 	public Cursor getCursor( MouseEvent e ) {return DragSource.DefaultMoveNoDrop;}
 

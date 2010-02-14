@@ -67,10 +67,8 @@ public abstract class Prompt {
 	public void incrementStringY(){ stringY += buttonHeight;}
 	public void incrementStringY(int value){ stringY += value;}
 	public void incrementStringYMulti(int value){ stringY += buttonHeight * value;}
+	public void setBottomButtons( Rectangle bottomButtons ) {this.bottomButtons = bottomButtons;}
 
-	public void setBottomButtons( Rectangle bottomButtons ) {
-		this.bottomButtons = bottomButtons;
-	}
 	public boolean renderButtonsAndString() {return renderButtonsAndString;}
 	public boolean renderElements() {return renderElements;}
 	/**
@@ -96,7 +94,9 @@ public abstract class Prompt {
 	* Returns true if {@link MouseEvent} e has x,y coordinates within one
 	* of this Prompt's buttons
 	*/
-	public abstract boolean isOverButton(MouseEvent e);
+	public boolean isOverButton(MouseEvent e){
+		return bottomButtons.contains(e.getPoint()) || closeButton.contains(e.getPoint());
+	}
 	
 	public Cursor getCursor( MouseEvent e ) {
 		if(isOverButton(e))
@@ -213,8 +213,8 @@ public abstract class Prompt {
 			Rectangle buttonRect = new Rectangle(bottomButtons.x, bottomButtons.y,
 					bottomButtons.width/buttons.length, bottomButtons.height);
 			for(Object button: buttons) {
-				TBSGraphics.renderButtonBackground(g2, buttonRect, button.toString().equals(selected));
-
+				TBSGraphics.renderButtonBackground(g2, buttonRect, 
+						button.toString().equals(selected));
 				g2.setColor(Color.gray);
 				g2.draw(buttonRect);
 				TBSGraphics.drawCenteredString(g2, button.toString(), buttonRect.x,
@@ -237,5 +237,9 @@ public abstract class Prompt {
 		g2.draw(new Line2D.Double(x,y,x+w,y+h));
 		g2.draw(new Line2D.Double(x,y+h,x+w,y));
 		g2.setStroke(new BasicStroke());
+	}
+	
+	public int getSelectedButtonIndex(int mouseX, int buttonCount){
+		return ((mouseX - bottomButtons.x) * buttonCount) / promptSize.width;
 	}
 }

@@ -94,17 +94,6 @@ public class WelcomePrompt extends Prompt
 	}
 
 	/**
-	* Probably this could be moved up to Prompt.java
-	*/
-	public boolean isOverButton(MouseEvent e){
-		if(getBottomButtons().contains(e.getPoint()))
-				return true;
-		if(getCloseButton().contains(e.getPoint()))
-				return true;
-		return false;
-	}
-
-	/**
 	 * Calculates the welcome message for the student, based on the state
 	 * of the Model.
 	 */
