@@ -11,7 +11,7 @@ public enum OpenQuestionButtonType {
 	/*
 	 * We are eliminating the radio question, until Professor White
 	 * says otherwise. Here is the code to add it:
-	 * THREE("Question 3", "questionThree",true, 13);
+	 * THREE("3", "Question 3", "questionThree",true, 13);
 	 * To add any more just write the same thing with new information.
 	 */
 	private String text;
