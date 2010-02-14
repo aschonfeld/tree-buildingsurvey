@@ -12,6 +12,7 @@ import tbs.model.ModelUtils;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
 import tbs.model.StudentModel;
+import tbs.view.TBSButtonType;
 
 public class Delete extends Command{
 
@@ -54,9 +55,16 @@ public class Delete extends Command{
 					model.getElements().add(modelElement.getId(), modelElement);
 				else{
 					model.getElements().add(modelElement);
+					model.getButtonStates().put(TBSButtonType.LABEL, true);
 					Collections.sort(model.getElements(), TBSGraphics.elementIdComparator);
 				}
+				model.setEmptyNodesInTree(true);
+				model.getButtonStates().put(TBSButtonType.DELETE, true);
+				model.getButtonStates().put(TBSButtonType.CLEAR, true);
+				if(model.inTreeElements().size() > 1)
+					model.getButtonStates().put(TBSButtonType.LINK, true);
 			}
+			model.setElementsInTree(true);
 		}
 		if(!elementConnections.isEmpty()){
 			for(Connection c : elementConnections){
@@ -67,7 +75,12 @@ public class Delete extends Command{
 				Node to = (Node) model.getElement(model.findIndexById(id));
 				ModelUtils.addConnection(from,to,c.getId(), model, true);
 			}
+			model.setConnectionsInTree(true);
+			model.getButtonStates().put(TBSButtonType.LINK, true);
+			model.getButtonStates().put(TBSButtonType.UNLINK, true);
 		}
+		model.getButtonStates().put(TBSButtonType.DELETE, true);
+		model.getButtonStates().put(TBSButtonType.CLEAR, true);
 	}
 
 	public String toString() {
