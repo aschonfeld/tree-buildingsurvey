@@ -21,7 +21,7 @@ public class Vertex implements Renderable {
     private Type type; // set by constructor
 	private ArrayList<Vertex> ancestors;
 	private ArrayList<Vertex> descendants;    
-
+		public boolean visited = false;
 
     Graphics2D g2 = null;
 	Rectangle r1 = null;
@@ -44,6 +44,49 @@ public class Vertex implements Renderable {
 		GREY,
 		BLACK;
 	}
+
+	public boolean ancestorOf(Vertex v)
+	{
+		return (descendants.contains(v));
+	}
+
+	public boolean descendantOf(Vertex v)
+	{
+		return (ancestors.contains(v));
+	}
+
+
+	public void addDescendants(ArrayList<Vertex> descList)
+	{
+		descendants.addAll(descList);
+	}
+
+	public void addAncestors(ArrayList<Vertex> ancList)
+	{
+		ancestors.addAll(ancList);
+	}
+	
+	public ArrayList<Vertex> getDescendants()
+	{
+		return descendants;
+	}
+
+	public ArrayList<Vertex> getAncestors()
+	{
+		return ancestors;
+	}
+	
+	public ArrayList<Vertex> getToVertices()
+	{
+		return toVertices;	
+	}
+
+	public ArrayList<Vertex> getFromVertices()
+	{
+		return fromVertices;
+	}
+
+
 	
 	// used for cycle detection algorithm
 	public void setMark(Mark mark) {
@@ -62,7 +105,9 @@ public class Vertex implements Renderable {
     	this.img = null;
     	toVertices = new ArrayList<Vertex>();
     	fromVertices = new ArrayList<Vertex>();
-    }
+		ancestors = new ArrayList<Vertex>();
+		descendants = new ArrayList<Vertex>();
+   }
     
     Vertex(String name, Point upperLeft, BufferedImage img) {
     	this.type = Type.ORGANISM;
@@ -71,6 +116,8 @@ public class Vertex implements Renderable {
     	this.img = img;
     	toVertices = new ArrayList<Vertex>();
     	fromVertices = new ArrayList<Vertex>();
+		ancestors = new ArrayList<Vertex>();
+		descendants = new ArrayList<Vertex>();
     }
     
     public void addFrom(Vertex fromVertex) {
@@ -193,4 +240,9 @@ public class Vertex implements Renderable {
 		return new String("VERTEX: " + name + " + img: " + (img != null) + ", location: " + upperLeft.x + "," + upperLeft.y);
 	}
 
+	public String getName() 
+	{
+		if (name!=null) return name;
+		return ("Unnamed");
+	}
 }
