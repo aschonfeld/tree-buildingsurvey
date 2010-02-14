@@ -124,6 +124,7 @@ public class AdminView extends TBSView {
 			}else
 				renderConnection(g2, TBSUtils.getConnectionBounds(((Connection) m).getFrom(), ((Connection) m).getTo()), TBSGraphics.connectionColor);
 		}
+		renderTooltip(g2);
 	}
 
 	public void renderStudents(Graphics2D g2){
