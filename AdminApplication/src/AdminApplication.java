@@ -1,8 +1,4 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,24 +25,26 @@ public class AdminApplication extends JFrame {
 	private static StudentDataTable table = null;
 	private static JSplitPane splitPane;
 	public static TreeMap<String, Graph> studentNameToTree = null;
+	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<BufferedImage> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
 	
     AdminApplication() {
-    	super("AdminApplication");
+		super("AdminApplication");
     	actionHandler = new ActionHandler();
     	treeView = new TreeView();
     	treeController = new TreeController();
     	initCommonVertices();
     	loadTreesFromDirectory();
-        treeView.setBackground(Color.black);
-        table = new StudentDataTable();
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, table, treeView);
-        add(splitPane);
-        addMouseListener(treeController);
-        setPreferredSize(new Dimension(928, 762));
-        setJMenuBar(actionHandler.createMenuBar());
+		treeMapToArrayList();
+      treeView.setBackground(Color.black);
+      table = new StudentDataTable();
+      splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, table, treeView);
+      add(splitPane);
+      addMouseListener(treeController);
+      setPreferredSize(new Dimension(928, 762));
+      setJMenuBar(actionHandler.createMenuBar());
     }
     
     /**
@@ -74,40 +72,25 @@ public class AdminApplication extends JFrame {
             }
         });
     }
-    
-    public String getStudent(int index) {
-    	for(String s : studentNameToTree.keySet()) {
-    		if (index==currentGraphIndex) return s;
-    		index++;
-    	}
-    	return "NOT FOUND";
-    }
-    
-    public Graph getGraph(int index) {
-    	if(getStudent(index).equals("NOT FOUND")) return new Graph();
-    	return studentNameToTree.get(getStudent(index));
-    }
-    
+   
+
     public int getNumStudents() {
     	return studentNameToTree.size();
     }
     
     public static void setCurrentGraph(int index) {
     	currentGraphIndex = index;
-		currentGraphIndex %= studentNameToTree.values().size();
+		currentGraphIndex %= graphs.size();
     	treeView.paintComponent();
-		getCurrentGraph().printReport();  	
     }
     
     public void nextGraph() {
     	currentGraphIndex++;
-		currentGraphIndex %= studentNameToTree.values().size();
+		currentGraphIndex %= graphs.size();
     	treeView.paintComponent();
-		getCurrentGraph().buildDescendantList();
-		getCurrentGraph().buildAncestorList();
 		getCurrentGraph().printReport();
     }
-    
+
     public void printGraphInfo() {
     	Graph currentGraph = null;
     	for(Graph graph: studentNameToTree.values()) {
@@ -119,28 +102,17 @@ public class AdminApplication extends JFrame {
    
 	public static Graph getCurrentGraph()
 	{
-    	int index = 0;
-    	String studentName = "";
-    	for(String s : studentNameToTree.keySet()) {
-    		studentName = s;
-    		if (index==currentGraphIndex) break;
-    		index++;
-    	}
-		return studentNameToTree.get(studentName);
+		return graphs.get(currentGraphIndex);
 	}
  
+
     public void drawCurrentGraph(Graphics g) {
     	Graphics2D g2 = (Graphics2D) g;
-    	int index = 0;
-    	String studentName = "";
-    	for(String s : studentNameToTree.keySet()) {
-    		studentName = s;
-    		if (index==currentGraphIndex) break;
-    		index++;
-    	}
+    	Graph graph = getCurrentGraph();	
+		String studentName = graph.getStudentName();
+
     	g.setColor(Color.white);
     	g.drawString(studentName, 0, 50);
-    	Graph graph = studentNameToTree.get(studentName);
     	int y = Common.getStringBounds(g2, studentName).height + 
 				Common.ySpacing + 50;
     	if(graph.containsCycle()) {
@@ -209,7 +181,7 @@ public class AdminApplication extends JFrame {
         		System.out.println("STUDENT: " + studentName);
         		linein = reader.readLine();
         		String[] treeItems = linein.split("#"); // remove '=' at start
-        		Graph graph = new Graph();
+        		Graph graph = new Graph(studentName);
         		for(String elements: treeItems) 
 				{
         			// load vertices
@@ -261,5 +233,32 @@ public class AdminApplication extends JFrame {
         	e.printStackTrace();
         }
     }
+	
+
+	//convert treeMap to ArrayList
+
+	private void treeMapToArrayList()
+	{
+		graphs = new ArrayList<Graph>();
+
+		while (!studentNameToTree.isEmpty())
+		{
+//			Graph thisGraph= studentNameToTree.pollFirstEntry().getValue();
+//			tried this - only good under 1.6 - I'm 1.5 at the moment.		
+
+			String key = studentNameToTree.firstKey();
+			Graph thisGraph = studentNameToTree.get(key);
+			studentNameToTree.remove(key);
+
+			//might as well build these lists now and get it done
+
+			thisGraph.buildDescendantList();
+			thisGraph.buildAncestorList();
+
+			//put it in the arraylist
+
+			graphs.add(thisGraph);
+		}
+	}
     
 }

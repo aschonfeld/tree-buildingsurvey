@@ -9,8 +9,10 @@ public class Graph implements Renderable {
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
 	private boolean allOrgsInTree;
-	
-	Graph() {
+	private String studentName;	
+
+	Graph(String studentName) {
+		this.studentName=studentName;
 		vertices = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
@@ -245,6 +247,10 @@ public class Graph implements Renderable {
 		return 7/8;
 	}
 
+	public String getStudentName()
+	{
+		return studentName;
+	}
 	
 
 	public String toString() {
