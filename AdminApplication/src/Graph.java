@@ -26,6 +26,10 @@ public class Graph implements Renderable {
 	
 	public void addEdge(Edge e) {
 		//System.out.println("ADDED EDGE " + e);
+		if((e.getV1() == null) || (e.getV2() == null)) {
+			System.out.println("Error loading tree: " + studentName);
+			return;
+		}
 		edges.add(e);
 		e.getV1().addTo(e.getV2());
 		e.getV2().addFrom(e.getV1());
