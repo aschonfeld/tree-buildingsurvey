@@ -55,16 +55,18 @@ public class StudentDataTable extends JPanel {
         String[] columnNames = { "Name", 
         						 "Contains loop", 
         						 "All organism nodes terminal", 
-        						 "Includes all organisms"};
-        int rows = AdminApplication.studentNameToTree.size();
+        						 "Includes all organisms",
+									"Single Common Ancestor"};
+        int rows = AdminApplication.graphs.size();
         Object[][] tableData = new Object[rows][columnNames.length];
         int row = 0;
-        for(String studentName: AdminApplication.studentNameToTree.keySet()) {
-        	Graph graph = AdminApplication.studentNameToTree.get(studentName);
+        for(Graph graph : AdminApplication.graphs) {
+				String studentName = graph.getStudentName();
         	tableData[row][0] = studentName;
         	tableData[row][1] = graph.containsCycle();
         	tableData[row][2] = graph.allOrganismsTerminal();
         	tableData[row][3] = graph.includesAllOrganisms();
+        	tableData[row][4] = graph.hasSingleCommonAncestor();
         	row++;
         }
         table = new JTable(tableData, columnNames);
@@ -102,7 +104,7 @@ public class StudentDataTable extends JPanel {
                     }
                 }
             }
-            System.out.println(output.toString());
+            //System.out.println(output.toString());
         }
     }
 }
