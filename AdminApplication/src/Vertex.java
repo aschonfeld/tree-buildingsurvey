@@ -20,8 +20,9 @@ public class Vertex implements Renderable {
     private Mark mark = Mark.WHITE;
     private Type type; // set by constructor
 	private ArrayList<Vertex> ancestors;
-	private ArrayList<Vertex> descendants;    
-		public boolean visited = false;
+	private ArrayList<Vertex> descendants;
+	private int indexInGraph = -1;
+	public boolean visited = false;
 
     Graphics2D g2 = null;
 	Rectangle r1 = null;
@@ -170,6 +171,14 @@ public class Vertex implements Renderable {
     	return error;
     }
     
+    public void setIndex(int index) {
+    	indexInGraph = index;
+	}
+
+	public int getIndex() {
+		return indexInGraph;
+	}
+
     public void render(Graphics g, Point offset) {
     	g2 = (Graphics2D) g;
     	upperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
@@ -243,6 +252,6 @@ public class Vertex implements Renderable {
 	public String getName() 
 	{
 		if (name!=null) return name;
-		return ("Unnamed");
+		return (new String("I" + indexInGraph));
 	}
 }
