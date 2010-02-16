@@ -9,7 +9,8 @@ public class Graph implements Renderable {
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
 	private boolean allOrgsInTree;
-	private String studentName;	
+	private String studentName;
+	private int path[][] = null; // length of shortest path from x->y = path[x][y]
 
 	Graph(String studentName) {
 		this.studentName=studentName;
@@ -19,6 +20,7 @@ public class Graph implements Renderable {
 	}
 	
 	public void addVertex(int id, Vertex v) {
+		v.setIndex(vertices.size());
 		vertices.add(v);
 		idToVertex.put(new Integer(id), v);
 		//System.out.println("ADDED VERTEX " + v);
@@ -120,7 +122,7 @@ public class Graph implements Renderable {
 	public Vertex getVertexByID(int id) {
 		return idToVertex.get(new Integer(id));
 	}
-	
+		
 	public String getInfo() {
 		StringBuffer sb = new StringBuffer();
 		for(Vertex v: vertices) {
@@ -254,6 +256,40 @@ public class Graph implements Renderable {
 	public String getStudentName()
 	{
 		return studentName;
+	}
+	
+	public int[][] getShortestPaths() {
+		if(path == null) {
+			runFloydWarshall(false);
+		}
+		return path;
+	}
+	
+	private void runFloydWarshall(boolean direction) {
+		int numVertices = vertices.size();
+		path = new int[numVertices][numVertices];
+		for(int x = 0; x < numVertices; x++) {
+			for(int y = 0; y < numVertices; y++) {
+				if(y == x) {
+					path[x][x] = 0;
+					continue;
+				}
+				// if use Integer.MAX_VALUE, addition will cause an overflow
+				path[x][y] = (int) Short.MAX_VALUE;
+			}
+		}
+		for(Vertex from: vertices) {
+			for(Vertex to: from.getAdjVertices(direction)) {
+				path[from.getIndex()][to.getIndex()] = 1;
+			}
+		}
+		for(int k = 0; k < numVertices; k++) {
+			for(int i = 0; k < numVertices; i++) {
+				for(int j = 0; k < numVertices; j++) {
+					path[i][j] = Math.min(path[i][j], path[i][k] + path[k][j]);
+				}
+			}
+		}
 	}
 	
 
