@@ -1,7 +1,22 @@
 #summary Developer's Guide: TBSGraphics.java
 
 = Introduction =
-Placeholder for walkthrough of TBSGraphics.java
+
+INCOMPLETE
+
+TBSGraphics contains constants and static methods used for graphics throughout the TBS Applet. 
+
+Static constants are either hard-coded or set according to environment. 
+
+Static values:
+  * Applet height & width are set according to height and width parameters passed by frame page. 
+  * The "line of death" is the vertical line separating the inactive organisms from those in the tree. The constant LINE_OF_DEATH is the X coordinate of this vertical line. It is hard-coded to 180 pixels, corresponding to the width of the Horseshoe Crab node plus its label. 
+  * padding is a Dimension representing the standard padding, in pixels, separating objects. Currently hard-coded to 10 pixels horizontally, and 5 vertically. 
+  * numOfOrganisms is the number of organisms loaded into the applet by TBSApplet.loadOrganisms(). It is declared here and set when organisms are loaded. 
+  * organismNodeHeight and organismNodeWidth are the width of all labelled organism nodes (ie, organism nodes "at rest" in the left-hand column). These values are calculated and set by StudentView.
+  * maxOrganismStringHeight and maxOrganismStringWidth are values calculated by TBSApplet.loadOrganisms(). 
+  * maxOrganismImageHeight and maxOrganismImageWidth are values calculated by TBSApplet.loadOrganisms().
+  * maxStudentNameWidth is a hard-coded constant, currently set to 150 pixels. (is there a figure in characters at any point in the code?)
 
 
 = Details =
