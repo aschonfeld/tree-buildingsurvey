@@ -23,8 +23,10 @@ public class AdminApplication extends JFrame {
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
-	private static StudentDataTable table = null;
-	private static JSplitPane splitPane;
+	private static StudentDataTable studentTable = null;
+	private static ShortestPathTable pathTable = null;
+	private static JSplitPane mainSplitPane;
+	private static JSplitPane leftSplitPane;
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
@@ -41,9 +43,11 @@ public class AdminApplication extends JFrame {
     	loadTreesFromParamTags();
 		treeMapToArrayList();
       treeView.setBackground(Color.black);
-      table = new StudentDataTable();
-      splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, table, treeView);
-      add(splitPane);
+      studentTable = new StudentDataTable();
+      pathTable = new ShortestPathTable();
+      leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, studentTable, pathTable);
+      mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane, treeView);
+      add(mainSplitPane);
       addMouseListener(treeController);
       setPreferredSize(new Dimension(928, 762));
       setJMenuBar(actionHandler.createMenuBar());
@@ -83,15 +87,14 @@ public class AdminApplication extends JFrame {
     public static void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
-    	treeView.paintComponent();
+	    leftSplitPane.remove(pathTable);
+	    pathTable = new ShortestPathTable();
+	    leftSplitPane.add(pathTable);
+	    leftSplitPane.revalidate();
+	    treeView.paintComponent();
     }
     
-    public void nextGraph() {
-    	currentGraphIndex++;
-		currentGraphIndex %= graphs.size();
-    	treeView.paintComponent();
-		getCurrentGraph().printReport();
-    }
+    public void nextGraph() {}
 
     public void printGraphInfo() {
     	Graph currentGraph = null;
