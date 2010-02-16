@@ -38,12 +38,12 @@ public class TBSGraphics {
 	private static final long serialVersionUID = 0xE6D7FA0516CC8DB2L;
 
 	/**
-	 * Applet height: perhaps should be set to size of window eventually. 
+	 * Applet width: Set by TBSApplet to size of browser window.
 	 */	
 	public static int appletWidth;
 
 	/**
-	 * Applet width: perhaps this should be set to size of window.
+	 * Applet height: set by TBSApplet to size of browser window.
 	 */
 	public static int appletHeight;
 
@@ -74,43 +74,43 @@ public class TBSGraphics {
 
 	/**
 	 * The fixed width of all OrganismNodes. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * StudentView
 	 */ 
 	public static int organismNodeWidth = 0;
 
 	/**
 	 * The fixed height of all OrganismNodes. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * StudentView
 	 */ 
 	public static int organismNodeHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNode label strings. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * StudentView
 	 */ 
 	public static int maxOrganismStringWidth = 0;
 
 	/**
 	 * The fixed height of all OrganismNode label strings. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * TBSApplet.loadOrganisms()
 	 */ 
 	public static int maxOrganismStringHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNode images. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * TBSApplet.loadOrganisms()
 	 */ 
 	public static int maxOrganismImageWidth = 0;
 
 	/**
 	 * The fixed height of all OrganismNode images. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * TBSApplet.loadOrganisms()
 	 */ 
 	public static int maxOrganismImageHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNodes. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
+	 * TBSApplet.loadOrganisms()
 	 */ 
 	public static int maxStudentNameWidth = 150;
 	public static int checkWidth = 0;
@@ -118,13 +118,13 @@ public class TBSGraphics {
 
 
 	/**
-	 * The fixed height of all OrganismNodes. Value is calculated in
+	 * The fixed height of all studentNodes. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
 	 */ 
 	public static int studentNodeHeight = 0;
 
 	/**
-	 * The fixed width of all OrganismNode label strings. Value is calculated in
+	 * The fixed width of all student:Node label strings. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
 	 */ 
 	public static int maxStudentStringWidth = 0;
