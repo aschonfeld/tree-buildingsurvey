@@ -17,6 +17,7 @@ public class ActionHandler extends JPanel {
 	public Action exitAction;
 	public Action printAction;
 	public Action nextAction;
+	public Action hullAction;
 	public AdminApplication parent;
 	
 	
@@ -48,6 +49,20 @@ public class ActionHandler extends JPanel {
 		}
 	}
 	
+	public class HullAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1740545322294704279L;
+
+		public HullAction() {
+			super("Hull Collision");
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent arg0) {
+			parent.checkHullCollisions();
+		}
+	}
+	
 	public class NextAction extends AbstractAction {
 
 		private static final long serialVersionUID = 1740545444294704279L;
@@ -64,6 +79,7 @@ public class ActionHandler extends JPanel {
 	
     public ActionHandler() {
         exitAction = new ExitAction();
+        hullAction = new HullAction();
         printAction = new PrintAction();
         nextAction = new NextAction();
     }
@@ -76,6 +92,7 @@ public class ActionHandler extends JPanel {
         JMenuBar menuBar;
         JMenu fileMenu;
         JMenuItem printItem;
+        JMenuItem hullItem;
         JMenuItem nextItem;
         JMenuItem exitItem;
         
@@ -86,9 +103,11 @@ public class ActionHandler extends JPanel {
 
         //a group of JMenuItems
         printItem = new JMenuItem(printAction);
+        hullItem = new JMenuItem(hullAction);
         nextItem = new JMenuItem(nextAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
+        fileMenu.add(hullItem);
         fileMenu.add(nextItem);
         fileMenu.add(exitItem);
         

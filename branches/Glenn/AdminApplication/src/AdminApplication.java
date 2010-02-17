@@ -33,7 +33,7 @@ public class AdminApplication extends JFrame {
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
-	private static ArrayList<BufferedImage> commonImages = null; //this simplifies things
+	private static ArrayList<VertexInfo> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
 	
     AdminApplication() {
@@ -102,6 +102,10 @@ public class AdminApplication extends JFrame {
     public void printGraphInfo() {
     	System.out.println(graphs.get(currentGraphIndex).getInfo());
     }
+    
+    public void checkHullCollisions() {
+    	System.out.println(graphs.get(currentGraphIndex).checkConvexHullCollision());
+    }
    
 	public static Graph getCurrentGraph(){
 		return graphs.get(currentGraphIndex);
@@ -128,40 +132,39 @@ public class AdminApplication extends JFrame {
     }
     
     private static void initCommonVertices() {
-    	TreeMap<String, BufferedImage> organismNameToImage = 
+    	TreeMap<String, VertexInfo> organismNameToImage = 
 				loadVerticesFromDirectory();
 		commonVertices = new ArrayList<Vertex>();
-		commonImages = new ArrayList<BufferedImage>();
-    	for(Map.Entry<String, BufferedImage> e : organismNameToImage.entrySet()) {
-            commonVertices.add(new Vertex(e.getKey(), new Point(0,0), 
-					e.getValue()));
+		commonImages = new ArrayList<VertexInfo>();
+    	for(Map.Entry<String, VertexInfo> e : organismNameToImage.entrySet()) {
+            commonVertices.add(new Vertex(e.getValue(), new Point(0,0)));
             commonImages.add(e.getValue());
     	}
     }
 
-    public static TreeMap<String, BufferedImage> loadVerticesFromDirectory() {
-        TreeMap<String, BufferedImage> organismNameToImage = 
-				new TreeMap<String, BufferedImage>();
+    public static TreeMap<String, VertexInfo> loadVerticesFromDirectory() {
+        TreeMap<String, VertexInfo> organismNameToImage = 
+				new TreeMap<String, VertexInfo>();
         try {
         	// read names of organisms and image file names from list.txt
         	BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream("images/list.txt")));
         	String line = null;
         	String[] parseLine = null;
-        	String organismName = null;
-        	String organismImageFilename = null;
-        	String organismImageFullPath = null;
+        	String name = null;
+        	StringBuffer imgFname = null;
+        	String type = null;
         	BufferedImage img = null;
         	while ((line = reader.readLine()) != null) {
         		// load image from files, and map organism name to image
         		parseLine = line.split(",");
-        		organismName = parseLine[0];
-        		organismImageFilename = parseLine[1];
+        		name = parseLine[0];
+        		imgFname = new StringBuffer("images/").append(parseLine[1]);
+        		type = parseLine[2];
         		// System.out.println(organismName + " " + organismImageFilename);
-        		organismImageFullPath = ("images/" + organismImageFilename);
-        		InputStream imageis= new FileInputStream(organismImageFullPath);
+        		InputStream imageis= new FileInputStream(imgFname.toString());
         		img = ImageIO.read(imageis);
-        		organismNameToImage.put(organismName, img);
+        		organismNameToImage.put(name, new VertexInfo(name, type, img));
         		imageis.close();
         	}
         	reader.close();
@@ -200,8 +203,7 @@ public class AdminApplication extends JFrame {
         				if(inTree) 
 						{
         					graph.addVertex(
-        							id, new Vertex(elementName, new Point(x, y), 
-									commonImages.get(id)));
+        							id, new Vertex(commonImages.get(id), new Point(x, y)));
         				}
         			}
         			if("E".equals(type)) 
@@ -209,7 +211,7 @@ public class AdminApplication extends JFrame {
         				// only empty nodes in tree (exclude immortalNode)
         				if(inTree) 
 						{
-        					graph.addVertex(id, new Vertex(elementName, 
+        					graph.addVertex(id, new Vertex(new VertexInfo(elementName), 
 							new Point(x, y)));
         				}
         			}
@@ -270,8 +272,7 @@ public class AdminApplication extends JFrame {
         				if(inTree) 
 						{
         					graph.addVertex(
-        							id, new Vertex(elementName, new Point(x, y), 
-									commonImages.get(id)));
+        							id, new Vertex(commonImages.get(id), new Point(x, y)));
         				}
         			}
         			if("E".equals(type)) 
@@ -279,7 +280,7 @@ public class AdminApplication extends JFrame {
         				// only empty nodes in tree (exclude immortalNode)
         				if(inTree) 
 						{
-        					graph.addVertex(id, new Vertex(elementName, 
+        					graph.addVertex(id, new Vertex(new VertexInfo(elementName), 
 							new Point(x, y)));
         				}
         			}

@@ -5,21 +5,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 
 public class Vertex implements Renderable {
 	 
-    private BufferedImage img;
-    private Point upperLeft;
-    private String name;
+    private VertexInfo info;
+	private Point upperLeft;
     private ArrayList<Vertex> toVertices;
     private ArrayList<Vertex> fromVertices;
     private boolean error = false;
     private Mark mark = Mark.WHITE;
-    private Type type; // set by constructor
-	private ArrayList<Vertex> ancestors;
+    private ArrayList<Vertex> ancestors;
 	private ArrayList<Vertex> descendants;
 	private int indexInGraph = -1;
 	public boolean visited = false;
@@ -27,17 +24,6 @@ public class Vertex implements Renderable {
     Graphics2D g2 = null;
 	Rectangle r1 = null;
 	Point upperLeftAdj = null; // adjusted by offset
-	
-	// would like to generalize these sometime, but use biology terms for now
-	public enum Type {
-		ORGANISM,
-		EMPTY;
-	}
-	
-	// set by constructor
-	public Type getType() {
-		return type;
-	}	
 	
 	// used for cycle detection algorithm
 	public enum Mark {
@@ -99,27 +85,14 @@ public class Vertex implements Renderable {
 		return mark;
 	}
 	
-    Vertex(String name, Point upperLeft) {
-    	this.type = Type.EMPTY;
-    	this.name = name;
+    Vertex(VertexInfo info, Point upperLeft) {
+    	this.info = info;
     	this.upperLeft = upperLeft;
-    	this.img = null;
     	toVertices = new ArrayList<Vertex>();
     	fromVertices = new ArrayList<Vertex>();
 		ancestors = new ArrayList<Vertex>();
 		descendants = new ArrayList<Vertex>();
    }
-    
-    Vertex(String name, Point upperLeft, BufferedImage img) {
-    	this.type = Type.ORGANISM;
-    	this.name = name;
-    	this.upperLeft = upperLeft;
-    	this.img = img;
-    	toVertices = new ArrayList<Vertex>();
-    	fromVertices = new ArrayList<Vertex>();
-		ancestors = new ArrayList<Vertex>();
-		descendants = new ArrayList<Vertex>();
-    }
     
     public void addFrom(Vertex fromVertex) {
     	if(!fromVertices.contains(fromVertex)) {
@@ -182,7 +155,7 @@ public class Vertex implements Renderable {
     public void render(Graphics g, Point offset) {
     	g2 = (Graphics2D) g;
     	upperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
-    	if(img != null) {
+    	if(info.getImage() != null) {
     		renderVertexWithImage();
     	} else {
     		renderVertex();
@@ -195,14 +168,14 @@ public class Vertex implements Renderable {
     }
 
     private void renderVertexWithImage() {
-        g2.drawImage(img, upperLeftAdj.x, upperLeftAdj.y, null);
+        g2.drawImage(info.getImage(), upperLeftAdj.x, upperLeftAdj.y, null);
     }
     
 	private void renderVertex() {
 		g2.setColor(Common.emptyNodeColor);
 		Rectangle bounds = getVertexBounds();
 		g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-		Common.drawCenteredString(g2, name, bounds.x, bounds.y, bounds.width, bounds.height, Color.black);
+		Common.drawCenteredString(g2, info.getName(), bounds.x, bounds.y, bounds.width, bounds.height, Color.black);
 	}
 
 	// draw a red box around vertex if has error
@@ -216,13 +189,13 @@ public class Vertex implements Renderable {
 	}
 	
 	private Rectangle getVertexBounds() {
-		if(this.img != null) {
-			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, img.getWidth(), img.getHeight());
+		if(info.getImage() != null) {
+			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, info.getImage().getWidth(), info.getImage().getHeight());
 		} else {
-			if(Common.isStringEmpty(name)) {
+			if(Common.isStringEmpty(info.getName())) {
 				return new Rectangle (upperLeftAdj.x, upperLeftAdj.y, Common.emptyNodeWidth, Common.emptyNodeHeight);
 			} else {
-				Dimension stringBounds = Common.getStringBounds(g2, name);
+				Dimension stringBounds = Common.getStringBounds(g2, info.getName());
 				int width = stringBounds.width + Common.paddingWidth * 2;
 				return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, width, Common.emptyNodeHeight);
 			}
@@ -231,14 +204,14 @@ public class Vertex implements Renderable {
 	
 	public Rectangle getVertexBounds(Graphics2D g2D, Point offset) {
 		Point tempUpperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
-		if(this.img != null) {
+		if(this.info.getImage() != null) {
 			//return new Rectangle(tempUpperLeftAdj.x, tempUpperLeftAdj.y, Common.organismNodeWidth, Common.organismNodeHeight);
-			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, img.getWidth(), img.getHeight());
+			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, info.getImage().getWidth(), info.getImage().getHeight());
 		} else {
-			if(Common.isStringEmpty(name)) {
+			if(Common.isStringEmpty(info.getName())) {
 				return new Rectangle (tempUpperLeftAdj.x, tempUpperLeftAdj.y, Common.emptyNodeWidth, Common.emptyNodeHeight);
 			} else {
-				Dimension stringBounds = Common.getStringBounds(g2D, name);
+				Dimension stringBounds = Common.getStringBounds(g2D, info.getName());
 				int width = stringBounds.width + Common.paddingWidth * 2;
 				return new Rectangle(tempUpperLeftAdj.x, tempUpperLeftAdj.y, width, Common.emptyNodeHeight);
 			}
@@ -246,12 +219,19 @@ public class Vertex implements Renderable {
 	}
 	
 	public String toString() {
-		return new String("VERTEX: " + name + " + img: " + (img != null) + ", location: " + upperLeft.x + "," + upperLeft.y);
+		return new String("VERTEX: " + info.getName() + " + img: " + (info.getImage() != null) + ", location: " + upperLeft.x + "," + upperLeft.y);
 	}
 
-	public String getName() 
-	{
-		if (name!=null) return name;
+	public String getName() {
+		if (info.getName()!=null) return info.getName();
 		return (new String("I" + indexInGraph));
+	}
+	
+	public VertexInfo.VertexType getType(){
+		return info.getVertexType();
+	}
+	
+	public VertexInfo getInfo(){
+		return info;
 	}
 }
