@@ -1,7 +1,10 @@
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -81,7 +84,7 @@ public class AdminApplication extends JFrame {
    
 
     public int getNumStudents() {
-    	return studentNameToTree.size();
+    	return graphs.size();
     }
     
     public static void setCurrentGraph(int index) {
@@ -97,16 +100,10 @@ public class AdminApplication extends JFrame {
     public void nextGraph() {}
 
     public void printGraphInfo() {
-    	Graph currentGraph = null;
-    	for(Graph graph: studentNameToTree.values()) {
-    		currentGraph = graph;
-    		break;
-    	}
-    	System.out.println(currentGraph.getInfo());
+    	System.out.println(graphs.get(currentGraphIndex).getInfo());
     }
    
-	public static Graph getCurrentGraph()
-	{
+	public static Graph getCurrentGraph(){
 		return graphs.get(currentGraphIndex);
 	}
  
@@ -198,7 +195,7 @@ public class AdminApplication extends JFrame {
         			int x = Integer.parseInt(attributes[3]);
         			int y = Integer.parseInt(attributes[4]);
         			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			if(type.equals("O")) 
+        			if("O".equals(type)) 
 					{
         				if(inTree) 
 						{
@@ -207,7 +204,7 @@ public class AdminApplication extends JFrame {
 									commonImages.get(id)));
         				}
         			}
-        			if(type.equals("E")) 
+        			if("E".equals(type)) 
 					{
         				// only empty nodes in tree (exclude immortalNode)
         				if(inTree) 
@@ -258,8 +255,7 @@ public class AdminApplication extends JFrame {
             	String section = studentDataItems[6].substring(8,10);
             	String[] treeItems = treeData.split("#"); // remove '=' at start
         		Graph graph = new Graph(studentName);
-        		for(String elements: treeItems) 
-				{
+        		for(String elements: treeItems){
         			// load vertices
         			String[] attributes = elements.split(":");
         			if(attributes.length < 6) continue;
@@ -269,7 +265,7 @@ public class AdminApplication extends JFrame {
         			int x = Integer.parseInt(attributes[3]);
         			int y = Integer.parseInt(attributes[4]);
         			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			if(type.equals("O")) 
+        			if("O".equals(type)) 
 					{
         				if(inTree) 
 						{
@@ -278,7 +274,7 @@ public class AdminApplication extends JFrame {
 									commonImages.get(id)));
         				}
         			}
-        			if(type.equals("E")) 
+        			if("E".equals(type)) 
 					{
         				// only empty nodes in tree (exclude immortalNode)
         				if(inTree) 
@@ -293,7 +289,7 @@ public class AdminApplication extends JFrame {
         			// load connections
         			String[] attributes = elements.split(":");
         			String type = attributes[0];
-        			if(!type.equals("C")) continue;
+        			if(!"C".equals(type)) continue;
         			int id1 = Integer.parseInt(attributes[2]);
         			int id2 = Integer.parseInt(attributes[3]);
         			//System.out.println(id1 + " " + id2);
@@ -323,8 +319,7 @@ public class AdminApplication extends JFrame {
 //			tried this - only good under 1.6 - I'm 1.5 at the moment.		
 
 			String key = studentNameToTree.firstKey();
-			Graph thisGraph = studentNameToTree.get(key);
-			studentNameToTree.remove(key);
+			Graph thisGraph = studentNameToTree.remove(key);
 
 			//might as well build these lists now and get it done
 
