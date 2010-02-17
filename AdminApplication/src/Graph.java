@@ -1,6 +1,12 @@
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.*;
+import java.awt.geom.Area;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Graph implements Renderable {
 	
@@ -182,7 +188,7 @@ public class Graph implements Renderable {
 	public boolean allOrganismsTerminal()	
 	{
 		for(Vertex v: vertices) {
-			if(v.getType() == Vertex.Type.ORGANISM) {
+			if(v.getType() == VertexInfo.VertexType.ORGANISM) {
 				if(!v.isTerminal(directional)) return false;
 			}
 		}
@@ -214,7 +220,7 @@ public class Graph implements Renderable {
     public boolean includesAllOrganisms() {
         int organismCounter = 0;
         for(Vertex v: vertices) {
-            if(v.getType() == Vertex.Type.ORGANISM) organismCounter++;
+            if(v.getType() == VertexInfo.VertexType.ORGANISM) organismCounter++;
         }
         if(organismCounter == 20) {
             allOrgsInTree =true;
@@ -309,6 +315,34 @@ public class Graph implements Renderable {
 				//System.out.println(i + "|" + j + "=" + path[i][j]);
 			}
 		}
+	}
+	
+	public boolean checkConvexHullCollision(){
+		Map<String, List<Vertex>> typeVertices = new HashMap<String, List<Vertex>>();
+		for(Vertex v : vertices){
+			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
+				if(typeVertices.containsKey(v.getInfo().getType()))
+					typeVertices.get(v.getInfo().getType()).add(v);
+				else{
+					List<Vertex> temp = new LinkedList<Vertex>();
+					temp.add(v);
+					typeVertices.put(v.getInfo().getType(), temp);
+				}
+			}
+		}
+		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
+		for(Map.Entry<String, List<Vertex>> e : typeVertices.entrySet())
+			hulls.add(new ConvexHull(2, e.getValue()));
+		for(int i1=0;i1<hulls.size();i1++){
+			for(int i2=hulls.size()-1;i2>i1;i2--){
+				Area intersect = new Area(); 
+				intersect.add(new Area(hulls.get(i1).hullShape)); 
+				intersect.intersect(new Area(hulls.get(i2).hullShape)); 
+				if (!intersect.isEmpty())
+					return true;
+			}
+		}
+		return false;
 	}
 	
 	public String toString() {

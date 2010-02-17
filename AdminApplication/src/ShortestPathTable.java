@@ -1,10 +1,12 @@
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.DefaultTableModel;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class ShortestPathTable extends JPanel {
 
