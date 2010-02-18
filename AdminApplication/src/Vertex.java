@@ -202,6 +202,10 @@ public class Vertex implements Renderable {
 		}
 	}
 	
+	public Point getUpperLeft() {
+		return upperLeft;
+	}
+	
 	public Rectangle getVertexBounds(Graphics2D g2D, Point offset) {
 		Point tempUpperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
 		if(this.info.getImage() != null) {
