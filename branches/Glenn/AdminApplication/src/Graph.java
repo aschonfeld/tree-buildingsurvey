@@ -240,25 +240,141 @@ public class Graph implements Renderable {
 	{
 		return 2;
 	}
+	
+	private class PathPair {
+		public int numPaths;
+		public int pathSums;
+		
+		PathPair(int numPaths, int pathSums) {
+			this.numPaths = numPaths;
+			this.pathSums = pathSums;
+		}
+	}
 
+	private int minOrgPath = unconnected;
+	private int maxOrgPath = 0;
+	private PathPair AveragePath = null;
+	private PathPair InvToInv = null;
+	private PathPair InvToVert = null;
+	private PathPair VertToVert = null;
+	private PathPair MammalToMammal = null;
+	private PathPair MammalToNMV = null;
+	private PathPair NMVToNMV = null;
+	
+	
+	// calculate shortest and average path length between distinct organisms
+	public void calulateOrganismPathLengths() {
+		if(InvToInv != null) return;
+		InvToInv = new PathPair(0, 0);
+		InvToVert = new PathPair(0, 0);
+		VertToVert = new PathPair(0, 0);
+		MammalToMammal = new PathPair(0, 0);
+		MammalToNMV = new PathPair(0, 0);
+		NMVToNMV = new PathPair(0,0);
+		AveragePath = new PathPair(0,0);
+		int[][] paths = getShortestPaths();
+		for(int fromIndex = 0; fromIndex < vertices.size(); fromIndex++) {
+			Vertex from = vertices.get(fromIndex);
+			if(from.getType() != VertexInfo.VertexType.ORGANISM) continue;
+			for(int toIndex = 0; toIndex < vertices.size(); toIndex++) {
+				Vertex to = vertices.get(toIndex);
+				if(to.getType() != VertexInfo.VertexType.ORGANISM) continue;
+				if(toIndex == fromIndex) continue;
+				int pathLength = paths[fromIndex][toIndex];
+				if(pathLength < unconnected) {
+					if(pathLength > maxOrgPath) maxOrgPath = pathLength;
+					if(pathLength < minOrgPath) minOrgPath = pathLength;
+					AveragePath.numPaths++;
+					AveragePath.pathSums += pathLength;
+					doAnalysis(from, to, pathLength);
+				}
+			}
+		}
+	}
+	
+	public void doAnalysis(Vertex from, Vertex to, int pathLength) {
+		for(PathPair p: getPathPairs(from, to)) {
+			p.numPaths++;
+			p.pathSums += pathLength;
+		}
+	}
+	
+	public ArrayList<PathPair> getPathPairs(Vertex from, Vertex to) {
+		ArrayList<PathPair> returnVal = new ArrayList<PathPair>();
+		if(testPair(from, to, "Invert", "Invert")) returnVal.add(InvToInv);
+		if(testPair(from, to, "Invert", "Mammal")) returnVal.add(InvToVert);
+		if(testPair(from, to, "Invert", "NMV")) returnVal.add(InvToVert);
+		if(returnVal.size() == 0) returnVal.add(VertToVert);
+		if(testPair(from, to, "Mammal", "Mammal")) returnVal.add(MammalToMammal);
+		if(testPair(from, to, "NMV", "Mammal")) returnVal.add(MammalToNMV);
+		if(testPair(from, to, "NMV", "NMV")) returnVal.add(NMVToNMV);
+		return returnVal;
+	}
+	
+	public boolean testPair(Vertex v1, Vertex v2, String type1, String type2) {
+		if(v1.getInfo().getType().equals(type1)) {
+			if(v2.getInfo().getType().equals(type2)) {
+				return true;
+			}
+		}
+		if(v2.getInfo().getType().equals(type1)) {
+			if(v1.getInfo().getType().equals(type2)) {
+				return true;
+			}
+		}	
+		return false;
+	}
+	
+	public int minOrgPathLength() {
+		calulateOrganismPathLengths();
+		return minOrgPath;
+	}
+	
+	public float averageOrgPathLength() {
+		calulateOrganismPathLengths();
+		return calcAverage(AveragePath);
+	}
+	
+	public int maxOrgPathLength() {
+		calulateOrganismPathLengths();
+		return minOrgPath;
+	}
+	
+	public float calcAverage(PathPair p) {
+		if (p.numPaths == 0) return 1.0f;
+		float returnVal = (float) p.pathSums;
+		returnVal /= (float) p.numPaths;
+		return returnVal;
+	}
+
+	// higher scores are better
+	// grouping < 1.0 means worse than random, grouping > 1.0 means better than random
 	public float groupingVertebrates()
 	{
-		return 2/3;
+		//return 2/3;
+		calulateOrganismPathLengths();
+		return calcAverage(InvToVert) / calcAverage(VertToVert);
 	}
 
 	public float groupingInvertebrates()
 	{
-		return 1/2;
+		//return 1/2;
+		calulateOrganismPathLengths();
+		return calcAverage(InvToVert) / calcAverage(InvToInv);
 	}
 
 	public float groupingMammals()
-	{		
-		return 4/5;
+	{	
+		//return 4/5;
+		calulateOrganismPathLengths();
+		return calcAverage(MammalToNMV) / calcAverage(MammalToMammal);
 	}
 
 	public float groupingNonmammals()
 	{
-		return 7/8;
+		//return 7/8;
+		calulateOrganismPathLengths();
+		return calcAverage(MammalToNMV) / calcAverage(NMVToNMV);
 	}
 
 	public String getStudentName()
