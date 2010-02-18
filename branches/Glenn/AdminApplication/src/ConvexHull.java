@@ -27,7 +27,7 @@ public class ConvexHull {
 	public static final int ZERO = 0;
 	public static final int FAST = 20;
 	public static final int SLOW = 100;
-	int    speed = SLOW;
+	int speed = SLOW;
 
 	/**
 	 * Stores all the points
@@ -35,7 +35,7 @@ public class ConvexHull {
 	Vector<pointExt> points = new Vector<pointExt>();
 	
 	Polygon hullShape = new Polygon();
-
+	
 	/**
 	 * Stores all the lines in the Hull
 	 */
@@ -51,7 +51,7 @@ public class ConvexHull {
 	 * The point we are comparing with the chkLn
 	 */
 	pointExt currPt = new pointExt(0,0);
-	int cx, cy, cz;
+	int cx,cy,cz;
 
 	public ConvexHull(int algor, List<Vertex> vertices) {
 		for(Vertex v : vertices)
@@ -65,8 +65,12 @@ public class ConvexHull {
 			break;
 			default:    System.out.println("Error in call algor\n");
 		}
-		for(Line l : hull)
-			hullShape.addPoint(l.point1.x, l.point1.y);		
+		if(hull.size() > 0){
+			hullShape.addPoint(hull.get(0).point1.x, hull.get(0).point1.y);
+			hullShape.addPoint(hull.get(0).point2.x, hull.get(0).point2.y);
+			for(int i=1;i<hull.size();i++)
+				hullShape.addPoint(hull.get(i).point2.x, hull.get(i).point2.y);	
+		}
 	}
 
 	 /**
