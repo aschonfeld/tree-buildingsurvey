@@ -113,21 +113,10 @@ public class AdminApplication extends JFrame {
  
 
     public void drawCurrentGraph(Graphics g) {
-    	Graphics2D g2 = (Graphics2D) g;
     	Graph graph = getCurrentGraph();	
 		String studentName = graph.getStudentName();
-
     	g.setColor(Color.white);
-    	g.drawString(studentName, 0, 50);
-    	int y = Common.getStringBounds(g2, studentName).height + 
-				Common.ySpacing + 50;
-    	if(graph.containsCycle()) {
-        	g.setColor(Color.red);
-        	g.drawString("LOOPS: TRUE", 0, y);		
-    	} else {
-        	g.setColor(Color.white);
-        	g.drawString("LOOPS: FALSE", 0, y);		   		
-    	}
+    	g.drawString(studentName, 5, 20);
     	graph.render(g, new Point(0,0));
     }
     

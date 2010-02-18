@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Area;
 import java.util.ArrayList;
@@ -145,8 +146,23 @@ public class Graph implements Renderable {
 		return sb.toString();
 	}
 	
+	public Point getUpperLeft() {
+		int minX = 1000;
+		int minY = 1000;
+		for(Vertex v: vertices) {
+			int x = v.getUpperLeft().x;
+			int y = v.getUpperLeft().y;
+			if(x < minX) minX = x;
+			if(y < minY) minY = y;
+		}
+		return new Point(minX - 5, minY - 40);
+	}
+	
 	public void render(Graphics g, Point offset)
 	{
+		Point upperLeft = getUpperLeft();
+		offset.x += upperLeft.x;
+		offset.y += upperLeft.y;
 		for(Vertex v: vertices) {
 			v.render(g, offset);
 		}
@@ -341,7 +357,7 @@ public class Graph implements Renderable {
 	}
 	
 	public float calcAverage(PathPair p) {
-		if (p.numPaths == 0) return 1.0f;
+		if (p.numPaths == 0) return -1.0f;
 		float returnVal = (float) p.pathSums;
 		returnVal /= (float) p.numPaths;
 		return returnVal;

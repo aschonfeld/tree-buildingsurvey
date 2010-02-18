@@ -41,7 +41,7 @@ public class Edge {
     	r2 = v2.getVertexBounds(g2, offset);
     	g2.setStroke(new BasicStroke(3));
 		Line2D conn = getConnectionBounds();
-		conn = new Line2D.Double(conn.getX1(), conn.getY1() - offset.y, conn.getX2() - offset.x, conn.getY2() - offset.y);
+		conn = new Line2D.Double(conn.getX1(), conn.getY1(), conn.getX2(), conn.getY2());
 		g2.setColor(Common.connectionColor);
 		g2.draw(conn);
 		if(directional){
