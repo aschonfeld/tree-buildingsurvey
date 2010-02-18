@@ -21,7 +21,12 @@ public class StudentDataTable extends JPanel {
         						 "Contains loop", 
         						 "All organism nodes terminal", 
         						 "Includes all organisms",
-									"Single Common Ancestor"};
+								 "Single Common Ancestor",
+        						 "Grouping Inv",
+        						 "Grouping Vert",
+        						 "Grouping Mammals",
+        						 "Grouping Non-Mammal Vert"};
+        
         int rows = AdminApplication.graphs.size();
         Object[][] tableData = new Object[rows][columnNames.length];
         int row = 0;
@@ -32,6 +37,10 @@ public class StudentDataTable extends JPanel {
         	tableData[row][2] = graph.allOrganismsTerminal();
         	tableData[row][3] = graph.includesAllOrganisms();
         	tableData[row][4] = graph.hasSingleCommonAncestor();
+        	tableData[row][5] = graph.groupingInvertebrates();
+        	tableData[row][6] = graph.groupingVertebrates();
+        	tableData[row][7] = graph.groupingMammals();
+        	tableData[row][8] = graph.groupingNonmammals();	
         	row++;
         }
         table = new JTable(tableData, columnNames);
