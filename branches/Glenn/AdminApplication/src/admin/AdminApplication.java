@@ -1,17 +1,8 @@
 package admin;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -19,10 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 
 public class AdminApplication extends JFrame {
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8731793917007308006L;
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
@@ -49,19 +36,20 @@ public class AdminApplication extends JFrame {
       treeView.setBackground(Color.black);
       studentTable = new StudentDataTable();
       pathTable = new ShortestPathTable();
-      leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, studentTable, pathTable);
-      mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane, treeView);
+      leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
+			studentTable, pathTable);
+      mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+			leftSplitPane, treeView);
       add(mainSplitPane);
       addMouseListener(treeController);
       setPreferredSize(new Dimension(928, 762));
       setJMenuBar(actionHandler.createMenuBar());
     }
     
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     */
+    	/**
+		* Create the GUI and show it.  For thread safety, this method 
+		*should be invoked from the event-dispatching thread.
+		*/
     private static void createAndShowGUI() {
         //Create and set up the window.
     	AdminApplication frame = new AdminApplication();
@@ -83,11 +71,6 @@ public class AdminApplication extends JFrame {
         });
     }
    
-
-    public int getNumStudents() {
-    	return graphs.size();
-    }
-    
     public static void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
@@ -97,8 +80,15 @@ public class AdminApplication extends JFrame {
 	    leftSplitPane.revalidate();
 	    treeView.paintComponent();
     }
-    
-    public void nextGraph() {}
+   
+
+//do we want to get rid of this? If so, let's get rid of the call in 
+//ActionHandler, too 
+    public void nextGraph() {
+		currentGraphIndex++;
+		currentGraphIndex %= graphs.size();
+		treeView.paintComponent();
+	}
 
     public void printGraphInfo() {
     	System.out.println(graphs.get(currentGraphIndex).getInfo());
@@ -164,11 +154,11 @@ public class AdminApplication extends JFrame {
         return organismNameToImage;
     }
     
-    public static void loadTreesFromDirectory() {
-        studentNameToTree = new TreeMap<String, Graph>();
-        try {
-        	String filePath = new String("trees/testTrees");
-    		BufferedReader reader = new BufferedReader(new 
+	public static void loadTreesFromDirectory() {
+		studentNameToTree = new TreeMap<String, Graph>();
+		try {
+			String filePath = new String("trees/testTrees");
+			BufferedReader reader = new BufferedReader(new 
 					InputStreamReader(new FileInputStream(filePath)));
     		String linein = reader.readLine();
         	while(linein != null) {
@@ -180,7 +170,7 @@ public class AdminApplication extends JFrame {
         		for(String elements: treeItems) 
 				{
         			// load vertices
-        			String[] attributes = elements.split(":");
+					String[] attributes = elements.split(":");
         			if(attributes.length < 6) continue;
         			String type = attributes[0];
         			int id = Integer.parseInt(attributes[1]);
@@ -193,7 +183,7 @@ public class AdminApplication extends JFrame {
         				if(inTree) 
 						{
         					graph.addVertex(
-        							id, new Vertex(commonImages.get(id), new Point(x, y)));
+     							id, new Vertex(commonImages.get(id), new Point(x, y)));
         				}
         			}
         			if("E".equals(type)) 
@@ -201,8 +191,8 @@ public class AdminApplication extends JFrame {
         				// only empty nodes in tree (exclude immortalNode)
         				if(inTree) 
 						{
-        					graph.addVertex(id, new Vertex(new VertexInfo(elementName), 
-							new Point(x, y)));
+        					graph.addVertex(id, new Vertex(new
+								VertexInfo(elementName), new Point(x, y)));
         				}
         			}
         		}
@@ -229,73 +219,73 @@ public class AdminApplication extends JFrame {
     }
     
     public static void loadTreesFromParamTags() {
-        try {
-        	String filePath = new String("trees/studentTrees");
+		try {
+			String filePath = new String("trees/studentTrees");
     		BufferedReader reader = new BufferedReader(new 
 					InputStreamReader(new FileInputStream(filePath)));
     		String linein = reader.readLine();
         	while(linein != null) {
         		String[] paramParse = linein.split("\" value=\"");
-            	String studentData = paramParse[1];
-            	//studentData.replaceAll("/", "");  
-            	//System.out.println(studentData);
-            	String[] studentDataItems = studentData.split(Pattern.quote("+="));
-            	String studentName = studentDataItems[0];
-            	String treeData = studentDataItems[2];
-            	String question1 = studentDataItems[3];
-            	String question2 = studentDataItems[4];
-            	String section = studentDataItems[6].substring(8,10);
-            	String[] treeItems = treeData.split("#"); // remove '=' at start
-        		Graph graph = new Graph(studentName);
-        		for(String elements: treeItems){
-        			// load vertices
-        			String[] attributes = elements.split(":");
-        			if(attributes.length < 6) continue;
-        			String type = attributes[0];
-        			int id = Integer.parseInt(attributes[1]);
-        			String elementName = attributes[2];
-        			int x = Integer.parseInt(attributes[3]);
-        			int y = Integer.parseInt(attributes[4]);
-        			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			if("O".equals(type)) 
+          	String studentData = paramParse[1];
+           	//studentData.replaceAll("/", "");  
+           	//System.out.println(studentData);
+           	String[] studentDataItems = 
+						studentData.split(Pattern.quote("+="));
+           	String studentName = studentDataItems[0];
+           	String treeData = studentDataItems[2];
+           	String question1 = studentDataItems[3];
+           	String question2 = studentDataItems[4];
+           	String section = studentDataItems[6].substring(8,10);
+           	String[] treeItems = treeData.split("#"); // remove '=' at start
+    			Graph graph = new Graph(studentName);
+     			for(String elements: treeItems){   //load vertices
+     				String[] attributes = elements.split(":");
+     				if(attributes.length < 6) continue;
+     				String type = attributes[0];
+     				int id = Integer.parseInt(attributes[1]);
+     				String elementName = attributes[2];
+     				int x = Integer.parseInt(attributes[3]);
+    				int y = Integer.parseInt(attributes[4]);
+     				boolean inTree = Boolean.parseBoolean(attributes[5]);
+     				if("O".equals(type)) 
 					{
-        				if(inTree) 
+     					if(inTree) 
 						{
-        					graph.addVertex(
-        							id, new Vertex(commonImages.get(id), new Point(x, y)));
-        				}
-        			}
-        			if("E".equals(type)) 
-					{
-        				// only empty nodes in tree (exclude immortalNode)
-        				if(inTree) 
+     						graph.addVertex(id, new Vertex(commonImages.get(id), 
+									new Point(x, y)));
+     					}
+     				}
+     				if("E".equals(type)) 
+				{
+     				// only empty nodes in tree (exclude immortalNode)
+     					if(inTree) 
 						{
-        					graph.addVertex(id, new Vertex(new VertexInfo(elementName), 
-							new Point(x, y)));
-        				}
+     						graph.addVertex(id, new Vertex(
+								new VertexInfo(elementName), new Point(x, y)));
+        				}	
         			}
         		}
         		for(String elements: treeItems) 
 				{
-        			// load connections
-        			String[] attributes = elements.split(":");
-        			String type = attributes[0];
-        			if(!"C".equals(type)) continue;
-        			int id1 = Integer.parseInt(attributes[2]);
-        			int id2 = Integer.parseInt(attributes[3]);
-        			//System.out.println(id1 + " " + id2);
-        			Vertex v1 = graph.getVertexByID(id1);
-        			Vertex v2 = graph.getVertexByID(id2);
-        			graph.addEdge(new Edge(v1, v2));
-        		}
-        		studentNameToTree.put(studentName, graph);
-        		linein = reader.readLine();
-        	}
-        	reader.close();
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
+       			// load connections
+     				String[] attributes = elements.split(":");
+    				String type = attributes[0];
+     				if(!"C".equals(type)) continue;
+     				int id1 = Integer.parseInt(attributes[2]);
+     				int id2 = Integer.parseInt(attributes[3]);
+        				//System.out.println(id1 + " " + id2);
+     				Vertex v1 = graph.getVertexByID(id1);
+     				Vertex v2 = graph.getVertexByID(id2);
+     				graph.addEdge(new Edge(v1, v2));
+     			}
+     			studentNameToTree.put(studentName, graph);
+     			linein = reader.readLine();
+     		}
+     		reader.close();
+     	} catch (Exception e) {
+     		e.printStackTrace();
+   	}
+	}
 	
 
 	//convert treeMap to ArrayList
