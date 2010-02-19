@@ -1,3 +1,4 @@
+package admin;
 import java.awt.image.BufferedImage;
 
 
