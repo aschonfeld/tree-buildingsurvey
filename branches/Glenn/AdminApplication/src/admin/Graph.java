@@ -2,10 +2,14 @@ package admin;
 
 //explicit list needed since some dumbass put List in both awt and util
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Area;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Graph implements Renderable {
 	
@@ -211,12 +215,12 @@ public class Graph implements Renderable {
 		}
 		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
 		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
-			hulls.add(new ConvexHull(2, e.getValue()));
+			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
 		for(int i1=0;i1<hulls.size();i1++){
 			for(int i2=hulls.size()-1;i2>i1;i2--){
 				Area intersect = new Area(); 
-				intersect.add(new Area(hulls.get(i1).hullShape)); 
-				intersect.intersect(new Area(hulls.get(i2).hullShape)); 
+				intersect.add(new Area(hulls.get(i1).getHullShape())); 
+				intersect.intersect(new Area(hulls.get(i2).getHullShape())); 
 				if (!intersect.isEmpty())
 					return true;
 			}

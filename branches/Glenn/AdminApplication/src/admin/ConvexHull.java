@@ -1,19 +1,14 @@
 package admin;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 /**
- * An applet that demonstrates the graph algorithm, by letting the user
- * pick the points in the screen and choose either the Quick Hull algor
- * or Brute Force algorithm, the program simulated the execution event,
- * showing which line or which point is being compared.
- *
- */
-
-/**
- * Main Screen Panel for showing the result.
+ * A class that demonstrates the graph algorithm, by accepting a group
+ * of points from the current graph and by way of either the Quick Hull
+ * algorithm or Brute Force algorithm, the Convex Hull of those points 
+ * is calculated and returned in the form of a List of lines or points.
  */
 public class ConvexHull {
 	/** 
@@ -21,47 +16,43 @@ public class ConvexHull {
 	 */
 	public static final int Brute = 1;
 	public static final int QUICK = 2;
-	
-	/**
-	 * Variable indicates the demonstration speed
-	 */
-	public static final int ZERO = 0;
-	public static final int FAST = 20;
-	public static final int SLOW = 100;
-	int speed = SLOW;
 
 	/**
 	 * Stores all the points
 	 */
-	Vector<Point> points = new Vector<Point>();
+	private List<Point> points = new LinkedList<Point>();
 	
-	Polygon hullShape = new Polygon();
+	/**
+	 * Stores shape of the hull for collision detection
+	 */
+	private Polygon hullShape;
 	
 	/**
 	 * Stores all the lines in the Hull
 	 */
-	Vector<Line> hull   = new Vector<Line>();
+	private List<Line> hull;
+	private List<Line> tempHull;
 
 	/**
-	 * Stores all the lines being checking 
+	 * Stores the name of the Hull
 	 */
-	Vector<Line> chkLns = new Vector<Line>();
-	Vector<Line> tempLns = new Vector<Line>();
-
+	private String hullName;
+	
 	/**
 	 * The point we are comparing with the chkLn
 	 */
-	Point currPt = new Point();
-	int cx,cy,cz;
-
-	public ConvexHull(int algor, List<Point> vertices) {
-		for(Point p : vertices)
-			points.add(new Point(p.x, p.y));
+	private Point currPt = new Point();
+	
+	public ConvexHull(int algor, List<Point> points, String hullName) {
+		this.points = points;
+		this.hullName = hullName;
+		hullShape = new Polygon();
+		hull = new LinkedList<Line>();
 		switch (algor) {
-			case Brute: hull.removeAllElements();
+			case Brute:
 			BruteForce();
 			break;
-			case QUICK: hull.removeAllElements();
+			case QUICK:
 			quickHull();
 			break;
 			default:    System.out.println("Error in call algor\n");
@@ -74,24 +65,26 @@ public class ConvexHull {
 		}
 	}
 
-	 /**
+	public Polygon getHullShape() {return hullShape;}
+	public List<Line> getHull() {return hull;}
+	public String getHullName() {return hullName;}
+
+	/**
 	  * Brute Force Algorithm implementation
 	  */
 	 public void BruteForce() {
 		 boolean leftMost, rightMost;
-		 for (cx = 0; cx < points.size(); cx++) {
-			 for (int cy = (cx+1); cy < points.size(); cy++) {
+		 for (int x = 0; x < points.size(); x++) {
+			 for (int y = (x+1); y < points.size(); y++) {
 				 leftMost  = true;
 				 rightMost = true;
-				 Line temp = new Line(points.elementAt(cx), points.elementAt(cy));
+				 Line temp = new Line(points.get(x), points.get(y));
 
-				 for (int cz = 0; cz < points.size(); cz++) {
-					 currPt = points.elementAt(cz);
-					 chkLns.removeAllElements();
-					 chkLns.addElement(new Line(points.elementAt(cx), points.elementAt(cy)));
-
-					 if ((cz != cx) && (cz != cy)) {
-						 if (temp.onLeft(points.elementAt(cz)))
+				 for (int z = 0; z < points.size(); z++) {
+					 currPt = points.get(z);
+					 
+					 if ((z != x) && (z != y)) {
+						 if (temp.onLeft(points.get(z)))
 							 leftMost = false;
 						 else
 							 rightMost = false;
@@ -99,113 +92,78 @@ public class ConvexHull {
 				 }
 
 				 if (leftMost || rightMost)
-					 hull.addElement(new Line(points.elementAt(cx), points.elementAt(cy)));
+					 hull.add(new Line(points.get(x), points.get(y)));
 			 }
 		 }
 	 }
 
-	 int indexChkLn = 0;
-
 	 /** 
 	  * Quick Hull Algorithm implementation.
-	  * Calculate the hull first and display the execution with the information from
-	  * chklns and tempHull.
 	  */
-
-	 Vector<Line> tempHull = new Vector<Line>();
-
 	 public void quickHull() {
-		 Vector<Point> P1 = new Vector<Point>();
-		 Vector<Point> P2 = new Vector<Point>();
-		 Point l = points.elementAt(0);
-		 Point r = points.elementAt(0);
+		 tempHull = new LinkedList<Line>();
+		 List<Point> P1 = new LinkedList<Point>();
+		 List<Point> P2 = new LinkedList<Point>();
+		 Point l = points.get(0);
+		 Point r = points.get(0);
 		 int minX = l.x;
 		 int maxX = l.x;
 		 int minAt = 0;
 		 int maxAt = 0;	
 
-		 chkLns.removeAllElements();
-		 tempLns.removeAllElements();
-		 tempHull.removeAllElements();
-
 		 /* find the max and min x-coord point */
-
 		 for (int i = 1; i < points.size(); i++) {
-			 currPt = points.elementAt(i);	
-			 if (points.elementAt(i).x > maxX) {
-				 r = points.elementAt(i);
-				 maxX = points.elementAt(i).x;
+			 currPt = points.get(i);	
+			 if (currPt.x > maxX) {
+				 r = currPt;
+				 maxX = currPt.x;
 				 maxAt = i;
 			 }
 
-			 if (points.elementAt(i).x < minX) {
-				 l = points.elementAt(i);
-				 minX = points.elementAt(i).x;
+			 if (currPt.x < minX) {
+				 l = currPt;
+				 minX = currPt.x;
 				 minAt = i;
 			 }
 		 }
 
 		 Line lr = new Line(l, r);
-		 tempLns.addElement(new Line(points.elementAt(maxAt), points.elementAt(minAt)));
-		 chkLns.addElement(new Line(points.elementAt(maxAt), points.elementAt(minAt)));
 		 
 		 /* find out each point is over or under the line formed by the two points */
 		 /* with min and max x-coord, and put them in 2 group according to whether */
 		 /* they are above or under                                                */
 		 for (int i = 0; i < points.size(); i++) {
 			 if ((i != maxAt) && (i != minAt)) {
-				 currPt = points.elementAt(i);
-
-				 if (lr.onLeft(points.elementAt(i)))
-					 P1.addElement(points.elementAt(i));
+				 currPt = points.get(i);
+				 if (lr.onLeft(currPt))
+					 P1.add(currPt);
 				 else
-					 P2.addElement(points.elementAt(i));
+					 P2.add(currPt);
 			 }
 
 		 };
 
 		 /* put the max and min x-cord points in each group */
-		 P1.addElement(l);
-		 P1.addElement(r);
+		 P1.add(l);
+		 P1.add(r);
 
-		 P2.addElement(l);
-		 P2.addElement(r);
+		 P2.add(l);
+		 P2.add(r);
 
 		 /* calculate the upper hull */
 		 quick(P1, l, r, 0);
 
-		 /* display the how the upper hull was calculated */
-		 for (int i=0; i<tempLns.size(); i++) {
-			 chkLns.addElement(new Line(tempLns.elementAt(i).point1, tempLns.elementAt(i).point2));
-			 for (int j=0; j<points.size(); j++) {
-				 if (tempLns.elementAt(i).onLeft(points.elementAt(j)))	
-					 currPt = points.elementAt(j);
-			 }
-		 }
-
 		 /* put the upper hull result in final result */
 		 for (int k=0; k<tempHull.size(); k++)
-			 hull.addElement(new Line(tempHull.elementAt(k).point1, tempHull.elementAt(k).point2));
-		 chkLns.removeAllElements();
-		 tempLns.removeAllElements();
-
+			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
+		 
 		 /* calculate the lower hull */
 		 quick(P2, l, r, 1);
 
-		 /* show how the lower hull was calculated */
-		 for (int i=0; i<tempLns.size(); i++) {
-			 chkLns.addElement(new Line(tempLns.elementAt(i).point1, tempLns.elementAt(i).point2));
-			 for (int j=0; j<points.size(); j++) {
-				 if (!tempLns.elementAt(i).onLeft(points.elementAt(j)))
-					 currPt = points.elementAt(j);
-			 }
-		 }
-
 		 /* append the result from lower hull to final result */
 		 for (int k=0; k<tempHull.size(); k++)
-			 hull.addElement(new Line(tempHull.elementAt(k).point1, tempHull.elementAt(k).point2));
+			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
 
-		 chkLns.removeAllElements();
 	 }
 
 
@@ -214,46 +172,43 @@ public class ConvexHull {
 	  * faceDir is 0 if we are calculating the upper hull.
 	  * faceDir is 1 if we are calculating the lower hull.
 	  */
-	 public synchronized void quick(Vector<Point> P, Point l, Point r, int faceDir) {
+	 public synchronized void quick(List<Point> P, Point l, Point r, int faceDir) {
 		 if (P.size() == 2) {
-			 tempHull.addElement(new Line(P.elementAt(0), P.elementAt(1)));
+			 tempHull.add(new Line(P.get(0), P.get(1)));
 			 return;
 		 } else {
 			 int hAt = splitAt(P, l, r);
-			 Line lh = new Line(l, P.elementAt(hAt));
-			 Line hr = new Line(P.elementAt(hAt), r);
-			 Vector<Point> P1 = new Vector<Point>();
-			 Vector<Point> P2 = new Vector<Point>();
+			 Line lh = new Line(l, P.get(hAt));
+			 Line hr = new Line(P.get(hAt), r);
+			 List<Point> P1 = new LinkedList<Point>();
+			 List<Point> P2 = new LinkedList<Point>();
 
 			 for (int i = 0; i < (P.size() - 2); i++) {
 				 if (i != hAt) {
-					 currPt = P.elementAt(i);
+					 currPt = P.get(i);
 					 if (faceDir == 0) {
-						 if (lh.onLeft(P.elementAt(i)))
-							 P1.addElement(P.elementAt(i));
+						 if (lh.onLeft(currPt))
+							 P1.add(currPt);
 
-						 if ((hr.onLeft(P.elementAt(i))))
-							 P2.addElement(P.elementAt(i));
+						 if ((hr.onLeft(currPt)))
+							 P2.add(currPt);
 					 } else {
-						 if (!(lh.onLeft(P.elementAt(i))))
-							 P1.addElement(P.elementAt(i));
+						 if (!(lh.onLeft(currPt)))
+							 P1.add(currPt);
 
-						 if (!(hr.onLeft(P.elementAt(i))))
-							 P2.addElement(P.elementAt(i));
+						 if (!(hr.onLeft(currPt)))
+							 P2.add(currPt);
 					 }
 				 }
 			 }
 
-			 P1.addElement(l);
-			 P1.addElement(P.elementAt(hAt));
+			 P1.add(l);
+			 P1.add(P.get(hAt));
 
-			 P2.addElement(P.elementAt(hAt));
-			 P2.addElement(r);
+			 P2.add(P.get(hAt));
+			 P2.add(r);
 
-			 Point h = P.elementAt(hAt);
-
-			 tempLns.addElement(new Line(l, h));
-			 tempLns.addElement(new Line(h, r));
+			 Point h = P.get(hAt);
 
 			 if (faceDir == 0) {
 				 quick(P1, l, h, 0);
@@ -270,10 +225,10 @@ public class ConvexHull {
 	  * Find out a point which is in the Hull for sure among a group of points
 	  * Since all the point are on the same side of the line formed by l and r,
 	  * so the point with the longest distance perpendicular to this line is 
-	  * the point we are lokking for.
+	  * the point we are looking for.
 	  * Return the index of this point in the Vector/
 	  */
-	 public synchronized int splitAt(Vector<Point> P, Point l, Point r) {
+	 public synchronized int splitAt(List<Point> P, Point l, Point r) {
 		 double    maxDist = 0;
 		 Line newLn = new Line(l, r);
 
@@ -284,20 +239,20 @@ public class ConvexHull {
 		 for (int i = 0; i < (P.size() - 2); i++) {
 			 if (newLn.slopeUndefine) {
 				 x3 = l.x;
-				 y3 = P.elementAt(i).y;
+				 y3 = P.get(i).y;
 			 } else {
 				 if (r.y == l.y) {
-					 x3 = P.elementAt(i).x;
+					 x3 = P.get(i).x;
 					 y3 = l.y;
 				 } else {
-					 x3 = (int) (((P.elementAt(i).x + newLn.slope *
-							 (newLn.slope * l.x - l.y + P.elementAt(i).y))
+					 x3 = (int) (((P.get(i).x + newLn.slope *
+							 (newLn.slope * l.x - l.y + P.get(i).y))
 									 / (1 + newLn.slope * newLn.slope)));
 					 y3 = (int) ((newLn.slope * (x3 - l.x) + l.y));
 				 }
 			 }
-			 int x1 = P.elementAt(i).x;
-			 int y1 = P.elementAt(i).y;
+			 int x1 = P.get(i).x;
+			 int y1 = P.get(i).y;
 			 distance = Math.sqrt(Math.pow((y1-y3), 2) + Math.pow((x1-x3), 2));
 
 			 if (distance > maxDist) {
@@ -308,11 +263,19 @@ public class ConvexHull {
 		 return farPt;
 	 }
 	 
-	 class Line {
-			Point point1;
-			Point point2;
-			float    slope;
-			boolean  slopeUndefine;
+	 public boolean equals( Object o ) {
+		 if ( this == o )
+			 return true;
+		 if ( !(o instanceof ConvexHull) )
+			 return false;
+		 return ((ConvexHull) o).getHullName().equals(hullName);
+	 }
+	 
+	 public class Line {
+			private Point point1;
+			private Point point2;
+			private float    slope;
+			private boolean  slopeUndefine;
 
 			/**
 			 * Line constructor.
@@ -365,5 +328,10 @@ public class ConvexHull {
 					}
 				}
 			}
+
+			public Point getPoint1() {return point1;}
+			public Point getPoint2() {return point2;}
+			public float getSlope() {return slope;}
+			public boolean isSlopeUndefine() {return slopeUndefine;}
 		}
 }
