@@ -197,20 +197,20 @@ public class Graph implements Renderable {
 * (for checking geometric arrangement of organsisms) *
 *****************************************************/
 	public boolean checkConvexHullCollision(){
-		Map<String, List<Vertex>> typeVertices = new HashMap<String, List<Vertex>>();
+		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
 		for(Vertex v : vertices){
 			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
 				if(typeVertices.containsKey(v.getInfo().getType()))
-					typeVertices.get(v.getInfo().getType()).add(v);
+					typeVertices.get(v.getInfo().getType()).add(v.upperLeftAdj);
 				else{
-					List<Vertex> temp = new LinkedList<Vertex>();
-					temp.add(v);
+					List<Point> temp = new LinkedList<Point>();
+					temp.add(v.upperLeftAdj);
 					typeVertices.put(v.getInfo().getType(), temp);
 				}
 			}
 		}
 		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
-		for(Map.Entry<String, List<Vertex>> e : typeVertices.entrySet())
+		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
 			hulls.add(new ConvexHull(2, e.getValue()));
 		for(int i1=0;i1<hulls.size();i1++){
 			for(int i2=hulls.size()-1;i2>i1;i2--){
