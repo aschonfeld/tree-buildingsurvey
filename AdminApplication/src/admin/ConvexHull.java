@@ -33,7 +33,7 @@ public class ConvexHull {
 	/**
 	 * Stores all the points
 	 */
-	Vector<pointExt> points = new Vector<pointExt>();
+	Vector<Point> points = new Vector<Point>();
 	
 	Polygon hullShape = new Polygon();
 	
@@ -51,12 +51,12 @@ public class ConvexHull {
 	/**
 	 * The point we are comparing with the chkLn
 	 */
-	pointExt currPt = new pointExt(0,0);
+	Point currPt = new Point();
 	int cx,cy,cz;
 
-	public ConvexHull(int algor, List<Vertex> vertices) {
-		for(Vertex v : vertices)
-			points.add(new pointExt(v.upperLeftAdj.x, v.upperLeftAdj.y));
+	public ConvexHull(int algor, List<Point> vertices) {
+		for(Point p : vertices)
+			points.add(new Point(p.x, p.y));
 		switch (algor) {
 			case Brute: hull.removeAllElements();
 			BruteForce();
@@ -115,10 +115,10 @@ public class ConvexHull {
 	 Vector<Line> tempHull = new Vector<Line>();
 
 	 public void quickHull() {
-		 Vector<pointExt> P1 = new Vector<pointExt>();
-		 Vector<pointExt> P2 = new Vector<pointExt>();
-		 pointExt l = points.elementAt(0);
-		 pointExt r = points.elementAt(0);
+		 Vector<Point> P1 = new Vector<Point>();
+		 Vector<Point> P2 = new Vector<Point>();
+		 Point l = points.elementAt(0);
+		 Point r = points.elementAt(0);
 		 int minX = l.x;
 		 int maxX = l.x;
 		 int minAt = 0;
@@ -131,7 +131,7 @@ public class ConvexHull {
 		 /* find the max and min x-coord point */
 
 		 for (int i = 1; i < points.size(); i++) {
-			 currPt = (pointExt) points.elementAt(i);	
+			 currPt = points.elementAt(i);	
 			 if (points.elementAt(i).x > maxX) {
 				 r = points.elementAt(i);
 				 maxX = points.elementAt(i).x;
@@ -157,19 +157,19 @@ public class ConvexHull {
 				 currPt = points.elementAt(i);
 
 				 if (lr.onLeft(points.elementAt(i)))
-					 P1.addElement(new pointExt(points.elementAt(i).x, points.elementAt(i).y));
+					 P1.addElement(points.elementAt(i));
 				 else
-					 P2.addElement(new pointExt(points.elementAt(i).x,points.elementAt(i).y));
+					 P2.addElement(points.elementAt(i));
 			 }
 
 		 };
 
 		 /* put the max and min x-cord points in each group */
-		 P1.addElement(new pointExt(l.x, l.y));
-		 P1.addElement(new pointExt(r.x, r.y));
+		 P1.addElement(l);
+		 P1.addElement(r);
 
-		 P2.addElement(new pointExt(l.x, l.y));
-		 P2.addElement(new pointExt(r.x, r.y));
+		 P2.addElement(l);
+		 P2.addElement(r);
 
 		 /* calculate the upper hull */
 		 quick(P1, l, r, 0);
@@ -214,7 +214,7 @@ public class ConvexHull {
 	  * faceDir is 0 if we are calculating the upper hull.
 	  * faceDir is 1 if we are calculating the lower hull.
 	  */
-	 public synchronized void quick(Vector<pointExt> P, pointExt l, pointExt r, int faceDir) {
+	 public synchronized void quick(Vector<Point> P, Point l, Point r, int faceDir) {
 		 if (P.size() == 2) {
 			 tempHull.addElement(new Line(P.elementAt(0), P.elementAt(1)));
 			 return;
@@ -222,35 +222,35 @@ public class ConvexHull {
 			 int hAt = splitAt(P, l, r);
 			 Line lh = new Line(l, P.elementAt(hAt));
 			 Line hr = new Line(P.elementAt(hAt), r);
-			 Vector<pointExt> P1 = new Vector<pointExt>();
-			 Vector<pointExt> P2 = new Vector<pointExt>();
+			 Vector<Point> P1 = new Vector<Point>();
+			 Vector<Point> P2 = new Vector<Point>();
 
 			 for (int i = 0; i < (P.size() - 2); i++) {
 				 if (i != hAt) {
-					 currPt = (pointExt) P.elementAt(i);
+					 currPt = P.elementAt(i);
 					 if (faceDir == 0) {
-						 if (lh.onLeft((pointExt)P.elementAt(i)))
-							 P1.addElement(new pointExt(P.elementAt(i).x, P.elementAt(i).y));
+						 if (lh.onLeft(P.elementAt(i)))
+							 P1.addElement(P.elementAt(i));
 
-						 if ((hr.onLeft((pointExt)P.elementAt(i))))
-							 P2.addElement(new pointExt(P.elementAt(i).x, P.elementAt(i).y));
+						 if ((hr.onLeft(P.elementAt(i))))
+							 P2.addElement(P.elementAt(i));
 					 } else {
-						 if (!(lh.onLeft((pointExt)P.elementAt(i))))
-							 P1.addElement(new pointExt(P.elementAt(i).x, P.elementAt(i).y));
+						 if (!(lh.onLeft(P.elementAt(i))))
+							 P1.addElement(P.elementAt(i));
 
-						 if (!(hr.onLeft((pointExt)P.elementAt(i))))
-							 P2.addElement(new pointExt(P.elementAt(i).x, P.elementAt(i).y));
+						 if (!(hr.onLeft(P.elementAt(i))))
+							 P2.addElement(P.elementAt(i));
 					 }
 				 }
 			 }
 
-			 P1.addElement(new pointExt(l.x, l.y));
-			 P1.addElement(new pointExt(P.elementAt(hAt).x, P.elementAt(hAt).y));
+			 P1.addElement(l);
+			 P1.addElement(P.elementAt(hAt));
 
-			 P2.addElement(new pointExt(P.elementAt(hAt).x, P.elementAt(hAt).y));
-			 P2.addElement(new pointExt(r.x, r.y));
+			 P2.addElement(P.elementAt(hAt));
+			 P2.addElement(r);
 
-			 pointExt h = new pointExt(P.elementAt(hAt).x, P.elementAt(hAt).y);
+			 Point h = P.elementAt(hAt);
 
 			 tempLns.addElement(new Line(l, h));
 			 tempLns.addElement(new Line(h, r));
@@ -273,9 +273,9 @@ public class ConvexHull {
 	  * the point we are lokking for.
 	  * Return the index of this point in the Vector/
 	  */
-	 public synchronized int splitAt(Vector<pointExt> P, pointExt l, pointExt r) {
+	 public synchronized int splitAt(Vector<Point> P, Point l, Point r) {
 		 double    maxDist = 0;
-		 Line newLn = new Line((pointExt) l, (pointExt) r);
+		 Line newLn = new Line(l, r);
 
 		 int x3 = 0, y3 = 0;
 		 double distance = 0;
@@ -284,10 +284,10 @@ public class ConvexHull {
 		 for (int i = 0; i < (P.size() - 2); i++) {
 			 if (newLn.slopeUndefine) {
 				 x3 = l.x;
-				 y3 = (P.elementAt(i)).y;
+				 y3 = P.elementAt(i).y;
 			 } else {
 				 if (r.y == l.y) {
-					 x3 = (P.elementAt(i)).x;
+					 x3 = P.elementAt(i).x;
 					 y3 = l.y;
 				 } else {
 					 x3 = (int) (((P.elementAt(i).x + newLn.slope *
@@ -308,25 +308,16 @@ public class ConvexHull {
 		 return farPt;
 	 }
 	 
-	 class pointExt extends Point {
-
-			private static final long serialVersionUID = 7631796596188612578L;
-
-			public pointExt(int x, int y) {
-				super(x, y);
-			}
-		}
-
-		class Line {
-			pointExt point1;
-			pointExt point2;
+	 class Line {
+			Point point1;
+			Point point2;
 			float    slope;
 			boolean  slopeUndefine;
 
 			/**
 			 * Line constructor.
 			 */
-			public Line(pointExt p1, pointExt p2) {
+			public Line(Point p1, Point p2) {
 				point1 = p1;
 				point2 = p2;
 				if (p1.x == p2.x)
@@ -344,7 +335,7 @@ public class ConvexHull {
 			 * Given a Check point and determine if this check point is lying on the
 			 * left side or right side of the first point of the line.
 			 */
-			public boolean onLeft(pointExt chkpt) {
+			public boolean onLeft(Point chkpt) {
 				if (this.slopeUndefine) {
 					if (chkpt.x < point1.x) return true;
 					else {
