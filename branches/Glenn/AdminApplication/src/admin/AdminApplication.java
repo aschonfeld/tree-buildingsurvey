@@ -303,9 +303,8 @@ public class AdminApplication extends JFrame {
 			Graph thisGraph = studentNameToTree.remove(key);
 
 			//might as well build these lists now and get it done
-
-			thisGraph.buildDescendantList();
-			thisGraph.buildAncestorList();
+			
+			thisGraph.initRelations();
 
 			//put it in the arraylist
 
