@@ -19,7 +19,8 @@ public class StudentDataTable extends JPanel {
         super(new BorderLayout());
 
         String[] columnNames = { "Name", 
-        						 "Contains loop", 
+        						 "Branches", 
+									"Labelled",
         						 "All organism nodes terminal", 
         						 "Includes all organisms",
 								 "Single Common Ancestor",
@@ -34,14 +35,15 @@ public class StudentDataTable extends JPanel {
         for(Graph graph : AdminApplication.graphs) {
 				String studentName = graph.getStudentName();
         	tableData[row][0] = studentName;
-        	tableData[row][1] = graph.containsCycle();
-        	tableData[row][2] = graph.allOrganismsTerminal();
-        	tableData[row][3] = graph.includesAllOrganisms();
-        	tableData[row][4] = graph.hasSingleCommonAncestor();
-        	tableData[row][5] = graph.groupingInvertebrates();
-        	tableData[row][6] = graph.groupingVertebrates();
-        	tableData[row][7] = graph.groupingMammals();
-        	tableData[row][8] = graph.groupingNonmammals();	
+        	tableData[row][1] = graph.hasBranches();
+        	tableData[row][2] = graph.groupsAreLabelled();
+        	tableData[row][3] = graph.allOrganismsTerminal();
+        	tableData[row][4] = graph.includesAllOrganisms();
+        	tableData[row][5] = graph.hasSingleCommonAncestor();
+        	tableData[row][6] = graph.groupingInvertebrates();
+        	tableData[row][7] = graph.groupingVertebrates();
+        	tableData[row][8] = graph.groupingMammals();
+        	tableData[row][9] = graph.groupingNonmammals();	
         	row++;
         }
         table = new JTable(tableData, columnNames);

@@ -12,7 +12,10 @@ public class Vertex implements Renderable {
     private boolean error = false;
     private Mark mark = Mark.WHITE;
     private ArrayList<Vertex> ancestors;
+    private ArrayList<Vertex> parents;
+    private ArrayList<Vertex> children;
 	private ArrayList<Vertex> descendants;
+	private int direction = 0;
 	private int indexInGraph = -1;
 	public boolean visited = false;
 
@@ -26,7 +29,9 @@ public class Vertex implements Renderable {
     	toVertices = new ArrayList<Vertex>();
     	fromVertices = new ArrayList<Vertex>();
 		ancestors = new ArrayList<Vertex>();
+		parents = new ArrayList<Vertex>();
 		descendants = new ArrayList<Vertex>();
+		children = new ArrayList<Vertex>();
    }
    
 
@@ -118,7 +123,29 @@ public class Vertex implements Renderable {
     	}
     	return returnVal;
     }
-    
+
+	public int direction()
+	{
+		if (isTerminal(true))
+		{
+			direction += fromVertices.size();
+			direction -= toVertices.size();
+		} 
+		return direction;
+	}   
+	
+	public void invertGraph()
+	// if graph is upside-down, swap ancestors and descendants
+	{
+		ArrayList <Vertex> tmp = ancestors;
+		ancestors = descendants;
+		descendants = tmp;
+
+		tmp = children;
+		children = parents;
+		parents = tmp;
+		
+	}
 
 /***************************************
 * used for cycle detection algorithm   *
@@ -249,6 +276,11 @@ public class Vertex implements Renderable {
 		if (info.getName()!=null) return info.getName();
 		return (new String("I" + indexInGraph));
 	}
+
+	public boolean hasName()
+	{
+		return info.getName().length() > 0;
+	}
 	
 	public VertexInfo.VertexType getType(){
 		return info.getVertexType();
@@ -263,6 +295,16 @@ public class Vertex implements Renderable {
 
 	public int getIndex() {
 		return indexInGraph;
+	}
+
+	public ArrayList<Vertex> getChildren()
+	{
+		return children;
+	}
+	
+	public ArrayList<Vertex> getParents()
+	{
+		return parents;
 	}
 
 }

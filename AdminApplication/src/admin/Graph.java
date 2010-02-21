@@ -14,11 +14,15 @@ import java.util.TreeMap;
 public class Graph implements Renderable {
 	
 	private ArrayList<Vertex> vertices;
+	private ArrayList<Vertex> organisms;
 	private ArrayList<Edge> edges;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
 	private boolean allOrgsInTree;
+	private boolean hasBranches = false;
 	private String studentName;
+	private boolean labelled = false;
+	private int graphDirection = 0;
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
 	private String[] pathIndexNames = null;
 	private int unconnected = 99;
@@ -26,6 +30,7 @@ public class Graph implements Renderable {
 	Graph(String studentName) {
 		this.studentName=studentName;
 		vertices = new ArrayList<Vertex>();
+		organisms = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
 	}
@@ -36,10 +41,8 @@ public class Graph implements Renderable {
 
 	public boolean allOrganismsTerminal()	
 	{
-		for(Vertex v: vertices) {
-			if(v.getType() == VertexInfo.VertexType.ORGANISM) {
+		for(Vertex v: organisms) {
 				if(!v.isTerminal(directional)) return false;
-			}
 		}
 		return true;
 	}
@@ -52,7 +55,7 @@ public class Graph implements Renderable {
 			ArrayList <Vertex> checklist = new ArrayList<Vertex>();
 			checklist.addAll(vertices);
 			checklist.remove(v);
-			if ( (v.getFromVertices().size() == 0)  &&
+			if ( (v.getParents().size() == 0)  &&
 				  (v.getDescendants().containsAll(checklist)) )
 			{		
 				commonAncestors++;
@@ -63,7 +66,7 @@ public class Graph implements Renderable {
 
 	public boolean groupsAreLabelled()
 	{
-		return true;
+		return labelled;
 	}
 
     public boolean includesAllOrganisms() {
@@ -81,7 +84,8 @@ public class Graph implements Renderable {
 
 	public boolean hasBranches()
 	{
-		return true;
+		checkForBranches();
+		return hasBranches; 
 	}
 
 	public int hierarchy()
@@ -94,31 +98,50 @@ public class Graph implements Renderable {
 	// grouping < 1.0 means worse than random, grouping > 1.0 means better than random
 	public float groupingVertebrates()
 	{
-		//return 2/3;
 		calulateOrganismPathLengths();
 		return calcAverage(InvToVert) / calcAverage(VertToVert);
 	}
 
 	public float groupingInvertebrates()
 	{
-		//return 1/2;
 		calulateOrganismPathLengths();
 		return calcAverage(InvToVert) / calcAverage(InvToInv);
 	}
 
 	public float groupingMammals()
 	{	
-		//return 4/5;
 		calulateOrganismPathLengths();
 		return calcAverage(MammalToNMV) / calcAverage(MammalToMammal);
 	}
 
 	public float groupingNonmammals()
 	{
-		//return 7/8;
 		calulateOrganismPathLengths();
 		return calcAverage(MammalToNMV) / calcAverage(NMVToNMV);
 	}
+
+
+
+/*********************
+* Check for branches *
+*********************/
+
+	public void checkForBranches()
+	{
+		for (Vertex v:vertices)
+		{
+			if (v.getFromVertices().size() > 1 ||
+				 v.getToVertices().size() > 1 )
+			hasBranches = true;
+		}
+	}
+
+/******************************************************
+* Alternate Grouping detection                        *
+* Find least node containing 50%+ of group under test *
+* Return percentage of group under this node          * 
+******************************************************/
+
 
 
 /******************
@@ -151,6 +174,13 @@ public class Graph implements Renderable {
 * Construct ancestor/descendant lists  *
 * (for single common ancestor)         *
 ***************************************/
+ 	public void initRelations()
+	{
+		buildDescendantList();
+		buildAncestorList();
+		setGraphDirection();	
+	}
+
 	public void buildDescendantList(Vertex v)
 	{
 		if (v.visited) return;
@@ -468,9 +498,54 @@ public class Graph implements Renderable {
 	public void addVertex(int id, Vertex v) {
 		v.setIndex(vertices.size());
 		vertices.add(v);
+		if(v.getType() == VertexInfo.VertexType.ORGANISM) 
+		{
+			organisms.add(v);
+		} else if (v.getType() ==VertexInfo.VertexType.EMPTY) 
+		{	
+			if (v.hasName())
+				labelled=true;
+		}
 		idToVertex.put(new Integer(id), v);
 	}
 	
+
+	public void setGraphDirection()
+	{
+		//partial- this only works if all organisms are terminal
+		//and assumes that consistency there will be reflected elsewhere
+		//This will have to be repaired, but will work for trial purposes. 
+
+		//Direction is 1 if arrows point from root to leaf, -1 if from
+		//leaves to root, 0 if undefined.		
+
+
+		if (allOrganismsTerminal())
+		{
+			for (Vertex v: organisms)
+			{
+				graphDirection+= v.direction();
+			}
+			if (Math.abs(graphDirection) == organisms.size() &&
+						organisms.size() != 0)
+			{
+				graphDirection/=organisms.size();
+				if (graphDirection < 0)
+				{
+					for (Vertex v: vertices)
+						v.invertGraph();
+					System.out.println("Inverted "+ studentName);
+				}
+
+			} else {
+				graphDirection = 0;  //we haven't got a direction yet
+			}
+		}
+		
+	
+			
+				
+	}
 	public void addEdge(Edge e) {
 		if((e.getV1() == null) || (e.getV2() == null)) {
 			System.out.println("Error loading tree: " + studentName);
@@ -481,7 +556,12 @@ public class Graph implements Renderable {
 		e.getV2().addFrom(e.getV1());
 	}
 
-/* Deprecated, keep for now
+}
+
+
+
+
+/* Deprecated, will probably be removed soon
 	public void	printReport()
 	{
 		System.out.println("------------ \nNext Graph:\n------------");
@@ -512,4 +592,4 @@ public class Graph implements Renderable {
 	}
 */
 	
-}
+
