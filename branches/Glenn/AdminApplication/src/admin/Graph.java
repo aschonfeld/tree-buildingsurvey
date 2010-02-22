@@ -477,6 +477,20 @@ public class Graph implements Renderable {
 		}
 		return new Point(minX - 5, minY - 40);
 	}
+	
+	public Point getLowerRight(Graphics g) {
+		int maxX = 0;
+		int maxY = 0;
+		for(Vertex v: vertices) {
+			int x = v.getLowerRight(g).x;
+			int y = v.getLowerRight(g).y;
+			if(x > maxX) maxX = x;
+			if(y > maxY) maxY = y;
+		}
+		maxX -= getUpperLeft().x;
+		maxY -= getUpperLeft().y;
+		return new Point(maxX, maxY);
+	}
 
 	public int[][] getShortestPaths() {
 		if(path == null) {

@@ -97,6 +97,13 @@ public class AdminApplication extends JFrame {
 		String studentName = graph.getStudentName();
     	g.setColor(Color.white);
     	g.drawString(studentName, 5, 20);
+    	Point size = graph.getLowerRight(g);
+    	Dimension newSize = new Dimension(size.x, size.y);
+    	treeView.setPreferredSize(newSize);
+    	treeView.scrollRectToVisible(new Rectangle(0, 0, size.x, size.y));
+    	treeView.revalidate();
+    	treeView.repaint();
+    	//System.out.println(size);
     	graph.render(g, new Point(0,0));
     }
     
