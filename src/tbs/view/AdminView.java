@@ -41,12 +41,10 @@ public class AdminView extends TBSView {
 	private boolean hasStudentScroll = false;
 	private JScrollBar studentBar;
 	private int studentYOffset = 0;
-
+	
 	public AdminView(Graphics2D g2, AdminModel m) {
 		super(true, m);
 		model = m;
-		setLayout(new BorderLayout());
-		add(getVerticalBar(), BorderLayout.EAST);
 		int studentBarMax = TBSGraphics.studentNodeHeight * (model.getStudents().size()-1);
 		studentBarMax += ((model.getStudents().size()-1) * TBSGraphics.ySpacing);
 		if(studentBarMax > model.getApplet().getHeight()){
@@ -115,8 +113,11 @@ public class AdminView extends TBSView {
 	}
 	
 	public void renderElements(Graphics2D g2) {
+		int maxPosition = 0;
 		for(ModelElement m : model.inTreeElements()){
 			if(m instanceof Node){
+				if(((Node) m).getRectangle().getMaxX() > maxPosition)
+					maxPosition = (int) ((Node)m).getRectangle().getMaxX();
 				if(m instanceof OrganismNode)
 						renderOrganismNode(g2, (OrganismNode) m);
 				else
@@ -124,6 +125,12 @@ public class AdminView extends TBSView {
 			}else
 				renderConnection(g2, TBSUtils.getConnectionBounds(((Connection) m).getFrom(), ((Connection) m).getTo()), TBSGraphics.connectionColor);
 		}
+		if(maxPosition > (model.getApplet().getWidth() - getVerticalBar().getWidth())){
+			getHorizontalBar().setVisibleAmount(model.getApplet().getWidth() - getVerticalBar().getWidth());
+			getHorizontalBar().setMaximum(maxPosition);
+			getHorizontalBar().setVisible(true);
+		}else
+			getHorizontalBar().setVisible(false);
 		renderTooltip(g2);
 	}
 

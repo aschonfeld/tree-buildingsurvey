@@ -55,6 +55,8 @@ public class AdminController extends TBSController
 		if(e.getKeyCode() == KeyEvent.VK_DOWN){
 			if(index < students.size()-1){
 				model.changeSavedTree(index+1);
+				view.getHorizontalBar().setValue(0);
+				view.setXOffset(0);
 				boolean moveBar = ((model.getStudent().getAnchorPoint().y + TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing) - view.getStudentYOffset()) > model.getApplet().getHeight();
 				if(moveBar)
 					view.getStudentBar().setValue(view.getStudentBar().getValue() + view.getStudentBar().getBlockIncrement());
@@ -62,6 +64,8 @@ public class AdminController extends TBSController
 		}else if(e.getKeyCode() == KeyEvent.VK_UP){
 			if(index > 0){
 				model.changeSavedTree(index-1);
+				view.getHorizontalBar().setValue(0);
+				view.setXOffset(0);
 				boolean moveBar = (model.getStudent().getAnchorPoint().y - view.getStudentYOffset()) < 0;
 				if(moveBar)
 					view.getStudentBar().setValue(view.getStudentBar().getValue() - view.getStudentBar().getBlockIncrement());
@@ -175,17 +179,7 @@ public class AdminController extends TBSController
 			return;
 		setButtonClicked(view.getButtons().get(buttonIndex));
 		System.out.println(getButtonClicked().toString());
-		switch (getButtonClicked()) {
-		case TREE:
-			model.clearPrompt();
-			break;
-		case OPEN_RESPONSE:
-			model.questionReview();
-			break;
-		case ANALYSIS:
-			model.analyze();
-			break;
-		}
+		model.viewPrompt(getButtonClicked());
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }	
     
@@ -194,6 +188,8 @@ public class AdminController extends TBSController
 		if(studentIndex >= model.getStudents().size())
 			return;
 		model.changeSavedTree(studentIndex);
+		view.getHorizontalBar().setValue(0);
+		view.setXOffset(0);
 		view.setAppletCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }

@@ -12,14 +12,16 @@ public class OrganismNode extends Node
 {
 	private BufferedImage img;
 	private String imgFileName;
+	private String organismType;
 	private Point defaultPoint;
 	private int stringWidth;
 	private int imageStartX = -1;
 	private int stringAreaLeftX = -1;
 
-	public OrganismNode(int id, String name, Point anchorPoint, BufferedImage i, int stringWidth) 
+	public OrganismNode(int id, String name, String organismType, Point anchorPoint, BufferedImage i, int stringWidth) 
 	{
 		super(id, name);
+		this.organismType = organismType;
 		img = i;
 		defaultPoint = new Point();
 		//This is crude and brittle; should be changed to pass image file name in setup
@@ -77,6 +79,10 @@ public class OrganismNode extends Node
 
 	public int getStringWidth() {
 		return stringWidth;
+	}
+
+	public String getOrganismType() {
+		return organismType;
 	}
 
 	public String toString(){
