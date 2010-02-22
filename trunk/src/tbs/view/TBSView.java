@@ -1,6 +1,7 @@
 package tbs.view;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -44,6 +45,8 @@ public abstract class TBSView extends JComponent implements Printable{
 	private TBSModel model;
 	private JScrollBar verticalBar;
 	private int yOffset = 0; // start of viewable tree area
+	private JScrollBar horizontalBar;
+	private int xOffset = 0;
 	private List<TBSButtonType> buttons;
 	private Cursor cursor;
 
@@ -61,7 +64,12 @@ public abstract class TBSView extends JComponent implements Printable{
 	public TBSView(boolean admin, TBSModel model){
 		this.model = model;
 		buttons = TBSButtonType.getButtons(admin);
+		setLayout(new BorderLayout());
 		verticalBar = new JScrollBar(JScrollBar.VERTICAL, 0, 100, 0, 200);
+		add(verticalBar, BorderLayout.EAST);
+		horizontalBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, 0, 0);
+		horizontalBar.setVisible(false);
+		add(horizontalBar, BorderLayout.SOUTH);
 		timer = new Timer(1000, hider);
 		cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 	}
@@ -87,6 +95,19 @@ public abstract class TBSView extends JComponent implements Printable{
 	// sets the start of viewable tree area
 	public void setYOffset(int yo) {
 		yOffset = yo;
+	}
+	
+	public JScrollBar getHorizontalBar() {
+		return horizontalBar;
+	}
+
+	public int getXOffset() {
+		return xOffset;
+	}
+
+	// sets the start of viewable tree area
+	public void setXOffset(int xo) {
+		xOffset = xo;
 	}
 
 	public void updateTooltip(String name, Point location){
@@ -134,7 +155,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 
 	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
-		g2.drawImage(on.getImage(), on.getX(), on.getY() - yOffset, null);
+		g2.drawImage(on.getImage(), on.getX() - xOffset, on.getY() - yOffset, null);
 	}
 	
 	public void renderOrganismNodeInfo(Graphics2D g2, OrganismNode on) {
@@ -148,7 +169,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderEmptyNode(Graphics2D g2, EmptyNode en){
 		if(!en.isBeingLabeled()){
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			g2.fill(new Rectangle(en.getX(), en.getY() - yOffset, en.getWidth(), en.getHeight()));
+			g2.fill(new Rectangle(en.getX() - xOffset, en.getY() - yOffset, en.getWidth(), en.getHeight()));
 			TBSGraphics.drawCenteredString(g2, en.getName(), en.getX(),
 					en.getY() - yOffset, en.getWidth(), en.getHeight());
 		}
@@ -185,7 +206,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 	
 	public void renderConnection(Graphics2D g2, Line2D line, Color color){
-		line.setLine(line.getX1(), line.getY1() - yOffset, line.getX2(), line.getY2() - yOffset);
+		line.setLine(line.getX1() - xOffset, line.getY1() - yOffset, line.getX2() - xOffset, line.getY2() - yOffset);
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(color);
 		g2.draw(line);
@@ -199,6 +220,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderTooltip(Graphics2D g2){
 		if(tooltipString != null){
 			int xVal = tooltipLocation.x;
+			xVal -= xOffset;
 			int yVal = tooltipLocation.y;
 			yVal -= yOffset;
 			g2.setFont(TBSGraphics.tooltipFont);
@@ -242,10 +264,10 @@ public abstract class TBSView extends JComponent implements Printable{
 				renderElements(g2);
 			prompt.paintComponent(g2);
 		}else{
-			renderButtons(g2);
-			renderStudents(g2);
 			renderScreenString(g2);
 			renderElements(g2);
+			renderButtons(g2);
+			renderStudents(g2);
 		}
 		setCursor(getAppletCursor());
 	}

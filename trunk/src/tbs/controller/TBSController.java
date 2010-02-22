@@ -40,6 +40,11 @@ public abstract class TBSController implements MouseListener, MouseMotionListene
         view.setYOffset((e.getValue() * view.getHeight()) / 100);
       }
     });
+    this.view.getHorizontalBar().addAdjustmentListener(new AdjustmentListener() {
+    	public void adjustmentValueChanged(AdjustmentEvent e) {
+    		view.setXOffset((e.getValue() * view.getHeight()) / 100);
+    	}
+    });
     buttonClicked = defaultButton;
   }
 
@@ -48,11 +53,14 @@ public abstract class TBSController implements MouseListener, MouseMotionListene
    */
   public Node elementMouseIsHoveringOver(int x, int y){
     int yOffset = 0;
-    if(x > TBSGraphics.LINE_OF_DEATH)
-      yOffset = view.getYOffset();      
+    int xOffset = 0;
+    if(x > TBSGraphics.LINE_OF_DEATH){
+      yOffset = view.getYOffset();  
+      xOffset = view.getXOffset();
+    }
     for (ModelElement me : model.inTreeElements()) {
-      if(me instanceof Node && me.contains(x, y + yOffset))
-        return (Node) me;
+    	if(me instanceof Node && me.contains(x + xOffset, y + yOffset))
+    		return (Node) me;
     }
     return null;
   }

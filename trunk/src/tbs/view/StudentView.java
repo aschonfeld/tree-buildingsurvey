@@ -41,8 +41,6 @@ public class StudentView extends TBSView {
 		model = m;
 		connInProgress = null;
 		screenString = null; 
-		setLayout(new BorderLayout());
-		add(getVerticalBar(), BorderLayout.EAST);
 		positionButtons(g2);
 		positionModelElements(g2);
 
