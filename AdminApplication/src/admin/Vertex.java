@@ -243,6 +243,15 @@ public class Vertex implements Renderable {
 		return upperLeft;
 	}
 	
+	public Point getLowerRight(Graphics g) {
+		g2 = (Graphics2D) g;
+		upperLeftAdj = new Point(upperLeft.x, upperLeft.y);
+		Rectangle bounds = getVertexBounds();
+		int x = bounds.x + bounds.width;
+		int y = bounds.y + bounds.height;
+		return new Point(x, y);
+	}
+	
 	public Rectangle getVertexBounds(Graphics2D g2D, Point offset) {
 		Point tempUpperLeftAdj = new Point(upperLeft.x - offset.x, 
 				upperLeft.y - offset.y);
