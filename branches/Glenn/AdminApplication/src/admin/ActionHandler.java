@@ -17,7 +17,6 @@ public class ActionHandler extends JPanel {
 	
 	public Action exitAction;
 	public Action printAction;
-	public Action nextAction;
 	public Action hullAction;
 	public AdminApplication parent;
 	
@@ -63,26 +62,11 @@ public class ActionHandler extends JPanel {
 			parent.checkHullCollisions();
 		}
 	}
-	
-	public class NextAction extends AbstractAction {
-
-		private static final long serialVersionUID = 1740545444294704279L;
-
-		public NextAction() {
-			super("Next Graph");
-		}
-
-		//@0verride
-		public void actionPerformed(ActionEvent arg0) {
-			parent.nextGraph();
-		}
-	}
-	
+		
     public ActionHandler() {
         exitAction = new ExitAction();
         hullAction = new HullAction();
         printAction = new PrintAction();
-        nextAction = new NextAction();
     }
     
     public void setParent(AdminApplication parent) {
@@ -94,7 +78,6 @@ public class ActionHandler extends JPanel {
         JMenu fileMenu;
         JMenuItem printItem;
         JMenuItem hullItem;
-        JMenuItem nextItem;
         JMenuItem exitItem;
         
         //Create the menu bar.
@@ -105,11 +88,9 @@ public class ActionHandler extends JPanel {
         //a group of JMenuItems
         printItem = new JMenuItem(printAction);
         hullItem = new JMenuItem(hullAction);
-        nextItem = new JMenuItem(nextAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
         fileMenu.add(hullItem);
-        fileMenu.add(nextItem);
         fileMenu.add(exitItem);
         
 

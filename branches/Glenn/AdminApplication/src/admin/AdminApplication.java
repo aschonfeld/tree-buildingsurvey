@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 public class AdminApplication extends JFrame {
@@ -15,9 +16,8 @@ public class AdminApplication extends JFrame {
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
 	private static StudentDataTable studentTable = null;
-	private static ShortestPathTable pathTable = null;
 	private static JSplitPane mainSplitPane;
-	private static JSplitPane leftSplitPane;
+	private static JScrollPane treePane;
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
@@ -25,25 +25,23 @@ public class AdminApplication extends JFrame {
 	private static int currentGraphIndex = 0;
 	
     AdminApplication() {
-		super("AdminApplication");
+    	super("AdminApplication");
     	actionHandler = new ActionHandler();
     	treeView = new TreeView();
     	treeController = new TreeController();
     	initCommonVertices();
     	loadTreesFromDirectory();
     	loadTreesFromParamTags();
-		treeMapToArrayList();
-      treeView.setBackground(Color.black);
-      studentTable = new StudentDataTable();
-      pathTable = new ShortestPathTable();
-      leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-			studentTable, pathTable);
-      mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
-			leftSplitPane, treeView);
-      add(mainSplitPane);
-      addMouseListener(treeController);
-      setPreferredSize(new Dimension(928, 762));
-      setJMenuBar(actionHandler.createMenuBar());
+    	treeMapToArrayList();
+    	treeView.setBackground(Color.black);
+    	treePane = new JScrollPane(treeView);
+    	studentTable = new StudentDataTable();
+    	mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+				studentTable, treePane);
+		add(mainSplitPane);
+		addMouseListener(treeController);
+		setPreferredSize(new Dimension(928, 762));
+		setJMenuBar(actionHandler.createMenuBar());
     }
     
     	/**
@@ -74,21 +72,12 @@ public class AdminApplication extends JFrame {
     public static void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
-	    leftSplitPane.remove(pathTable);
-	    pathTable = new ShortestPathTable();
-	    leftSplitPane.add(pathTable);
-	    leftSplitPane.revalidate();
+	    //leftSplitPane.remove(pathTable);
+	    //pathTable = new ShortestPathTable();
+	    //leftSplitPane.add(pathTable);
+	    //leftSplitPane.revalidate();
 	    treeView.paintComponent();
     }
-   
-
-//do we want to get rid of this? If so, let's get rid of the call in 
-//ActionHandler, too 
-    public void nextGraph() {
-		currentGraphIndex++;
-		currentGraphIndex %= graphs.size();
-		treeView.paintComponent();
-	}
 
     public void printGraphInfo() {
     	System.out.println(graphs.get(currentGraphIndex).getInfo());
