@@ -227,6 +227,16 @@ public class TBSGraphics {
 	public static int buttonsHeight = 0;
 
 	/**
+	 * Width of hull buttons. Set in [TBSModel.???]
+	 */ 
+	public static int hullButtonWidth = 0;
+	
+	/**
+	 * Height of hull buttons. Set in  [TBSModel.???]
+	 */
+	public static int hullButtonHeight = 0;
+
+	/**
 	 * Width of buttons. Set in [TBSModel.???]
 	 */ 
 	public static int buttonsWidth = 0;

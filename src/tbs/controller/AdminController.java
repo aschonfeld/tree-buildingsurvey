@@ -5,6 +5,7 @@ package tbs.controller;
 
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -92,7 +93,10 @@ public class AdminController extends TBSController
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
 		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
-        
+        int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
+        Rectangle hullButtons = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + view.getVerticalBar().getWidth()),
+				model.getApplet().getHeight() - (view.getHorizontalBar().getHeight() + totalHullButtonsHeight),
+				TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
 		if (x > scrollWidth && x < (studentButtonWidth+scrollWidth)){
 			int studentIndex = (y + view.getStudentYOffset()) / (TBSGraphics.studentNodeHeight+TBSGraphics.ySpacing);
 			if(studentIndex < model.getStudents().size())
@@ -105,6 +109,8 @@ public class AdminController extends TBSController
 				if(buttonIndex < OpenQuestionButtonType.values().length)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			}
+		} else if(hullButtons.contains(x, y)){
+			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.isTooltipRunning()){
 			Node n = elementMouseIsHoveringOver(x,y);
 			if(n != null && n instanceof OrganismNode){
@@ -144,6 +150,17 @@ public class AdminController extends TBSController
 				return;
 			}
 		}
+		
+		int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
+		Rectangle hullButtons = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + view.getVerticalBar().getWidth()),
+				model.getApplet().getHeight() - (view.getHorizontalBar().getHeight() + totalHullButtonsHeight),
+				TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+		if(hullButtons.contains(x, y)){
+			int hullIndex = (y - (hullButtons.y - hullButtons.height)) / TBSGraphics.hullButtonHeight;
+			model.getHulls().get(hullIndex-model.getHulls().size()).toggleHull();
+			return;
+		}
+				
 		
 		Prompt prompt = model.getPrompt();
 		if(prompt != null) {

@@ -1,4 +1,5 @@
 package tbs.graphanalysis;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.LinkedList;
@@ -38,14 +39,20 @@ public class ConvexHull {
 	 */
 	private String hullName;
 	
+	private Boolean displayHull;
+	
+	private Color color;
+	
 	/**
 	 * The point we are comparing with the chkLn
 	 */
 	private Point currPt = new Point();
 	
-	public ConvexHull(int algor, List<Point> points, String hullName) {
+	public ConvexHull(int algor, List<Point> points, String hullName, Color color) {
 		this.points = points;
 		this.hullName = hullName;
+		displayHull = false;
+		this.color = color;
 		hullShape = new Polygon();
 		hull = new LinkedList<Line>();
 		switch (algor) {
@@ -68,6 +75,12 @@ public class ConvexHull {
 	public Polygon getHullShape() {return hullShape;}
 	public List<Line> getHull() {return hull;}
 	public String getHullName() {return hullName;}
+	public Boolean getDisplayHull() {return displayHull;}
+	public void setDisplayHull(Boolean displayHull) {this.displayHull = displayHull;}
+	public void toggleHull(){this.displayHull = !displayHull;}
+	public Color getColor() {return color;}
+	public String toString(){return hullName + " \u2713";}
+	 
 
 	/**
 	  * Brute Force Algorithm implementation
