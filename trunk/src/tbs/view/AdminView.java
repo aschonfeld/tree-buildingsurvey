@@ -3,11 +3,13 @@
 
 package tbs.view;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Line2D;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,6 +17,7 @@ import javax.swing.JScrollBar;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
+import tbs.graphanalysis.ConvexHull;
 import tbs.model.AdminModel;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
@@ -80,6 +83,7 @@ public class AdminView extends TBSView {
 	 */
 	public void renderButtons(Graphics2D g2)
 	{
+		renderGroupSelection(g2);
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
 		if(buttonClicked == null || model.getPrompt() == null)
 			buttonClicked = TBSButtonType.TREE;
@@ -168,6 +172,48 @@ public class AdminView extends TBSView {
 				y += TBSGraphics.textHeight;
 			}
 		}
+	}
+	
+	public void renderGroupSelection(Graphics2D g2){
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,model.getHulls());
+		TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
+		TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+		Rectangle hullButton = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + getVerticalBar().getWidth()),
+				model.getApplet().getHeight() - (getHorizontalBar().getHeight() + TBSGraphics.hullButtonHeight),
+				TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
+		ConvexHull ch;
+		for(int i=(model.getHulls().size()-1);i>=0;i--){
+			ch=model.getHulls().get(i);
+			//Render Button
+			g2.setColor(ch.getColor());
+			g2.fill(hullButton);
+			TBSGraphics.drawCenteredString(g2,
+					ch.getHullName() + (ch.getDisplayHull() ? " \u2713" : ""),
+					hullButton.x, hullButton.y, hullButton.width, hullButton.height);
+			if(ch.getDisplayHull()){
+				//Render Hull
+				g2.setStroke(new BasicStroke(3));
+				g2.setColor(ch.getColor());
+				for(ConvexHull.Line l : ch.getHull()){
+					g2.draw(new Line2D.Double(l.getPoint1().x - getXOffset(),
+							l.getPoint1().y - getYOffset(),
+							l.getPoint2().x - getXOffset(),
+							l.getPoint2().y - getYOffset()));
+				}
+				g2.setStroke(new BasicStroke());
+			}
+			g2.setColor(Color.BLACK);
+			g2.draw(hullButton);
+			hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
+		}
+		TBSGraphics.drawCenteredString(g2,
+				"Area",
+				hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
+		hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
+		TBSGraphics.drawCenteredString(g2,
+				"View Group",
+				hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
+		hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
 	}
 
 	/**
