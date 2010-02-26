@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 
 import admin.dao.AdminJdbcDao;
 
@@ -29,14 +28,12 @@ public class AdminApplication extends JFrame {
 	private static ActionHandler actionHandler = null;
 	private static TreeView treeView = null;
 	private static TreeController treeController = null;
-	private static StudentDataTable studentTable = null;
-	private static JSplitPane mainSplitPane;
-	private static JScrollPane treePane;
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<VertexInfo> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
+	private static AdminMultiWindow parent;
 	
 	AdminApplication() {
     	super("AdminApplication");
@@ -53,12 +50,7 @@ public class AdminApplication extends JFrame {
 			loadTreesFromParamTags();
 		}
 		treeMapToArrayList();
-		treeView.setBackground(Color.black);
-		treePane = new JScrollPane(treeView);
-		studentTable = new StudentDataTable();
-		mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
-				studentTable, treePane);
-		add(mainSplitPane);
+		add(new JScrollPane(treeView));
 		addMouseListener(treeController);
 		setPreferredSize(new Dimension(928, 762));
 		setJMenuBar(actionHandler.createMenuBar());
@@ -70,12 +62,15 @@ public class AdminApplication extends JFrame {
 		*/
     private static void createAndShowGUI() {
         //Create and set up the window.
-    	AdminApplication frame = new AdminApplication();
-    	treeView.setParent(frame);
-    	actionHandler.setParent(frame);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+    	parent = new AdminMultiWindow();
+    	treeView.setParent(parent.adminApplicationFrame);
+    	actionHandler.setParent(parent.adminApplicationFrame);
+    	parent.adminApplicationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	parent.adminApplicationFrame.pack();
+    	parent.adminApplicationFrame.setVisible(true);
+    	parent.studentDataTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	parent.studentDataTableFrame.pack();
+    	parent.studentDataTableFrame.setVisible(true);
         
     }
 
@@ -235,9 +230,15 @@ public class AdminApplication extends JFrame {
     }
     
 	public static void loadTreesFromParamTags() {
+		BufferedWriter out = null;
 		try {
 			FileWriter ryt=new FileWriter("c:\\studentData.sql");
-			BufferedWriter out=new BufferedWriter(ryt);	
+			out = new BufferedWriter(ryt);
+		} catch (Exception e) {
+			e.printStackTrace();
+			out = null;
+		}
+		try {
 			StringBuffer sqlStatement;
 			String filePath = new String("trees/studentTrees");
 			BufferedReader reader = new BufferedReader(new 
@@ -304,11 +305,11 @@ public class AdminApplication extends JFrame {
 					graph.addEdge(new Edge(v1, v2));
 				}
 				studentNameToTree.put(studentName, graph);
-				out.write(sqlStatement.append("\n").toString());
+				if(out!= null) out.write(sqlStatement.append("\n").toString());
 				linein = reader.readLine();
 			}
 			reader.close();
-			out.close();
+			if(out != null) out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

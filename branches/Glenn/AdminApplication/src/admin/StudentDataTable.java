@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 
-public class StudentDataTable extends JPanel {
+public class StudentDataTable extends JFrame {
     /**
 	 * 
 	 */
@@ -16,8 +16,7 @@ public class StudentDataTable extends JPanel {
     ListSelectionModel listSelectionModel;
 
     public StudentDataTable() {
-        super(new BorderLayout());
-
+        super("TBS Student Data");
         String[] columnNames = { "Name", 
         						 "Branches", 
 									"Labelled",
@@ -52,8 +51,9 @@ public class StudentDataTable extends JPanel {
         table.setSelectionModel(listSelectionModel);
         JScrollPane tablePane = new JScrollPane(table);
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tablePane.setPreferredSize(new Dimension(420, 130));
+        tablePane.setSize(new Dimension(928, 762));
         add(tablePane);
+        setSize(new Dimension(928, 762));
     }
     
     class SharedListSelectionHandler implements ListSelectionListener {
