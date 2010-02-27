@@ -1,13 +1,19 @@
 #summary PLACEHOLDER: Developer's Guide: ModelElement.java
 
-= Introduction =
+= Summary =
 
-Documentation of ModelElement.java
+Superclass of [Node Nodes]([OrganismNode organisms] and [EmptyNode empty nodes]) and [Connection connections]. ModelElement comprises all of the 
+
+collidesWith(ModelElement e) must return true if this element overlaps with e. 
+
+contains(Point p) must return true if p lies within this element's boundaries. 
+
+dump() must return a string representing the vital attributes of a particular ModelElement. Implementation varies, see particular classes, but generally is of the form
+TYPE:ID#:NAME:X:Y:IN_TREE:To_Connections:From_Connections
+
+where In_Tree is a boolean indicating whether this element is "active" and "To_Connections" and From_Connections" are lists of nodes which this node connects to and which connect to this node. Connections are a special case, and have exactly one of each sort of connection and no location. "In_Tree" is only relevant for Organism Nodes, and may be factored out of this string, as we no longer dump inactive nodes. 
 
 
-= Details =
+Equals(Object o) reliably returns the correct results.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+See instantiating classes for particular details. 
