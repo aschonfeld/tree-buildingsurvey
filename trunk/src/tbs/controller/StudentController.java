@@ -158,7 +158,9 @@ public class StudentController extends TBSController
 		y = e.getY();
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		if(y < TBSGraphics.buttonsHeight) {
-			if(x >= TBSGraphics.questionButtonsStart){
+			if(x >= model.getApplet().getWidth()-(TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth()))
+				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+			else if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.questionButtonsWidth;
 				if(buttonIndex < 1)
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -187,9 +189,11 @@ public class StudentController extends TBSController
 					if(n instanceof OrganismNode){
 						if(TBSButtonType.LABEL.equals(getButtonClicked()))
 							c = DragSource.DefaultMoveNoDrop;
-						OrganismNode o = (OrganismNode) n;
-						view.updateTooltip(o.getName(),
-								new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
+						if(!view.getDisplayAllTooltips()){
+							OrganismNode o = (OrganismNode) n;
+							view.updateTooltip(o.getName(),
+									new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
+						}
 					}
 				}
 			}
@@ -249,7 +253,9 @@ public class StudentController extends TBSController
         previousY = y;
 		// if mouse is in button bar
 		if(y < TBSGraphics.buttonsHeight)  {
-			if(x >= TBSGraphics.questionButtonsStart)
+			if(x >= model.getApplet().getWidth()-(TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth()))
+				view.toggleDisplayAllTooltips();
+			else if(x >= TBSGraphics.questionButtonsStart)
 				handleMouseQuestionPressed(x, y);
 			handleMouseButtonPressed(x, y);
 		} else if (x > TBSGraphics.LINE_OF_DEATH)

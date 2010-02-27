@@ -90,10 +90,24 @@ public class StudentView extends TBSView {
 		TBSGraphics.drawCenteredString(g2, buttonString,
 				buttonRect.x, upperY, buttonRect.width, 0);
 		buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
+		
+		//Show All Names Button
+		buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.namesButtonWidth + getVerticalBar().getWidth()),
+				0,TBSGraphics.namesButtonWidth, TBSGraphics.buttonsHeight);
+		TBSGraphics.renderButtonBackground(g2, buttonRect, (prompt != null) && prompt instanceof WrittenQuestionPrompt);
+		g2.setColor(Color.gray);
+		g2.draw(buttonRect);
+		TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
+				buttonRect.x, upperY, buttonRect.width, 0);
 
 	}
 	
 	public void renderElements(Graphics2D g2) {
+		/*
+		 * Uncomment this line of code to start logging of 
+		 * model integrity
+		 * model.checkElementsIntegrity();
+		 */
 		renderUnselectedModelElements(g2);
 		//Immortal Branch Node
 		int stringAreaLeftX = TBSGraphics.emptyNodeLeftX + TBSGraphics.emptyNodeWidth + TBSGraphics.padding.width;
@@ -168,5 +182,8 @@ public class StudentView extends TBSView {
 
 		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
 		TBSGraphics.questionButtonsWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
+		
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
+		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
 	}
 }
