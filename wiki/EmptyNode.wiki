@@ -1,0 +1,10 @@
+#summary Developer's Guide: EmptyNode.java
+
+= Introduction =
+Empty Nodes (labelled "Branch Point" when running the applet) are user-created junction points used in creating the tree structure. The correct understanding of these objects is probably the most important factor in a student's success in building a tree. 
+
+Empty Nodes differ from [OrganismNode Organism Nodes] in that they can be created and  labelled by the student. They also have a generic appearance, rather than a distinct image file. 
+
+= Method Details =
+
+setAlteredWidth() is called to inform the Empty Node of its new horizontal dimension when it has been labelled. 
