@@ -230,19 +230,7 @@ public class AdminApplication extends JFrame {
     }
     
 	public static void loadTreesFromParamTags() {
-		BufferedWriter out = null;
 		try {
-<<<<<<< .mine
-=======
-			FileWriter ryt=new FileWriter("c:\\studentData.sql");
-			out = new BufferedWriter(ryt);
-		} catch (Exception e) {
-			e.printStackTrace();
-			out = null;
-		}
-		try {
-			StringBuffer sqlStatement;
->>>>>>> .r859
 			String filePath = new String("trees/studentTrees");
 			BufferedReader reader = new BufferedReader(new 
 					InputStreamReader(new FileInputStream(filePath)));
