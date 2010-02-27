@@ -14,6 +14,7 @@
     * [MeetingTwoMinutes 10/29/2009]
     * [MeetingOneMinutes 10/27/2009]
   * [VisionStatement Vision Statement]
+  * [TBSApplet Developer's Guide - in progress]
   * [BugPolicy Bug List Policy]
   * [Testing Info For Testers]
   * [TBSExperiment Scoring Parameters]
