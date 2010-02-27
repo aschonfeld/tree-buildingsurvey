@@ -5,8 +5,10 @@ package tbs.model;
 
 import java.awt.Point;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import tbs.TBSApplet;
 import tbs.TBSGraphics;
@@ -486,6 +488,23 @@ public abstract class TBSModel
 		for(ModelElement m : inTreeElements())
 			export.append(m.dump()).append("#");
 		return export.toString();
-
+	}
+	
+	public void checkElementsIntegrity(){
+		Set<Integer> ids = new HashSet<Integer>();
+		for(ModelElement element : elements){
+			if(!ids.add(element.getId()))
+				System.out.println("ID(" + element.getId() + ") OCCURS TWICE!!");
+			if(element instanceof Node){
+				for(Node n : ((Node) element).getConnectedTo()){
+					if(findIndexById(n.getId()) < 0)
+						System.out.println("Node(" + element.getId() + ") connected to Node(" + n.getId() + ") that doesn't exist!");
+				}
+				for(Node n : ((Node) element).getConnectedFrom()){
+					if(findIndexById(n.getId()) < 0)
+						System.out.println("Node(" + element.getId() + ") connected from Node(" + n.getId() + ") that doesn't exist!");
+				}
+			}
+		}
 	}
 }
