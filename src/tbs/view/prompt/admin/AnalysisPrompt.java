@@ -42,16 +42,23 @@ public class AnalysisPrompt extends Prompt
 	public void paintComponent(Graphics2D g2) {
 		setGraphics(g2);
 		if(analysisText.isEmpty()){
+			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
+					"1) All organism nodes are" + (model.getGraph().allOrganismsTerminal() ? " " : " not ") + "terminal.",
+					getWidth() - TBSGraphics.padding.width * 2));
+			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
+					"2) All organism nodes are" + (model.outOfTreeElements().isEmpty() ? " " : " not ") + "included.",
+					getWidth() - TBSGraphics.padding.width * 2));
 			if(model.getHullCollisions().isEmpty()){
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
-						"None of the groups of organisms collide with another group of organisms.",
+						"3) None of the groups of organisms collide with another group of organisms.",
 						getWidth() - TBSGraphics.padding.width * 2));
 			}else{
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
-						"There were the following collisions between organism groups:",
+						"3) There were the following collisions between organism groups:",
 						getWidth() - TBSGraphics.padding.width * 2));
 				analysisText.addAll(model.getHullCollisions());
 			}
+				
 		}
 		calculateValues(analysisText.size()+1, true, false);
 		drawBox();

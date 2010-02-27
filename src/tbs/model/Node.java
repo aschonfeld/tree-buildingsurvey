@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 import java.util.LinkedList;
 import java.util.List;
 
+import tbs.graphanalysis.Vertex;
+
 
 
 /**
@@ -179,11 +181,6 @@ public abstract class Node extends ModelElement implements Cloneable
 		return ret;
 	}
 
-//-------------------------------------------------
-// ---- Connection handling from here to end ------
-//-------------------------------------------------
-
-
 	public List<Node> getConnectedFrom() {
 		return connectedFrom;
 	}
@@ -267,4 +264,6 @@ public abstract class Node extends ModelElement implements Cloneable
 	
 	public abstract boolean isBeingLabeled();
 	public abstract void setBeingLabeled(boolean beingLabeled);
+	
+	public abstract Vertex convertToVertex();
 }	

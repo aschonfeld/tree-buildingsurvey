@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import tbs.TBSGraphics;
+import tbs.graphanalysis.Vertex;
+import tbs.graphanalysis.VertexInfo;
 
 public class OrganismNode extends Node
 {
@@ -85,5 +87,9 @@ public class OrganismNode extends Node
 	 */
 	public String toString(){
 		return getName() + " Node";
+	}
+
+	public Vertex convertToVertex() {
+		return new Vertex(new VertexInfo(getName(), organismType, img), getAnchorPoint());
 	}
 }

@@ -6,6 +6,8 @@ package tbs.model;
 import java.awt.Point;
 
 import tbs.TBSGraphics;
+import tbs.graphanalysis.Vertex;
+import tbs.graphanalysis.VertexInfo;
 
 
 /**
@@ -60,5 +62,9 @@ public class EmptyNode extends Node
 			return "Branch Node";
 		else
 			return getName() + " Node";
+	}
+
+	public Vertex convertToVertex() {
+		return new Vertex(new VertexInfo(getName()), getAnchorPoint());
 	}
 }

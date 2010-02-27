@@ -14,6 +14,9 @@ import java.util.Map;
 import tbs.TBSApplet;
 import tbs.TBSUtils;
 import tbs.graphanalysis.ConvexHull;
+import tbs.graphanalysis.Edge;
+import tbs.graphanalysis.Graph;
+import tbs.graphanalysis.Vertex;
 import tbs.model.admin.Student;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
@@ -29,6 +32,7 @@ public class AdminModel extends TBSModel
 	private List<Student> students;
 	private List<ConvexHull> hulls;
 	private List<String> hullCollisions;
+	private Graph graph;
 
 	public AdminModel(TBSApplet applet,	List<OrganismNode> organisms, List<Student> students) {
 		super(applet, organisms);
@@ -39,6 +43,7 @@ public class AdminModel extends TBSModel
 		if(!TBSUtils.isStringEmpty(tree)){
 			loadTree(tree);
 			calculateHullCollisions();
+			loadGraph();
 		}
 		writtenQuestionReviewPrompt = new WrittenQuestionReviewPrompt(this);
 		/*
@@ -62,6 +67,7 @@ public class AdminModel extends TBSModel
 			if(!TBSUtils.isStringEmpty(tree)){
 				loadTree(tree);
 				calculateHullCollisions();
+				loadGraph();
 			}
 			writtenQuestionReviewPrompt = null;
 			analysisPrompt = null;
@@ -128,4 +134,22 @@ public class AdminModel extends TBSModel
 
 	public List<ConvexHull> getHulls() {return hulls;}
 	public List<String> getHullCollisions() {return hullCollisions;}
+	
+	public void loadGraph(){
+		graph = new Graph(getStudent().getName());
+		List<Connection> connections = new LinkedList<Connection>();
+		for(ModelElement element: inTreeElements()){   //load vertices
+			if(element instanceof Node)
+				graph.addVertex(element.getId(), ((Node) element).convertToVertex());
+			else
+				connections.add((Connection) element);
+		}
+		for(Connection c : connections){
+			Vertex v1 = graph.getVertexByID(c.getFrom().getId());
+			Vertex v2 = graph.getVertexByID(c.getTo().getId());
+			graph.addEdge(new Edge(v1, v2));
+		}
+	}
+	
+	public Graph getGraph() {return graph;}
 }
