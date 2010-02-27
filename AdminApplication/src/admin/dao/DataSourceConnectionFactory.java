@@ -19,9 +19,9 @@ import java.sql.SQLException;
  */
 public class DataSourceConnectionFactory {
     public static final String CONN_DRIVER = "com.mysql.jdbc.Driver";
-    public static final String CONN_URL = "jdbc:mysql://localhost/trees";
-    public static final String CONN_UNAME = "treesurvey";
-    public static final String CONN_PWORD = "tr335urvey";
+    public static final String CONN_URL = "jdbc:mysql://localhost/";
+    public static final String CONN_UNAME = "root";
+    public static final String CONN_PWORD = "testpw";
     
     // allow only static access
     private DataSourceConnectionFactory() {}
@@ -60,11 +60,11 @@ public class DataSourceConnectionFactory {
      *                              <li>the data source is not found in cache, and is not found after the lookup process.</li>
      *                              </ul>
      */
-    public static Connection getConnection() throws Exception{
+    public static Connection getConnection(String database) throws Exception{
     	Connection conn = null;
     	try{
     		Class.forName(CONN_DRIVER).newInstance ();
-            conn = DriverManager.getConnection(CONN_URL, CONN_UNAME, CONN_PWORD);
+            conn = DriverManager.getConnection(CONN_URL + database, CONN_UNAME, CONN_PWORD);
             System.out.println("Database connection established");
     	}catch (Exception e){
             System.err.println(String.format("Cannot connect to server:%s", CONN_URL));

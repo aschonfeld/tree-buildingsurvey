@@ -82,16 +82,16 @@ public abstract class BaseJdbcDao {
      * @return a connection.
      * @throws SQLException if an error occurs while retrieving the connection.
      */
-    protected static Connection getConnection() throws Exception {
-        return DataSourceConnectionFactory.getConnection();
+    protected static Connection getConnection(String database) throws Exception {
+        return DataSourceConnectionFactory.getConnection(database);
     }
     
     /**
      * This is equivalent to calling the more verbose <code>executeQuery</code> method while passing
      * in a default connection instance and setting <code>closeConn</code> to <code>true</code>.
      */
-    protected static <T> List<T> executeQuery(String sql, ResultSetRowHandler<T> handler, InParam... params) throws Exception {
-        Connection conn = getConnection();
+    protected static <T> List<T> executeQuery(String database, String sql, ResultSetRowHandler<T> handler, InParam... params) throws Exception {
+        Connection conn = getConnection(database);
         boolean closeConn = true;
         
         return executeQuery(sql, handler, conn, closeConn, params);
@@ -152,10 +152,9 @@ public abstract class BaseJdbcDao {
      * This is equivalent to calling the more verbose <code>executeUpdate</code> method while passing
      * in a default connection instance and setting <code>closeConn</code> to <code>true</code>.
      */
-    protected static int executeUpdate(String sql, InParam... params) throws Exception {
-        Connection conn = getConnection();
+    protected static int executeUpdate(String database, String sql, InParam... params) throws Exception {
+        Connection conn = getConnection(database);
         boolean closeConn = true;
-        
         return executeUpdate(sql, conn, closeConn, params);
     }
     
