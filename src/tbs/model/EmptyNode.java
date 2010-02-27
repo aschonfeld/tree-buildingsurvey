@@ -47,17 +47,18 @@ public class EmptyNode extends Node
 	public Point getDefaultPoint() {
 		return new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY);
 	}
-
-
-/*	
-
-NEVER CALLED - DELETE?
-
+	
+	/*
+	 * This is a default method that is used by setScreenString in the 
+	 * Controller & also some logging to get information about a
+	 * ModelElement object.  Even though the element is a ModelElement
+	 * when toString is called it will refer to the resulting subclass,
+	 * in this case EmptyNode. 
+	 */
 	public String toString(){
 		if(getName() == null || getName().length() == 0)
 			return "Branch Node";
 		else
-			return getName() + "Node";
+			return getName() + " Node";
 	}
-*/
 }

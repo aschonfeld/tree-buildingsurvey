@@ -76,11 +76,17 @@ public class Connection extends ModelElement implements Cloneable
 			.append(this.to.getId());
 	}
 	
+	/*
+	 * This is a default method that is used by setScreenString in the 
+	 * Controller & also some logging to get information about a
+	 * ModelElement object.  Even though the element is a ModelElement
+	 * when toString is called it will refer to the resulting subclass,
+	 * in this case Connection. 
+	 */
 	public String toString(){
 		return "Connection from " + getFrom().getName() + " to " + getTo().getName();
 	}
 
-  public Boolean isInTree() {return true;}
-
-  public void setInTree( Boolean inTree ) {}
+	public Boolean isInTree() {return true;}
+	public void setInTree( Boolean inTree ) {}
 }
