@@ -2,6 +2,8 @@
 
 = Introduction =
 
+Inherits from: [Node Node.java] [ModelElement ModelElement.java]
+
 Organism Nodes represent the named organisms provided at statup to the student (Bat, Bird, Leech, etc)
 These are not a fixed set in principle; the set is defined by the contents of the file "[organismsProps organisms.properties]". In order to alter the set of organisms in the initial configuration, alter that file and add any needed image files to the images directory. 
 At scoring time, organisms have certain inherent properties (contained the properties file) - they are verebrates or not, mammalian or not, etc. These properties are ignored during tree building; the Model is unaware of them.
