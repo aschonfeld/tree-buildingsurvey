@@ -102,7 +102,7 @@ public class AdminController extends TBSController
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(y < TBSGraphics.buttonsHeight)  {
-			if(x >= model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + view.getVerticalBar().getWidth()))
+			if(x >= model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth()))
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			else if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
@@ -111,12 +111,14 @@ public class AdminController extends TBSController
 			}
 		} else if(hullButtons.contains(x, y)){
 			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.isTooltipRunning()){
-			Node n = elementMouseIsHoveringOver(x,y);
-			if(n != null && n instanceof OrganismNode){
-				OrganismNode o = (OrganismNode) n;
-				view.updateTooltip(o.getName(),
-							new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
+		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.getDisplayAllTooltips()){
+			if(!view.isTooltipRunning()){
+				Node n = elementMouseIsHoveringOver(x,y);
+				if(n != null && n instanceof OrganismNode){
+					OrganismNode o = (OrganismNode) n;
+					view.updateTooltip(o.getName(),
+								new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
+				}
 			}
 		}
 		view.setAppletCursor(c);
@@ -145,7 +147,9 @@ public class AdminController extends TBSController
 					}
 				}
 				return;
-			}else if(x >= TBSGraphics.questionButtonsStart){
+			}else if(x >= (model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth())))
+				view.toggleDisplayAllTooltips();
+			else if(x >= TBSGraphics.questionButtonsStart){
 				handleMouseButtonPressed(x, y);
 				return;
 			}

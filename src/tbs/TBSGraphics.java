@@ -258,6 +258,11 @@ public class TBSGraphics {
 	 * Width of question buttons. Set in [TBSModel.???]
 	 */ 
 	public static int questionButtonsWidth = 0;
+	
+	/**
+	 * Width of question buttons. Set in [TBSModel.???]
+	 */ 
+	public static int namesButtonWidth = 0;
 
 	/**
 	 * Starting x-coordinate of question buttons. Set in [TBSModel.???]

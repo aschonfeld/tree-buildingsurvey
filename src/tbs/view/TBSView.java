@@ -51,6 +51,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	private Cursor cursor;
 
 	//Tooltip information
+	private Boolean displayAllTooltips;
 	private String tooltipString;
 	private Point tooltipLocation;
 	private Timer timer;
@@ -71,6 +72,7 @@ public abstract class TBSView extends JComponent implements Printable{
 		horizontalBar.setVisible(false);
 		add(horizontalBar, BorderLayout.SOUTH);
 		timer = new Timer(1000, hider);
+		displayAllTooltips = false;
 		cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 	}
 	
@@ -118,6 +120,18 @@ public abstract class TBSView extends JComponent implements Printable{
 	public boolean isTooltipRunning(){
 		return timer.isRunning();
 	}
+	
+	public Boolean getDisplayAllTooltips() {
+		return displayAllTooltips;
+	}
+
+	public void setDisplayAllTooltips(Boolean displayAllTooltips) {
+		this.displayAllTooltips = displayAllTooltips;
+	}
+	
+	public void toggleDisplayAllTooltips(){
+		this.displayAllTooltips = !displayAllTooltips;
+	}
 
 	/**
 	 * Redraw the screen.
@@ -156,6 +170,15 @@ public abstract class TBSView extends JComponent implements Printable{
 
 	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
 		g2.drawImage(on.getImage(), on.getX() - xOffset, on.getY() - yOffset, null);
+		if(displayAllTooltips){
+			int xVal = (on.getX() + (on.getWidth()/2)) - xOffset;
+			int yVal = (on.getY()-on.getHeight()) - yOffset;
+			g2.setFont(TBSGraphics.tooltipFont);
+			xVal -= TBSGraphics.getStringBounds(g2, on.getName()).width/2;
+			TBSGraphics.drawCenteredString(g2, on.getName(), xVal, yVal, 0,
+					TBSGraphics.buttonsHeight, Color.CYAN, TBSGraphics.tooltipFont);
+			g2.setFont(TBSGraphics.font);
+		}
 	}
 	
 	public void renderOrganismNodeInfo(Graphics2D g2, OrganismNode on) {
@@ -218,7 +241,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 	
 	public void renderTooltip(Graphics2D g2){
-		if(tooltipString != null){
+		if(!displayAllTooltips && tooltipString != null){
 			int xVal = tooltipLocation.x;
 			xVal -= xOffset;
 			int yVal = tooltipLocation.y;

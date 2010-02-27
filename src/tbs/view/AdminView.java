@@ -114,9 +114,23 @@ public class AdminView extends TBSView {
 		g2.draw(buttonRect);
 		TBSGraphics.drawCenteredString(g2, "Print",
 				buttonRect.x, upperY, buttonRect.width, 0);
+		
+		//Show All Tooltips Button
+		buttonRect = new Rectangle(buttonRect.x - TBSGraphics.namesButtonWidth,
+				0,TBSGraphics.namesButtonWidth, TBSGraphics.buttonsHeight);
+		TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+		g2.setColor(Color.gray);
+		g2.draw(buttonRect);
+		TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
+				buttonRect.x, upperY, buttonRect.width, 0);
 	}
 	
 	public void renderElements(Graphics2D g2) {
+		/*
+		 * Uncomment this line of code to start logging of 
+		 * model integrity
+		 * model.checkElementsIntegrity();
+		 */
 		int maxPosition = 0;
 		for(ModelElement m : model.inTreeElements()){
 			if(m instanceof Node){
@@ -175,45 +189,47 @@ public class AdminView extends TBSView {
 	}
 	
 	public void renderGroupSelection(Graphics2D g2){
-		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,model.getHulls());
-		TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-		TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-		Rectangle hullButton = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + getVerticalBar().getWidth()),
-				model.getApplet().getHeight() - (getHorizontalBar().getHeight() + TBSGraphics.hullButtonHeight),
-				TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
-		ConvexHull ch;
-		for(int i=(model.getHulls().size()-1);i>=0;i--){
-			ch=model.getHulls().get(i);
-			//Render Button
-			g2.setColor(ch.getColor());
-			g2.fill(hullButton);
-			TBSGraphics.drawCenteredString(g2,
-					ch.getHullName() + (ch.getDisplayHull() ? " \u2713" : ""),
-					hullButton.x, hullButton.y, hullButton.width, hullButton.height);
-			if(ch.getDisplayHull()){
-				//Render Hull
-				g2.setStroke(new BasicStroke(3));
+		if(model.getPrompt() == null || model.getPrompt().renderElements()){
+			Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,model.getHulls());
+			TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
+			TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+			Rectangle hullButton = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + getVerticalBar().getWidth()),
+					model.getApplet().getHeight() - (getHorizontalBar().getHeight() + TBSGraphics.hullButtonHeight),
+					TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
+			ConvexHull ch;
+			for(int i=(model.getHulls().size()-1);i>=0;i--){
+				ch=model.getHulls().get(i);
+				//Render Button
 				g2.setColor(ch.getColor());
-				for(ConvexHull.Line l : ch.getHull()){
-					g2.draw(new Line2D.Double(l.getPoint1().x - getXOffset(),
-							l.getPoint1().y - getYOffset(),
-							l.getPoint2().x - getXOffset(),
-							l.getPoint2().y - getYOffset()));
+				g2.fill(hullButton);
+				TBSGraphics.drawCenteredString(g2,
+						ch.getHullName() + (ch.getDisplayHull() ? " \u2713" : ""),
+						hullButton.x, hullButton.y, hullButton.width, hullButton.height);
+				if(ch.getDisplayHull()){
+					//Render Hull
+					g2.setStroke(new BasicStroke(3));
+					g2.setColor(ch.getColor());
+					for(ConvexHull.Line l : ch.getHull()){
+						g2.draw(new Line2D.Double(l.getPoint1().x - getXOffset(),
+								l.getPoint1().y - getYOffset(),
+								l.getPoint2().x - getXOffset(),
+								l.getPoint2().y - getYOffset()));
+					}
+					g2.setStroke(new BasicStroke());
 				}
-				g2.setStroke(new BasicStroke());
+				g2.setColor(Color.BLACK);
+				g2.draw(hullButton);
+				hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
 			}
-			g2.setColor(Color.BLACK);
-			g2.draw(hullButton);
+			TBSGraphics.drawCenteredString(g2,
+					"Area",
+					hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
+			hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
+			TBSGraphics.drawCenteredString(g2,
+					"View Group",
+					hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
 			hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
 		}
-		TBSGraphics.drawCenteredString(g2,
-				"Area",
-				hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
-		hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
-		TBSGraphics.drawCenteredString(g2,
-				"View Group",
-				hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
-		hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
 	}
 
 	/**
@@ -252,5 +268,8 @@ public class AdminView extends TBSView {
 		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,TBSButtonType.getButtons(true));
 		TBSGraphics.buttonsWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
 		TBSGraphics.buttonsHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+		
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
+		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
 	}
 }
