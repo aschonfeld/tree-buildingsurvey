@@ -24,7 +24,6 @@ public class EmptyNode extends Node
 		super(id, "");
 		setAnchorPoint(new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY));
 		beingLabeled = false;
-		System.out.println("Created EmptyNode #" +id);
 	}
 	
 	public int getHeight() {
@@ -48,12 +47,17 @@ public class EmptyNode extends Node
 	public Point getDefaultPoint() {
 		return new Point(TBSGraphics.emptyNodeLeftX, TBSGraphics.emptyNodeUpperY);
 	}
-	
+
+
+/*	
+
+NEVER CALLED - DELETE?
+
 	public String toString(){
 		if(getName() == null || getName().length() == 0)
 			return "Branch Node";
 		else
 			return getName() + "Node";
 	}
-
+*/
 }
