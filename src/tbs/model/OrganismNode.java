@@ -1,4 +1,4 @@
-//TBS version 0.4
+//TBS version ????
 //OrganismNode: represents "organisms" manipulated by user
 
 package tbs.model;
@@ -11,7 +11,6 @@ import tbs.TBSGraphics;
 public class OrganismNode extends Node
 {
 	private BufferedImage img;
-	private String imgFileName;
 	private String organismType;
 	private Point defaultPoint;
 	private int stringWidth;
@@ -24,19 +23,11 @@ public class OrganismNode extends Node
 		this.organismType = organismType;
 		img = i;
 		defaultPoint = new Point();
-		//This is crude and brittle; should be changed to pass image file name in setup
-		//rather than reverse engineering it from the name of the organisme. Works for now,
-		//though.
-		imgFileName = name.toLowerCase().replace(" ", "") +".gif";
 		this.stringWidth = stringWidth;
 	}
 
 	public BufferedImage getImage() {return img;}
 	
-	/**
-	* Returns the name of the image file associated with this object
-	*/
-	public String getImgFileName(){return imgFileName;}
 
 	public int getHeight() {
 		if(getX() > 0)
@@ -84,9 +75,11 @@ public class OrganismNode extends Node
 	public String getOrganismType() {
 		return organismType;
 	}
-
+/*
+	THIS IS NEVER CALLED - DELETE?
+		
 	public String toString(){
 		return getName() + " Node";
 	}
-
+*/
 }
