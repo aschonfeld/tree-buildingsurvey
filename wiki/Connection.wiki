@@ -1,0 +1,7 @@
+#summary PLACEHOLDER Developer's Guide: Connection.java
+
+= Introduction =
+Inherits from [ModelElement ModelElement.java]
+
+
+= Details =
