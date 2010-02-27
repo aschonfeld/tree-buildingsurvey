@@ -1,0 +1,28 @@
+/* Licensing and Authorship Information
+
+TBS Tree-Building System - Elicitor of Phylogenetic Intuitions
+Copyright (C)2010 Brian White
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+    This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details. 
+
+	A copy of the GNU General Public License should be included with all
+distributions of this software as GPL.txt. If this file is not found,
+see <http://www.gnu.org/licenses/>.
+
+
+The code was written by Andrew Schonfeld, Glenn Thelen, and Jon Kiparsky
+from an original concept by Brian White. 
+Program is maintained by Brian White - contact brian.white@umb.edu for
+bugs/information.
+
+
+
+End of Licensing/Authorship Information */
