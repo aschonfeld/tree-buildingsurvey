@@ -10,6 +10,9 @@ import java.util.List;
  * of points from the current graph and by way of either the Quick Hull
  * algorithm or Brute Force algorithm, the Convex Hull of those points 
  * is calculated and returned in the form of a List of lines or points.
+ * 
+ * @author Jeff C. So(University of Lethbridge) & Andrew Schonfeld
+ *  
  */
 public class ConvexHull {
 	/** 
