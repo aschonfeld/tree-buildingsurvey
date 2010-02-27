@@ -75,11 +75,15 @@ public class OrganismNode extends Node
 	public String getOrganismType() {
 		return organismType;
 	}
-/*
-	THIS IS NEVER CALLED - DELETE?
-		
+	
+	/*
+	 * This is a default method that is used by setScreenString in the 
+	 * Controller & also some logging to get information about a
+	 * ModelElement object.  Even though the element is a ModelElement
+	 * when toString is called it will refer to the resulting subclass,
+	 * in this case OrganismNode. 
+	 */
 	public String toString(){
 		return getName() + " Node";
 	}
-*/
 }

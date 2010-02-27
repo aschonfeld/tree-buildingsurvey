@@ -341,9 +341,10 @@ public class StudentController extends TBSController
 				    }
 				  }
 				}
-				if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH )
+				if ((draggedNode.getX()-draggedNode.getWidth()) <= TBSGraphics.LINE_OF_DEATH ){
+					view.setScreenString("You have removed " + draggedNode.toString());
 					ModelUtils.removeElement(draggedNode, model, false);
-				else{
+				}else{
 					if (!draggedNode.isInTree() && (draggedNode.getX()-draggedNode.getWidth()) > TBSGraphics.LINE_OF_DEATH )
 						ModelUtils.addNode(draggedNode, model, false); 
 					else 
@@ -404,6 +405,7 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() != null){
 			switch (getButtonClicked()) {
 				case DELETE:
+					view.setScreenString("You have removed " + model.getSelectedElement().toString());
 					ModelUtils.removeElement(model.getSelectedElement(), model, false);
           setButtonClicked(TBSButtonType.SELECT);
 					break;
@@ -509,6 +511,7 @@ public class StudentController extends TBSController
 						ModelUtils.addNode(newNode, model, false);
 					break;
 				case DELETE:
+					view.setScreenString("You have removed " + clickedElement.toString());
 					ModelUtils.removeElement(clickedElement, model, false);
           setButtonClicked(TBSButtonType.SELECT);
 					return;
