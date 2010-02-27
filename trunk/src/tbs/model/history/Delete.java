@@ -30,6 +30,7 @@ public class Delete extends Command{
 				}
 			}
 			this.modelElement = (Node)((Node)element).clone();
+			((Node)modelElement).setBeingDragged(false);
 			if(!model.getHistory().isEmpty() && model.getHistory().peek() instanceof Drag){
 				((Node)modelElement).setAnchorPoint(((Drag) model.getHistory().peek()).getPointBefore());
 				model.removeActionFromHistory();
