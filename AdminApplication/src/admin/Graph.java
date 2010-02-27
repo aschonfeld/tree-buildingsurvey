@@ -245,7 +245,7 @@ public class Graph implements Renderable {
 		}
 		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
 		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
-			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
+			hulls.add(new ConvexHull(2, e.getValue(), e.getKey(), null));
 		for(int i1=0;i1<hulls.size();i1++){
 			for(int i2=hulls.size()-1;i2>i1;i2--){
 				Area intersect = new Area(); 
