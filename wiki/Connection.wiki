@@ -2,6 +2,13 @@
 
 = Introduction =
 Inherits from [ModelElement ModelElement.java]
+Connection represents the link between two nodes. 
 
+= Method Details =
 
-= Details =
+contains(x, y) returns true if point x,y is on the line of this connection.
+
+collidesWith(ModelElement e) returns false; collision is not meaningful for connections at this point. 
+
+dump() returns a string representing this Connection; this is called by ModelElement.exportTree().
+String format for a Connection is "C:id:fromNode:toNode"
