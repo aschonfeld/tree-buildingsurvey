@@ -1,12 +1,14 @@
-#summary PLACEHOLDER: Developer's Guide: StudentModel.java
+#summary INCOMPLETE: Developer's Guide: StudentModel.java
 
 = Introduction =
 The [TBSModel] class for trees under construction by a student taking the TBS survey.
 
+The Model is responsible for creating and maintaining the state of the tree and its components, and for exporting a string representation of the tree when the student is finished constructing it. 
 
-= Details =
+StudentModel begins by constructing the initial state, whether this is for a new tree or for continuing work on a tree already begun. A string "tree" is passed as an initial parameter; this string is either empty or it contains the previous state of the tree. If the previous state exists, StudentModel uses TBSModel.loadTree() to determine the positions of already-placed [ModelElement ModelElements] and their [Connection Connections]. If this string is empty, a default initial configuration is used. Available actions are set based on the presence or absence of [Node Nodes] in the tree; the availability of actions is reflected by setting [TBSButtonType buttons] to either active or inactive state. 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+As part of maintenance of the tree, the StudentModel creates and maintains a history of actions taken by the student since startup; all actions taken in a given session can be reversed with the Undo button. The history is maintained as a stack of Command objects. A Command, when placed on the stack, is essentially the instructions for undoing that command. 
+*note:* Undo has been a source of odd bugs, which are typically difficult to replicate and thus to diagnose. This is an area which could probably use a careful overhaul.
+
+
+= Method Details =
