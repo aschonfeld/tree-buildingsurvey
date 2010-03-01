@@ -159,7 +159,7 @@ public class AdminView extends TBSView {
 		width = TBSGraphics.maxStudentNameWidth - TBSGraphics.padding.width;
 		for(Student student : model.getStudents()){
 			if(student.getName().equals(selectedStudentName))
-				g2.setColor(Color.GREEN);
+				g2.setColor(TBSGraphics.selectedStudentColor);
 			else
 				g2.setColor(Color.WHITE);
 			x = student.getAnchorPoint().x + (hasStudentScroll ? studentBar.getWidth() : 0);
@@ -200,7 +200,7 @@ public class AdminView extends TBSView {
 			for(int i=(model.getHulls().size()-1);i>=0;i--){
 				ch=model.getHulls().get(i);
 				//Render Button
-				g2.setColor(ch.getColor());
+				g2.setColor(TBSGraphics.hullColors[i]);
 				g2.fill(hullButton);
 				TBSGraphics.drawCenteredString(g2,
 						ch.getHullName() + (ch.getDisplayHull() ? " \u2713" : ""),
@@ -208,7 +208,7 @@ public class AdminView extends TBSView {
 				if(ch.getDisplayHull()){
 					//Render Hull
 					g2.setStroke(new BasicStroke(3));
-					g2.setColor(ch.getColor());
+					g2.setColor(TBSGraphics.hullColors[i]);
 					for(ConvexHull.Line l : ch.getHull()){
 						g2.draw(new Line2D.Double(l.getPoint1().x - getXOffset(),
 								l.getPoint1().y - getYOffset(),

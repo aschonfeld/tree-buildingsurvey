@@ -3,7 +3,6 @@
 
 package tbs.model;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Area;
 import java.util.HashMap;
@@ -111,10 +110,9 @@ public class AdminModel extends TBSModel
 		}
 		hulls = new LinkedList<ConvexHull>();
 		hullCollisions = new LinkedList<String>();
-		Color[] hullColors = new Color[]{Color.MAGENTA, Color.ORANGE, Color.PINK};
 		int i = 0;
 		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet()){
-			hulls.add(new ConvexHull(2, e.getValue(), e.getKey(), hullColors[i]));
+			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
 			i++;
 		}
 		

@@ -122,6 +122,8 @@ public class TBSGraphics {
 	 * TBSModel.createModelElements (CHECK THIS)
 	 */ 
 	public static int studentNodeHeight = 0;
+	
+	public static Color selectedStudentColor = Color.GREEN;
 
 	/**
 	 * The fixed width of all student:Node label strings. Value is calculated in
@@ -200,6 +202,7 @@ public class TBSGraphics {
 	// Font Properties
 	public static Font font = null;
 	public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
+	public static Color tooltipColor = Color.CYAN;
 
 	/**
 	 * Color of text strings labeling OrganismNodes. Currently set to
@@ -235,6 +238,8 @@ public class TBSGraphics {
 	 * Height of hull buttons. Set in  [TBSModel.???]
 	 */
 	public static int hullButtonHeight = 0;
+	
+	public static Color[] hullColors = new Color[]{Color.MAGENTA, Color.ORANGE, Color.PINK};
 
 	/**
 	 * Width of buttons. Set in [TBSModel.???]
@@ -247,6 +252,7 @@ public class TBSGraphics {
 	public static Color buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
 	public static Color buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 	public static Color buttonEnd = new Color(1.0f, 1.0f, 1.0f);
+	public static Color buttonInactive = Color.RED;
 
 
 	/**
@@ -407,5 +413,33 @@ public class TBSGraphics {
 		}
 		font = tempFont;
 		closeButtonStroke = stroke;
+	}
+	
+	public static void setColorsForPrinting(){
+		selectedStudentColor = Color.WHITE;
+		tooltipColor = Color.WHITE;
+		connectionSelectedColor = Color.WHITE;
+		connectionColor = Color.WHITE;
+		emptyNodeColor = Color.WHITE;
+		selectedNodeBorderColor = Color.WHITE;
+		buttonNotSelected = Color.WHITE;
+		buttonSelected = Color.WHITE;
+		buttonEnd = Color.WHITE;
+		buttonInactive = Color.WHITE;
+		hullColors = new Color[]{Color.WHITE,Color.WHITE,Color.WHITE};
+	}
+	
+	public static void setColorsForDisplay(){
+		selectedStudentColor = Color.GREEN;
+		tooltipColor = Color.CYAN;
+		connectionSelectedColor = Color.GREEN;
+		connectionColor = new Color(0.5f, 1.0f, 0.5f);
+		emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+		selectedNodeBorderColor = Color.GREEN;
+		buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
+		buttonSelected = new Color(0.2f, 0.8f, 0.2f);
+		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
+		buttonInactive = Color.RED;
+		hullColors = new Color[]{Color.MAGENTA,Color.ORANGE,Color.PINK};
 	}
 }

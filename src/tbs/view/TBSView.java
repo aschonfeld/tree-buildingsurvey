@@ -176,7 +176,7 @@ public abstract class TBSView extends JComponent implements Printable{
 			g2.setFont(TBSGraphics.tooltipFont);
 			xVal -= TBSGraphics.getStringBounds(g2, on.getName()).width/2;
 			TBSGraphics.drawCenteredString(g2, on.getName(), xVal, yVal, 0,
-					TBSGraphics.buttonsHeight, Color.CYAN, TBSGraphics.tooltipFont);
+					TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
 			g2.setFont(TBSGraphics.font);
 		}
 	}
@@ -249,7 +249,7 @@ public abstract class TBSView extends JComponent implements Printable{
 			g2.setFont(TBSGraphics.tooltipFont);
 			xVal -= TBSGraphics.getStringBounds(g2, tooltipString).width/2;
 			TBSGraphics.drawCenteredString(g2, tooltipString, xVal, yVal, 0,
-					TBSGraphics.buttonsHeight, Color.CYAN, TBSGraphics.tooltipFont);
+					TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
 			g2.setFont(TBSGraphics.font);
 			if(!timer.isRunning())
 				timer.start();
@@ -305,6 +305,7 @@ public abstract class TBSView extends JComponent implements Printable{
 					getWidth(), 
 					getHeight(), 
 					BufferedImage.TYPE_INT_RGB);
+			TBSGraphics.setColorsForPrinting();
 			paint(fullSizeImage.getGraphics());
 
 			// scale to fit
@@ -338,6 +339,7 @@ public abstract class TBSView extends JComponent implements Printable{
 					actualHeight, 
 					null);
 			fullSizeImage = null;
+			TBSGraphics.setColorsForDisplay();
 			return(PAGE_EXISTS);
 		}
 	}
