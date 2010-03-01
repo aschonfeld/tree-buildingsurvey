@@ -1,5 +1,4 @@
 package admin;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.LinkedList;
@@ -44,18 +43,15 @@ public class ConvexHull {
 	
 	private Boolean displayHull;
 	
-	private Color color;
-	
 	/**
 	 * The point we are comparing with the chkLn
 	 */
 	private Point currPt = new Point();
 	
-	public ConvexHull(int algor, List<Point> points, String hullName, Color color) {
+	public ConvexHull(int algor, List<Point> points, String hullName) {
 		this.points = points;
 		this.hullName = hullName;
 		displayHull = false;
-		this.color = color;
 		hullShape = new Polygon();
 		hull = new LinkedList<Line>();
 		switch (algor) {
@@ -81,7 +77,6 @@ public class ConvexHull {
 	public Boolean getDisplayHull() {return displayHull;}
 	public void setDisplayHull(Boolean displayHull) {this.displayHull = displayHull;}
 	public void toggleHull(){this.displayHull = !displayHull;}
-	public Color getColor() {return color;}
 	public String toString(){return hullName + " \u2713";}
 	 
 
