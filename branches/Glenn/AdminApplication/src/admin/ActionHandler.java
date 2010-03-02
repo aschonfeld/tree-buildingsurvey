@@ -1,12 +1,14 @@
 package admin;
+import java.awt.event.ActionEvent;
+import java.io.File;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-
-import java.awt.event.ActionEvent;
 
 public class ActionHandler extends JPanel {    
 	/**
@@ -18,6 +20,7 @@ public class ActionHandler extends JPanel {
 	public Action exitAction;
 	public Action printAction;
 	public Action hullAction;
+	public Action exportAction;
 	public AdminApplication parent;
 	
 	
@@ -51,7 +54,7 @@ public class ActionHandler extends JPanel {
 	
 	public class HullAction extends AbstractAction {
 
-		private static final long serialVersionUID = 1740545322294704279L;
+		private static final long serialVersionUID = 3382645405034163126L;
 
 		public HullAction() {
 			super("Hull Collision");
@@ -62,11 +65,37 @@ public class ActionHandler extends JPanel {
 			parent.checkHullCollisions();
 		}
 	}
+	
+	public class ExportAction extends AbstractAction {
+
+		private static final long serialVersionUID = -5425238186912620684L;
+		
+		private JFileChooser fc;
+
+
+		public ExportAction() {
+			super("Export Data");
+			fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent arg0) {
+			int returnVal = fc.showSaveDialog(parent);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				parent.createExportFile(file.getPath());
+				System.out.println("Exporting data to: " + file.getPath());
+			} else 
+				System.out.println("Export Command cancelled by user.");
+		}
+	}
 		
     public ActionHandler() {
         exitAction = new ExitAction();
         hullAction = new HullAction();
         printAction = new PrintAction();
+        exportAction = new ExportAction();
     }
     
     public void setParent(AdminApplication parent) {
@@ -78,6 +107,7 @@ public class ActionHandler extends JPanel {
         JMenu fileMenu;
         JMenuItem printItem;
         JMenuItem hullItem;
+        JMenuItem exportItem;
         JMenuItem exitItem;
         
         //Create the menu bar.
@@ -88,9 +118,11 @@ public class ActionHandler extends JPanel {
         //a group of JMenuItems
         printItem = new JMenuItem(printAction);
         hullItem = new JMenuItem(hullAction);
+        exportItem = new JMenuItem(exportAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
         fileMenu.add(hullItem);
+        fileMenu.add(exportItem);
         fileMenu.add(exitItem);
         
 
