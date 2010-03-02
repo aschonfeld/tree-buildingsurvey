@@ -27,6 +27,10 @@ public class Edge {
     	directional = true;
     }
     
+    public void setDirectional(boolean directional) {
+    	this.directional = directional;
+    }
+    
     public Vertex getV1() {
     	return v1;
     }
