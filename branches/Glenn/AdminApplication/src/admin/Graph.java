@@ -34,6 +34,10 @@ public class Graph implements Renderable {
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
 	}
+	
+	public void setDirectional(boolean directional) {
+		this.directional = directional;
+	}
 
 /*************************
 * Return test parameters *
@@ -422,6 +426,7 @@ public class Graph implements Renderable {
 			v.render(g, offset);
 		}
 		for(Edge e: edges) {
+			e.setDirectional(directional);
 			e.render(g, offset);
 		}
 	}

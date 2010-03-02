@@ -247,7 +247,8 @@ public class AdminApplication extends JFrame {
 				String question1 = studentDataItems[3];
 				String question2 = studentDataItems[4];
 				String section = studentDataItems[6].substring(8,10);
-				
+				int iSection = Integer.parseInt(section);
+				boolean directional = iSection % 2 == 0;
 				String[] treeItems = treeData.split("#"); // remove '=' at start
 				Graph graph = new Graph(studentName);
 				for(String elements: treeItems){   //load vertices
@@ -289,6 +290,7 @@ public class AdminApplication extends JFrame {
 					Vertex v2 = graph.getVertexByID(id2);
 					graph.addEdge(new Edge(v1, v2));
 				}
+				graph.setDirectional(directional);
 				studentNameToTree.put(studentName, graph);
 				linein = reader.readLine();
 			}
@@ -304,6 +306,11 @@ public class AdminApplication extends JFrame {
 		for(String[] studentData : studentsData) {
 			String studentName = studentData[0];
 			String treeData = studentData[2];
+			String question1 = studentData[3];
+			String question2 = studentData[4];
+			String section = studentData[6].substring(8,10);
+			int iSection = Integer.parseInt(section);
+			boolean directional = iSection % 2 == 0;
 			String[] treeItems = treeData.split("#"); // remove '=' at start
 			Graph graph = new Graph(studentName);
 			for(String elements: treeItems){   //load vertices
@@ -346,6 +353,7 @@ public class AdminApplication extends JFrame {
 				Vertex v2 = graph.getVertexByID(id2);
 				graph.addEdge(new Edge(v1, v2));
 			}
+			graph.setDirectional(directional);
 			studentNameToTree.put(studentName, graph);
 		}
 		
