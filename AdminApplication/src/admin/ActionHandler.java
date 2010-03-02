@@ -1,6 +1,10 @@
 package admin;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -9,6 +13,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 public class ActionHandler extends JPanel {    
 	/**
@@ -19,7 +24,6 @@ public class ActionHandler extends JPanel {
 	
 	public Action exitAction;
 	public Action printAction;
-	public Action hullAction;
 	public Action exportAction;
 	public AdminApplication parent;
 	
@@ -43,26 +47,54 @@ public class ActionHandler extends JPanel {
 		private static final long serialVersionUID = 1740545322294704279L;
 
 		public PrintAction() {
-			super("Print To Console");
+			super("Print Graph");
 		}
 
 		//@0verride
 		public void actionPerformed(ActionEvent arg0) {
 			parent.printGraphInfo();
+			PrinterJob printJob = PrinterJob.getPrinterJob();
+			printJob.setPrintable(parent.treeView);
+			if (printJob.printDialog()){
+				try { 
+					printJob.print();
+				} catch(PrinterException pe) {
+					System.out.println("Error printing: " + pe);
+				}
+			}
+		}
+	}
+	
+	public class NamesAction extends AbstractAction {
+
+		private static final long serialVersionUID = 3382645405034163126L;
+		public NamesAction() {
+			super();
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent e) {
+			parent.getCurrentGraph().toggleShowNames();
+			JMenuItem item = (JMenuItem)e.getSource();
+			item.setText("Display Names" + (parent.getCurrentGraph().getShowNames() ? " \u2713" : ""));
 		}
 	}
 	
 	public class HullAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3382645405034163126L;
-
-		public HullAction() {
-			super("Hull Collision");
+		private int hullIndex;
+		public HullAction(int hullIndex) {
+			super();
+			this.hullIndex = hullIndex;
 		}
 
 		//@0verride
-		public void actionPerformed(ActionEvent arg0) {
-			parent.checkHullCollisions();
+		public void actionPerformed(ActionEvent e) {
+			ConvexHull temp = parent.getCurrentGraph().getHulls().get(hullIndex);
+			temp.toggleHull();
+			JMenuItem item = (JMenuItem)e.getSource();
+			item.setText(temp.getHullName() + (temp.getDisplayHull() ? " \u2713" : ""));
 		}
 	}
 	
@@ -93,7 +125,6 @@ public class ActionHandler extends JPanel {
 		
     public ActionHandler() {
         exitAction = new ExitAction();
-        hullAction = new HullAction();
         printAction = new PrintAction();
         exportAction = new ExportAction();
     }
@@ -106,26 +137,56 @@ public class ActionHandler extends JPanel {
         JMenuBar menuBar;
         JMenu fileMenu;
         JMenuItem printItem;
-        JMenuItem hullItem;
-        JMenuItem exportItem;
         JMenuItem exitItem;
         
         //Create the menu bar.
         menuBar = new JMenuBar();
-        fileMenu = new JMenu("File");
+        fileMenu = new JMenu("Menu");
         menuBar.add(fileMenu);
 
         //a group of JMenuItems
         printItem = new JMenuItem(printAction);
-        hullItem = new JMenuItem(hullAction);
-        exportItem = new JMenuItem(exportAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
-        fileMenu.add(hullItem);
-        fileMenu.add(exportItem);
+        JMenuItem names = new JMenuItem("Display Names" + (parent.getCurrentGraph().getShowNames() ? " \u2713" : ""));
+        names.addActionListener(new NamesAction());
+        fileMenu.add(names);
+        Graph tempGraph = parent.getCurrentGraph();
+        if(!tempGraph.getHulls().isEmpty()){
+        	JMenu submenu = new JMenu("Hulls");
+        	for(int i=0;i<tempGraph.getHulls().size();i++){
+        		ConvexHull tempCH = tempGraph.getHulls().get(i);
+        		JMenuItem menuItem = new JMenuItem(tempCH.getHullName() +
+        				(tempCH.getDisplayHull() ? " \u2713" : ""));
+        		menuItem.addActionListener(new HullAction(i));
+        		submenu.add(menuItem);
+        	}
+        	fileMenu.add(submenu);
+        }
         fileMenu.add(exitItem);
         
 
        return menuBar;
+    }
+    
+    public JMenuBar getDataMenuBar() {
+    	JMenuBar menuBar;
+    	JMenu fileMenu;
+    	JMenuItem exportItem;
+    	JMenuItem exitItem;
+
+    	//Create the menu bar.
+    	menuBar = new JMenuBar();
+    	fileMenu = new JMenu("Menu");
+    	menuBar.add(fileMenu);
+
+    	//a group of JMenuItems
+    	exportItem = new JMenuItem(exportAction);
+    	exitItem = new JMenuItem(exitAction);
+    	fileMenu.add(exportItem);
+    	fileMenu.add(exitItem);
+
+
+    	return menuBar;
     }
 }

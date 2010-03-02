@@ -11,7 +11,7 @@ public class AdminMultiWindow extends WindowAdapter {
 	public AdminMultiWindow() {
 		adminApplicationFrame = new AdminApplication();
 	    adminApplicationFrame.setVisible(true);
-	    studentDataTableFrame = new StudentDataTable();
+	    studentDataTableFrame = new StudentDataTable(adminApplicationFrame);
 	    studentDataTableFrame.setVisible(true);
 	}
 }
