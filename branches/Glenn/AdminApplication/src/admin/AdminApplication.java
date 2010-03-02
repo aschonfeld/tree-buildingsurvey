@@ -27,8 +27,8 @@ import admin.dao.AdminJdbcDao;
 
 public class AdminApplication extends JFrame {
 	private static final long serialVersionUID = 8731793917007308006L;
-	private static ActionHandler actionHandler = null;
-	private static TreeView treeView = null;
+	public static ActionHandler actionHandler = null;
+	public static TreeView treeView = null;
 	private static TreeController treeController = null;
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
@@ -86,10 +86,13 @@ public class AdminApplication extends JFrame {
         });
     }
    
-    public static void setCurrentGraph(int index) {
+    public void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
-	    //leftSplitPane.remove(pathTable);
+		setJMenuBar(actionHandler.createMenuBar());
+		validate();
+		repaint();
+		//leftSplitPane.remove(pathTable);
 	    //pathTable = new ShortestPathTable();
 	    //leftSplitPane.add(pathTable);
 	    //leftSplitPane.revalidate();
@@ -100,11 +103,7 @@ public class AdminApplication extends JFrame {
     	System.out.println(graphs.get(currentGraphIndex).getInfo());
     }
     
-    public void checkHullCollisions() {
-    	System.out.println(graphs.get(currentGraphIndex).checkConvexHullCollision());
-    }
-   
-	public static Graph getCurrentGraph(){
+    public static Graph getCurrentGraph(){
 		return graphs.get(currentGraphIndex);
 	}
  
@@ -222,6 +221,7 @@ public class AdminApplication extends JFrame {
         			Vertex v2 = graph.getVertexByID(id2);
         			graph.addEdge(new Edge(v1, v2));
         		}
+        		graph.loadHulls();
         		studentNameToTree.put(new String("0_TEST_" + studentName), graph);
         		linein = reader.readLine();
         	}
@@ -291,6 +291,7 @@ public class AdminApplication extends JFrame {
 					graph.addEdge(new Edge(v1, v2));
 				}
 				graph.setDirectional(directional);
+				graph.loadHulls();
 				studentNameToTree.put(studentName, graph);
 				linein = reader.readLine();
 			}
@@ -351,6 +352,8 @@ public class AdminApplication extends JFrame {
 				Vertex v2 = graph.getVertexByID(id2);
 				graph.addEdge(new Edge(v1, v2));
 			}
+			graph.loadHulls();
+			
 			studentNameToTree.put(studentName, graph);
 		}
 		

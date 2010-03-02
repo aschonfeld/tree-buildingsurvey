@@ -1,9 +1,12 @@
 package admin;
 
 //explicit list needed since some dumbass put List in both awt and util
+import java.awt.BasicStroke;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Area;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,15 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import admin.VertexInfo.VertexType;
+
 public class Graph implements Renderable {
 	
 	private ArrayList<Vertex> vertices;
 	private ArrayList<Vertex> organisms;
 	private ArrayList<Edge> edges;
+	private ArrayList<ConvexHull> hulls;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
+	private boolean showNames = false;
 	private boolean allOrgsInTree;
 	private boolean hasBranches = false;
+	private boolean hasHullCollisions = false;
 	private String studentName;
 	private boolean labelled = false;
 	private int graphDirection = 0;
@@ -38,6 +46,9 @@ public class Graph implements Renderable {
 	public void setDirectional(boolean directional) {
 		this.directional = directional;
 	}
+	
+	public boolean getShowNames() {return showNames;}
+	public void toggleShowNames() {this.showNames = !showNames;}
 
 /*************************
 * Return test parameters *
@@ -234,33 +245,38 @@ public class Graph implements Renderable {
 * Convex Hull Calculations                           *
 * (for checking geometric arrangement of organsisms) *
 *****************************************************/
-	public boolean checkConvexHullCollision(){
+	public void loadHulls(){
 		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
 		for(Vertex v : vertices){
 			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
 				if(typeVertices.containsKey(v.getInfo().getType()))
-					typeVertices.get(v.getInfo().getType()).add(v.upperLeftAdj);
+					typeVertices.get(v.getInfo().getType()).add(v.upperLeft);
 				else{
 					List<Point> temp = new LinkedList<Point>();
-					temp.add(v.upperLeftAdj);
+					temp.add(v.upperLeft);
 					typeVertices.put(v.getInfo().getType(), temp);
 				}
 			}
 		}
-		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
+		hulls = new ArrayList<ConvexHull>();
 		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
 			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
+		outerloop:
 		for(int i1=0;i1<hulls.size();i1++){
 			for(int i2=hulls.size()-1;i2>i1;i2--){
 				Area intersect = new Area(); 
 				intersect.add(new Area(hulls.get(i1).getHullShape())); 
 				intersect.intersect(new Area(hulls.get(i2).getHullShape())); 
-				if (!intersect.isEmpty())
-					return true;
+				if (!intersect.isEmpty()){
+					hasHullCollisions = true;	
+					break outerloop;
+				}
 			}
 		}
-		return false;
 	}
+	
+	public ArrayList<ConvexHull> getHulls(){return hulls;}
+	public Boolean getHasHullCollisions(){return hasHullCollisions;}
 
 /***************************************
 * Shortest Path Calculations           *
@@ -424,10 +440,33 @@ public class Graph implements Renderable {
 		offset.y += upperLeft.y;
 		for(Vertex v: vertices) {
 			v.render(g, offset);
+			if(showNames && VertexType.ORGANISM.equals(v.getInfo().getVertexType())){
+				int xVal = (v.upperLeft.x - offset.x) + (v.getInfo().getImage().getWidth()/2);
+				int yVal = v.upperLeft.y - (offset.y + Common.ySpacing);
+				g.setFont(Common.tooltipFont);
+				xVal -= Common.getStringBounds((Graphics2D) g, v.getInfo().getName()).width/2;
+				Common.drawCenteredString((Graphics2D) g, v.getInfo().getName(), xVal, yVal, 0,
+						0, Common.tooltipColor, Common.tooltipFont);
+				g.setFont(Common.font);
+			}
 		}
 		for(Edge e: edges) {
 			e.setDirectional(directional);
 			e.render(g, offset);
+		}
+		for(ConvexHull hull : hulls){
+			if(hull.getDisplayHull()){
+				for(ConvexHull.Line line : hull.getHull()){
+					Graphics2D g2 = (Graphics2D) g;
+					g2.setStroke(new BasicStroke(3));
+					g2.setColor(Common.connectionColor);
+					g2.draw(new Line2D.Double(line.getPoint1().x - offset.x,
+							line.getPoint1().y - offset.y,
+							line.getPoint2().x - offset.x,
+							line.getPoint2().y - offset.y));
+					g2.setStroke(new BasicStroke());
+				}
+			}
 		}
 	}
 

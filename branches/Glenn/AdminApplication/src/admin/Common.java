@@ -43,6 +43,9 @@ public class Common {
     
      public static Font font = new Font("default", Font.BOLD, 16);
      
+     public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
+ 	 public static Color tooltipColor = Color.CYAN;
+     
     /**
      * Returns the @Rectangle2D surrounding a piece of text
      */
@@ -121,6 +124,15 @@ public class Common {
                layout.draw(g2, x, y);
        }
        
+       public static void setColorsForPrinting(){
+    	   connectionColor = Color.WHITE;
+    	   emptyNodeColor = Color.WHITE;
+    	   tooltipColor = Color.WHITE;
+       }
 
-       
+       public static void setColorsForDisplay(){
+    	   connectionColor = new Color(0.5f, 1.0f, 0.5f);
+    	   emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+    	   tooltipColor = Color.CYAN;
+       }       
 }

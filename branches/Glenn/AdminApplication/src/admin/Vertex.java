@@ -2,11 +2,12 @@ package admin;
 import java.awt.*;
 import java.util.ArrayList;
 
+import admin.VertexInfo.VertexType;
+
 
 public class Vertex implements Renderable {
 	 
     private VertexInfo info;
-	private Point upperLeft;
     private ArrayList<Vertex> toVertices;
     private ArrayList<Vertex> fromVertices;
     private boolean error = false;
@@ -21,6 +22,7 @@ public class Vertex implements Renderable {
 
     Graphics2D g2 = null;
 	Rectangle r1 = null;
+	Point upperLeft;
 	Point upperLeftAdj = null; // adjusted by offset
 	
     Vertex(VertexInfo info, Point upperLeft) {
@@ -203,7 +205,7 @@ public class Vertex implements Renderable {
     public void render(Graphics g, Point offset) {
     	g2 = (Graphics2D) g;
     	upperLeftAdj = new Point(upperLeft.x - offset.x, upperLeft.y - offset.y);
-    	if(info.getImage() != null) {
+    	if(VertexType.ORGANISM.equals(info.getVertexType())) {
     		renderVertexWithImage();
     	} else {
     		renderVertex();

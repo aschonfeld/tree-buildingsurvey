@@ -14,35 +14,38 @@ public class StudentDataTable extends JFrame {
     JTable table;
     String newline = "\n";
     ListSelectionModel listSelectionModel;
+    AdminApplication parent;
 
-    public StudentDataTable() {
+    public StudentDataTable(AdminApplication parent) {
         super("TBS Student Data");
         String[] columnNames = { "Name", 
         						 "Branches", 
-									"Labelled",
+								 "Labelled",
         						 "All organism nodes terminal", 
         						 "Includes all organisms",
+        						 "Hull Collisions",
 								 "Single Common Ancestor",
         						 "Grouping Inv",
         						 "Grouping Vert",
         						 "Grouping Mammals",
         						 "Grouping Non-Mammal Vert"};
-        
-        int rows = AdminApplication.graphs.size();
+        this.parent = parent;
+        int rows = parent.graphs.size();
         Object[][] tableData = new Object[rows][columnNames.length];
         int row = 0;
-        for(Graph graph : AdminApplication.graphs) {
+        for(Graph graph : parent.graphs) {
 				String studentName = graph.getStudentName();
         	tableData[row][0] = studentName;
         	tableData[row][1] = graph.hasBranches();
         	tableData[row][2] = graph.groupsAreLabelled();
         	tableData[row][3] = graph.allOrganismsTerminal();
         	tableData[row][4] = graph.includesAllOrganisms();
-        	tableData[row][5] = graph.hasSingleCommonAncestor();
-        	tableData[row][6] = graph.groupingInvertebrates();
-        	tableData[row][7] = graph.groupingVertebrates();
-        	tableData[row][8] = graph.groupingMammals();
-        	tableData[row][9] = graph.groupingNonmammals();	
+        	tableData[row][5] = graph.getHasHullCollisions();
+        	tableData[row][6] = graph.hasSingleCommonAncestor();
+        	tableData[row][7] = graph.groupingInvertebrates();
+        	tableData[row][8] = graph.groupingVertebrates();
+        	tableData[row][9] = graph.groupingMammals();
+        	tableData[row][10] = graph.groupingNonmammals();
         	row++;
         }
         table = new JTable(tableData, columnNames);
@@ -54,6 +57,7 @@ public class StudentDataTable extends JFrame {
         tablePane.setSize(new Dimension(928, 762));
         add(tablePane);
         setSize(new Dimension(928, 762));
+        setJMenuBar(parent.actionHandler.getDataMenuBar());
     }
     
     class SharedListSelectionHandler implements ListSelectionListener {
@@ -77,7 +81,7 @@ public class StudentDataTable extends JFrame {
                 for (int i = minIndex; i <= maxIndex; i++) {
                     if (lsm.isSelectedIndex(i)) {
                         output.append(" " + i);
-                        if(!isAdjusting) AdminApplication.setCurrentGraph(i);
+                        if(!isAdjusting) parent.setCurrentGraph(i);
                     }
                 }
             }
