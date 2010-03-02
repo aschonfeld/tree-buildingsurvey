@@ -302,15 +302,13 @@ public class AdminApplication extends JFrame {
 	
 	public static void loadTreesFromDB() throws Exception {
 		AdminJdbcDao dao = new AdminJdbcDao();
-		List<String[]> studentsData = dao.loadTrees();
-		for(String[] studentData : studentsData) {
-			String studentName = studentData[0];
-			String treeData = studentData[2];
-			String question1 = studentData[3];
-			String question2 = studentData[4];
-			String section = studentData[6].substring(8,10);
-			int iSection = Integer.parseInt(section);
-			boolean directional = iSection % 2 == 0;
+		List<String[]> studentSurveys = dao.loadSurveys();
+		List<String[]> students = dao.loadStudents();
+		for(String[] studentSurvey : studentSurveys) {
+			String studentName = studentSurvey[0];
+			String treeData = studentSurvey[2];
+			String question1 = studentSurvey[3];
+			String question2 = studentSurvey[4];
 			String[] treeItems = treeData.split("#"); // remove '=' at start
 			Graph graph = new Graph(studentName);
 			for(String elements: treeItems){   //load vertices
@@ -353,17 +351,18 @@ public class AdminApplication extends JFrame {
 				Vertex v2 = graph.getVertexByID(id2);
 				graph.addEdge(new Edge(v1, v2));
 			}
-			graph.setDirectional(directional);
 			studentNameToTree.put(studentName, graph);
 		}
 		
-		/*
-		 * This code would be used to load the student's section info
-		 * 
-		 * List<String[]> sectionInfos = dao.loadStudents();
-		for(String[] sectionInfo : sectionInfos){
-
-		}*/
+		//Update directionality information
+		for(String[] student : students){
+			String name = student[0];
+			String section = student[1].substring(8,10);
+			int iSection = Integer.parseInt(section);
+			Graph temp = studentNameToTree.get(name);
+			if(temp != null)
+				temp.setDirectional(iSection % 2 == 0);
+		}
 	}
 	
 

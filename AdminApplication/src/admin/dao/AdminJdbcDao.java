@@ -6,12 +6,12 @@ import java.util.List;
 
 public class AdminJdbcDao extends BaseJdbcDao {
 	
-	private static final String SQL_LOAD_TREES = "SELECT name, date, tree, Q1, Q2 FROM student_testdata  ORDER BY name ASC";
+	private static final String SQL_LOAD_SURVEYS = "SELECT name, date, tree, Q1, Q2 FROM student_testdata  ORDER BY name ASC";
 	private static final String SQL_LOAD_STUDENTS = "SELECT name, section FROM students ORDER BY name ASC";
 	
 	/**
 	 * This method is utilized by AdminApplication to retrieve the
-	 * student data (name, tree, Q1, Q2) from the table, trees.student_testdata.
+	 * student surveys (name, tree, Q1, Q2) from the table, trees.student_data.
 	 *       
 	 * @return the desired <code>List</code> of <code>String[]</code> objects,
 	 * 		   or <code>null</code> if there is no data.
@@ -20,8 +20,8 @@ public class AdminJdbcDao extends BaseJdbcDao {
 	 *             if an SQLException occurs.
 	 * 
 	 */
-	public List<String[]> loadTrees() throws Exception{
-		System.out.println(String.format("Fetching Students. SQL is [%s].", SQL_LOAD_TREES));
+	public List<String[]> loadSurveys() throws Exception{
+		System.out.println(String.format("Fetching Surveys. SQL is [%s].", SQL_LOAD_SURVEYS));
 		ResultSetRowHandler<String[]> handler = new ResultSetRowHandler<String[]>() {
 			public String[] handle(ResultSet rs) throws SQLException {
 				String name, date, tree, Q1, Q2;
@@ -33,12 +33,12 @@ public class AdminJdbcDao extends BaseJdbcDao {
 				return new String[]{name,date,tree,Q1,Q2};
 			}
 		};
-		return executeQuery("trees", SQL_LOAD_TREES, handler, new InParam[]{});
+		return executeQuery("trees", SQL_LOAD_SURVEYS, handler, new InParam[]{});
 	}
 	
 	/**
 	 * This method is utilized by AdminApplication to retrieve the
-	 * student data (name, tree, Q1, Q2) from the table, trees.student_testdata.
+	 * students (name, section) from the table, grades.students.
 	 *       
 	 * @return the desired <code>List</code> of <code>String[]</code> objects,
 	 * 		   or <code>null</code> if there is no data.
