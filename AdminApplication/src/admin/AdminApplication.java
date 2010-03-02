@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.table.TableModel;
 
 import admin.dao.AdminJdbcDao;
 
@@ -379,6 +381,32 @@ public class AdminApplication extends JFrame {
 
 			graphs.add(thisGraph);
 		}
+	}
+	
+	public void createExportFile(String filename){
+		FileWriter ryt;
+		BufferedWriter out;
+		StringBuffer line;
+		try {
+			ryt = new FileWriter(filename + ".csv");
+			out = new BufferedWriter(ryt);
+			TableModel model = parent.studentDataTableFrame.table.getModel();
+			int colCount = model.getColumnCount();
+			int rowCount = model.getRowCount();
+			line = new StringBuffer();
+			for(int col=0;col<colCount;col++)
+				line.append(model.getColumnName(col)).append(",");
+			out.write(line.deleteCharAt(line.lastIndexOf(",")).append("\n").toString());
+			for(int row=0;row<rowCount;row++){
+				line = new StringBuffer();
+				for(int col=0;col<colCount;col++)
+					line.append(model.getValueAt(row, col)).append(",");
+				out.write(line.deleteCharAt(line.lastIndexOf(",")).append("\n").toString());
+			}
+			out.close();
+		} catch (IOException e) {
+			System.out.println("Could not export data file:" + e);
+		}		
 	}
     
 }
