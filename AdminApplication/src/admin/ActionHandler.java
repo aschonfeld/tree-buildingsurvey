@@ -74,9 +74,9 @@ public class ActionHandler extends JPanel {
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			parent.getCurrentGraph().toggleShowNames();
+			parent.toggleShowNames();
 			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText("Display Names" + (parent.getCurrentGraph().getShowNames() ? " \u2713" : ""));
+			item.setText("Display Names" + (parent.showNames ? " \u2713" : ""));
 		}
 	}
 	
@@ -148,7 +148,7 @@ public class ActionHandler extends JPanel {
         printItem = new JMenuItem(printAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
-        JMenuItem names = new JMenuItem("Display Names" + (parent.getCurrentGraph().getShowNames() ? " \u2713" : ""));
+        JMenuItem names = new JMenuItem("Display Names" + (parent.showNames ? " \u2713" : ""));
         names.addActionListener(new NamesAction());
         fileMenu.add(names);
         Graph tempGraph = parent.getCurrentGraph();
