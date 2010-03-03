@@ -48,8 +48,8 @@ public class AdminView extends TBSView {
 	public AdminView(Graphics2D g2, AdminModel m) {
 		super(true, m);
 		model = m;
-		int studentBarMax = TBSGraphics.studentNodeHeight * (model.getStudents().size()-1);
-		studentBarMax += ((model.getStudents().size()-1) * TBSGraphics.ySpacing);
+		int studentBarMax = TBSGraphics.studentNodeHeight * model.getStudents().size();
+		studentBarMax += (model.getStudents().size()-1) * TBSGraphics.ySpacing;
 		if(studentBarMax > model.getApplet().getHeight()){
 			studentBar = new JScrollBar(JScrollBar.VERTICAL, 0, model.getApplet().getHeight(), 0, studentBarMax);
 			studentBar.setBlockIncrement(TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing);
