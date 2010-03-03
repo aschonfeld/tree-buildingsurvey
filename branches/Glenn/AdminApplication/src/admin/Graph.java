@@ -479,7 +479,7 @@ public class Graph implements Renderable {
 					g2.setColor(Common.hullColor);
 					g2.draw(temp);
 					g2.setStroke(new BasicStroke());
-					if(temp.getP1().distance(temp.getP2()) > 5){
+					if(temp.getP1().distance(temp.getP2()) > 100){
 						int xVal = (int) temp.getBounds().getCenterX();
 						int yVal = (int) temp.getBounds().getCenterY();
 						Dimension dim = Common.getStringBounds(g2, hull.getHullName());
