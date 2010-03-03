@@ -347,6 +347,7 @@ public abstract class TBSModel
 	public void loadTree(String tree)
 	{
 		List<ModelElement> savedTree = getElements();
+		List<String[]> savedConnections = new LinkedList<String[]>();
 		String[] treeItems = tree.split("#");
 		try{
 			for(String item : treeItems)
@@ -357,19 +358,19 @@ public abstract class TBSModel
 				else if (data[0].equals("E"))
 					loadEmptyNode(data, savedTree);
 				else if (data[0].equals("C")){
-					savedTree.add(loadConnection(data, savedTree));
+					savedConnections.add(data);
 					connectionsInTree = true;
-				}else
-				{
+				}else{
 					System.out.println("Problem in loadTree");
 					break;
 				}
 			}
-
-			// Sort the local list
 			Collections.sort(savedTree, TBSGraphics.elementIdComparator);
-			setElements(savedTree);
 			refreshSerial();
+			for(String[] savedConnection : savedConnections)
+				loadConnection(savedConnection, savedTree);
+			// Sort the local list
+			setElements(savedTree);
 			System.out.println("loadTree: end");
 		}catch(NumberFormatException e){
 			System.out.println(new StringBuffer("There was an error parsing saved tree for ")
@@ -437,11 +438,9 @@ public abstract class TBSModel
 		}
 	}
 
-	public ModelElement loadConnection(String[] data, List<ModelElement> parsedElements)
-	throws NumberFormatException {
-		int id=0,from=0,to=0;
+	public void loadConnection(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
+		int from=0,to=0;
 		try{
-			id = Integer.parseInt(data[1]);
 			from = Integer.parseInt(data[2]);
 			to = Integer.parseInt(data[3]);
 		}catch(NumberFormatException e){
@@ -449,13 +448,14 @@ public abstract class TBSModel
 			.append(data[1]).append(",from id:").append(data[2]).append("to id:").append(data[3]).append(")").toString());
 			throw e;
 		}
-		int fromIndex = findIndexById(from, parsedElements);
-		int toIndex = findIndexById(to, parsedElements);
+		int fromIndex = findIndexById(from, tempTree);
+		int toIndex = findIndexById(to, tempTree);
 
-		Node fromNode = (Node) parsedElements.get(fromIndex);
-		Node toNode = (Node) parsedElements.get(toIndex);
-		Connection conn = new Connection(id, fromNode, toNode);
-		return (ModelElement) conn;
+		if(fromIndex > 0 && toIndex > 0){
+			Node fromNode = (Node) tempTree.get(fromIndex);
+			Node toNode = (Node) tempTree.get(toIndex);
+			tempTree.add(new Connection(getSerial(), fromNode, toNode));
+		}
 	}
 
 	/**
