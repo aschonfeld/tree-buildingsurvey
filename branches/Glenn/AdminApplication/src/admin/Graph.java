@@ -27,7 +27,6 @@ public class Graph implements Renderable {
 	private ArrayList<ConvexHull> hulls;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
-	private boolean showNames = false;
 	private boolean allOrgsInTree;
 	private boolean hasBranches = false;
 	private boolean hasHullCollisions = false;
@@ -49,9 +48,6 @@ public class Graph implements Renderable {
 	public void setDirectional(boolean directional) {
 		this.directional = directional;
 	}
-	
-	public boolean getShowNames() {return showNames;}
-	public void toggleShowNames() {this.showNames = !showNames;}
 
 /*************************
 * Return test parameters *
@@ -453,7 +449,7 @@ public class Graph implements Renderable {
 		offset.y += upperLeft.y;
 		for(Vertex v: vertices) {
 			v.render(g, offset);
-			if(showNames && VertexType.ORGANISM.equals(v.getInfo().getVertexType())){
+			if(AdminApplication.showNames && VertexType.ORGANISM.equals(v.getInfo().getVertexType())){
 				int xVal = (v.upperLeft.x - offset.x) + (v.getInfo().getImage().getWidth()/2);
 				int yVal = v.upperLeft.y - (offset.y + Common.ySpacing);
 				g.setFont(Common.tooltipFont);

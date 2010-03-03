@@ -36,6 +36,7 @@ public class AdminApplication extends JFrame {
 	private static ArrayList<VertexInfo> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
 	private static AdminMultiWindow parent;
+	public static boolean showNames = false;
 	
 	AdminApplication() {
     	super("AdminApplication");
@@ -106,6 +107,8 @@ public class AdminApplication extends JFrame {
     public static Graph getCurrentGraph(){
 		return graphs.get(currentGraphIndex);
 	}
+    
+    public static void toggleShowNames() {showNames = !showNames;}
  
 
     public void drawCurrentGraph(Graphics g) {
