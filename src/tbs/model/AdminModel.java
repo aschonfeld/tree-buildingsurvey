@@ -4,6 +4,7 @@
 package tbs.model;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -97,13 +98,16 @@ public class AdminModel extends TBSModel
 	
 	public void calculateHullCollisions(){
 		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
+		Rectangle rect;
 		for(ModelElement m : inTreeElements()){
 			if(m instanceof OrganismNode){
-				if(typeVertices.containsKey(((OrganismNode) m).getOrganismType()))
-					typeVertices.get(((OrganismNode) m).getOrganismType()).add(((Node)m).getAnchorPoint());
-				else{
+				if(typeVertices.containsKey(((OrganismNode) m).getOrganismType())){
+					rect = ((OrganismNode) m).getRectangle();
+					typeVertices.get(((OrganismNode) m).getOrganismType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+				}else{
+					rect = ((OrganismNode) m).getRectangle();
 					List<Point> temp = new LinkedList<Point>();
-					temp.add(((Node) m).getAnchorPoint());
+					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
 					typeVertices.put(((OrganismNode) m).getOrganismType(), temp);
 				}
 			}
