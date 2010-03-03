@@ -2,9 +2,12 @@ package admin;
 
 //explicit list needed since some dumbass put List in both awt and util
 import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -247,13 +250,23 @@ public class Graph implements Renderable {
 *****************************************************/
 	public void loadHulls(){
 		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
+		Rectangle rect;
 		for(Vertex v : vertices){
 			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
-				if(typeVertices.containsKey(v.getInfo().getType()))
-					typeVertices.get(v.getInfo().getType()).add(v.upperLeft);
+				if(typeVertices.containsKey(v.getInfo().getType())){
+					rect = new Rectangle(v.upperLeft.x,
+							v.upperLeft.y,
+							v.getInfo().getImage().getWidth(),
+							v.getInfo().getImage().getHeight());
+					typeVertices.get(v.getInfo().getType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+				}
 				else{
 					List<Point> temp = new LinkedList<Point>();
-					temp.add(v.upperLeft);
+					rect = new Rectangle(v.upperLeft.x,
+							v.upperLeft.y,
+							v.getInfo().getImage().getWidth(),
+							v.getInfo().getImage().getHeight());
+					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
 					typeVertices.put(v.getInfo().getType(), temp);
 				}
 			}
@@ -457,14 +470,25 @@ public class Graph implements Renderable {
 		for(ConvexHull hull : hulls){
 			if(hull.getDisplayHull()){
 				for(ConvexHull.Line line : hull.getHull()){
-					Graphics2D g2 = (Graphics2D) g;
-					g2.setStroke(new BasicStroke(3));
-					g2.setColor(Common.connectionColor);
-					g2.draw(new Line2D.Double(line.getPoint1().x - offset.x,
+					Line2D temp = new Line2D.Double(line.getPoint1().x - offset.x,
 							line.getPoint1().y - offset.y,
 							line.getPoint2().x - offset.x,
-							line.getPoint2().y - offset.y));
+							line.getPoint2().y - offset.y);
+					Graphics2D g2 = (Graphics2D) g;
+					g2.setStroke(new BasicStroke(3));
+					g2.setColor(Common.hullColor);
+					g2.draw(temp);
 					g2.setStroke(new BasicStroke());
+					if(temp.getP1().distance(temp.getP2()) > 5){
+						int xVal = (int) temp.getBounds().getCenterX();
+						int yVal = (int) temp.getBounds().getCenterY();
+						Dimension dim = Common.getStringBounds(g2, hull.getHullName());
+						xVal -= (dim.width+4)/2;
+						g2.setColor(Color.BLACK);
+						g2.fill(new Rectangle(xVal, yVal - (dim.height+4), dim.width+4, dim.height+4));
+						Common.drawCenteredString(g2, hull.getHullName(), xVal, yVal-2, 0,
+								0, Common.hullColor, Common.font);
+					}
 				}
 			}
 		}

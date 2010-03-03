@@ -15,6 +15,7 @@ public class Common {
     public static Color organismStringColor = Color.BLACK;
     public static Color organismBoxColor = Color.WHITE;
     public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
+    public static Color hullColor = Color.GREEN;
     public static Color emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
 
     /**
@@ -128,11 +129,13 @@ public class Common {
     	   connectionColor = Color.WHITE;
     	   emptyNodeColor = Color.WHITE;
     	   tooltipColor = Color.WHITE;
+    	   hullColor = Color.WHITE;
        }
 
        public static void setColorsForDisplay(){
     	   connectionColor = new Color(0.5f, 1.0f, 0.5f);
     	   emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
     	   tooltipColor = Color.CYAN;
+    	   hullColor = Color.GREEN;
        }       
 }
