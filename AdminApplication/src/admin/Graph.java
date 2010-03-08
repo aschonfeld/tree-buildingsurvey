@@ -31,6 +31,7 @@ public class Graph implements Renderable {
 	private boolean hasBranches = false;
 	private boolean hasHullCollisions = false;
 	private String studentName;
+	private ArrayList<String> answers = null;
 	private boolean labelled = false;
 	private int graphDirection = 0;
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
@@ -47,6 +48,14 @@ public class Graph implements Renderable {
 	
 	public void setDirectional(boolean directional) {
 		this.directional = directional;
+	}
+	
+	public void setAnswers(ArrayList<String> answers) {
+		this.answers = answers;
+	}
+	
+	public ArrayList<String> getAnswers() {
+		return answers;
 	}
 
 /*************************
