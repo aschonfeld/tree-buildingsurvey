@@ -86,7 +86,7 @@ public abstract class TBSController implements MouseListener, MouseMotionListene
    */   
   public ModelElement elementMouseIsOver(int x, int y) {
     int index = indexMouseIsOver(x,y);
-    if(index > 0)
+    if(index >= 0)
       return model.getElement(index);
     return null;
   } 
