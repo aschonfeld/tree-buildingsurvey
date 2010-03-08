@@ -53,6 +53,7 @@ public class TextEntryBox extends Prompt{
 
 	public TextEntryBox(StudentModel model) {
 		super(true, true, new Dimension(), model);
+		setRenderClose(false);
 		this.model = model;
 		pressedKeys = new LinkedList<Integer>();
 		pressedKeys.add(KeyEvent.VK_DELETE);

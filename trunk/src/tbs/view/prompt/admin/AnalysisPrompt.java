@@ -60,9 +60,8 @@ public class AnalysisPrompt extends Prompt
 			}
 				
 		}
-		calculateValues(analysisText.size()+1, true, false);
+		calculateValues(analysisText.size()+1, false);
 		drawBox();
-		drawCloseButton();
 		drawHeader("Tree Anaylsis");
 		incrementStringY();
 		drawText(analysisText);

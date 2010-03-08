@@ -80,9 +80,8 @@ public class RadioQuestionReviewPrompt extends Prompt
 	{
 		setGraphics(g2);
 		List<String[]> radioQuestionText = radioQuestionTexts.get(currentRadioQuestion);
-		calculateValues(radioQuestionText.size() + 2, true, true);
+		calculateValues(radioQuestionText.size() + 2, true);
 		drawBox();
-		drawCloseButton();
 		drawButtons(radioQuestions.toArray());
 		
 		setStringY(anchorPoint.y);
