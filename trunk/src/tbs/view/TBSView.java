@@ -52,6 +52,7 @@ public abstract class TBSView extends JComponent implements Printable{
 
 	//Tooltip information
 	private Boolean displayAllTooltips;
+	private Boolean screenPrintMode;
 	private String tooltipString;
 	private Point tooltipLocation;
 	private Timer timer;
@@ -74,6 +75,7 @@ public abstract class TBSView extends JComponent implements Printable{
 		timer = new Timer(1000, hider);
 		displayAllTooltips = false;
 		cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+		screenPrintMode = false;
 	}
 	
 	public Cursor getAppletCursor(){
@@ -91,7 +93,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 
 	public int getYOffset() {
-		return yOffset;
+		return screenPrintMode ? 0 : yOffset;
 	}
 
 	// sets the start of viewable tree area
@@ -104,7 +106,7 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 
 	public int getXOffset() {
-		return xOffset;
+		return screenPrintMode ? 0 : xOffset;
 	}
 
 	// sets the start of viewable tree area
@@ -131,6 +133,10 @@ public abstract class TBSView extends JComponent implements Printable{
 	
 	public void toggleDisplayAllTooltips(){
 		this.displayAllTooltips = !displayAllTooltips;
+	}
+	
+	public Boolean getScreenPrintMode(){
+		return screenPrintMode;
 	}
 
 	/**
@@ -169,10 +175,10 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 
 	public void renderOrganismNode(Graphics2D g2, OrganismNode on) {
-		g2.drawImage(on.getImage(), on.getX() - xOffset, on.getY() - yOffset, null);
+		g2.drawImage(on.getImage(), on.getX() - getXOffset(), on.getY() - getYOffset(), null);
 		if(displayAllTooltips){
-			int xVal = (on.getX() + (on.getWidth()/2)) - xOffset;
-			int yVal = (on.getY()-on.getHeight()) - yOffset;
+			int xVal = (on.getX() + (on.getWidth()/2)) - getXOffset();
+			int yVal = (on.getY()-on.getHeight()) - getYOffset();
 			g2.setFont(TBSGraphics.tooltipFont);
 			xVal -= TBSGraphics.getStringBounds(g2, on.getName()).width/2;
 			TBSGraphics.drawCenteredString(g2, on.getName(), xVal, yVal, 0,
@@ -192,9 +198,9 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderEmptyNode(Graphics2D g2, EmptyNode en){
 		if(!en.isBeingLabeled()){
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			g2.fill(new Rectangle(en.getX() - xOffset, en.getY() - yOffset, en.getWidth(), en.getHeight()));
+			g2.fill(new Rectangle(en.getX() - getXOffset(), en.getY() - getYOffset(), en.getWidth(), en.getHeight()));
 			TBSGraphics.drawCenteredString(g2, en.getName(), en.getX(),
-					en.getY() - yOffset, en.getWidth(), en.getHeight());
+					en.getY() - getYOffset(), en.getWidth(), en.getHeight());
 		}
 	}
 
@@ -217,25 +223,24 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderSelectedNode(Graphics2D g2, Node n){
 		if(n.isBeingLabeled() || (!n.isInTree() && !n.isBeingDragged()))
 			return; // do not draw green box around node being labeled or in reservoir
-		double y = n.getY() - (1.5 + yOffset);
 		g2.setColor(TBSGraphics.selectedNodeBorderColor);
-		g2.draw(new Rectangle2D.Double(n.getX()-1.5, y,	n.getWidth() + 3, n.getHeight() + 3));
+		g2.draw(new Rectangle2D.Double(n.getX()-(1.5+getXOffset()), n.getY()-(1.5+getYOffset()), n.getWidth() + 3, n.getHeight() + 3));
 		if(n.isBeingDragged()){
 			if(n instanceof OrganismNode)
-				g2.drawImage(((OrganismNode) n).getImage(), n.getX(), n.getY() - yOffset, null);
+				g2.drawImage(((OrganismNode) n).getImage(), n.getX(), n.getY(), null);
 			else
 				renderEmptyNode(g2, (EmptyNode) n);	
 		}
 	}
 	
 	public void renderConnection(Graphics2D g2, Line2D line, Color color){
-		line.setLine(line.getX1() - xOffset, line.getY1() - yOffset, line.getX2() - xOffset, line.getY2() - yOffset);
+		Line2D temp = new Line2D.Double(line.getX1() - getXOffset(), line.getY1() - getYOffset(), line.getX2() - getXOffset(), line.getY2() - getYOffset());
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(color);
-		g2.draw(line);
+		g2.draw(temp);
 		if(model.getStudent().hasArrows()){
-			g2.draw(TBSUtils.getArrowHead(line, 0.75 * Math.PI));
-			g2.draw(TBSUtils.getArrowHead(line, 1.25 * Math.PI));
+			g2.draw(TBSUtils.getArrowHead(temp, 0.75 * Math.PI));
+			g2.draw(TBSUtils.getArrowHead(temp, 1.25 * Math.PI));
 		}
 		g2.setStroke(new BasicStroke());
 	}
@@ -243,9 +248,9 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderTooltip(Graphics2D g2){
 		if(!displayAllTooltips && tooltipString != null){
 			int xVal = tooltipLocation.x;
-			xVal -= xOffset;
+			xVal -= getXOffset();
 			int yVal = tooltipLocation.y;
-			yVal -= yOffset;
+			yVal -= getYOffset();
 			g2.setFont(TBSGraphics.tooltipFont);
 			xVal -= TBSGraphics.getStringBounds(g2, tooltipString).width/2;
 			TBSGraphics.drawCenteredString(g2, tooltipString, xVal, yVal, 0,
@@ -301,24 +306,32 @@ public abstract class TBSView extends JComponent implements Printable{
 			return(NO_SUCH_PAGE);
 		} else {
 			// make pic
-			BufferedImage fullSizeImage = new BufferedImage(
-					getWidth(), 
-					getHeight(), 
+			int previousHeight = getHeight();
+			int previousWidth = getWidth();
+			int width = getWidth();
+			if(horizontalBar.isVisible())
+				width *= horizontalBar.getMaximum()/horizontalBar.getVisibleAmount();
+			int height = getHeight() * (verticalBar.getMaximum()/verticalBar.getVisibleAmount());
+			BufferedImage fullSizeImage = new BufferedImage(width, height, 
 					BufferedImage.TYPE_INT_RGB);
 			TBSGraphics.setColorsForPrinting();
+			screenPrintMode = true;
+			horizontalBar.setVisible(false);
+			verticalBar.setVisible(false);
+			setSize(width, height);
 			paint(fullSizeImage.getGraphics());
 
 			// scale to fit
-			double wRatio = getWidth()/pageFormat.getImageableWidth();
-			double hRatio = getHeight()/pageFormat.getImageableHeight();
+			double wRatio = width/pageFormat.getImageableWidth();
+			double hRatio = height/pageFormat.getImageableHeight();
 			int actualWidth;
 			int actualHeight;
 			if (wRatio > hRatio) {
-				actualWidth = (int)(getWidth()/wRatio);
-				actualHeight = (int)(getHeight()/wRatio);
+				actualWidth = (int)(width/wRatio);
+				actualHeight = (int)(height/wRatio);
 			} else {
-				actualWidth = (int)(getWidth()/hRatio);
-				actualHeight = (int)(getHeight()/hRatio);
+				actualWidth = (int)(width/hRatio);
+				actualHeight = (int)(height/hRatio);
 			}
 
 			// print it
@@ -340,6 +353,9 @@ public abstract class TBSView extends JComponent implements Printable{
 					null);
 			fullSizeImage = null;
 			TBSGraphics.setColorsForDisplay();
+			setSize(previousWidth, previousHeight);
+			verticalBar.setVisible(true);
+			screenPrintMode = false;
 			return(PAGE_EXISTS);
 		}
 	}

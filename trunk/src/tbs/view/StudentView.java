@@ -50,56 +50,57 @@ public class StudentView extends TBSView {
 	 */
 	public void renderButtons(Graphics2D g2)
 	{
-		TBSButtonType buttonClicked = model.getController().getButtonClicked();
-		if(buttonClicked == null)
-			buttonClicked = TBSButtonType.SELECT;
-		Rectangle buttonRect = new Rectangle(0,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
-		int upperY = TBSGraphics.buttonsHeight - TBSGraphics.padding.height;
-		for(TBSButtonType b: getButtons()) {
-			TBSGraphics.renderButtonBackground(g2, buttonRect, b.equals(buttonClicked));
+		if(!getScreenPrintMode()){
+			TBSButtonType buttonClicked = model.getController().getButtonClicked();
+			if(buttonClicked == null)
+				buttonClicked = TBSButtonType.SELECT;
+			Rectangle buttonRect = new Rectangle(0,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
+			int upperY = TBSGraphics.buttonsHeight - TBSGraphics.padding.height;
+			for(TBSButtonType b: getButtons()) {
+				TBSGraphics.renderButtonBackground(g2, buttonRect, b.equals(buttonClicked));
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				if(!model.isButtonActive(b)){
+					g2.setColor(TBSGraphics.buttonInactive);
+					g2.setStroke(new BasicStroke(3));
+					g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y,
+							buttonRect.x + buttonRect.width, buttonRect.y + buttonRect.height));
+					g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y+buttonRect.height,
+							buttonRect.x + buttonRect.width, buttonRect.y));
+					g2.setStroke(new BasicStroke());
+				}
+				TBSGraphics.drawCenteredString(g2, b.toString(),
+						buttonRect.x, upperY, buttonRect.width, 0);
+				buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
+			}
+
+			buttonRect.setLocation(buttonRect.x + TBSGraphics.spaceBeforeQuestionButtons, buttonRect.y);
+			TBSGraphics.questionButtonsStart = buttonRect.x;
+			buttonRect.setSize(new Dimension(TBSGraphics.questionButtonsWidth, buttonRect.height));
+
+			Prompt prompt = model.getPrompt();
+			Student student = model.getStudent();
+			String buttonString;
+			TBSGraphics.renderButtonBackground(g2, buttonRect, (prompt != null) && prompt instanceof WrittenQuestionPrompt);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			if(!model.isButtonActive(b)){
-				g2.setColor(TBSGraphics.buttonInactive);
-				g2.setStroke(new BasicStroke(3));
-				g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y,
-						buttonRect.x + buttonRect.width, buttonRect.y + buttonRect.height));
-				g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y+buttonRect.height,
-						buttonRect.x + buttonRect.width, buttonRect.y));
-				g2.setStroke(new BasicStroke());
-			}
-			TBSGraphics.drawCenteredString(g2, b.toString(),
+			buttonString = "Questions";
+			if(student.getResponse(OpenQuestionButtonType.ONE).isCompleted() && 
+					student.getResponse(OpenQuestionButtonType.TWO).isCompleted())
+				buttonString += " \u2713";
+			TBSGraphics.drawCenteredString(g2, buttonString,
 					buttonRect.x, upperY, buttonRect.width, 0);
-			buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
+			buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
+
+			//Show All Names Button
+			buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.namesButtonWidth + getVerticalBar().getWidth()),
+					0,TBSGraphics.namesButtonWidth, TBSGraphics.buttonsHeight);
+			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+			g2.setColor(Color.gray);
+			g2.draw(buttonRect);
+			TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
+					buttonRect.x, upperY, buttonRect.width, 0);
 		}
-
-		buttonRect.setLocation(buttonRect.x + TBSGraphics.spaceBeforeQuestionButtons, buttonRect.y);
-		TBSGraphics.questionButtonsStart = buttonRect.x;
-		buttonRect.setSize(new Dimension(TBSGraphics.questionButtonsWidth, buttonRect.height));
-
-		Prompt prompt = model.getPrompt();
-		Student student = model.getStudent();
-		String buttonString;
-		TBSGraphics.renderButtonBackground(g2, buttonRect, (prompt != null) && prompt instanceof WrittenQuestionPrompt);
-		g2.setColor(Color.gray);
-		g2.draw(buttonRect);
-		buttonString = "Questions";
-		if(student.getResponse(OpenQuestionButtonType.ONE).isCompleted() && 
-				student.getResponse(OpenQuestionButtonType.TWO).isCompleted())
-			buttonString += " \u2713";
-		TBSGraphics.drawCenteredString(g2, buttonString,
-				buttonRect.x, upperY, buttonRect.width, 0);
-		buttonRect.setLocation(buttonRect.x + TBSGraphics.questionButtonsWidth, buttonRect.y);
-		
-		//Show All Names Button
-		buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.namesButtonWidth + getVerticalBar().getWidth()),
-				0,TBSGraphics.namesButtonWidth, TBSGraphics.buttonsHeight);
-		TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-		g2.setColor(Color.gray);
-		g2.draw(buttonRect);
-		TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
-				buttonRect.x, upperY, buttonRect.width, 0);
-
 	}
 	
 	public void renderElements(Graphics2D g2) {
@@ -151,7 +152,7 @@ public class StudentView extends TBSView {
 		if(screenString != null && screenString.length() > 0) {
 			int xVal = TBSGraphics.LINE_OF_DEATH + 20;
 			int yVal = TBSGraphics.buttonsHeight;
-      int width = model.getApplet().getWidth() - (xVal + TBSGraphics.buttonsWidth);
+			int width = model.getApplet().getWidth() - (xVal + TBSGraphics.buttonsWidth);
 			List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
 			for(String line : lines) {
 				TBSGraphics.drawCenteredString(g2, line, xVal, yVal, 0, TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor);
