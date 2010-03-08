@@ -74,7 +74,9 @@ public class AdminApplication extends JFrame {
     	parent.studentDataTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	parent.studentDataTableFrame.pack();
     	parent.studentDataTableFrame.setVisible(true);
-        
+    	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	parent.questionDisplayFrame.pack();
+    	parent.questionDisplayFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -90,6 +92,7 @@ public class AdminApplication extends JFrame {
     public void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
+		parent.questionDisplayFrame.setAnswersText(graphs.get(currentGraphIndex).getAnswers());
 		setJMenuBar(actionHandler.createMenuBar());
 		validate();
 		repaint();
@@ -99,7 +102,7 @@ public class AdminApplication extends JFrame {
 	    //leftSplitPane.revalidate();
 	    treeView.paintComponent();
     }
-
+    
     public void printGraphInfo() {
     	System.out.println(graphs.get(currentGraphIndex).getInfo());
     }
@@ -124,6 +127,7 @@ public class AdminApplication extends JFrame {
     	treeView.repaint();
     	//System.out.println(size);
     	graph.render(g, new Point(0,0));
+    	
     }
     
     private static void initCommonVertices() {
@@ -247,13 +251,15 @@ public class AdminApplication extends JFrame {
 					studentData.split(Pattern.quote("+="));
 				String studentName = studentDataItems[0];
 				String treeData = studentDataItems[2];
-				String question1 = studentDataItems[3];
-				String question2 = studentDataItems[4];
+				ArrayList<String> answers = new ArrayList<String>();
+				answers.add(studentDataItems[3]);
+				answers.add(studentDataItems[4]);
 				String section = studentDataItems[6].substring(8,10);
 				int iSection = Integer.parseInt(section);
 				boolean directional = iSection % 2 == 0;
 				String[] treeItems = treeData.split("#"); // remove '=' at start
 				Graph graph = new Graph(studentName);
+				graph.setAnswers(answers);
 				for(String elements: treeItems){   //load vertices
 					String[] attributes = elements.split(":");
 					if(attributes.length < 6) continue;
@@ -311,10 +317,12 @@ public class AdminApplication extends JFrame {
 		for(String[] studentSurvey : studentSurveys) {
 			String studentName = studentSurvey[0];
 			String treeData = studentSurvey[2];
-			String question1 = studentSurvey[3];
-			String question2 = studentSurvey[4];
+			ArrayList<String> answers = new ArrayList<String>();
+			answers.add(studentSurvey[3]);
+			answers.add(studentSurvey[4]);
 			String[] treeItems = treeData.split("#"); // remove '=' at start
 			Graph graph = new Graph(studentName);
+			graph.setAnswers(answers);
 			for(String elements: treeItems){   //load vertices
 				String[] attributes = elements.split(":");
 				if(attributes.length < 6) continue;
