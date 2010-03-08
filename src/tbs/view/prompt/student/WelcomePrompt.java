@@ -80,9 +80,8 @@ public class WelcomePrompt extends Prompt
 		List<String> directions = TBSGraphics.breakStringByLineWidth(g2,
 				instrProps.getProperty("welcome_instr"),
         getWidth() - TBSGraphics.padding.width * 2);
-		calculateValues(introduction.size() + directions.size() + 5, true, true);
+		calculateValues(introduction.size() + directions.size() + 5, true);
 		drawBox();
-		drawCloseButton();
 		drawButtons(new Object[]{"Start"});
 		drawHeader("Welcome");
 		incrementStringY();

@@ -89,6 +89,8 @@ public class HelpPrompt extends Prompt
 	public void mousePressed(MouseEvent e) {
 		if(getCloseButton().contains(e.getPoint()))
 			setFinished(true);
+		else if(getMinimizeButton().contains(e.getPoint()))
+			startMinimization();
 		else{
 			if(getBottomButtons().contains(e.getPoint()))
 				selectedOption = options[getSelectedButtonIndex(e.getX(),options.length)];
@@ -155,11 +157,10 @@ public class HelpPrompt extends Prompt
 			totalLines = buttonsLines + 2;
 		}
 		if(HelpPromptButtonType.BUTTON_INFO.equals(selectedOption))
-			calculateValues(totalLines, (buttonInfo.size() * TBSGraphics.padding.width) + TBSGraphics.textHeight + TBSGraphics.padding.height, true, true);
+			calculateValues(totalLines, (buttonInfo.size() * TBSGraphics.padding.width) + TBSGraphics.textHeight + TBSGraphics.padding.height, true);
 		else
-			calculateValues(totalLines, TBSGraphics.textHeight + TBSGraphics.padding.height, true, true);
+			calculateValues(totalLines, TBSGraphics.textHeight + TBSGraphics.padding.height, true);
 		drawBox();
-		drawCloseButton();
 		drawButtons(options, selectedOption.toString());
 		drawHeader(new StringBuffer("Help - ").append(selectedOption.getText()).toString());
 		incrementStringY();

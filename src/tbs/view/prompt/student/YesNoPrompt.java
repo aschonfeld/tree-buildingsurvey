@@ -31,6 +31,7 @@ public class YesNoPrompt extends Prompt{
 	// if buttons == null, text input is assumed
 	public YesNoPrompt(TBSModel model, TBSButtonType promptType) {
 		super(true, true, new Dimension(320,0), model);
+		setRenderClose(false);
 		this.model = model;
 		this.promptType = promptType;
 		question = new StringBuffer("Are you sure you want to ").append(promptType.getText())
@@ -62,7 +63,7 @@ public class YesNoPrompt extends Prompt{
 		lineBrokenQuestion = new LinkedList<String>();
 		lineBrokenQuestion.addAll(TBSGraphics.breakStringByLineWidth(g2,
 					question, getWidth() - TBSGraphics.padding.width * 2));
-		calculateValues(2 + lineBrokenQuestion.size(), false, true);
+		calculateValues(2 + lineBrokenQuestion.size(), true);
 		drawBox();
 		drawButtons(buttons);
 		drawText(lineBrokenQuestion);

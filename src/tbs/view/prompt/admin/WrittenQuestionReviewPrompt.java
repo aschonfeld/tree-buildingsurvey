@@ -78,7 +78,6 @@ public class WrittenQuestionReviewPrompt extends Prompt
 		drawHeader(new StringBuffer("Open Responses - Questions ").append(maxQuestion-1)
 				.append(" & ").append(maxQuestion).toString());
 		drawBox();
-		drawCloseButton();
 		drawButtons(pageButtonText.toArray());
 		incrementStringY();
 		

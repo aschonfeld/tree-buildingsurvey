@@ -65,6 +65,8 @@ public class WrittenQuestionPrompt extends Prompt{
 	// if buttons == null, text input is assumed
 	public WrittenQuestionPrompt(TBSModel model) {
 		super(true, false, new Dimension(770,0), model);
+		setRenderMinimize(true);
+		setMinimizedTitle("Written Questions");
 		this.model = model;
 		questionProps = PropertyLoader.getProperties("questions");
 		questionTexts = new HashMap<OpenQuestionButtonType, List<String>>();
@@ -91,6 +93,12 @@ public class WrittenQuestionPrompt extends Prompt{
 			}
 		}else if(getCloseButton().contains(e.getPoint()))
 			setFinished(true);
+		else if(getMinimizeButton().contains(e.getPoint())){
+			if(getMinimizedState())
+				startMaximization();
+			else
+				startMinimization();
+		}
 		if(isFinished())
 			timer.stop();
 	}
@@ -201,87 +209,90 @@ public class WrittenQuestionPrompt extends Prompt{
 
 	public void paintComponent(Graphics2D g2) {
 		setGraphics(g2);
-		lineBrokenQuestion = new LinkedList<String>();
-		List<String> text = new LinkedList<String>();
-		int totalLines = 0;
-		if(!questionTexts.containsKey(currentQuestion)){
-			text = TBSGraphics.breakStringByLineWidth(g2,
-					questionProps.getProperty(currentQuestion.getQuestionKey()),getUnpaddedWidth());
-			questionTexts.put(currentQuestion, text);
-		}else
-			text = questionTexts.get(currentQuestion);
-		totalLines = text.size() + 3 + TBSGraphics.maxLinesOfWrittenText;	
-		calculateValues(totalLines, true, true);
-		drawBox();
-		drawCloseButton();
-		drawButtons(buttons.toArray());
-		drawHeader(new StringBuffer("Open Response - ").append(currentQuestion.getAdminText()).toString());
-		incrementStringY();
-		drawText(text);
-		incrementStringY();
-		String line = "";
-		for(int i=0;i<userInputLines.size();i++){
-			line = userInputLines.get(i);
-			if(i != lineIndex){
-				if(!TBSUtils.isStringEmpty(line))
-					drawText(TBSGraphics.breakStringByLineWidth(g2,line,getUnpaddedWidth()));
-				else
-					incrementStringY();
-			}else{
-				TextLayout layout;
-				int x, y;
-				List<String> tempLines = TBSGraphics.breakStringByLineWidth(g2,line,getUnpaddedWidth());
-				int currentSize = 0;
-				int cursorY = 0;
-				String cursorLine = "";
-				int cursorLineIndex = 0;
-				int adjCursorIndex = cursorIndex;
-				if(tempLines.size() == 1){
-					cursorLine = line;
-					cursorY = getStringY();
+		if(getMinimizedState()){
+			drawMinimized();
+		}else{
+			lineBrokenQuestion = new LinkedList<String>();
+			List<String> text = new LinkedList<String>();
+			int totalLines = 0;
+			if(!questionTexts.containsKey(currentQuestion)){
+				text = TBSGraphics.breakStringByLineWidth(g2,
+						questionProps.getProperty(currentQuestion.getQuestionKey()),getUnpaddedWidth());
+				questionTexts.put(currentQuestion, text);
+			}else
+				text = questionTexts.get(currentQuestion);
+			totalLines = text.size() + 3 + TBSGraphics.maxLinesOfWrittenText;	
+			calculateValues(totalLines, true);
+			drawBox();
+			drawButtons(buttons.toArray());
+			drawHeader(new StringBuffer("Open Response - ").append(currentQuestion.getAdminText()).toString());
+			incrementStringY();
+			drawText(text);
+			incrementStringY();
+			String line = "";
+			for(int i=0;i<userInputLines.size();i++){
+				line = userInputLines.get(i);
+				if(i != lineIndex){
+					if(!TBSUtils.isStringEmpty(line))
+						drawText(TBSGraphics.breakStringByLineWidth(g2,line,getUnpaddedWidth()));
+					else
+						incrementStringY();
 				}else{
-					String tempLine = "";
-					for(int j=0;j<tempLines.size();j++){
-						tempLine = tempLines.get(j);
-						if(adjCursorIndex <= tempLine.length() && cursorLineIndex == 0){
-							cursorLine = tempLine;
-							cursorY = getStringY();
-							incrementStringY();
-							cursorLineIndex = j;
-						}else{
-							drawString(tempLine, getX() + TBSGraphics.padding.width, getStringY());
-							incrementStringY();
-							currentSize += tempLine.length();
-							if(j>=cursorLineIndex)
-								adjCursorIndex -= tempLine.length();
+					TextLayout layout;
+					int x, y;
+					List<String> tempLines = TBSGraphics.breakStringByLineWidth(g2,line,getUnpaddedWidth());
+					int currentSize = 0;
+					int cursorY = 0;
+					String cursorLine = "";
+					int cursorLineIndex = 0;
+					int adjCursorIndex = cursorIndex;
+					if(tempLines.size() == 1){
+						cursorLine = line;
+						cursorY = getStringY();
+					}else{
+						String tempLine = "";
+						for(int j=0;j<tempLines.size();j++){
+							tempLine = tempLines.get(j);
+							if(adjCursorIndex <= tempLine.length() && cursorLineIndex == 0){
+								cursorLine = tempLine;
+								cursorY = getStringY();
+								incrementStringY();
+								cursorLineIndex = j;
+							}else{
+								drawString(tempLine, getX() + TBSGraphics.padding.width, getStringY());
+								incrementStringY();
+								currentSize += tempLine.length();
+								if(j>=cursorLineIndex)
+									adjCursorIndex -= tempLine.length();
+							}
+							i++;	
 						}
-						i++;	
 					}
-				}
-				// calculate dimensions of String s
-				x = getX() + TBSGraphics.padding.width;
-				y = cursorY + TBSGraphics.textHeight;
-				boolean cursorWithinName = adjCursorIndex < cursorLine.length();
-				String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
-				int cursorX = x;
-				if(!TBSUtils.isStringEmpty(beforeCursor)){
-					layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
-					layout.draw(g2, x, y);
-					cursorX += ((int) layout.getBounds().getWidth() + 2);
-				}
-				else
-					cursorX += 2;
-				if(cursorWithinName){
-					String afterCursor = cursorLine.substring(adjCursorIndex);
-					if(!TBSUtils.isStringEmpty(afterCursor)){
-						layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
-						layout.draw(g2, cursorX + cursorWidth, y);
+					// calculate dimensions of String s
+					x = getX() + TBSGraphics.padding.width;
+					y = cursorY + TBSGraphics.textHeight;
+					boolean cursorWithinName = adjCursorIndex < cursorLine.length();
+					String beforeCursor = cursorWithinName ? cursorLine.substring(0, adjCursorIndex) : cursorLine;
+					int cursorX = x;
+					if(!TBSUtils.isStringEmpty(beforeCursor)){
+						layout = new TextLayout(beforeCursor, g2.getFont(), g2.getFontRenderContext());
+						layout.draw(g2, x, y);
+						cursorX += ((int) layout.getBounds().getWidth() + 2);
 					}
-				}
-				drawCursor(new Point(cursorX,cursorY), new Point(cursorWidth, TBSGraphics.textHeight));
-				if(adjCursorIndex != cursorIndex)
-					incrementStringY();
-			}	
+					else
+						cursorX += 2;
+					if(cursorWithinName){
+						String afterCursor = cursorLine.substring(adjCursorIndex);
+						if(!TBSUtils.isStringEmpty(afterCursor)){
+							layout = new TextLayout(afterCursor, g2.getFont(), g2.getFontRenderContext());
+							layout.draw(g2, cursorX + cursorWidth, y);
+						}
+					}
+					drawCursor(new Point(cursorX,cursorY), new Point(cursorWidth, TBSGraphics.textHeight));
+					if(adjCursorIndex != cursorIndex)
+						incrementStringY();
+				}	
+			}
 		}
 	}
 

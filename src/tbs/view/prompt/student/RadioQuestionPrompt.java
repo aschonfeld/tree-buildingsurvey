@@ -112,9 +112,8 @@ public class RadioQuestionPrompt extends Prompt{
 		List<OpenQuestionPromptButtonType> radioAnswers = response.getRadioAnswers();
 		for(int i=0;i<radioAnswers.size();i++)
 			radioText.get(i)[1] = radioAnswers.get(i).getText();
-		calculateValues(totalLines, true, true);
+		calculateValues(totalLines, true);
 		drawBox();
-		drawCloseButton();
 		drawButtons(buttons.toArray());
 
 		drawHeader(new StringBuffer("Open Response - ").append(currentRadioQuestion.getAdminText()).toString());
