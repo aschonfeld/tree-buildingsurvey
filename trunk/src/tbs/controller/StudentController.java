@@ -205,8 +205,9 @@ public class StudentController extends TBSController
 		if(model.getSelectedElement() instanceof Node) {
 			if(TBSButtonType.LINK.equals(getButtonClicked()))
 				view.setConnInProgress(
-		    		new Line2D.Double(((Node) model.getSelectedElement()).getCenter(),
-		    				new Point(e.getX(), e.getY() + view.getYOffset())));
+		    		new Line2D.Double(
+		    				((Node) model.getSelectedElement()).getCenter(),
+		    				new Point(x + view.getXOffset(), y + view.getYOffset())));
 		}
 	}
 	
