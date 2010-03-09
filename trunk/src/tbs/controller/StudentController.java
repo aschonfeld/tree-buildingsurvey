@@ -311,7 +311,7 @@ public class StudentController extends TBSController
 				node.move(deltaX, deltaY);
 			} else {
 				// if organism node being added to tree snap to mouse location
-				node.moveTo(x, y);
+				node.moveTo(x+view.getXOffset(), y+view.getYOffset());
 			}
 		}
 		// update our data
@@ -338,8 +338,6 @@ public class StudentController extends TBSController
 				//Node dragged to point out of bounds
 				modifyOutOfBounds(draggedNode);
 				List<ModelElement> inTreeElements = model.inTreeElements();
-				if(!draggedNode.isInTree())
-					draggedNode.setY(draggedNode.getY() + view.getYOffset());
 				for(ModelElement inTreeElement : inTreeElements){
 				  if(!inTreeElement.equals(draggedNode)){
 				    if(inTreeElement instanceof Node && inTreeElement.collidesWith(draggedNode)){
@@ -566,19 +564,12 @@ public class StudentController extends TBSController
 	}    
     
     //Handles attempts to place nodes outside of the applet's area. 
-	public void modifyOutOfBounds(Node n){
-		if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
-			n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
-		if(n.isInTree()){
-			if (n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height)
-				n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height);
-			if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
-				n.setY(view.getHeight()-n.getHeight() + view.getYOffset());
-		} else {
-			if(n.getY() <= TBSGraphics.buttonsHeight + TBSGraphics.padding.height)
-				n.setY(TBSGraphics.buttonsHeight + TBSGraphics.padding.height);
-			if((n.getY() + n.getHeight()) > view.getHeight())
-				n.setY(view.getHeight()-n.getHeight());       
-		}
-	}
+    public void modifyOutOfBounds(Node n){
+    	if((n.getX()+n.getWidth()) > view.getWidth() - view.getVerticalBar().getWidth())
+    		n.setX(view.getWidth() - n.getWidth() - view.getVerticalBar().getWidth());
+    	if (n.getY() <= view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height)
+    		n.setY(view.getYOffset() + TBSGraphics.buttonsHeight + TBSGraphics.padding.height);
+    	if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
+    		n.setY((view.getHeight()+ view.getYOffset())-n.getHeight());
+    }
 }
