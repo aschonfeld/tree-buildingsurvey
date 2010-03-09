@@ -25,6 +25,7 @@ import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
+import tbs.model.AdminModel;
 import tbs.model.Connection;
 import tbs.model.EmptyNode;
 import tbs.model.ModelElement;
@@ -309,15 +310,26 @@ public abstract class TBSView extends JComponent implements Printable{
 			int previousHeight = getHeight();
 			int previousWidth = getWidth();
 			int width = getWidth();
-			if(horizontalBar.isVisible())
-				width *= horizontalBar.getMaximum()/horizontalBar.getVisibleAmount();
+			int maxX = 0;
+			for(ModelElement m : model.inTreeElements()){
+				if(m instanceof Node){
+					if(((Node) m).getRectangle().getMaxX() > maxX)
+						maxX = (int) ((Node)m).getRectangle().getMaxX();
+				}
+			}
+			if(maxX > width)
+				width = maxX + 100;
 			int height = getHeight() * (verticalBar.getMaximum()/verticalBar.getVisibleAmount());
+			if(model instanceof AdminModel)
+				height += 200;
 			BufferedImage fullSizeImage = new BufferedImage(width, height, 
 					BufferedImage.TYPE_INT_RGB);
 			TBSGraphics.setColorsForPrinting();
 			screenPrintMode = true;
 			horizontalBar.setVisible(false);
 			verticalBar.setVisible(false);
+			if(model instanceof AdminModel)
+				((AdminView) this).getStudentBar().setVisible(false);
 			setSize(width, height);
 			paint(fullSizeImage.getGraphics());
 
@@ -355,6 +367,8 @@ public abstract class TBSView extends JComponent implements Printable{
 			TBSGraphics.setColorsForDisplay();
 			setSize(previousWidth, previousHeight);
 			verticalBar.setVisible(true);
+			if(model instanceof AdminModel)
+				((AdminView) this).getStudentBar().setVisible(true);
 			screenPrintMode = false;
 			return(PAGE_EXISTS);
 		}
