@@ -4,35 +4,51 @@
 == Introduction ==
 The schedule for the spring semester will be couched in terms of deliverables per week. Responsibility for deliverables will be taken at team meetings. 
 
-In order to ensure orderly development, code submissions should be in fulfillment of schedule items or in response to items on the issues list. 
+In order to ensure orderly development, code submissions should be in fulfillment of schedule items or in response to items on the issues list. Experimental ideas should be developed in personal branches. 
 
 
 The schedule for the fall semester has been moved [FallSchedule here].
 
-== Outstanding Items ==
-Week 1: (1/29 - 2/4)
-  * Glenn: Load tree into a graph. Deliverable: load a tree and traverse it.
-  * Andrew: Refactor Model. Deliverable: Simplicity ([RefactoringAnalysis Refactoring Analysis])
+Second Sprint features backlog
+
+
+Relatively Minor Features:
+
+  * Minimize/restore prompts
+  * Bring AdminApp and AdminApplet into sync as much as possible
+  * Display student responses in Admin Application
+  * Display responses in printout
+  * Respond to Prof. White's review of current scoring mechanism (response pending, this may have to wait for third round)
+  * Finish common-ancestor scoring (Jon)
+  * Selectable columns in data readout
+
+Major Overhaul:
+  * Machine learning/neural network scoring (pending Prof. White's approval)
+  * [Deployable Deployable Applet] 
+
+
+
+
+
+
+Previously scheduled, not delivered:
+(may reschedule, or not, depending on demand)
+
+  * Glenn: Collect statistics on multiple graphs
+  * Glenn: Student trees searchable by graph features
   * Andrew: Study feasability of logging. Deliverable: written report, aye or nay and why
     * This feature will not be feasible, report coming
-  * Jon:  Unit tests for White's scoring items 
-  * Jon: Begin Controller refactor: decompose switch
-  * Jon: Begin Controller refactor: write unit tests for testable methods
-
-Week 2: (2/4-2/11)
-  * Glenn: Implement White's tests
-  * Andrew: Refactor Prompts
-  * Jon: Finish Controller refactor
-   
-Week 3: (2/11-2/18)
-  * Glenn: Collect statistics on multiple graphs
-  * Andrew: Refactor View
-  * Jon: Continue adding unit tests
-
-Week 4: (2/18-2/25)
-  * Glenn: Student trees searchable by graph features
   * Andrew: If feasible, logging. Otherwise, a new deliverable here.
-  * Jon: Continue adding unit tests
+  * Jon: Refactor, unit tests
+    * These were derailed by Andrew's work on refactoring. Might return to unit tests, at the moment documentation seems more critical. 
 
 
-== Delivered Items ==
+== Delivered Items from first sprint ==
+  * Glenn: Implement White's tests
+  * Glenn: Load tree into a graph. Deliverable: load a tree and traverse it.
+  * Andrew: Refactor Model. Deliverable: Simplicity ([RefactoringAnalysis Refactoring 
+  * Jon:  Unit tests for White's scoring items (sort of)
+  * Jon: Implement various of Prof. White's tests.
+  * Andrew: Refactor Prompts
+  * Andrew: Refactor View
+Jon: Work on testing methods, documentation
