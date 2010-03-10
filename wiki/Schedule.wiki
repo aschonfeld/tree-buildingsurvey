@@ -11,11 +11,15 @@ The schedule for the fall semester has been moved [FallSchedule here].
 
 Second Sprint features backlog
 
+Team Switching:
+  * Create build instructions for builders(Andrew)
+  * Build C3PO(Andrew)
+  * Build VisitME(Jon/Glenn)
 
 Relatively Minor Features:
 
   * Minimize/restore prompts
-  * Bring AdminApp and AdminApplet into sync as much as possible
+  * Bring `AdminApp` and `AdminApplet` into sync as much as possible
   * Display student responses in Admin Application
   * Display responses in printout
   * Respond to Prof. White's review of current scoring mechanism (response pending, this may have to wait for third round)
