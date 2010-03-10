@@ -12,7 +12,7 @@ The schedule for the fall semester has been moved [FallSchedule here].
 Second Sprint features backlog
 
 Team Switching:
-  * Create build instructions for builders(Andrew)
+  * Create [BuildInstructions build instructions] for builders(Andrew)
   * Build C3PO(Andrew)
   * Build VisitME(Jon/Glenn)
 
