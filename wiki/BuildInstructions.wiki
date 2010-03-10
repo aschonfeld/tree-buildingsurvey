@@ -3,19 +3,19 @@
 = Instructions For Builder =
 
 Follow these steps to build our applications:
-  # Download Java's [JDK 6 http://java.sun.com/javase/downloads/index.jsp]
+  # Download Java's [http://java.sun.com/javase/downloads/index.jsp JDK 6]
   # add environment variable 'JAVA_HOME' with location of folder that begins with 'jdk'
     * Mine on windows is 'C:\Program Files\Sun\jdk1.6.0_16'
   # add the following entry to environment variable, 'Path':
     * Windows: ;%JAVA_HOME%\bin
     * Unix: ;%JAVA_HOME%/bin
-  # Download [Ant http://ant.apache.org/bindownload.cgi]
+  # Download [http://ant.apache.org/bindownload.cgi Ant]
   # add environment variable 'ANT_HOME' with location of folder that begins with 'ant'
     * Mine on windows is 'C:\apache-ant-1.8.0'
   # add the following entry to environment variable, 'Path':
     * Windows: ;%ANT_HOME%\bin
     * Unix: ;%ANT_HOME%/bin
-  # Download our [.zip file http://www.google.com] containing our Applet & AdminApp projects
+  # Download our [http://www.google.com .zip file] containing our Applet & Admin Application projects
   # Extract the contents of the .zip file
   # from the command line `cd` into the folder extracted from the .zip file
   # `cd` into the *Applet* folder
