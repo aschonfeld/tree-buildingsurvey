@@ -1,0 +1,28 @@
+#summary Instructions For Builder
+
+= Instructions For Builder =
+
+Follow these steps to build our applications:
+  # Download Java's [JDK 6 http://java.sun.com/javase/downloads/index.jsp]
+  # add environment variable 'JAVA_HOME' with location of folder that begins with 'jdk'
+    * Mine on windows is 'C:\Program Files\Sun\jdk1.6.0_16'
+  # add the following entry to environment variable, 'Path':
+    * Windows: ;%JAVA_HOME%\bin
+    * Unix: ;%JAVA_HOME%/bin
+  # Download [Ant http://ant.apache.org/bindownload.cgi]
+  # add environment variable 'ANT_HOME' with location of folder that begins with 'ant'
+    * Mine on windows is 'C:\apache-ant-1.8.0'
+  # add the following entry to environment variable, 'Path':
+    * Windows: ;%ANT_HOME%\bin
+    * Unix: ;%ANT_HOME%/bin
+  # Download our [.zip file http://www.google.com] containing our Applet & AdminApp projects
+  # Extract the contents of the .zip file
+  # from the command line `cd` into the folder extracted from the .zip file
+  # `cd` into the *Applet* folder
+  # run `ant jarfile`
+  # here are the commands to run the two versions of the applet
+    * Student Applet: `ant run_student`
+    * Administrator Applet: `ant run_admin`
+  # `cd` into the *AdminApp* folder
+  # run `ant jarfile`
+  # run `ant run` to run Admin Application
