@@ -15,7 +15,7 @@ Follow these steps to build our applications:
   # add the following entry to environment variable, 'Path':
     * Windows: ;%ANT_HOME%\bin
     * Unix: ;%ANT_HOME%/bin
-  # Download our [http://www.google.com .zip file] containing our Applet & Admin Application projects
+  # Download our [http://code.google.com/p/tree-buildingsurvey/downloads/list TBS Projects] containing our Applet & Admin Application projects
   # Extract the contents of the .zip file
   # from the command line `cd` into the folder extracted from the .zip file
   # `cd` into the *Applet* folder
