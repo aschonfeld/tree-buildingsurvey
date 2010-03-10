@@ -18,11 +18,11 @@ Follow these steps to build our applications:
   # Download our [http://code.google.com/p/tree-buildingsurvey/downloads/list TBS Projects] containing our Applet & Admin Application projects
   # Extract the contents of the .zip file
   # from the command line `cd` into the folder extracted from the .zip file
-  # `cd` into the *Applet* folder
+  # `cd` into the `Applet` folder
   # run `ant jarfile`
   # here are the commands to run the two versions of the applet
     * Student Applet: `ant run_student`
     * Administrator Applet: `ant run_admin`
-  # `cd` into the *AdminApp* folder
+  # `cd` into the `AdminApp` folder
   # run `ant jarfile`
   # run `ant run` to run Admin Application
