@@ -221,7 +221,7 @@ public class Vertex implements Renderable {
 		g2.setColor(Common.emptyNodeColor);
 		Rectangle bounds = getVertexBounds();
 		g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-		Common.drawCenteredString(g2, info.getName(), bounds.x, bounds.y, bounds.width, bounds.height, Color.black);
+		Common.drawCenteredString(g2, info.getName(), bounds.x, bounds.y, bounds.width, bounds.height, Common.emptyNodeNameColor);
 	}
 
 	private Rectangle getVertexBounds() {
