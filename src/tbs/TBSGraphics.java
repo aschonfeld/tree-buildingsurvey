@@ -65,6 +65,7 @@ public class TBSGraphics {
    */
   public static Dimension padding = new Dimension(10,5);
 
+  	public static Color backgroundColor = Color.BLACK;
 	/**
 	 * Total number of Organisms contained in the applet, this will
 	 * be used in the future to more efficiently search the list of
@@ -416,20 +417,22 @@ public class TBSGraphics {
 	}
 	
 	public static void setColorsForPrinting(){
-		selectedStudentColor = Color.WHITE;
-		tooltipColor = Color.WHITE;
-		connectionSelectedColor = Color.WHITE;
-		connectionColor = Color.WHITE;
-		emptyNodeColor = Color.WHITE;
-		selectedNodeBorderColor = Color.WHITE;
-		buttonNotSelected = Color.WHITE;
-		buttonSelected = Color.WHITE;
-		buttonEnd = Color.WHITE;
-		buttonInactive = Color.WHITE;
-		hullColors = new Color[]{Color.WHITE,Color.WHITE,Color.WHITE};
+		backgroundColor = Color.WHITE;
+		selectedStudentColor = Color.BLACK;
+		tooltipColor = Color.BLACK;
+		connectionSelectedColor = Color.BLACK;
+		connectionColor = Color.BLACK;
+		emptyNodeColor = Color.BLACK;
+		selectedNodeBorderColor = Color.BLACK;
+		buttonNotSelected = Color.BLACK;
+		buttonSelected = Color.BLACK;
+		buttonEnd = Color.BLACK;
+		buttonInactive = Color.BLACK;
+		hullColors = new Color[]{Color.BLACK,Color.BLACK,Color.BLACK};
 	}
 	
 	public static void setColorsForDisplay(){
+		backgroundColor = Color.BLACK;
 		selectedStudentColor = Color.GREEN;
 		tooltipColor = Color.CYAN;
 		connectionSelectedColor = Color.GREEN;

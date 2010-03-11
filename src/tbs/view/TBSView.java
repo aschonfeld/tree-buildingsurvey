@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -48,6 +49,8 @@ public abstract class TBSView extends JComponent implements Printable{
 	private int yOffset = 0; // start of viewable tree area
 	private JScrollBar horizontalBar;
 	private int xOffset = 0;
+	private int maxX = 0;
+	private int maxY = 0;
 	private List<TBSButtonType> buttons;
 	private Cursor cursor;
 
@@ -139,6 +142,37 @@ public abstract class TBSView extends JComponent implements Printable{
 	public Boolean getScreenPrintMode(){
 		return screenPrintMode;
 	}
+	
+	public int getMaxX(){return maxX;}
+	public int getMaxY(){return maxY;}
+	
+	public void positionModelElements(Graphics2D g2) {
+		TBSGraphics.organismNodeWidth = TBSGraphics.maxOrganismStringWidth + TBSGraphics.maxOrganismImageWidth + TBSGraphics.padding.height * 2;
+		if(TBSGraphics.maxOrganismStringHeight  > TBSGraphics.maxOrganismImageHeight)
+			TBSGraphics.organismNodeHeight = TBSGraphics.maxOrganismStringHeight;
+		else
+			TBSGraphics.organismNodeHeight = TBSGraphics.maxOrganismImageHeight;
+		
+		//create left-side empty node
+		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
+		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
+		int emptyY = (TBSGraphics.buttonsHeight + 10) + (TBSGraphics.numOfOrganisms * (TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing));
+		TBSGraphics.emptyNodeUpperY = emptyY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
+	}
+
+	public void positionButtons(Graphics2D g2)
+	{
+		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,TBSButtonType.getButtons(model instanceof AdminModel));
+		TBSGraphics.buttonsWidth = buttonDimensions.width + TBSGraphics.padding.width* 2;
+		TBSGraphics.buttonsHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
+		TBSGraphics.questionButtonsWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
+		
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
+		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
+		
+	}
 
 	/**
 	 * Redraw the screen.
@@ -159,14 +193,24 @@ public abstract class TBSView extends JComponent implements Printable{
 	 * draws a modelElement
 	 */
 	public void renderUnselectedModelElements(Graphics2D g2) {
-		for(ModelElement me : model.getElements()){
-			if(me instanceof OrganismNode){
-				renderOrganismNodeInfo(g2, (OrganismNode) me);
-				if(!((Node) me).isBeingDragged() &&  me.isInTree())
-					renderOrganismNode(g2, (OrganismNode) me);
-			}else if (me instanceof EmptyNode){
-				if(me.isInTree())
-					renderEmptyNode(g2, (EmptyNode) me);
+		maxX = 0;
+		maxY = 0;
+		List<ModelElement> elements = model instanceof AdminModel ? model.inTreeElements() : model.getElements();
+		for(ModelElement me : elements){
+			if(me instanceof Node){
+				Node n = (Node) me;
+				if(n.getRectangle().getMaxX() > maxX)
+					maxX = (int) n.getRectangle().getMaxX();
+				if(n.getRectangle().getMaxY() > maxY)
+					maxY = (int) n.getRectangle().getMaxY();
+				if(n instanceof OrganismNode){
+					renderOrganismNodeInfo(g2, (OrganismNode) n);
+					if(!n.isBeingDragged() &&  me.isInTree())
+						renderOrganismNode(g2, (OrganismNode) n);
+				}else if (n instanceof EmptyNode){
+					if(me.isInTree())
+						renderEmptyNode(g2, (EmptyNode) n);
+				}
 			}else{
 				Connection c = (Connection) me;
 				if (!c.getFrom().collidesWith(c.getTo()))
@@ -189,11 +233,13 @@ public abstract class TBSView extends JComponent implements Printable{
 	}
 	
 	public void renderOrganismNodeInfo(Graphics2D g2, OrganismNode on) {
-		Color stringColor = on.isInTree() || on.isBeingDragged() ? TBSGraphics.organismBoxColor : TBSGraphics.organismStringColor;
-		g2.setColor(on.isInTree() || on.isBeingDragged() ? TBSGraphics.organismStringColor : TBSGraphics.organismBoxColor);
-		g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getWidth(), on.getHeight());
-		TBSGraphics.drawCenteredString(g2, on.getName(), on.getStringAreaLeftX(), on.getDefaultPoint().y, on.getStringWidth(), TBSGraphics.organismNodeHeight, stringColor);
-		g2.drawImage(on.getImage(), on.getImageStartX(), on.getDefaultPoint().y, null);
+		if(screenPrintMode || !(model instanceof AdminModel)){
+			Color stringColor = (on.isInTree() || on.isBeingDragged()) && !screenPrintMode ? TBSGraphics.organismBoxColor : TBSGraphics.organismStringColor;
+			g2.setColor((on.isInTree() || on.isBeingDragged()) && !screenPrintMode ? TBSGraphics.organismStringColor : TBSGraphics.organismBoxColor);
+			g2.fillRect(on.getDefaultPoint().x, on.getDefaultPoint().y, on.getWidth(), on.getHeight());
+			TBSGraphics.drawCenteredString(g2, on.getName(), on.getStringAreaLeftX(), on.getDefaultPoint().y, on.getStringWidth(), TBSGraphics.organismNodeHeight, stringColor);
+			g2.drawImage(on.getImage(), on.getImageStartX(), on.getDefaultPoint().y, null);
+		}
 	}
 	
 	public void renderEmptyNode(Graphics2D g2, EmptyNode en){
@@ -281,7 +327,7 @@ public abstract class TBSView extends JComponent implements Printable{
 		g2.setRenderingHints(rh);
 		g2.setFont(TBSGraphics.font);
 		Prompt prompt = model.getPrompt();
-		g2.setColor(Color.black);
+		g2.setColor(TBSGraphics.backgroundColor);
 		g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
 		refreshGraphics();
 		if(prompt != null){
@@ -310,13 +356,6 @@ public abstract class TBSView extends JComponent implements Printable{
 			int previousHeight = getHeight();
 			int previousWidth = getWidth();
 			int width = getWidth();
-			int maxX = 0;
-			for(ModelElement m : model.inTreeElements()){
-				if(m instanceof Node){
-					if(((Node) m).getRectangle().getMaxX() > maxX)
-						maxX = (int) ((Node)m).getRectangle().getMaxX();
-				}
-			}
 			if(maxX > width)
 				width = maxX + 100;
 			int height = getHeight() * (verticalBar.getMaximum()/verticalBar.getVisibleAmount());
