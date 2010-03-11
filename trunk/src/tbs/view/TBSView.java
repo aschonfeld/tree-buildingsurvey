@@ -247,7 +247,7 @@ public abstract class TBSView extends JComponent implements Printable{
 			g2.setColor(TBSGraphics.emptyNodeColor);
 			g2.fill(new Rectangle(en.getX() - getXOffset(), en.getY() - getYOffset(), en.getWidth(), en.getHeight()));
 			TBSGraphics.drawCenteredString(g2, en.getName(), en.getX() - getXOffset(),
-					en.getY() - getYOffset(), en.getWidth(), en.getHeight());
+					en.getY() - getYOffset(), en.getWidth(), en.getHeight(), TBSGraphics.emptyNodeNameColor);
 		}
 	}
 
