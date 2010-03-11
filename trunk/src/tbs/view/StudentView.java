@@ -42,7 +42,6 @@ public class StudentView extends TBSView {
 		screenString = null; 
 		positionButtons(g2);
 		positionModelElements(g2);
-
 	}
 
 	/**
@@ -123,6 +122,13 @@ public class StudentView extends TBSView {
 		renderTooltip(g2);
 		if(model.getStudentControllerTest() != null)
 			model.getStudentControllerTest().renderVirtualCursor(g2);
+		if(getScreenPrintMode()){
+			g2.setColor(TBSGraphics.backgroundColor);
+			int tempWidth = getMaxX() + 100;
+			if(getWidth() > tempWidth)
+				tempWidth = getWidth();
+			g2.fillRect(0, model.getApplet().getHeight(), tempWidth, (getHeight() * (getVerticalBar().getMaximum()/getVerticalBar().getVisibleAmount())) - getHeight());
+		}
 	}
 
 	public void renderStudents(Graphics2D g2) {}
@@ -159,32 +165,5 @@ public class StudentView extends TBSView {
 				yVal += TBSGraphics.buttonsHeight;
 			}
 		}
-	}
-
-	private void positionModelElements(Graphics2D g2) {
-		TBSGraphics.organismNodeWidth = TBSGraphics.maxOrganismStringWidth + TBSGraphics.maxOrganismImageWidth + TBSGraphics.padding.height * 2;
-		if(TBSGraphics.maxOrganismStringHeight  > TBSGraphics.maxOrganismImageHeight)
-			TBSGraphics.organismNodeHeight = TBSGraphics.maxOrganismStringHeight;
-		else
-			TBSGraphics.organismNodeHeight = TBSGraphics.maxOrganismImageHeight;
-		
-		//create left-side empty node
-		TBSGraphics.immortalNodeLabelWidth = (int) TBSGraphics.getStringBounds(g2, TBSGraphics.immortalNodeLabel).getWidth();
-		TBSGraphics.emptyNodeLeftX = (TBSGraphics.organismNodeWidth - (TBSGraphics.emptyNodeWidth + TBSGraphics.immortalNodeLabelWidth)) / 2;
-		int emptyY = (TBSGraphics.buttonsHeight + 10) + (TBSGraphics.numOfOrganisms * (TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing));
-		TBSGraphics.emptyNodeUpperY = emptyY + ((TBSGraphics.organismNodeHeight - TBSGraphics.emptyNodeHeight)/2);
-	}
-
-	private void positionButtons(Graphics2D g2)
-	{
-		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,TBSButtonType.getButtons(false));
-		TBSGraphics.buttonsWidth = buttonDimensions.width + TBSGraphics.padding.width* 2;
-		TBSGraphics.buttonsHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-
-		buttonDimensions = TBSGraphics.getStringBounds(g2,"Questions");
-		TBSGraphics.questionButtonsWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
-		
-		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
-		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
 	}
 }

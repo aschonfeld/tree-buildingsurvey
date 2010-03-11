@@ -19,11 +19,6 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.graphanalysis.ConvexHull;
 import tbs.model.AdminModel;
-import tbs.model.Connection;
-import tbs.model.EmptyNode;
-import tbs.model.ModelElement;
-import tbs.model.Node;
-import tbs.model.OrganismNode;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyLoader;
 
@@ -44,8 +39,6 @@ public class AdminView extends TBSView {
 	private boolean hasStudentScroll = false;
 	private JScrollBar studentBar;
 	private int studentYOffset = 0;
-	private int maxX = 0;
-	private int maxY = 0;
 	
 	public AdminView(Graphics2D g2, AdminModel m) {
 		super(true, m);
@@ -61,6 +54,7 @@ public class AdminView extends TBSView {
 			studentBar = new JScrollBar();
 		}
 		positionButtons(g2);
+		positionModelElements(g2);
 	}
 
 	public boolean hasStudentScroll() {
@@ -135,32 +129,24 @@ public class AdminView extends TBSView {
 		 * model integrity
 		 * model.checkElementsIntegrity();
 		 */
-		maxX = 0;
-		maxY = 0;
-		for(ModelElement m : model.inTreeElements()){
-			if(m instanceof Node){
-				if(((Node) m).getRectangle().getMaxX() > maxX)
-					maxX = (int) ((Node)m).getRectangle().getMaxX();
-				if(((Node) m).getRectangle().getMaxY() > maxY)
-					maxY = (int) ((Node)m).getRectangle().getMaxY();
-				if(m instanceof OrganismNode)
-						renderOrganismNode(g2, (OrganismNode) m);
-				else
-						renderEmptyNode(g2, (EmptyNode) m);
-			}else
-				renderConnection(g2, TBSUtils.getConnectionBounds(((Connection) m).getFrom(), ((Connection) m).getTo()), TBSGraphics.connectionColor);
-		}
-		if(maxX > (model.getApplet().getWidth() - getVerticalBar().getWidth())){
+		renderUnselectedModelElements(g2);
+		if(getMaxX() > (model.getApplet().getWidth() - getVerticalBar().getWidth())){
 			getHorizontalBar().setVisibleAmount(model.getApplet().getWidth() - getVerticalBar().getWidth());
-			getHorizontalBar().setMaximum(maxX);
+			getHorizontalBar().setMaximum(getMaxX());
 			if(!getScreenPrintMode())
 				getHorizontalBar().setVisible(true);
 				
 		}else
 			getHorizontalBar().setVisible(false);
 		renderTooltip(g2);
-		if(getScreenPrintMode())
+		if(getScreenPrintMode()){
+			g2.setColor(TBSGraphics.backgroundColor);
+			int tempWidth = getMaxX() + 100;
+			if(getWidth() > tempWidth)
+				tempWidth = getWidth();
+			g2.fillRect(0, model.getApplet().getHeight(), tempWidth, (getHeight() * (getVerticalBar().getMaximum()/getVerticalBar().getVisibleAmount())) - getHeight());
 			renderScreenPrintText(g2);
+		}
 	}
 
 	public void renderStudents(Graphics2D g2){
@@ -299,15 +285,15 @@ public class AdminView extends TBSView {
 		int yVal = TBSGraphics.padding.height;
 		for(String line : lines) {
 			TBSGraphics.drawCenteredString(g2, line, TBSGraphics.padding.width, yVal, width,
-					TBSGraphics.textHeight + TBSGraphics.padding.height, Color.WHITE);
+					TBSGraphics.textHeight + TBSGraphics.padding.height, Color.BLACK);
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		}
 		
-		yVal = maxY == 0 ? (3 * TBSGraphics.textHeight) : (maxY + TBSGraphics.textHeight);
+		yVal = getMaxY() == 0 ? (3 * TBSGraphics.textHeight) : (getMaxY() + TBSGraphics.textHeight);
 		Properties questionProps = PropertyLoader.getProperties("questions");
 		
 		TBSGraphics.drawCenteredString(g2, "Written Questions", TBSGraphics.padding.width, yVal, width,
-				TBSGraphics.textHeight + 4, Color.WHITE);
+				TBSGraphics.textHeight + 4, Color.BLACK);
 		yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		for(OpenQuestionButtonType writtenQuestion : OpenQuestionButtonType.getWrittenButtons()){
 			for(String s : TBSGraphics.breakStringByLineWidth(g2,
@@ -315,7 +301,7 @@ public class AdminView extends TBSView {
 					questionProps.getProperty(writtenQuestion.getQuestionKey()),
 					width - TBSGraphics.padding.width * 2)){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-						TBSGraphics.textHeight + 4, Color.WHITE);
+						TBSGraphics.textHeight + 4, Color.BLACK);
 				yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			}
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
@@ -323,19 +309,19 @@ public class AdminView extends TBSView {
 			for(String s : TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
 					width - TBSGraphics.padding.width * 2)){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-						TBSGraphics.textHeight + 4, Color.WHITE);
+						TBSGraphics.textHeight + 4, Color.BLACK);
 				yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			}
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		}
 		TBSGraphics.drawCenteredString(g2, "Tree Analysis", TBSGraphics.padding.width, yVal, width,
-				TBSGraphics.textHeight + 4, Color.WHITE);
+				TBSGraphics.textHeight + 4, Color.BLACK);
 		yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		for(String s : TBSGraphics.breakStringByLineWidth(g2,
 				"1) All organism nodes are" + (model.getGraph().allOrganismsTerminal() ? " " : " not ") + "terminal.",
 				width - TBSGraphics.padding.width * 2)){
 			TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-					TBSGraphics.textHeight + 4, Color.WHITE);
+					TBSGraphics.textHeight + 4, Color.BLACK);
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		}
 			
@@ -343,7 +329,7 @@ public class AdminView extends TBSView {
 				"2) All organism nodes are" + (model.outOfTreeElements().isEmpty() ? " " : " not ") + "included.",
 				width - TBSGraphics.padding.width * 2)){
 			TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-					TBSGraphics.textHeight + 4, Color.WHITE);
+					TBSGraphics.textHeight + 4, Color.BLACK);
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 		}
 		if(model.getHullCollisions().isEmpty()){
@@ -351,7 +337,7 @@ public class AdminView extends TBSView {
 					"3) None of the groups of organisms collide with another group of organisms.",
 					width - TBSGraphics.padding.width * 2)){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-						TBSGraphics.textHeight + 4, Color.WHITE);
+						TBSGraphics.textHeight + 4, Color.BLACK);
 				yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			}
 		}else{
@@ -359,24 +345,14 @@ public class AdminView extends TBSView {
 					"3) There were the following collisions between organism groups:",
 					width - TBSGraphics.padding.width * 2)){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-						TBSGraphics.textHeight + 4, Color.WHITE);
+						TBSGraphics.textHeight + 4, Color.BLACK);
 				yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			}
 			for(String s : model.getHullCollisions()){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
-						TBSGraphics.textHeight + 4, Color.WHITE);
+						TBSGraphics.textHeight + 4, Color.BLACK);
 				yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			}
 		}
-	}
-
-	private void positionButtons(Graphics2D g2)
-	{
-		Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,TBSButtonType.getButtons(true));
-		TBSGraphics.buttonsWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-		TBSGraphics.buttonsHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-		
-		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
-		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
 	}
 }
