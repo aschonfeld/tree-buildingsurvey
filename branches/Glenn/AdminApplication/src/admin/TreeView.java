@@ -1,5 +1,4 @@
 package admin;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -44,7 +43,7 @@ public class TreeView extends JComponent implements Printable{
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
 		g2.setFont(Common.font);
-		g2.setColor(Color.black);
+		g2.setColor(Common.backgroundColor);
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		if(parent == null) return;
 		parent.drawCurrentGraph(g);

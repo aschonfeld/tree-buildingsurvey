@@ -12,7 +12,10 @@ import java.util.Collection;
 
 public class Common {
 	
-    public static Color organismStringColor = Color.BLACK;
+    public static Color backgroundColor = Color.BLACK;
+    public static Color emptyNodeNameColor = Color.BLACK;
+    public static Color studentNameColor = Color.WHITE;
+	public static Color organismStringColor = Color.BLACK;
     public static Color organismBoxColor = Color.WHITE;
     public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
     public static Color hullColor = Color.GREEN;
@@ -126,13 +129,19 @@ public class Common {
        }
        
        public static void setColorsForPrinting(){
-    	   connectionColor = Color.WHITE;
-    	   emptyNodeColor = Color.WHITE;
-    	   tooltipColor = Color.WHITE;
-    	   hullColor = Color.WHITE;
+    	   backgroundColor = Color.WHITE;
+    	   studentNameColor = Color.BLACK;
+    	   emptyNodeNameColor = Color.WHITE;
+    	   connectionColor = Color.BLACK;
+    	   emptyNodeColor = Color.BLACK;
+    	   tooltipColor = Color.BLACK;
+    	   hullColor = Color.BLACK;
        }
 
        public static void setColorsForDisplay(){
+    	   backgroundColor = Color.BLACK;
+    	   emptyNodeNameColor = Color.BLACK;
+    	   studentNameColor = Color.WHITE;
     	   connectionColor = new Color(0.5f, 1.0f, 0.5f);
     	   emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
     	   tooltipColor = Color.CYAN;
