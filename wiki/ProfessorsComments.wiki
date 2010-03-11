@@ -2,6 +2,10 @@
 
 = Comments and questions from the professor = 
 
+=== March 11 ===
+
+Just checking in to say that I like the results and the process from the first sprint and look forward to the second.
+
 === February 16 ===
 
 I see frequent updates to svn (and some to wiki). I applaud your commitment to using the svn commit comment field.
