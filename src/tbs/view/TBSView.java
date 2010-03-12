@@ -328,7 +328,16 @@ public abstract class TBSView extends JComponent implements Printable{
 		g2.setFont(TBSGraphics.font);
 		Prompt prompt = model.getPrompt();
 		g2.setColor(TBSGraphics.backgroundColor);
-		g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
+		/*
+		 * The route I went to color the whole background white for the 
+		 * screen print was to just choose dimensions(2000 * 2000) that
+		 * were known to be much larger than the applet could possibly be,
+		 * rather than calculating the exact size.
+		 */
+		if(screenPrintMode)
+			g2.fillRect(0, 0, 2000, 2000);
+		else
+			g2.fillRect(0, 0, model.getApplet().getWidth(), model.getApplet().getHeight());
 		refreshGraphics();
 		if(prompt != null){
 			if(prompt.renderButtonsAndString()){
