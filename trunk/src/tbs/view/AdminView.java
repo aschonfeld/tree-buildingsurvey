@@ -139,14 +139,8 @@ public class AdminView extends TBSView {
 		}else
 			getHorizontalBar().setVisible(false);
 		renderTooltip(g2);
-		if(getScreenPrintMode()){
-			g2.setColor(TBSGraphics.backgroundColor);
-			int tempWidth = getMaxX() + 100;
-			if(getWidth() > tempWidth)
-				tempWidth = getWidth();
-			g2.fillRect(0, model.getApplet().getHeight(), tempWidth, (getHeight() * (getVerticalBar().getMaximum()/getVerticalBar().getVisibleAmount())) - getHeight());
+		if(getScreenPrintMode())
 			renderScreenPrintText(g2);
-		}
 	}
 
 	public void renderStudents(Graphics2D g2){

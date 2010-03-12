@@ -122,13 +122,6 @@ public class StudentView extends TBSView {
 		renderTooltip(g2);
 		if(model.getStudentControllerTest() != null)
 			model.getStudentControllerTest().renderVirtualCursor(g2);
-		if(getScreenPrintMode()){
-			g2.setColor(TBSGraphics.backgroundColor);
-			int tempWidth = getMaxX() + 100;
-			if(getWidth() > tempWidth)
-				tempWidth = getWidth();
-			g2.fillRect(0, model.getApplet().getHeight(), tempWidth, (getHeight() * (getVerticalBar().getMaximum()/getVerticalBar().getVisibleAmount())) - getHeight());
-		}
 	}
 
 	public void renderStudents(Graphics2D g2) {}
