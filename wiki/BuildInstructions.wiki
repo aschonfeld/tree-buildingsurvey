@@ -15,14 +15,34 @@ Follow these steps to build our applications:
   # add the following entry to environment variable, 'Path':
     * Windows: ;%ANT_HOME%\bin
     * Unix: ;%ANT_HOME%/bin
+  # Download [http://subversion.apache.org/packages.html Subversion]
+    * If your downloading for Windows I prefer the `tigris.org` version, this is an .msi file so it should do all the installation automatically
+  # add environment variable 'SUBVERSION_HOME' with location of folder that begins with 'Subversion'
+    * Mine on windows is 'C:\Program Files\Subversion'
+  # add the following entry to environment variable, 'Path':
+    * Windows: ;%SUBVERSION_HOME%\bin
+    * Unix: ;%SUBVERSION_HOME%/bin
+  # Download [http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.5.2-201002111343/eclipse-SDK-3.5.2-win32.zip Eclipse]
+  # Install [Subclipse_Setup subclipse](the subversion plugin for eclipse) and checkout our two projects(Applet & Admin Application)
+    * There is also information on how to get code updates and committing changes
   # Download our [http://tree-buildingsurvey.googlecode.com/files/TBS%20Projects.zip TBS Projects] containing our Applet & Admin Application projects
-  # Extract the contents of the .zip file
-  # from the command line `cd` into the folder extracted from the .zip file
-  # `cd` into the `Applet` folder
+
+= Compiling and Running Your Eclipse Projects From Command-Line =
+  # from the command line `cd` into the folder that contains you eclipse workspace
+    * mine is `C:\Workspace`
+  # `cd` into the folder for either of your two projects
   # run `ant jarfile`
-  # here are the commands to run the two versions of the applet
-    * Student Applet: `ant run_student`
-    * Administrator Applet: `ant run_admin`
-  # `cd` into the `AdminApp` folder
-  # run `ant jarfile`
-  # run `ant run` to run Admin Application
+  # here are the commands to run the new JAR files
+    * the two versions of the Applet
+      * Student Applet: `ant run_student`
+      * Administrator Applet: `ant run_admin`
+    * the Admin Application
+      # `ant run`
+
+= Installing MySQL & Creating Local Database (Coming Soon) =
+  * In order to have some of the functionality of the Student Page(saving trees) or Administrator Page(having data for the applet) in created in the next section(Local Server) will not work until this database setup is complete
+  
+= Creating A Local Server and Running Applet From It w/ Eclipse & Apache =
+  * Follow the instructions in these two Wiki pages:
+    # [ApacheEclipseSetup Apache Tomcat Eclipse Setup Instructions]
+    # [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment Instructions]
