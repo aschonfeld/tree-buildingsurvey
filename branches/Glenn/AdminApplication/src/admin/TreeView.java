@@ -13,6 +13,8 @@ import javax.swing.JComponent;
 public class TreeView extends JComponent implements Printable{
 	
 	private AdminApplication parent;
+	private boolean screenPrintMode = false;
+	
 	/**
 	 * 
 	 */
@@ -44,9 +46,9 @@ public class TreeView extends JComponent implements Printable{
 		g2.setRenderingHints(rh);
 		g2.setFont(Common.font);
 		g2.setColor(Common.backgroundColor);
-		g2.fillRect(0, 0, getWidth(), getHeight());
+		g2.fillRect(0, 0, getWidth(), getHeight() + (screenPrintMode ? 200 : 0));
 		if(parent == null) return;
-		parent.drawCurrentGraph(g);
+		parent.drawCurrentGraph(g,screenPrintMode);
 		return;
 	}
 
@@ -55,25 +57,31 @@ public class TreeView extends JComponent implements Printable{
 		if (pageIndex > 0) {
 			return(NO_SUCH_PAGE);
 		} else {
+			int previousWidth = getWidth(), previousHeight = getHeight();
+			int width = previousWidth, height = previousHeight+600;
 			// make pic
+			if(pageFormat.getImageableWidth() > width)
+				width = (int) pageFormat.getImageableWidth();
+			if(pageFormat.getImageableHeight() > height)
+				height = (int) pageFormat.getImageableHeight();
 			BufferedImage fullSizeImage = new BufferedImage(
-					getWidth(), 
-					getHeight(), 
-					BufferedImage.TYPE_INT_RGB);
+					width, height, BufferedImage.TYPE_INT_RGB);
 			Common.setColorsForPrinting();
+			screenPrintMode = true;
+			setSize(width, height);
 			paint(fullSizeImage.getGraphics());
-
+			screenPrintMode = false;
 			// scale to fit
-			double wRatio = getWidth()/pageFormat.getImageableWidth();
-			double hRatio = getHeight()/pageFormat.getImageableHeight();
+			double wRatio = width/pageFormat.getImageableWidth();
+			double hRatio = height/pageFormat.getImageableHeight();
 			int actualWidth;
 			int actualHeight;
 			if (wRatio > hRatio) {
-				actualWidth = (int)(getWidth()/wRatio);
-				actualHeight = (int)(getHeight()/wRatio);
+				actualWidth = (int)(width/wRatio);
+				actualHeight = (int)(height/wRatio);
 			} else {
-				actualWidth = (int)(getWidth()/hRatio);
-				actualHeight = (int)(getHeight()/hRatio);
+				actualWidth = (int)(width/hRatio);
+				actualHeight = (int)(height/hRatio);
 			}
 
 			// print it
@@ -95,6 +103,7 @@ public class TreeView extends JComponent implements Printable{
 					null);
 			fullSizeImage = null;
 			Common.setColorsForDisplay();
+			setSize(previousWidth, previousHeight);
 			return(PAGE_EXISTS);
 		}
 	}

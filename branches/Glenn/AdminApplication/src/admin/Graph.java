@@ -44,6 +44,7 @@ public class Graph implements Renderable {
 		organisms = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
+		answers = new ArrayList<String>();
 	}
 	
 	public void setDirectional(boolean directional) {

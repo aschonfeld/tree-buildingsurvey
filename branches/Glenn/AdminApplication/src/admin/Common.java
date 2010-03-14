@@ -8,6 +8,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class Common {
@@ -20,6 +22,8 @@ public class Common {
     public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
     public static Color hullColor = Color.GREEN;
     public static Color emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+    
+    public static Dimension padding = new Dimension(10,5);
 
     /**
      * The fixed height of all OrganismNodes. Value is calculated in
@@ -39,16 +43,24 @@ public class Common {
 	*/ 
 	public static int emptyNodeHeight = 20;
 
-    
-    /**
-     * Minimum number of pixels around the right and left of an organism's name
-     */
-     public static int paddingWidth = 5;    
-    
-     public static Font font = new Font("default", Font.BOLD, 16);
-     
-     public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
- 	 public static Color tooltipColor = Color.CYAN;
+
+	/**
+	 * Minimum number of pixels around the right and left of an organism's name
+	 */
+	public static int paddingWidth = 5;    
+
+	public static Font font = new Font("default", Font.BOLD, 16);
+	
+	public static Font tooltipFont = new Font("default", Font.PLAIN, 12);
+	public static Color tooltipColor = Color.CYAN;
+
+	public static String[] questions = new String[] {new String(
+			"Explain in words how you went about organizing these organisms. " +
+			"Use one or two specific examples and describe why you put them where you did."
+	), new String(
+			"How did you decide if organisms were closely related to one another or not closely related? " +
+			"Use one or two specific examples from your work to explain your reasoning."
+	)};
      
     /**
      * Returns the @Rectangle2D surrounding a piece of text
@@ -126,6 +138,26 @@ public class Common {
                        y = upperY + height - (height - stringHeight) / 2;
                // if width or height is 0, do not center along that axis
                layout.draw(g2, x, y);
+       }
+       
+       public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
+    	   String currentLine = "";
+    	   List<String> widthBrokenString = new LinkedList<String>();
+    	   if(isStringEmpty(s)){
+    		   widthBrokenString.add("");
+    		   return widthBrokenString;
+    	   }
+    	   for(String token : s.split(" ")){
+    		   if(getStringBounds(g2, currentLine + token).width > width){
+    			   widthBrokenString.add(currentLine);
+    			   currentLine = token + " ";
+    		   }else{
+    			   currentLine += token + " ";
+    		   }
+    	   }
+    	   if(currentLine.length() > 0)
+    		   widthBrokenString.add(currentLine);
+    	   return widthBrokenString;
        }
        
        public static void setColorsForPrinting(){

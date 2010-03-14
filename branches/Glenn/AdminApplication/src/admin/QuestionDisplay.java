@@ -14,14 +14,10 @@ public class QuestionDisplay extends JFrame {
 	private JEditorPane editorPane;
 	
 	private static String question1 = new String(
-			"<b><i>Question One</i>: " +
-			"Explain in words how you went about organizing these organisms. " +
-			"Use one or two specific examples and describe why you put them where you did.</b><br><br>"
+			"<b><i>Question One</i>: " + Common.questions[0] +	"</b><br><br>"
 	);
 	private static String question2 = new String(
-			"<br><br><b><i>Question Two</i>: " +
-			"How did you decide if organisms were closely related to one another or not closely related? " +
-			"Use one or two specific examples from your work to explain your reasoning.</b><br><br>"
+			"<br><br><b><i>Question Two</i>: " + Common.questions[1] + "</b><br><br>"
 	);
 	
 	QuestionDisplay(AdminApplication parent) {

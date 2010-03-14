@@ -2,6 +2,7 @@ package admin;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -114,10 +115,10 @@ public class AdminApplication extends JFrame {
     public static void toggleShowNames() {showNames = !showNames;}
  
 
-    public void drawCurrentGraph(Graphics g) {
+    public void drawCurrentGraph(Graphics g, boolean screenPrintMode) {
     	Graph graph = getCurrentGraph();	
 		String studentName = graph.getStudentName();
-    	g.setColor(Color.white);
+    	g.setColor(Common.studentNameColor);
     	g.drawString(studentName, 5, 20);
     	Point size = graph.getLowerRight(g);
     	Dimension newSize = new Dimension(size.x, size.y);
@@ -127,8 +128,42 @@ public class AdminApplication extends JFrame {
     	treeView.repaint();
     	//System.out.println(size);
     	graph.render(g, new Point(0,0));
+    	if(screenPrintMode)
+    		drawScreenPrintText((Graphics2D) g, size.y, graph);
     	
     }
+    
+    private void drawScreenPrintText(Graphics2D g2, int y, Graph g){
+    	int width = treeView.getWidth();
+    	int textHeight = Common.getStringBounds(g2,"QOgj").height;
+		int yVal = Common.padding.height;
+		yVal = y == 0 ? (3 * textHeight) : (y + textHeight);
+		
+		Common.drawCenteredString(g2, "Written Questions", Common.padding.width, yVal, width,
+				textHeight + 4, Color.BLACK);
+		yVal += textHeight + Common.padding.height;
+		int i = 1;
+		List<String> writtenAnswers = g.getAnswers();
+		while(i < 3){
+			for(String s : Common.breakStringByLineWidth(g2,
+					i + ") " + 
+					Common.questions[i-1],
+					width - Common.padding.width * 2)){
+				Common.drawCenteredString(g2, s, Common.padding.width, yVal, 0,
+						textHeight + 4, Color.BLACK);
+				yVal += textHeight + Common.padding.height;
+			}
+			yVal += textHeight + Common.padding.height;
+			for(String s : Common.breakStringByLineWidth(g2,writtenAnswers.get(i-1),
+					width - Common.padding.width * 2)){
+				Common.drawCenteredString(g2, s, Common.padding.width, yVal, 0,
+						textHeight + 4, Color.BLACK);
+				yVal += textHeight + Common.padding.height;
+			}
+			yVal += textHeight + Common.padding.height;
+			i++;
+		}
+	}
     
     private static void initCommonVertices() {
     	TreeMap<String, VertexInfo> organismNameToImage = 
