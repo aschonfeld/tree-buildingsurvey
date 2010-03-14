@@ -2,7 +2,7 @@
 
 = Setup =
 
-    # Download "Apache Software Foundations"(located in the Downloads tab) to your C:\ drive
+    # Download [http://tree-buildingsurvey.googlecode.com/files/TBS%20Apache%20Software%20Foundation.zip Apache Software Foundations] to your C:\ drive
     # Open Eclipse
     # Window > Preferences
     # Server > Runtime Environments
