@@ -37,7 +37,7 @@ Follow these steps to build our applications:
       * Student Applet: `ant run_student`
       * Administrator Applet: `ant run_admin`
     * the Admin Application
-      # `ant run`
+      * `ant run`
 
 = Installing MySQL & Creating Local Database (Coming Soon) =
   * In order to have some of the functionality of the Student Page(saving trees) or Administrator Page(having data for the applet) in created in the next section(Local Server) will not work until this database setup is complete
