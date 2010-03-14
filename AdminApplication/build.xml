@@ -43,4 +43,7 @@
 
     <target name="main" depends="clean,jarfile"/>
 
+	<target name="run">
+		<java jar="AdminApplication.jar" fork="true"/>
+	</target>
 </project>
