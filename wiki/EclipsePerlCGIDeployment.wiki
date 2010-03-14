@@ -38,7 +38,8 @@
   <Context privileged="true">
   </Context>
   }}}
-  # Create the folder `WebContent\WEB-INF\cgi` and place a copy of `TreeSurvey.pl` inside that folder
+  # Create the folder `WebContent\WEB-INF\cgi` and place a copy of either `TreeSurvey.pl` or `TBSTestSurvey.pl` inside that folder
+    * This file will be located within the Applet project folder you checked out from SVN earlier in our [Subclipse_Setup Subclipse] setup
   # Right click the server that we created earlier in our [ApacheEclipseSetup Apache Setup] and add this project to it
   # You should be able to view the script at the url `http://localhost:9080/[Project Name]/cgi-bin/TreeSurvey.pl`
 
