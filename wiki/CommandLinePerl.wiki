@@ -14,7 +14,7 @@
   # Click Apply
   # Go to the "Common" tab and for the `perl -w` configuration and click the `External Tools` checkbox  in the `Display in favorites menu`
   # Click Apply & hit OK
-  # Now select your Perl script (TreeSurvey.pl) and go to Run > External Tools > `perl -w`
+  # Now select your Perl script (`TreeSurvey.pl`) and go to Run > External Tools > `perl -w`
   
   After doing this you should see the output from your Perl script in the Console view.  In This case since ours is a CGI script our output will be mostly HTML code.  This is good from running quickly with debug statements to see where possible errors are occuring.
   
