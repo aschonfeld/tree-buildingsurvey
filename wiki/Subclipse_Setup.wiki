@@ -1,4 +1,4 @@
-#summary Steps taken in order to setup Subclipse Eclipse Plug-in.
+#summary Steps taken in order to setup Subclipse Eclipse Plug-in and Checkout Projects
 
 = Setup =
 
@@ -14,5 +14,17 @@
     # Select SVN Repository Exploring
     # Right-click inside the 'SVN Repositories' tab
     # New > Rpository Location
-    # Put the url that you can find on the google [http://code.google.com/p/tree-buildingsurvey/source/checkout code page] inside the 'Url' input box
-    # Enter the auto-generated password from the google code site
+    # Enter this URL the input box:
+      * `svn checkout http://tree-buildingsurvey.googlecode.com/svn/trunk/ tree-buildingsurvey-read-only` inside the 'Url' input box
+    # Checkout Applet
+      # Right-click on the 'trunk' folder
+      # Click 'Checkout...'
+      # Click 'Finish'
+      # Select 'Java Project'
+      # Enter a project name and click 'Finish'
+    # Checkout Admin Application
+      # Right-click on the 'branches/Glenn/AdminApplication' folder
+      # Click 'Checkout...'
+      # Click 'Finish'
+      # Select 'Java Project'
+      # Enter a project name and click 'Finish'
