@@ -28,3 +28,11 @@
       # Click 'Finish'
       # Select 'Java Project'
       # Enter a project name and click 'Finish'
+    # Go to Window > Open Perspective > Other
+    # Select Java
+    # Right-Click on either project that you checked out from SVN
+    # Click 'Team -> Synchronize With Repository'
+    # Click 'Yes' to prompt
+      * This will bring you to the 'Team Synchronizing' view
+      * Right-click on any blue items and click 'Update' to get updates
+      * Right-click on any grey items and click 'Commit' to check-in your updates
