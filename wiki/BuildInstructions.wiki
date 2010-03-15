@@ -39,10 +39,20 @@ Follow these steps to build our applications:
     * the Admin Application
       * `ant run`
 
-= Installing MySQL & Creating Local Database (Coming Soon) =
-  * In order to have some of the functionality of the Student Page(saving trees) or Administrator Page(having data for the applet) in created in the next section(Local Server) will not work until this database setup is complete
-  
 = Creating A Local Server and Running Applet From It w/ Eclipse & Apache =
   * Follow the instructions in these two Wiki pages:
     # [ApacheEclipseSetup Apache Tomcat Eclipse Setup Instructions]
     # [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment Instructions]
+
+= Installing MySQL & Creating Local Database (Coming Soon) =
+  # Download and install [http://dev.mysql.com/downloads/mysql/ MySQL]
+  # Once the download is complete, open up MySQL Command Line Client
+  # You will need to enter the root password that you created during the installation
+  # Locate the file 'phylogenySurvey.sql' in the documents folder of the checked out Applet project
+    * This will be in the workspace folder of your eclipse projects, mine is C:\workspace
+  # In the command line run the command:
+    * `source [location of checked out Applet project]\documents\phylogenySurvey.sql`
+  # Do the following [PerlMySQLDBI Perl MySQL DBI] setup
+  # There will be two other files within the documents folder from two steps earlier of the extension `.pm`, drop these two files into the `WebContent\WEB-INF\cgi\' for the Local Server project you created earlier
+  * *Now your database should be all set for running a local version of the Applet complete with saving!*
+  * In order to have some of the functionality of the Student Page(saving trees) or Administrator Page(having data for the applet) in created in the next section(Local Server) will not work until this database setup is complete!!!
