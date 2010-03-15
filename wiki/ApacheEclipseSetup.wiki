@@ -15,4 +15,4 @@
     # Apache > Apache Tomcat v6.0
     # Click Finish
 
-   Note: This .zip file that I have loaded on to the "Downloads" tab has everything already setup for deploying Servlets & Perl CGI Scripts (see C:\Apache Software Foundation\Tomcat 6.0\conf\web.xml) as well as ODBC connections for Oracle, MySQL, & HSQL databases (see C:\Apache Software Foundation\Tomcat 6.0\conf\context.xml)
+   Note: This .zip file that I have loaded on to the "Downloads" tab has everything already setup for deploying Servlets & Perl CGI Scripts (see ..\Apache Software Foundation\Tomcat 6.0\conf\web.xml) as well as ODBC connections for Oracle, MySQL, & HSQL databases (see ..\Apache Software Foundation\Tomcat 6.0\conf\context.xml)
