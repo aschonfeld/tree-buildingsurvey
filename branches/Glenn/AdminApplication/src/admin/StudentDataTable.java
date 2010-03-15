@@ -2,64 +2,128 @@ package admin;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+
+import admin.StudentDataColumns.ColumnDataHandler;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 public class StudentDataTable extends JFrame {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 8614152295188968068L;
-	JTextArea output;
-    JList list; 
-    JTable table;
-    String newline = "\n";
-    ListSelectionModel listSelectionModel;
-    AdminApplication parent;
+	static JTextArea output;
+    static JList list; 
+    static JTable table;
+    static JScrollPane tablePane;
+    static String newline = "\n";
+    static ListSelectionModel listSelectionModel;
+    static StudentDataTableModel studentDataTableModel;
+    public static StudentDataColumns studentDataColumns;
+    static AdminApplication parent;
 
     public StudentDataTable(AdminApplication parent) {
         super("TBS Student Data");
-        String[] columnNames = { "Name", 
-        						 "Branches", 
-								 "Labelled",
-        						 "All organism nodes terminal", 
-        						 "Includes all organisms",
-        						 "Hull Collisions",
-								 "Single Common Ancestor",
-        						 "Grouping Inv",
-        						 "Grouping Vert",
-        						 "Grouping Mammals",
-        						 "Grouping Non-Mammal Vert"};
         this.parent = parent;
-        int rows = parent.graphs.size();
-        Object[][] tableData = new Object[rows][columnNames.length];
-        int row = 0;
-        for(Graph graph : parent.graphs) {
-				String studentName = graph.getStudentName();
-        	tableData[row][0] = studentName;
-        	tableData[row][1] = graph.hasBranches();
-        	tableData[row][2] = graph.groupsAreLabelled();
-        	tableData[row][3] = graph.allOrganismsTerminal();
-        	tableData[row][4] = graph.includesAllOrganisms();
-        	tableData[row][5] = graph.getHasHullCollisions();
-        	tableData[row][6] = graph.hasSingleCommonAncestor();
-        	tableData[row][7] = graph.groupingInvertebrates();
-        	tableData[row][8] = graph.groupingVertebrates();
-        	tableData[row][9] = graph.groupingMammals();
-        	tableData[row][10] = graph.groupingNonmammals();
-        	row++;
-        }
-        table = new JTable(tableData, columnNames);
+        studentDataColumns = new StudentDataColumns();
+        studentDataTableModel = new StudentDataTableModel();
+        table = new JTable(studentDataTableModel);
         listSelectionModel = table.getSelectionModel();
         listSelectionModel.addListSelectionListener(new SharedListSelectionHandler());
         table.setSelectionModel(listSelectionModel);
-        JScrollPane tablePane = new JScrollPane(table);
+        tablePane = new JScrollPane(table);
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePane.setSize(new Dimension(928, 762));
         add(tablePane);
         setSize(new Dimension(928, 762));
-        setJMenuBar(parent.actionHandler.getDataMenuBar());
+        setJMenuBar(parent.actionHandler.getDataMenuBar(studentDataColumns));
     }
     
+    public class StudentDataTableModel extends AbstractTableModel {
+    	
+        private String[] columnNames;
+        private Object[][] data;
+        
+        StudentDataTableModel() {
+        	loadTableData();
+        }
+        
+        private void loadTableData() {
+        	int rows = parent.graphs.size();
+            int columns = 0;
+            for(ColumnDataHandler cdh: studentDataColumns.columnDataHandlers) {
+            	if(!cdh.isVisible()) continue;
+            	columns++;
+            }
+            columnNames = new String[columns];
+            int column = 0;
+            for(ColumnDataHandler cdh: studentDataColumns.columnDataHandlers) {
+            	if(!cdh.isVisible()) continue;
+            	columnNames[column] = cdh.getName();
+            	column++;
+            }
+            data = new Object[rows][columns];
+            int row = 0;
+            for(Graph graph : parent.graphs) {
+            	column = 0;
+            	for(ColumnDataHandler cdh: studentDataColumns.columnDataHandlers) {
+            		if(!cdh.isVisible()) continue;
+            		data[row][column] = cdh.getData(graph);
+            		column++;
+            	}
+            	row++;
+            }
+        }
+        		
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return parent.graphs.size();
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+        	return data[row][col];
+        }
+
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        public boolean isCellEditable(int row, int col) {
+        	return false;
+        }
+
+        public void setValueAt(Object value, int row, int col) {
+            // data[row][col] = value;
+            // fireTableCellUpdated(row, col);
+        }
+    }
+       
+    public void refreshTable() {
+    	Dimension size = this.getSize();
+    	Dimension tableSize = tablePane.getSize();
+    	remove(tablePane);
+        studentDataTableModel = new StudentDataTableModel();
+        table = new JTable(studentDataTableModel);
+        listSelectionModel = table.getSelectionModel();
+        listSelectionModel.addListSelectionListener(new SharedListSelectionHandler());
+        table.setSelectionModel(listSelectionModel);
+        tablePane = new JScrollPane(table);
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablePane.setSize(tableSize);
+        add(tablePane);
+        setSize(size);
+    }
+
     class SharedListSelectionHandler implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) { 
             ListSelectionModel lsm = (ListSelectionModel)e.getSource();

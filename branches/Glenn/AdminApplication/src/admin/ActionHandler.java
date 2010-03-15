@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -14,6 +15,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+
+import admin.StudentDataColumns.ColumnDataHandler;
 
 public class ActionHandler extends JPanel {    
 	/**
@@ -98,6 +101,27 @@ public class ActionHandler extends JPanel {
 		}
 	}
 	
+	public class ColumnDisplayAction extends AbstractAction {
+		
+		private static final long serialVersionUID = -251547965416261110L;
+		private ColumnDataHandler cdh;
+		private int index;
+		public ColumnDisplayAction(ColumnDataHandler cdh, int index) {
+			super(cdh.getName() + (cdh.isVisible() ? " \u2713" : ""));
+			this.cdh = cdh;
+			this.index = index;
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent e) {
+			cdh.toggleVisible();
+			JMenuItem item = (JMenuItem) e.getSource();
+			item.setText(cdh.getName() + (cdh.isVisible() ? " \u2713" : ""));
+			parent.parent.studentDataTableFrame.refreshTable();
+		}
+	}
+	
+	
 	public class ExportAction extends AbstractAction {
 
 		private static final long serialVersionUID = -5425238186912620684L;
@@ -169,17 +193,25 @@ public class ActionHandler extends JPanel {
        return menuBar;
     }
     
-    public JMenuBar getDataMenuBar() {
+    public JMenuBar getDataMenuBar(StudentDataColumns studentDataColumns) {
     	JMenuBar menuBar;
     	JMenu fileMenu;
+    	JMenu showColumnsMenu;
     	JMenuItem exportItem;
     	JMenuItem exitItem;
-
+    	
     	//Create the menu bar.
     	menuBar = new JMenuBar();
     	fileMenu = new JMenu("Menu");
+    	showColumnsMenu = new JMenu("Show Columns");
+    	int index = 0;
+    	for(ColumnDataHandler cdh: studentDataColumns.columnDataHandlers) {
+    		if(cdh.isAlwaysVisible()) continue;
+    		showColumnsMenu.add(new ColumnDisplayAction(cdh, index));
+    		index++;
+    	}
     	menuBar.add(fileMenu);
-
+    	menuBar.add(showColumnsMenu);
     	//a group of JMenuItems
     	exportItem = new JMenuItem(exportAction);
     	exitItem = new JMenuItem(exitAction);

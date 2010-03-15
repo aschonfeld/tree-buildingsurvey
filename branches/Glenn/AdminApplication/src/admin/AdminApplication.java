@@ -36,7 +36,7 @@ public class AdminApplication extends JFrame {
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
 	private static ArrayList<VertexInfo> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
-	private static AdminMultiWindow parent;
+	public static AdminMultiWindow parent;
 	public static boolean showNames = false;
 	
 	AdminApplication() {
