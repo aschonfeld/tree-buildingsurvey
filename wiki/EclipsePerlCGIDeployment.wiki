@@ -38,9 +38,16 @@
   <Context privileged="true">
   </Context>
   }}}
-  # Create the folder `WebContent\WEB-INF\cgi` and place a copy of either `TreeSurvey.pl` or `TBSTestSurvey.pl` inside that folder
+  # Create the folder `WebContent\WEB-INF\cgi` and place a copy `TBSTestSurvey.pl` inside that folder
     * This file will be located within the Applet project folder you checked out from SVN earlier in our [Subclipse_Setup Subclipse] setup
-  # Right click the server that we created earlier in our [ApacheEclipseSetup Apache Setup] and add this project to it
-  # You should be able to view the script at the url `http://localhost:9080/[Project Name]/cgi-bin/TreeSurvey.pl`
+  # Update `TBSTestSurvey.pl'
+    # put a `#` at the beginning of line 11 (`$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";`)
+    # remove the '#' at the beginning of line 12 (`#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";`)
+    # update `PhylogenySurveyWeb` in line 12 with whatever the name of your web project is that you are deploying on your local server
+  # Use the [BuildInstructions Command Line Instructions] to build a JAR file
+  # Copy and paste that JAR file into the `WebContent` folder
+  # Right-click the server that we created earlier in our [ApacheEclipseSetup Apache Setup] and add this project to it
+  # Right-click that server again and click 'Start'
+  # You should be able to view the script at the url `http://localhost:9080/[Project Name]/cgi-bin/TBSTestSurvey.pl`
 
   
