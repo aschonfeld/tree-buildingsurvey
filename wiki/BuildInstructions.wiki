@@ -33,6 +33,7 @@ Follow these steps to build our applications:
     * mine is `C:\Workspace`
   # `cd` into the folder for either of your two projects
   # run `ant jarfile`
+    * The resulting jarfile will be located in this current location that you are running ant from
   # here are the commands to run the new JAR files
     * the two versions of the Applet
       * Student Applet: `ant run_student`
@@ -41,9 +42,9 @@ Follow these steps to build our applications:
       * `ant run`
 
 = Creating A Local Server and Running Applet From It w/ Eclipse & Apache =
-  * Follow the instructions in these two Wiki pages:
-    # [ApacheEclipseSetup Apache Tomcat Eclipse Setup Instructions]
-    # [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment Instructions]
+Follow the instructions in these two Wiki pages:
+  # [ApacheEclipseSetup Apache Tomcat Eclipse Setup Instructions]
+  # [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment Instructions]
 
 = Installing MySQL & Creating Local Database (Coming Soon) =
   # Download and install [http://dev.mysql.com/downloads/mysql/ MySQL]
