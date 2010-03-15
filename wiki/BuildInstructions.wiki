@@ -55,4 +55,3 @@ Follow these steps to build our applications:
   # Do the following [PerlMySQLDBI Perl MySQL DBI] setup
   # There will be two other files within the documents folder from two steps earlier of the extension `.pm`, drop these two files into the `WebContent\WEB-INF\cgi\' for the Local Server project you created earlier
   * *Now your database should be all set for running a local version of the Applet complete with saving!*
-  * In order to have some of the functionality of the Student Page(saving trees) or Administrator Page(having data for the applet) in created in the next section(Local Server) will not work until this database setup is complete!!!
