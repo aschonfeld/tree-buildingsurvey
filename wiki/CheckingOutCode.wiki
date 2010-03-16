@@ -26,4 +26,3 @@
   # Click 'Yes' to prompt
     * This will bring you to the 'Team Synchronizing' view
     * Right-click on any blue items and click 'Update' to get updates
-    * Right-click on any grey items and click 'Commit' to check-in your updates
