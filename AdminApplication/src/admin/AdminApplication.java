@@ -221,6 +221,7 @@ public class AdminApplication extends JFrame {
         		linein = reader.readLine();
         		String[] treeItems = linein.split("#"); // remove '=' at start
         		Graph graph = new Graph(studentName);
+        		graph.setType(Graph.GraphType.Test);
         		for(String elements: treeItems) 
 				{
         			// load vertices
