@@ -26,7 +26,6 @@ Follow these steps to build our applications:
   # Download [http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops/R-3.5.2-201002111343/eclipse-SDK-3.5.2-win32.zip Eclipse]
   # Install [Subclipse_Setup subclipse](the subversion plugin for eclipse) and checkout our two projects(Applet & Admin Application)
     * There is also information on how to get code updates and committing changes
-  # Download our [http://tree-buildingsurvey.googlecode.com/files/TBS%20Projects.zip TBS Projects] containing our Applet & Admin Application projects
 
 = Compiling and Running Your Eclipse Projects From Command-Line =
   # from the command line `cd` into the folder that contains you eclipse workspace
