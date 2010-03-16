@@ -9,6 +9,7 @@ public class StudentDataColumns {
 	StudentDataColumns() {
     	columnDataHandlers = new ArrayList<ColumnDataHandler>();
         columnDataHandlers.add(new Student_Name());
+        columnDataHandlers.add(new Graph_Type());
         columnDataHandlers.add(new Has_Branches());
         columnDataHandlers.add(new Groups_Are_Labelled());
         columnDataHandlers.add(new All_Organisms_Terminal());
@@ -48,6 +49,9 @@ public class StudentDataColumns {
     
     class Student_Name extends ColumnDataHandler {
     	public Object getData(Graph graph) {return graph.getStudentName();}
+    }
+    class Graph_Type extends ColumnDataHandler {
+    	public Object getData(Graph graph) {return graph.getType();}
     }
     class Has_Branches extends ColumnDataHandler {
     	public Object getData(Graph graph) {return graph.hasBranches();}

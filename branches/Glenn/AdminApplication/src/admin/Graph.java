@@ -37,6 +37,23 @@ public class Graph implements Renderable {
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
 	private String[] pathIndexNames = null;
 	private int unconnected = 99;
+	private GraphType type = GraphType.Unscored;
+	
+	public enum GraphType {
+		Tree,
+	    Web,
+	    Islands,
+	    Other,
+	    // NOTE: Type "Test" is for non-student trees
+	    // Only student trees should be used for machine learning
+		Test,
+		Unscored;
+		
+		public boolean isSelectableType() {
+			if((this == GraphType.Test) || (this == GraphType.Unscored)) return false;
+			return true;
+		}
+	}
 
 	Graph(String studentName) {
 		this.studentName=studentName;
@@ -45,6 +62,15 @@ public class Graph implements Renderable {
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
 		answers = new ArrayList<String>();
+	}
+	
+	public GraphType getType() {
+		return type;
+	}
+	
+	public void setType(GraphType type) {
+		if(this.type == GraphType.Test) return;
+		this.type = type;
 	}
 	
 	public void setDirectional(boolean directional) {

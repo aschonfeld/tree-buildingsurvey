@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import admin.StudentDataColumns.ColumnDataHandler;
 
@@ -24,10 +25,12 @@ public class StudentDataTable extends JFrame {
     static StudentDataTableModel studentDataTableModel;
     public static StudentDataColumns studentDataColumns;
     static AdminApplication parent;
+    static HumanScoring humanScoring;
 
     public StudentDataTable(AdminApplication parent) {
         super("TBS Student Data");
         this.parent = parent;
+        humanScoring = new HumanScoring(parent);
         studentDataColumns = new StudentDataColumns();
         studentDataTableModel = new StudentDataTableModel();
         table = new JTable(studentDataTableModel);
@@ -37,6 +40,7 @@ public class StudentDataTable extends JFrame {
         tablePane = new JScrollPane(table);
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tablePane.setSize(new Dimension(928, 762));
+        setUpGraphTypeColumn(table, table.getColumnModel().getColumn(1));
         add(tablePane);
         setSize(new Dimension(928, 762));
         setJMenuBar(parent.actionHandler.getDataMenuBar(studentDataColumns));
@@ -99,15 +103,30 @@ public class StudentDataTable extends JFrame {
         }
 
         public boolean isCellEditable(int row, int col) {
+        	if(col == 1) {
+        		if(data[row][col] == Graph.GraphType.Test) return false;
+        		return true;
+        	}
         	return false;
         }
 
         public void setValueAt(Object value, int row, int col) {
-            // data[row][col] = value;
-            // fireTableCellUpdated(row, col);
+        	if(col == 1) {
+        		humanScoring.saveCategory(parent.graphs.get(row), (Graph.GraphType) value);
+        		data[row][col] = value;
+        	}
+            fireTableCellUpdated(row, col);
         }
     }
-       
+    
+    public void setUpGraphTypeColumn(JTable table, TableColumn graphTypeColumn) {
+    		JComboBox comboBox = new JComboBox();
+    		for(Graph.GraphType type: Graph.GraphType.values()) {
+    			if(type.isSelectableType()) comboBox.addItem(type);
+    		}
+    		graphTypeColumn.setCellEditor(new DefaultCellEditor(comboBox));
+    }
+
     public void refreshTable() {
     	Dimension size = this.getSize();
     	Dimension tableSize = tablePane.getSize();
@@ -119,6 +138,7 @@ public class StudentDataTable extends JFrame {
         table.setSelectionModel(listSelectionModel);
         tablePane = new JScrollPane(table);
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setUpGraphTypeColumn(table, table.getColumnModel().getColumn(1));
         tablePane.setSize(tableSize);
         add(tablePane);
         setSize(size);
