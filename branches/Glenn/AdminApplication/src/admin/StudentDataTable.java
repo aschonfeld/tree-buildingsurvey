@@ -104,6 +104,8 @@ public class StudentDataTable extends JFrame {
 
         public boolean isCellEditable(int row, int col) {
         	if(col == 1) {
+        		// row must be selected in order for cell to be editable
+        		if(row != parent.getCurrentGraphIndex()) return false;
         		if(data[row][col] == Graph.GraphType.Test) return false;
         		return true;
         	}

@@ -112,6 +112,10 @@ public class AdminApplication extends JFrame {
 		return graphs.get(currentGraphIndex);
 	}
     
+    public static int getCurrentGraphIndex() {
+    	return currentGraphIndex;
+    }
+    
     public static void toggleShowNames() {showNames = !showNames;}
  
 
