@@ -1,7 +1,7 @@
   * [BuildInstructions Instructions For Builder]
   * [Schedule Project Schedule]
   * [SpringFeatureProgress Spring Deliverable Progress]
-  * [AppletLogging Logging Feasability Report]
+  * [AppletLogging Logging Feasibility Report]
   * [RefactoringAnalysis Rafactoring Analysis]
   * [OneStepBuild One Step Build]
   * [MeetingMinutes Meeting Minutes]
