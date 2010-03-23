@@ -41,7 +41,7 @@ Previously scheduled, not delivered:
   * Glenn: Collect statistics on multiple graphs
   * Glenn: Student trees searchable by graph features
   * Andrew: Study feasability of logging. Deliverable: written report, aye or nay and why
-    * This feature will not be feasible, report coming
+    * [AppletLogging Logging Feasibility Report]
   * Andrew: If feasible, logging. Otherwise, a new deliverable here.
   * Jon: Refactor, unit tests
     * These were derailed by Andrew's work on refactoring. Might return to unit tests, at the moment documentation seems more critical. 
