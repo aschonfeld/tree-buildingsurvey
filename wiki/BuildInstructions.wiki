@@ -45,7 +45,7 @@ Follow the instructions in these two Wiki pages:
   # [ApacheEclipseSetup Apache Tomcat Eclipse Setup Instructions]
   # [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment Instructions]
 
-= Installing MySQL & Creating Local Database (Coming Soon) =
+= Installing MySQL & Creating Local Database =
   # Download and install [http://dev.mysql.com/downloads/mysql/ MySQL]
   # Once the download is complete, open up MySQL Command Line Client
   # You will need to enter the root password that you created during the installation
