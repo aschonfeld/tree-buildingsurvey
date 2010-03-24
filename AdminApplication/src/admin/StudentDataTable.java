@@ -32,15 +32,8 @@ public class StudentDataTable extends JFrame {
         this.parent = parent;
         humanScoring = new HumanScoring(parent);
         studentDataColumns = new StudentDataColumns();
-        studentDataTableModel = new StudentDataTableModel();
-        table = new JTable(studentDataTableModel);
-        listSelectionModel = table.getSelectionModel();
-        listSelectionModel.addListSelectionListener(new SharedListSelectionHandler());
-        table.setSelectionModel(listSelectionModel);
-        tablePane = new JScrollPane(table);
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        sharedTableInit();
         tablePane.setSize(new Dimension(928, 762));
-        setUpGraphTypeColumn(table, table.getColumnModel().getColumn(1));
         add(tablePane);
         setSize(new Dimension(928, 762));
         setJMenuBar(parent.actionHandler.getDataMenuBar(studentDataColumns));
@@ -133,17 +126,23 @@ public class StudentDataTable extends JFrame {
     	Dimension size = this.getSize();
     	Dimension tableSize = tablePane.getSize();
     	remove(tablePane);
+    	sharedTableInit();
+        tablePane.setSize(tableSize);
+        add(tablePane);
+        setSize(size);
+    }
+    
+    // contains code common to contstructor and refreshTable
+    public void sharedTableInit() {
         studentDataTableModel = new StudentDataTableModel();
         table = new JTable(studentDataTableModel);
         listSelectionModel = table.getSelectionModel();
         listSelectionModel.addListSelectionListener(new SharedListSelectionHandler());
         table.setSelectionModel(listSelectionModel);
+        table.setAutoCreateRowSorter(true);
         tablePane = new JScrollPane(table);
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setUpGraphTypeColumn(table, table.getColumnModel().getColumn(1));
-        tablePane.setSize(tableSize);
-        add(tablePane);
-        setSize(size);
     }
 
     class SharedListSelectionHandler implements ListSelectionListener {
