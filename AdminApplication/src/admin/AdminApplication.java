@@ -119,7 +119,7 @@ public class AdminApplication extends JFrame {
     public static void toggleShowNames() {showNames = !showNames;}
  
 
-    public void drawCurrentGraph(Graphics g, boolean screenPrintMode) {
+    public void drawCurrentGraph(Graphics g) {
     	Graph graph = getCurrentGraph();	
 		String studentName = graph.getStudentName();
     	g.setColor(Common.studentNameColor);
@@ -132,7 +132,7 @@ public class AdminApplication extends JFrame {
     	treeView.repaint();
     	//System.out.println(size);
     	graph.render(g, new Point(0,0));
-    	if(screenPrintMode)
+    	if(Common.screenPrintMode)
     		drawScreenPrintText((Graphics2D) g, size.y, graph);
     	
     }
@@ -158,9 +158,18 @@ public class AdminApplication extends JFrame {
 				yVal += textHeight + Common.padding.height;
 			}
 			yVal += textHeight + Common.padding.height;
-			for(String s : Common.breakStringByLineWidth(g2,writtenAnswers.get(i-1),
-					width - Common.padding.width * 2)){
-				Common.drawCenteredString(g2, s, Common.padding.width, yVal, 0,
+			if(writtenAnswers.size() >= i){
+				String answer = writtenAnswers.get(i-1);
+				if(Common.isStringEmpty(answer))
+					answer = "NO RESPONSE";
+				for(String s : Common.breakStringByLineWidth(g2,answer,
+						width - Common.padding.width * 2)){
+					Common.drawCenteredString(g2, s, Common.padding.width, yVal, 0,
+							textHeight + 4, Color.BLACK);
+					yVal += textHeight + Common.padding.height;
+				}
+			}else{
+				Common.drawCenteredString(g2, "NO RESPONSE", Common.padding.width, yVal, 0,
 						textHeight + 4, Color.BLACK);
 				yVal += textHeight + Common.padding.height;
 			}

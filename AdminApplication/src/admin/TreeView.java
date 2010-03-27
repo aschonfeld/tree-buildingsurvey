@@ -13,7 +13,6 @@ import javax.swing.JComponent;
 public class TreeView extends JComponent implements Printable{
 	
 	private AdminApplication parent;
-	private boolean screenPrintMode = false;
 	
 	/**
 	 * 
@@ -46,9 +45,9 @@ public class TreeView extends JComponent implements Printable{
 		g2.setRenderingHints(rh);
 		g2.setFont(Common.font);
 		g2.setColor(Common.backgroundColor);
-		g2.fillRect(0, 0, getWidth(), getHeight() + (screenPrintMode ? 200 : 0));
+		g2.fillRect(0, 0, getWidth(), getHeight() + (Common.screenPrintMode ? 200 : 0));
 		if(parent == null) return;
-		parent.drawCurrentGraph(g,screenPrintMode);
+		parent.drawCurrentGraph(g);
 		return;
 	}
 
@@ -67,10 +66,10 @@ public class TreeView extends JComponent implements Printable{
 			BufferedImage fullSizeImage = new BufferedImage(
 					width, height, BufferedImage.TYPE_INT_RGB);
 			Common.setColorsForPrinting();
-			screenPrintMode = true;
+			//screenPrintMode = true;
 			setSize(width, height);
 			paint(fullSizeImage.getGraphics());
-			screenPrintMode = false;
+			//screenPrintMode = false;
 			// scale to fit
 			double wRatio = width/pageFormat.getImageableWidth();
 			double hRatio = height/pageFormat.getImageableHeight();

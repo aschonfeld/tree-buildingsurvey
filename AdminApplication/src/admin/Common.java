@@ -14,6 +14,8 @@ import java.util.List;
 
 public class Common {
 	
+	public static boolean screenPrintMode = false;
+	
     public static Color backgroundColor = Color.BLACK;
     public static Color emptyNodeNameColor = Color.BLACK;
     public static Color studentNameColor = Color.WHITE;
@@ -163,20 +165,20 @@ public class Common {
        public static void setColorsForPrinting(){
     	   backgroundColor = Color.WHITE;
     	   studentNameColor = Color.BLACK;
-    	   emptyNodeNameColor = Color.WHITE;
     	   connectionColor = Color.BLACK;
     	   emptyNodeColor = Color.BLACK;
     	   tooltipColor = Color.BLACK;
     	   hullColor = Color.BLACK;
+    	   screenPrintMode = true;
        }
 
        public static void setColorsForDisplay(){
     	   backgroundColor = Color.BLACK;
-    	   emptyNodeNameColor = Color.BLACK;
     	   studentNameColor = Color.WHITE;
     	   connectionColor = new Color(0.5f, 1.0f, 0.5f);
     	   emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
     	   tooltipColor = Color.CYAN;
     	   hullColor = Color.GREEN;
+    	   screenPrintMode = false;
        }       
 }

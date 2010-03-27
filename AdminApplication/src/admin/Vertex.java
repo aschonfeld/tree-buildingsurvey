@@ -1,5 +1,11 @@
 package admin;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import admin.VertexInfo.VertexType;
@@ -220,7 +226,10 @@ public class Vertex implements Renderable {
 	private void renderVertex() {
 		g2.setColor(Common.emptyNodeColor);
 		Rectangle bounds = getVertexBounds();
-		g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+		if(Common.screenPrintMode && !Common.isStringEmpty(info.getName()))
+			g2.draw(bounds);
+		else
+			g2.fill(bounds);
 		Common.drawCenteredString(g2, info.getName(), bounds.x, bounds.y, bounds.width, bounds.height, Common.emptyNodeNameColor);
 	}
 
