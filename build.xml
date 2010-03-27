@@ -29,7 +29,7 @@
 
 	<target name="jarfile" depends="compile" description="Makes jar file">
 	    <exec dir="${basedir}" executable="perl">
-            <arg line="${basedir}/update.pl"/>
+            <arg line="${basedir}/get_revno.pl"/>
         </exec>
 	    <jar destfile="${basedir}/${jarfile}.jar" basedir="${build.dir}">
 	        <manifest>
