@@ -245,7 +245,11 @@ public abstract class TBSView extends JComponent implements Printable{
 	public void renderEmptyNode(Graphics2D g2, EmptyNode en){
 		if(!en.isBeingLabeled()){
 			g2.setColor(TBSGraphics.emptyNodeColor);
-			g2.fill(new Rectangle(en.getX() - getXOffset(), en.getY() - getYOffset(), en.getWidth(), en.getHeight()));
+			Rectangle temp = new Rectangle(en.getX() - getXOffset(), en.getY() - getYOffset(), en.getWidth(), en.getHeight());
+			if(screenPrintMode && !TBSUtils.isStringEmpty(en.getName()))
+				g2.draw(temp);
+			else
+				g2.fill(temp);
 			TBSGraphics.drawCenteredString(g2, en.getName(), en.getX() - getXOffset(),
 					en.getY() - getYOffset(), en.getWidth(), en.getHeight(), TBSGraphics.emptyNodeNameColor);
 		}

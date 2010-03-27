@@ -424,7 +424,6 @@ public class TBSGraphics {
 		connectionSelectedColor = Color.BLACK;
 		connectionColor = Color.BLACK;
 		emptyNodeColor = Color.BLACK;
-		emptyNodeNameColor = Color.WHITE;
 		selectedNodeBorderColor = Color.BLACK;
 		buttonNotSelected = Color.BLACK;
 		buttonSelected = Color.BLACK;
@@ -440,7 +439,6 @@ public class TBSGraphics {
 		connectionSelectedColor = Color.GREEN;
 		connectionColor = new Color(0.5f, 1.0f, 0.5f);
 		emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
-		emptyNodeNameColor = Color.BLACK;
 		selectedNodeBorderColor = Color.GREEN;
 		buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
 		buttonSelected = new Color(0.2f, 0.8f, 0.2f);
