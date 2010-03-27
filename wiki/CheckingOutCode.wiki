@@ -6,7 +6,7 @@
   # Right-click inside the 'SVN Repositories' tab
   # New > Rpository Location
   # Enter this URL the input box:
-    * `svn checkout http://tree-buildingsurvey.googlecode.com/svn/trunk/ tree-buildingsurvey-read-only` inside the 'Url' input box
+    * `http://tree-buildingsurvey.googlecode.com/svn` inside the 'Url' input box
   # Checkout Applet
     # Right-click on the 'trunk' folder
     # Click 'Checkout...'
