@@ -300,6 +300,8 @@ public class AdminView extends TBSView {
 			}
 			yVal += TBSGraphics.textHeight + TBSGraphics.padding.height;
 			String writtenAnswer = model.getStudent().getResponse(writtenQuestion).getText();
+			if(TBSUtils.isStringEmpty(writtenAnswer))
+				writtenAnswer = "NO REPONSE";
 			for(String s : TBSGraphics.breakStringByLineWidth(g2,writtenAnswer,
 					width - TBSGraphics.padding.width * 2)){
 				TBSGraphics.drawCenteredString(g2, s, TBSGraphics.padding.width, yVal, 0,
