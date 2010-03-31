@@ -43,14 +43,14 @@ public class AnalysisPrompt extends Prompt
 		setGraphics(g2);
 		if(analysisText.isEmpty()){
 			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					"1) All organism nodes are" + (model.getGraph().allOrganismsTerminal() ? " " : " not ") + "terminal.",
+					"1) All organism nodes terminal: " + (model.getGraph().allOrganismsTerminal() ? "Yes" : "No"),
 					getWidth() - TBSGraphics.padding.width * 2));
 			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
-					"2) All organism nodes are" + (model.outOfTreeElements().isEmpty() ? " " : " not ") + "included.",
+					"2) All organism nodes included: " + (model.outOfTreeElements().isEmpty() ? "Yes" : "No"),
 					getWidth() - TBSGraphics.padding.width * 2));
 			if(model.getHullCollisions().isEmpty()){
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
-						"3) None of the groups of organisms collide with another group of organisms.",
+						"3) There are no collisions between organism groups(Mammal, Invert, NMV)",
 						getWidth() - TBSGraphics.padding.width * 2));
 			}else{
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
