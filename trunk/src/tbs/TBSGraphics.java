@@ -254,8 +254,8 @@ public class TBSGraphics {
 	public static Color buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
 	public static Color buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 	public static Color buttonEnd = new Color(1.0f, 1.0f, 1.0f);
-	public static Color buttonInactive = Color.RED;
-
+	public static Color buttonInactiveBgColor = new Color(205,188,181);
+	public static Color buttonInactiveFntColor = new Color(139,125,123);
 
 	/**
 	 * Space between buttons and question buttons.
@@ -428,7 +428,8 @@ public class TBSGraphics {
 		buttonNotSelected = Color.BLACK;
 		buttonSelected = Color.BLACK;
 		buttonEnd = Color.BLACK;
-		buttonInactive = Color.BLACK;
+		buttonInactiveBgColor = Color.WHITE;
+		buttonInactiveFntColor = Color.BLACK;
 		hullColors = new Color[]{Color.BLACK,Color.BLACK,Color.BLACK};
 	}
 	
@@ -441,9 +442,9 @@ public class TBSGraphics {
 		emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
 		selectedNodeBorderColor = Color.GREEN;
 		buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
-		buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
-		buttonInactive = Color.RED;
+		buttonInactiveBgColor = new Color(205,188,181);
+		buttonInactiveFntColor = new Color(139,125,123);
 		hullColors = new Color[]{Color.MAGENTA,Color.ORANGE,Color.PINK};
 	}
 }
