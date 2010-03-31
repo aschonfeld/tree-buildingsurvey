@@ -56,20 +56,20 @@ public class StudentView extends TBSView {
 			Rectangle buttonRect = new Rectangle(0,0,TBSGraphics.buttonsWidth, TBSGraphics.buttonsHeight);
 			int upperY = TBSGraphics.buttonsHeight - TBSGraphics.padding.height;
 			for(TBSButtonType b: getButtons()) {
-				TBSGraphics.renderButtonBackground(g2, buttonRect, b.equals(buttonClicked));
+				if(model.isButtonActive(b))
+					TBSGraphics.renderButtonBackground(g2, buttonRect, b.equals(buttonClicked));
+				else{
+					g2.setColor(TBSGraphics.buttonInactiveBgColor);
+					g2.fill(buttonRect);
+				}
 				g2.setColor(Color.gray);
 				g2.draw(buttonRect);
-				if(!model.isButtonActive(b)){
-					g2.setColor(TBSGraphics.buttonInactive);
-					g2.setStroke(new BasicStroke(3));
-					g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y,
-							buttonRect.x + buttonRect.width, buttonRect.y + buttonRect.height));
-					g2.draw(new Line2D.Double(buttonRect.x, buttonRect.y+buttonRect.height,
-							buttonRect.x + buttonRect.width, buttonRect.y));
-					g2.setStroke(new BasicStroke());
-				}
-				TBSGraphics.drawCenteredString(g2, b.toString(),
-						buttonRect.x, upperY, buttonRect.width, 0);
+				if(!model.isButtonActive(b))
+					TBSGraphics.drawCenteredString(g2, b.toString(),
+							buttonRect.x, upperY, buttonRect.width, 0, TBSGraphics.buttonInactiveFntColor);
+				else
+					TBSGraphics.drawCenteredString(g2, b.toString(),
+							buttonRect.x, upperY, buttonRect.width, 0);
 				buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 			}
 
