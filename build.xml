@@ -7,15 +7,17 @@
 	<property name="javadoc.dir" value="${basedir}/javadoc/"/>
 	<property name="deploy.dir" value="${basedir}/deploy${version}/"/>
 	<property name="main.class" value="tbs.TBSApplet"/>
-	<property name="jarfile" value="TBSRun"/>
+	<property name="jardir" value="${basedir}/documents/Applet_Testing"/>
+	<property name="jarfile" value="${jardir}/TBSRun.jar"/>
 	
 
 	<target name="clean">
 			<delete dir="${build.dir}" description="Deletes the build directory"/>
+			<delete file="${jarfile}" description="Deletes the last jarfile"/>
 	</target>
 	
 	<target name="clean-javadoc">
-		<delete dir="${javadoc.dir}" description="Deletes the javadoc directory"/>
+			<delete dir="${javadoc.dir}" description="Deletes the javadoc directory"/>
 	</target>
 		
 	<target name="init" description="Creates the build directory">
@@ -29,9 +31,9 @@
 
 	<target name="jarfile" depends="compile" description="Makes jar file">
 	    <exec dir="${basedir}" executable="perl">
-            <arg line="${basedir}/get_revno.pl"/>
+            <arg line="${basedir}/documents/perl/get_revno.pl"/>
         </exec>
-	    <jar destfile="${basedir}/${jarfile}.jar" basedir="${build.dir}">
+	    <jar destfile="${jarfile}" basedir="${build.dir}">
 	        <manifest>
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
@@ -58,8 +60,8 @@
 	<!-- YOU MUST REMEMBER TO UPDATE THE applet.html FILE WITH CURRENT VERSION INFO!! -->
 	<target name="deploy">
 		<mkdir dir="${deploy.dir}"/>
-		<copy file="TBSRun.jar" todir="${deploy.dir}"/>
-		<copy file="applet.html" todir="${deploy.dir}"/>
+		<copy file="${jarfile}" todir="${deploy.dir}"/>
+		<copy file="${jardir}/applet.html" todir="${deploy.dir}"/>
 		<copy todir="${deploy.dir}">
 			<fileset dir="${javadoc.dir}"/>
 		</copy>
@@ -79,13 +81,13 @@
 	</target>
 	
 	<target name="run_student">
-			<exec dir="." executable="appletviewer">
+			<exec dir="${jardir}" executable="appletviewer">
 	       		<arg value="-J-Djava.security.policy=security.policy" />
 	       		<arg value="applet.html" />
 	     	</exec>
 	</target>
 	<target name="run_admin">
-			<exec dir="." executable="appletviewer">
+			<exec dir="${jardir}" executable="appletviewer">
 	       		<arg value="-J-Djava.security.policy=security.policy" />
 	       		<arg value="adminApplet.html" />
 	     	</exec>
