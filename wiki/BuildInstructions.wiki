@@ -52,7 +52,7 @@ Follow the instructions in these two Wiki pages:
   # Locate the file 'phylogenySurvey.sql' in the documents folder of the checked out Applet project
     * This will be in the workspace folder of your eclipse projects, mine is C:\workspace
   # In the command line run the command:
-    * `source [location of checked out Applet project]\documents\phylogenySurvey.sql`
+    * `source [location of checked out Applet project]\documents\DB_Setup\phylogenySurvey.sql`
   # Do the following [PerlMySQLDBI Perl MySQL DBI] setup
   # There will be two other files within the documents folder from two steps earlier of the extension `.pm`, drop these two files into the `WebContent\WEB-INF\cgi\' for the Local Server project you created earlier
   * *Now your database should be all set for running a local version of the Applet complete with saving!*
