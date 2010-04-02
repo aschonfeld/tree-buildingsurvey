@@ -10,7 +10,6 @@ $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
 #$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
 $jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
 $graphing_pw = "tester";
-$survey_points = "10";
 $too_late_month = 12;
 $too_late_day = 12;
 $name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
@@ -21,6 +20,7 @@ $assignment_index = "";
 $revno = 801;
 $student_index="students";
 $prof_name="Dr. Blue";
+$complete = 0;
 
 @date = localtime(time);
 $too_late = 0;
@@ -150,7 +150,8 @@ sub login_page {
     	 print "</td><td height=100%>\n";
     	 print "<table bgcolor=yellow height=100% style=\"width:200px;\"><tr><td style=\"font-weight:bold;\"><center>\n";
 		 print "The submission deadline has passed!</center></td></tr><tr><td><center>\n";
-		 print "You can submit a survey but you will not recieve $survey_points points.<br>\n";
+		 print "You can submit a survey but you will not recieve course
+credit.<br>\n";
 		 print "Thanks!</center></td></tr></table>\n";
 		 print "</td></tr></table>\n";
     }
@@ -236,7 +237,6 @@ sub load_student_survey {
 	$name = $query->param('Name');
 	$Q1 = $query->param('Q1');
 	$Q2 = $query->param('Q2');
-	$Q3 = $query->param('Q3');
 	$treeXML = $query->param('treeXML');
 	$lastUpdate = $query->param('lastUpdate');
 	$browser = $query->param('Browser');
@@ -263,30 +263,15 @@ sub load_student_survey {
 	print "<html><head>\n";
 	print "<title>Diversity of Life Survey for $name</title>\n";
 	
-	#If Professor White requests the radio question be put back into
-	#the open-response section, then reinstitute this line of code and
-	#comment out the one underneath it.
-	#if (($Q1 eq "") || ($Q2 eq "") || ($Q3 =~ /0/)) {
-	
-	if($grade eq $survey_points){
-		$complete  = 1;
-	}
-	else{
 		if (($Q1 eq "") || ($Q2 eq "")) {
 		     $complete = 0;
 		} else {
 		     $complete = 1;
 		}
-	}
-	if ($complete != 0) {
-	     #enter the grade
-		$grade = $survey_points;
-	}
-	
+
 
 	$writeArray[0]=$array[0];
-	push(@writeArray,$browser);
-	$str = $grade.",".&ctime(time);
+	$str = $complete.",".&ctime(time);
 	push(@writeArray,$str);
 	push (@writeArray,$Q1);
 	push (@writeArray,$Q2);
@@ -303,7 +288,8 @@ sub load_student_survey {
        	print "<body bgcolor=\"lightblue\">\n";
        	print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
 	   	if ($too_late != 1) {
-			print "<br><center><font size=+1>You have recieved $survey_points points.</font><br>";
+			print "<br><center><font size=+1>You have recieved credit for
+completing the survey.</font><br>";
 	    }
   	    print "<form action=\"$script_url\" method=\"POST\" name=\"form\">\n";
   	    print "<table><tr><td>\n";
@@ -363,7 +349,8 @@ sub load_student_survey {
     if ($too_late == 1) {
     	print "<table bgcolor=yellow><tr><td style=\"font-weight:bold;\"><center>\n";
 		print "The submission deadline<br> has passed!</center></td></tr><tr><td><center>\n";
-		print "You can submit a survey<br>but you will not<br> recieve $survey_points points.<br>\n";
+		print "You can submit a survey<br>but you will not<br> recieve
+course credit.<br>\n";
 		print "Thanks!</center></td></tr></table>\n";
 	}else{
 	    if ($complete == 0) {
@@ -374,7 +361,7 @@ sub load_student_survey {
 		} else {
 			print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
 			print "Your survey is complete!</center></td></tr><tr><td><center>\n";
-			print "You have received<br> $survey_points points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
+			print "You have received<br> course credit<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
 			print "Thanks!</center></td></tr></table>\n";	
 		}
 	}
@@ -402,8 +389,6 @@ sub load_student_survey {
 
 sub load_admin_survey {
 
-	#$name = $query->param('Name');
-	#$browser = $query->param('Browser');
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
