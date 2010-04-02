@@ -389,7 +389,8 @@ course credit.<br>\n";
 
 sub load_admin_survey {
 
-
+	$browser = $query->param('Browser');
+	
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Diversity of Life Survey - Administrator Version</title>\n";
