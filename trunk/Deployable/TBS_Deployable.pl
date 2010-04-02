@@ -1,12 +1,14 @@
 #!/usr/bin/perl
 
+use CGI;
 require "ctime.pl";
+
 
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
-$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
-#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+#$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
+$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
 $graphing_pw = "tester";
 $survey_points = "10";
 $too_late_month = 12;
@@ -42,7 +44,6 @@ exit 1;
 
 sub login_page {
 	$invalidLogin = $_[0];
-# 	print <<END_OF_TEXT
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Login to the TBS Survey</title>\n";
@@ -110,11 +111,8 @@ sub login_page {
 	
 	print "<form action=\"$script_url\" method=\"POST\" onsubmit=\"return getAdminValue();\" ";
   	print "name=\"form\">\n";
-
-#END_OF_TEXT
   	
 #	$dbh = GradeDB::connect();
-	%name_grade_hash = ();
 #	$sth = $dbh->prepare("SELECT * FROM $student_info ORDER BY name");
 #	$sth->execute();
 #   while (@result = $sth->fetchrow_array()) {
@@ -122,16 +120,14 @@ sub login_page {
 ################################################
 # Read students file, convert to %name_id_hash #
 ################################################
-open(STUDENTS, "$student_index") || die "Can't open students";
+    open(STUDENTS, "$student_index") || die "Can't open students";
 #tie @result, 'Tie::File', STUDENTS or die "Can't tie file";
 
-%name_tree_hash= ();
 
-while (<STUDENTS>)
-  {  
-	@this_student=split(/,/, $_);
-	$name_id_hash{$this_student[0]}=$this_student[1];
-  }
+    while (<STUDENTS>){  
+	    @this_student=split(/,/, $_);
+	    $name_id_hash{$this_student[0]}=$this_student[1];
+    }
 
 	close STUDENTS || die "Can't close students file";
 
@@ -183,18 +179,18 @@ while (<STUDENTS>)
 }
 
 sub load_survey {
+	
+    # read in student file and shove it into an array
+	$query = CGI->new();
+    open(STUDENT_FILE, "dummy") || die "Can't open dummy";
+    @array=<STUDENT_FILE>;
+    close STUDENT_FILE || die "Can't close dummy file";
+    
+    #load values into variables
 
-
-# read in student file and shove it into an array
-
-open(STUDENT_FILE, "dummy");
-while (<STUDENT_FILE>) { push(@array, $_); }
-
-# load values into variables
-
-($name, $section, $password, $admin,$graphing)=split(/,/, @array[0]);
-($grade, $lastUpdate) = split(/,/,@array[1]);
-
+   ($name, $section, $password, $admin,$graphing)=split(/,/, trim(@array[0]));
+   ($browser) = trim(@array[1]);
+   ($grade, $lastUpdate) = split(/,/,trim(@array[2]));
 	if($graphing eq 'true') {
 		if($graphing_pw eq $password){
 			&load_graphing_survey;
@@ -203,65 +199,64 @@ while (<STUDENT_FILE>) { push(@array, $_); }
 		}
 	} elsif($admin eq 'true') {
 		if($admin_pw eq $password){
-	#		&load_admin_survey;
+			&load_admin_survey;
 		}else{
 			&login_page('true');
 		}
 	} else {
+		# not sure what assignment_index is doing - I think maybe it's points
+        # earned for taking the survey?		
+		#if($assignment_index eq ''){
+		#	$assignment_index = $grade;
+		#}
 	
-		
-		if($assignment_index eq ''){
-# not sure what assignment_indexis doing - I think maybe it's points
-# earned for taking the survey?
-			$assignment_index = $grade;
-		}
+		#skipping passwords for now
 	
-#skpping passwords for now
-	
-#		$statement = "SELECT password,section FROM $student_info WHERE name=\"$name\"";
-#		$sth = $dbh->prepare($statement);
-#		$sth->execute();
-#		@result = $sth->fetchrow_array();
-#		$sth->finish();
-#		$pw = $result[0];
-#		$dbh->disconnect();		
-#		if(&decrypt_pw($pw,$password) == 1){
-		if(1) {
-			&load_student_survey;
-#		}else{
-#		   &login_page('true');
-#		}
+		#$statement = "SELECT password,section FROM $student_info WHERE name=\"$name\"";
+		#$sth = $dbh->prepare($statement);
+		#$sth->execute();
+		#@result = $sth->fetchrow_array();
+		#$sth->finish();
+		#$pw = $result[0];
+		#$dbh->disconnect();		
+		#if(&decrypt_pw($pw,$password) == 1){
+			if(1) {
+				#&load_student_survey;
+			}else{
+			   #&login_page('true');
+			}
+		#}
 	}
 	
 }
 
 sub load_student_survey {
 	
-$password = $query->param('Passwd');
-$name = $query->param('Name');
-$Q1 = $query->param('Q1');
-$Q2 = $query->param('Q2');
-$Q3 = $query->param('Q3');
-$treeXML = $query->param('treeXML');
-$lastUpdate = $query->param('lastUpdate');
-$browser = $query->param('Browser');
-
-
-######################################################################
-# Open student's data file, extract question strings and tree, as well
-# as last update and browser values
-# lastUpdate, browser, grade will be on line 2, comma-sep
-# Q1-QN are on lines 3ff, followed by the tree. Save format tbd
-######################################################################
-
-# we've already loaded the student file into @array, so:
-$browser = $array[1];
-
-($lastUpdate,$grade)= split(/,/,$array[2]);
-$Q1 = $array[3];
-$Q2 = $array[4];
-$Q3 = $array[5];
-$treeXML = $array[6];
+	$password = $query->param('Passwd');
+	$name = $query->param('Name');
+	$Q1 = $query->param('Q1');
+	$Q2 = $query->param('Q2');
+	$Q3 = $query->param('Q3');
+	$treeXML = $query->param('treeXML');
+	$lastUpdate = $query->param('lastUpdate');
+	$browser = $query->param('Browser');
+	
+	
+	######################################################################
+	# Open student's data file, extract question strings and tree, as well
+	# as last update and browser values
+	# lastUpdate, browser, grade will be on line 2, comma-sep
+	# Q1-QN are on lines 3ff, followed by the tree. Save format tbd
+	######################################################################
+	
+	# we've already loaded the student file into @array, so:
+	$browser = $array[1];
+	
+	($lastUpdate,$grade)= split(/,/,$array[2]);
+	$Q1 = $array[3];
+	$Q2 = $array[4];
+	$Q3 = $array[5];
+	$treeXML = $array[6];
 
 
 	print "Content-type: text/html\n\n";
@@ -289,25 +284,27 @@ $treeXML = $array[6];
 	}
 	
 
-$writeArray[0]=$array[0];
-push(@writeArray,$browser);
-$str = $grade.",".&ctime(time);
-push(@writeArray,$str);
-push (@writeArray,$Q1);
-push (@writeArray,$Q2);
-push (@writeArray,$Q3);
-push (@writeArray,$treeXML);
-
-open (F, ">dummy");
-while (@writeArray){
-	print F; 
-}
-
-print "<body bgcolor=\"lightblue\">\n";
-print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
-	if ($too_late != 1) {
-		print "<br><center><font size=+1>You have recieved $survey_points points.</font><br>";
+	$writeArray[0]=$array[0];
+	push(@writeArray,$browser);
+	$str = $grade.",".&ctime(time);
+	push(@writeArray,$str);
+	push (@writeArray,$Q1);
+	push (@writeArray,$Q2);
+	push (@writeArray,$Q3);
+	push (@writeArray,$treeXML);
+	
+	open (F, ">dummy");
+	while (@writeArray){
+		print F; 
 	}
+
+    if ($treeXML ne "") {
+    	print "</head>\n";
+       	print "<body bgcolor=\"lightblue\">\n";
+       	print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
+	   	if ($too_late != 1) {
+			print "<br><center><font size=+1>You have recieved $survey_points points.</font><br>";
+	    }
   	    print "<form action=\"$script_url\" method=\"POST\" name=\"form\">\n";
   	    print "<table><tr><td>\n";
   	    print "<input type=\"button\" value=\"Return To Login\" onclick=\"window.location = '$script_url';\">\n";
@@ -321,7 +318,6 @@ print "<br><center><font size=+1>$name thank you for your survey submission.</fo
     	print "</form></center>\n";
    		print "</body></html>\n";
    		exit 1;
-		}
 	}
 	
 	
@@ -371,16 +367,17 @@ print "<br><center><font size=+1>$name thank you for your survey submission.</fo
 		print "Thanks!</center></td></tr></table>\n";
 	}else{
 	    if ($complete == 0) {
-	print "<table bgcolor=red><tr><td style=\"font-weight:bold;\"><center>\n";
-	print "Your survey is not complete!</center></td></tr><tr><td><center>\n";
-	print "You will not receive<br> any credit unless<br> you answer all the questions.<br>\n";
-	print "Thanks!</center></td></tr></table>\n";
+			print "<table bgcolor=red><tr><td style=\"font-weight:bold;\"><center>\n";
+			print "Your survey is not complete!</center></td></tr><tr><td><center>\n";
+			print "You will not receive<br> any credit unless<br> you answer all the questions.<br>\n";
+			print "Thanks!</center></td></tr></table>\n";
 		} else {
-	print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
-	print "Your survey is complete!</center></td></tr><tr><td><center>\n";
-	print "You have received<br> $survey_points points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
-	print "Thanks!</center></td></tr></table>\n";	
+			print "<table bgcolor=green><tr><td style=\"font-weight:bold;\"><center>\n";
+			print "Your survey is complete!</center></td></tr><tr><td><center>\n";
+			print "You have received<br> $survey_points points<br> for the<br> &quot;Diversity Of Life Survey&quot;<br>\n";
+			print "Thanks!</center></td></tr></table>\n";	
 		}
+	}
     print "<input type=\"hidden\" name=\"AdminValue\" value=\"$admin\">\n";
     print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
     print "<input type=\"hidden\" name=\"Passwd\" value=\"$password\">\n";
@@ -405,9 +402,8 @@ print "<br><center><font size=+1>$name thank you for your survey submission.</fo
 
 sub load_admin_survey {
 
-#	$query = CGI->new();
-#	$name = $query->param('Name');
-#	$browser = $query->param('Browser');
+	#$name = $query->param('Name');
+	#$browser = $query->param('Browser');
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
@@ -426,17 +422,34 @@ sub load_admin_survey {
   	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\">\n";
   	print "<tr><td width=\"85%\"> \n";
 	print "<applet code=\"tbs.TBSApplet.class\" archive=\"$jar_loc\" width=\"100%\" height=\"100%\" name=\"TreeApplet\"> \n";
-    $count = 0;
-		$count++;
-		my $student_name = $data[0];
-        my $last_update = $data[1];
-		my $tree = $data[2];
-		my $Q1 = $data[3];
-		my $Q2 = $data[4];
-		my $Q3 = $data[5];
-		my $section = $name_section_hash{$student_name};
-		print "<param name=\"Student$count\" value=\"$student_name+=$last_update+=$tree+=$Q1+=$Q2+=$Q3+=$section+=\"> \n";
-	
+    
+    #$dbh = GradeDB::connect();
+	#%name_section_hash = ();
+	#$sth = $dbh->prepare("SELECT name, section FROM $student_info ORDER BY name");
+    #$sth->execute();
+    #while (@result = $sth->fetchrow_array()) {
+    #    $name_section_hash{$result[0]} = $result[1];
+    #}
+    #$sth->finish();
+    
+	#$dbh = treeDB::connect();
+	#$sth = $dbh->prepare("SELECT * FROM $survey_info ORDER BY name");
+    #$sth->execute();
+    #$count = 0;
+	#while (@data = $sth->fetchrow_array()) {
+	#	$count++;
+	#	my $student_name = $data[0];
+    #    my $last_update = $data[1];
+	#	my $tree = $data[2];
+	#	my $Q1 = $data[3];
+	#	my $Q2 = $data[4];
+	#	my $Q3 = $data[5];
+	#	my $section = $name_section_hash{$student_name};
+	#	print "<param name=\"Student$count\" value=\"$student_name+=$last_update+=$tree+=$Q1+=$Q2+=$Q3+=$section+=\"> \n";
+    #}
+    #$sth->finish();
+    
+	print "<param name=\"Student\" value=\"+=+=+=+=+=+=+=\"> \n";
 	print "<param name=\"Admin\" value=\"true\"> \n";
 	print "<param name=\"StudentCount\" value=\"$count\"> \n";
 	print "<param name=\"Browser\" value=\"$browser\"> \n";
@@ -465,38 +478,38 @@ sub load_admin_survey {
 
 sub load_graphing_survey {
 	
-#	$password = $query->param('Passwd');
-#	$name = $query->param('Name');
-#	$treeXML = $query->param('treeXML');
-#	$lastUpdate = $query->param('lastUpdate');
-#	$browser = $query->param('Browser');
+	$password = $query->param('Passwd');
+	$name = $query->param('Name');
+	$treeXML = $query->param('treeXML');
+	$lastUpdate = $query->param('lastUpdate');
+	$browser = $query->param('Browser');
 	
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Diversity of Life Survey - Tree Analysis Testing</title>\n";
 	
 	#see if there's already an entry for this student
-#	$dbh = treeDB::connect();
-##	$statement = "SELECT count(*) from $graphing_info WHERE name=?";
-#	$sth = $dbh->prepare($statement);
-##	$sth->execute($name);
-#	$rowcount = $sth->fetchrow();
-#	$sth->finish();
-#	$dbh->disconnect();
-#	
+	#$dbh = treeDB::connect();
+	#$statement = "SELECT count(*) from $graphing_info WHERE name=?";
+	#$sth = $dbh->prepare($statement);
+	#$sth->execute($name);
+	#$rowcount = $sth->fetchrow();
+	#$sth->finish();
+	#$dbh->disconnect();
+	
 	#see if they're entering data
-	if ($treeXML ne "") {
+	#if ($treeXML ne "") {
 	#	$dbh = treeDB::connect();
-	    if ($rowcount == 0) {
-	 #       $statement = "INSERT INTO $graphing_info (tree, date, name) VALUES (?,NOW(),?)";
-	    }  else {
-	 #       $statement = "UPDATE $graphing_info SET tree = ?, date = NOW() WHERE name = ?";
-	    }
-	 #  $sth = $dbh->prepare($statement);
-	 #   $sth->execute($treeXML, $name);
-	 #   $sth->finish();
+	#   if ($rowcount == 0) {
+	#       $statement = "INSERT INTO $graphing_info (tree, date, name) VALUES (?,NOW(),?)";
+	#   }  else {
+	#       $statement = "UPDATE $graphing_info SET tree = ?, date = NOW() WHERE name = ?";
+	#   }
+	#   $sth = $dbh->prepare($statement);
+	#   $sth->execute($treeXML, $name);
+	#   $sth->finish();
 	#	$dbh->disconnect();
-	}
+	#}
 	
 	print "<SCRIPT language=\"JavaScript\">\n";
 	print "function viewTree() {\n";
@@ -549,3 +562,27 @@ sub decrypt_pw {
 	}
 	$isok;
 }
+
+# Perl trim function to remove whitespace from the start and end of the string
+sub trim($)
+{
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	return $string;
+}
+# Left trim function to remove leading whitespace
+sub ltrim($)
+{
+	my $string = shift;
+	$string =~ s/^\s+//;
+	return $string;
+}
+# Right trim function to remove trailing whitespace
+sub rtrim($)
+{
+	my $string = shift;
+	$string =~ s/\s+$//;
+	return $string;
+}
+
