@@ -8,18 +8,16 @@ require "common_functions.pl";
 # set some constants
 $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
-#$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
-$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
-$graphing_pw = "tester";
+$jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
+#$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
 $too_late_month = 12;
 $too_late_day = 12;
-$name_of_survey_field_in_assignments_txt = "Genetics Survey (10)";
-$student_info = "test_students";
-$survey_info = "student_testdata";
-$graphing_info = "graphing_testdata";
-$assignment_index = "";
+$survey_points = "10";
 $revno = 801;
-$student_index="students";
+#$student_index="C:/Workspace/PhylogenySurveyWeb/WebContent/WEB-INF/cgi/students";
+$student_index="/var/www/cgi-bin/students";
+#$dummy_index="C:/Workspace/PhylogenySurveyWeb/WebContent/WEB-INF/cgi/dummy";
+$dummy_index="/var/www/cgi-bin/dummy";
 $prof_name="Dr. Blue";
 $complete = 0;
 
@@ -54,13 +52,10 @@ sub login_page {
 	print " if(document.form.AdminCB.checked) {\n";
 	print "    document.form.AdminValue.value = \"true\";\n";
 	print "  }\n";
-	print " if(document.form.GraphingCB.checked) {\n";
-	print "    document.form.GraphingValue.value = \"true\";\n";
-	print "  }\n";
 	print "  return true;\n";
 	print "}\n";
 	print "function checkLogin() {\n";
-	print " if(!document.form.AdminCB.checked && !document.form.GraphingCB.checked) {\n";
+	print " if(!document.form.AdminCB.checked) {\n";
 	print " 	var user = document.form.Name.value;\n";
 	print " 	if(user == \"\") {\n";
 	print "    		alert(\"You must select a username!\");\n";
@@ -84,7 +79,7 @@ sub login_page {
 	print "				document.all.InvalidLogin.style.display = 'none';\n";
 	print "        }\n";
 	print " }\n";
-	print " if(document.form.AdminCB.checked || document.form.GraphingCB.checked) {\n";
+	print " if(document.form.AdminCB.checked) {\n";
 	print "    if(document.layers){\n";
 	print "        document.NameSelection.display = 'none';\n";
 	print "        document.AdminPassText.display = 'block';\n";
@@ -113,21 +108,17 @@ sub login_page {
 	print "<form action=\"$script_url\" method=\"POST\" onsubmit=\"return getAdminValue();\" ";
   	print "name=\"form\">\n";
   	
-#	$dbh = GradeDB::connect();
-#	$sth = $dbh->prepare("SELECT * FROM $student_info ORDER BY name");
-#	$sth->execute();
-#   while (@result = $sth->fetchrow_array()) {
 
-################################################
-# Read students file, convert to %name_id_hash #
-################################################
+	################################################
+	# Read students file, convert to %name_id_hash #
+	################################################
     open(STUDENTS, "$student_index") || die "Can't open students";
-#tie @result, 'Tie::File', STUDENTS or die "Can't tie file";
+	#tie @result, 'Tie::File', STUDENTS or die "Can't tie file";
 
 
     while (<STUDENTS>){  
 	    @this_student=split(/,/, $_);
-	    $name_id_hash{$this_student[0]}=$this_student[1];
+	    $name_id_hash{@this_student[0]}=@this_student[1];
     }
 
 	close STUDENTS || die "Can't close students file";
@@ -135,9 +126,7 @@ sub login_page {
 	print "<font size=+3>Login to the diversity of life survey site</font><br>\n";
 	print "<br>Administrator?  \n";
     print "<input type=\"checkbox\" name=\"AdminCB\" onclick=\"return updateView();\"><br>\n";
-    print "Tree Analysis Testing?  \n";
-    print "<input type=\"checkbox\" name=\"GraphingCB\" onclick=\"return updateView();\"><br><br>\n";
-	print "<div id=\"NameSelection\">\n";
+    print "<div id=\"NameSelection\">\n";
 	print "Choose your name from this list:<br>\n";
 	if ($too_late == 1) {
 		print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;\"><tr><td>\n";
@@ -151,8 +140,7 @@ sub login_page {
     	 print "</td><td height=100%>\n";
     	 print "<table bgcolor=yellow height=100% style=\"width:200px;\"><tr><td style=\"font-weight:bold;\"><center>\n";
 		 print "The submission deadline has passed!</center></td></tr><tr><td><center>\n";
-		 print "You can submit a survey but you will not recieve course
-credit.<br>\n";
+		 print "You can submit a survey but you will not recieve course credit.<br>\n";
 		 print "Thanks!</center></td></tr></table>\n";
 		 print "</td></tr></table>\n";
     }
@@ -173,8 +161,7 @@ credit.<br>\n";
   	print "<br>\n";
   	print "<input type=\"submit\" value=\"Login\" onclick=\"return checkLogin();\">\n";
   	print "<input type=\"hidden\" name=\"AdminValue\" value=\"false\">\n";
-  	print "<input type=\"hidden\" name=\"GraphingValue\" value=\"false\">\n";
-    print "<input type=\"hidden\" name=\"Browser\" value=\"\">\n";
+  	print "<input type=\"hidden\" name=\"Browser\" value=\"\">\n";
     print "</form>\n";
 	print "<hr>\n";
 	print "</body></html>\n";
@@ -184,113 +171,87 @@ sub load_survey {
 	
     # read in student file and shove it into an array
 	$query = CGI->new();
-    open(STUDENT_FILE, "dummy") || die "Can't open dummy";
-    @array=<STUDENT_FILE>;
-    close STUDENT_FILE || die "Can't close dummy file";
+	$name = $query->param('Name');
+	$password = $query->param('Passwd');
+	$admin = $query->param('AdminValue');
+	
+    open(STUDENT_FILE, $dummy_index) || die "Can't open dummy";
+    @this_student_data=<STUDENT_FILE>;
+    close STUDENT_FILE || die "Can't close dummy";
     
     #load values into variables
 
-   ($name, $section, $password, $admin,$graphing)=split(/,/, trim(@array[0]));
-   ($browser) = trim(@array[1]);
-   ($grade, $lastUpdate) = split(/,/,trim(@array[2]));
-	if($graphing eq 'true') {
-		if($graphing_pw eq $password){
-			&load_graphing_survey;
-		}else{
-			&login_page('true');
-		}
-	} elsif($admin eq 'true') {
+   ($name, $section, $pw)=split(/,/, trim(@this_student_data[0]));
+    if($admin eq 'true') {
 		if($admin_pw eq $password){
 			&load_admin_survey;
 		}else{
 			&login_page('true');
 		}
 	} else {
-		# not sure what assignment_index is doing - I think maybe it's points
-        # earned for taking the survey?		
-		#if($assignment_index eq ''){
-		#	$assignment_index = $grade;
-		#}
-	
-		#skipping passwords for now
-	
-		#$statement = "SELECT password,section FROM $student_info WHERE name=\"$name\"";
-		#$sth = $dbh->prepare($statement);
-		#$sth->execute();
-		#@result = $sth->fetchrow_array();
-		#$sth->finish();
-		#$pw = $result[0];
-		#$dbh->disconnect();		
+		#We might eventually add encryption to the password values stored in the
+		#student data files
 		#if(&decrypt_pw($pw,$password) == 1){
-			if(1) {
-				#&load_student_survey;
-			}else{
-			   #&login_page('true');
-			}
-		#}
+		if($pw eq $password) {
+			&load_student_survey;
+		} else {
+			&login_page('true');
+		}
 	}
 	
 }
 
 sub load_student_survey {
 	
-	$password = $query->param('Passwd');
 	$name = $query->param('Name');
+	$password = $query->param('Passwd');
 	$Q1 = $query->param('Q1');
 	$Q2 = $query->param('Q2');
+	$Q3 = "";
 	$treeXML = $query->param('treeXML');
 	$lastUpdate = $query->param('lastUpdate');
-	$browser = $query->param('Browser');
-	
-	
-	######################################################################
-	# Open student's data file, extract question strings and tree, as well
-	# as last update and browser values
-	# lastUpdate, browser, grade will be on line 2, comma-sep
-	# Q1-QN are on lines 3ff, followed by the tree. Save format tbd
-	######################################################################
-	
-	# we've already loaded the student file into @array, so:
-	$browser = $array[1];
-	
-	($lastUpdate,$grade)= split(/,/,$array[2]);
-	$Q1 = $array[3];
-	$Q2 = $array[4];
-	$Q3 = $array[5];
-	$treeXML = $array[6];
-
+	$browser = $query->param('Browser');	
 
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Diversity of Life Survey for $name</title>\n";
 	
+	@temp = split(/,/,trim(@this_student_data[1]));
+	if(@temp[0] eq $survey_points){
+		$complete  = 1;
+	} else {
 		if (($Q1 eq "") || ($Q2 eq "")) {
-		     $complete = 0;
+			$complete = 0;
 		} else {
-		     $complete = 1;
+			$complete = 1;
 		}
-
-
-	$writeArray[0]=$array[0];
-	$str = $complete.",".&ctime(time);
-	push(@writeArray,$str);
-	push (@writeArray,$Q1);
-	push (@writeArray,$Q2);
-	push (@writeArray,$Q3);
-	push (@writeArray,$treeXML);
-	
-	open (F, ">dummy");
-	while (@writeArray){
-		print F; 
 	}
 
     if ($treeXML ne "") {
     	print "</head>\n";
        	print "<body bgcolor=\"lightblue\">\n";
-       	print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
+       	
+    	#Save student data
+    	@writeArray[0]=@this_student_data[0];
+		if ($complete != 0) {
+			push (@writeArray,"10,".&ctime(time));
+		} else {
+			push (@writeArray,"0,".&ctime(time));
+		}
+		if($Q1 eq ''){$Q1 = "NULL";}
+		push (@writeArray,"$Q1\n");
+		if($Q2 eq ''){$Q2 = "NULL";}
+		push (@writeArray,"$Q2\n");
+		if($treeXML eq ''){$treeXML = "NULL";}
+		push (@writeArray,"$treeXML\n");
+		
+		open (F, ">$dummy_index") || die "Can't open dummy";
+		print F @writeArray;
+    	close F || die "Can't close dummy";
+    	
+    	print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
 	   	if ($too_late != 1) {
-			print "<br><center><font size=+1>You have recieved credit for
-completing the survey.</font><br>";
+			print "<br><center><font size=+1>You have recieved credit for completing the survey.</font><br>";
 	    }
   	    print "<form action=\"$script_url\" method=\"POST\" name=\"form\">\n";
   	    print "<table><tr><td>\n";
@@ -305,6 +266,19 @@ completing the survey.</font><br>";
     	print "</form></center>\n";
    		print "</body></html>\n";
    		exit 1;
+	}else {
+		######################################################################
+		# Open student's data file, extract question strings and tree, as well
+		# as last update and browser values
+		# lastUpdate, browser, grade will be on line 2, comma-sep
+		# Q1-QN are on lines 3ff, followed by the tree. Save format tbd
+		######################################################################
+		
+		# we've already loaded the student file into @array, so:
+		$lastUpdate = @temp[1];
+		$Q1 = trim(@this_student_data[2]);
+		$Q2 = trim(@this_student_data[3]);
+		$treeXML = trim(@this_student_data[4]);
 	}
 	
 	
@@ -320,7 +294,6 @@ completing the survey.</font><br>";
 	print " document.forms[0].treeXML.value = document.TreeApplet.getTree();\n";
 	print " document.forms[0].Q1.value = document.TreeApplet.getQ1(); \n";
 	print " document.forms[0].Q2.value = document.TreeApplet.getQ2(); \n";
-	#print " document.forms[0].Q3.value = document.TreeApplet.getQ3(); \n";
 	print " if(status != \"\"){ \n";
 	print "   return confirm(status + \" Is it ok to save?\");\n";
 	print " } \n";
@@ -350,8 +323,7 @@ completing the survey.</font><br>";
     if ($too_late == 1) {
     	print "<table bgcolor=yellow><tr><td style=\"font-weight:bold;\"><center>\n";
 		print "The submission deadline<br> has passed!</center></td></tr><tr><td><center>\n";
-		print "You can submit a survey<br>but you will not<br> recieve
-course credit.<br>\n";
+		print "You can submit a survey<br>but you will not<br> recieve course credit.<br>\n";
 		print "Thanks!</center></td></tr></table>\n";
 	}else{
 	    if ($complete == 0) {
@@ -438,7 +410,8 @@ sub load_admin_survey {
     
 	print "<param name=\"Student\" value=\"+=+=+=+=+=+=+=\"> \n";
 	print "<param name=\"Admin\" value=\"true\"> \n";
-	print "<param name=\"StudentCount\" value=\"$count\"> \n";
+	#print "<param name=\"StudentCount\" value=\"$count\"> \n";
+	print "<param name=\"StudentCount\" value=\"1\"> \n";
 	print "<param name=\"Browser\" value=\"$browser\"> \n";
   	print "You have to enable Java on your machine!\n";
   	print "</applet> \n";
@@ -459,82 +432,6 @@ sub load_admin_survey {
   	print "</table>\n";
   	print "</td>\n";
   	print "</tr></table>\n";
-  	print "</form>\n";
-    print "</body></html>\n";
-}
-
-sub load_graphing_survey {
-	
-	$password = $query->param('Passwd');
-	$name = $query->param('Name');
-	$treeXML = $query->param('treeXML');
-	$lastUpdate = $query->param('lastUpdate');
-	$browser = $query->param('Browser');
-	
-	print "Content-type: text/html\n\n";
-	print "<html><head>\n";
-	print "<title>Diversity of Life Survey - Tree Analysis Testing</title>\n";
-	
-	#see if there's already an entry for this student
-	#$dbh = treeDB::connect();
-	#$statement = "SELECT count(*) from $graphing_info WHERE name=?";
-	#$sth = $dbh->prepare($statement);
-	#$sth->execute($name);
-	#$rowcount = $sth->fetchrow();
-	#$sth->finish();
-	#$dbh->disconnect();
-	
-	#see if they're entering data
-	#if ($treeXML ne "") {
-	#	$dbh = treeDB::connect();
-	#   if ($rowcount == 0) {
-	#       $statement = "INSERT INTO $graphing_info (tree, date, name) VALUES (?,NOW(),?)";
-	#   }  else {
-	#       $statement = "UPDATE $graphing_info SET tree = ?, date = NOW() WHERE name = ?";
-	#   }
-	#   $sth = $dbh->prepare($statement);
-	#   $sth->execute($treeXML, $name);
-	#   $sth->finish();
-	#	$dbh->disconnect();
-	#}
-	
-	print "<SCRIPT language=\"JavaScript\">\n";
-	print "function viewTree() {\n";
-	print " var tree = document.TreeApplet.getTree();\n";
-	print " prompt(\"Here is you tree:\",tree);\n";
-	print " return true; \n";
-	print "}\n";
-	print "</script>\n";
-	print "</head>\n";
-	print "<body bgcolor=\"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
-	print "<form action=\"$script_url\" method=\"POST\" name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
-  	print "<table width=\"100%\" height=\"100%\" style=\"border-collapse: collapse;padding: 0;margin: 0;\"> \n";
-  	print "<tr>\n";
-  	print "<td width=\"85%\">\n";
-	print "<applet code=\"tbs.TBSApplet.class\" archive=\"$jar_loc\" width=\"100%\" height=\"100%\" name=\"TreeApplet\"> \n";
-	print "<param name=\"Student\" value=\"+=+=+=+=+=+=+=\"> \n";
-  	print "<param name=\"Admin\" value=\"false\"> \n";
-  	print "<param name=\"Browser\" value=\"$browser\"> \n";
-  	print "You have to enable Java on your machine! \n";
-  	print "</applet>\n";
-  	print "</td>\n";
-  	print "<td width=\"15%\" height=\"100%\" align=\"center\">\n";
-  	print "<table style=\"border-collapse: collapse;padding: 0;margin: 0;height:100%;\">\n";
-  	print "<tr><td valign=\"top\"><center>\n";
-    print "<input type=\"button\" value=\"Logout\" onclick=\"window.location = '$script_url';\">\n";
-    print "</center></td></tr>\n";
-    print "<tr><td><center>\n";
-    print "<input type=\"hidden\" name=\"AdminValue\" value=\"$admin\">\n";
-    print "<input type=\"hidden\" name=\"Name\" value=\"$name\">\n";
-    print "<input type=\"hidden\" name=\"Passwd\" value=\"$password\">\n";
-    print "<input type=\"hidden\" name=\"lastUpdate\" value=\"$lastUpdate\">\n";
-    print "<input type=\"hidden\" name=\"treeXML\" value=\"$treeXML\">\n";
-    print "<input type=\"hidden\" name=\"Browser\" value=\"$browser\">\n";
-    print "<input type=\"button\" value=\"View Tree String\" onclick=\"return viewTree();\"><br> \n";
-    #print "<input type=\"submit\" value=\"Submit Survey\" onclick=\"return isComplete();\">\n";
-    print "</center></td></tr> \n";
-    print "</table>\n";
-    print "</td></tr></table>\n";
   	print "</form>\n";
     print "</body></html>\n";
 }
