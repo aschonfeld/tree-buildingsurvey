@@ -7,14 +7,29 @@ The schedule for the spring semester will be couched in terms of deliverables pe
 In order to ensure orderly development, code submissions should be in fulfillment of schedule items or in response to items on the issues list. Experimental ideas should be developed in personal branches. 
 
 
-The schedule for the fall semester has been moved [FallSchedule here].
+The schedule for the fall semester has been moved to [FallSchedule here].
 
-Second Sprint features backlog
+== Third Sprint ==
+  * _April 1-???_: Development of Neural Network learning (Glenn)
+  * _April 1-10_: First draft of deployable Applet (Jon/Andrew)
+    * Includes reading and writing from file
+    * _April 5th_: Version released on test server that does not correctly write to file due to permissions(Andrew)
+  * _Sometime between April 1st and April 15th_: Meeting with Professor White to iron out final scoring specs
+  * _April 15-30_: Finish scoring algorithm and migrate changes to Standalone App & whatever possible to Admin version of Applet
+  * _April 11-20_: Second draft of deployable Applet (Jon/Andrew)
+    * Includes creation of new classes, students, etc.
+  * _April 1-20_: Researching Servlet-to-Applet technology for technology presentation (Andrew)
+  * _April 20_: Technology Presentation
+  * _May 1_: *Code Freeze*
+  * _May 11_: Deliver final versions of Applet & Standalone Scoring application to professor White
+  * _May 1-20_: Poster creation
+  
+== Second Sprint features backlog ==
 
 Team Switching:
   * Create [BuildInstructions build instructions] for builders(Andrew)
-  * Build C3PO(Andrew)
-  * Build VisitME(Jon/Glenn)
+  * Build C3PO(Glenn)
+  * Build VisitME(Jon)
 
 Relatively Minor Features:
 
