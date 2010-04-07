@@ -10,6 +10,8 @@ $googleCode_url = "http://code.google.com/p/tree-buildingsurvey/issues/list";
 $script_url = "http://$ENV{'HTTP_HOST'}$ENV{'REQUEST_URI'}";
 $jar_loc = "http://$ENV{'HTTP_HOST'}/Test/TBSRun.jar";
 #$jar_loc = "http://localhost:8080/PhylogenySurveyWeb/TBSRun.jar";
+$js_loc = "http://$ENV{'HTTP_HOST'}/common_functions.js";
+#$js_loc = "http://localhost:8080/PhylogenySurveyWeb/common_functions.js";
 $too_late_month = 12;
 $too_late_day = 12;
 $survey_points = "10";
@@ -46,62 +48,8 @@ sub login_page {
 	print "Content-type: text/html\n\n";
 	print "<html><head>\n";
 	print "<title>Login to the TBS Survey</title>\n";
-	print "<SCRIPT type=\"text/javascript\">\n";
-	print "function getAdminValue() {\n";
-	print " document.form.Browser.value = navigator.userAgent;\n";
-	print " if(document.form.AdminCB.checked) {\n";
-	print "    document.form.AdminValue.value = \"true\";\n";
-	print "  }\n";
-	print "  return true;\n";
-	print "}\n";
-	print "function checkLogin() {\n";
-	print " if(!document.form.AdminCB.checked) {\n";
-	print " 	var user = document.form.Name.value;\n";
-	print " 	if(user == \"\") {\n";
-	print "    		alert(\"You must select a username!\");\n";
-	print "    		return false;\n";
-	print "  	}\n";
-	print " }\n";
-	print " var pass = document.form.Passwd.value;\n";
-	print " if(pass == \"\") {\n";
-	print "    alert(\"You must enter a password!\");\n";
-	print "    return false;\n";
-	print "  }\n";
-	print "  return true;\n";
-	print "}\n";
-	print "function updateView() {\n";
-	print " if(document.layers) {\n";
-	print "        if(document.InvalidLogin) {\n";
-	print "				document.InvalidLogin.display = 'none';\n";
-	print "        }\n";
-	print "  } else {\n";
-	print "        if(document.all.InvalidLogin) {\n";
-	print "				document.all.InvalidLogin.style.display = 'none';\n";
-	print "        }\n";
-	print " }\n";
-	print " if(document.form.AdminCB.checked) {\n";
-	print "    if(document.layers){\n";
-	print "        document.NameSelection.display = 'none';\n";
-	print "        document.AdminPassText.display = 'block';\n";
-	print "        document.StudentPassText.display = 'none';\n";
-	print "    } else {\n";
-	print "        document.all.NameSelection.style.display = 'none';\n";
-	print "        document.all.AdminPassText.style.display = 'block';\n";
-	print "        document.all.StudentPassText.style.display = 'none';\n";
-	print "    }\n";
-	print " } else {\n";
-	print "    if(document.layers){\n";
-	print "        document.NameSelection.display = 'block';\n";
-	print "        document.AdminPassText.display = 'none';\n";
-	print "        document.StudentPassText.display = 'block';\n";
-	print "    } else {\n";
-	print "        document.all.NameSelection.style.display = 'block';\n";
-	print "        document.all.AdminPassText.style.display = 'none';\n";
-	print "        document.all.StudentPassText.style.display = 'block';\n";
-	print "    }\n";
-	print " }\n";
-	print "}\n";
-	print "</script>\n";
+	print "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"$js_loc\">\n";
+	print "</SCRIPT>\n";
 	print "</head>\n";
 	print "<body bgcolor=\"#808000\">\n";
 	
@@ -246,7 +194,9 @@ sub load_student_survey {
 		push (@writeArray,"$treeXML\n");
 		
 		open (F, ">$dummy_index") || die "Can't open dummy";
+		flock F, 2; #Exclusive lock
 		print F @writeArray;
+		flock F, 8; #Unlock
     	close F || die "Can't close dummy";
     	
     	print "<br><center><font size=+1>$name thank you for your survey submission.</font><br>";
@@ -282,24 +232,8 @@ sub load_student_survey {
 	}
 	
 	
-	print "<SCRIPT language=\"JavaScript\">\n";
-	print "function isComplete() {\n";
-	print " var qip = document.TreeApplet.questionInProgress();\n";
-	print " if(qip != ''){\n";
-	print " 	if(confirm(\"Is it ok to save your changes to question \" + qip + \"?\")){\n";
-	print "			document.TreeApplet.acceptQuestionInProgress();\n";
-	print "		}\n";
-	print " }\n";
-	print " var status = document.TreeApplet.getStatus();\n";
-	print " document.forms[0].treeXML.value = document.TreeApplet.getTree();\n";
-	print " document.forms[0].Q1.value = document.TreeApplet.getQ1(); \n";
-	print " document.forms[0].Q2.value = document.TreeApplet.getQ2(); \n";
-	print " if(status != \"\"){ \n";
-	print "   return confirm(status + \" Is it ok to save?\");\n";
-	print " } \n";
-	print " return true; \n";
-	print "}\n";
-	print "</script>\n";
+	print "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"$js_loc\">\n";
+	print "</SCRIPT>\n";
 	print "</head>\n";
 	print "<body bgcolor=\"lightblue\" style=\"border: 0;padding: 0;margin:0;\">\n"; 
 	print "<form action=\"$script_url\" method=\"POST\" name=\"form\" style=\"border: 0;padding: 0;margin:0;\">\n";
