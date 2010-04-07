@@ -52,4 +52,4 @@
     * [TestServerDeployment Deploying to Professor White's Test Server]
   * [Resources Resources]
   * [RequirementsDiscussion Requirements Discussion]
-  * [CalculatingGeneticRelatedness Scoring Groupings Using Shortest Path Algorithm]
+  * [CalculatingGeneticRelatedness Algorithm For Scoring Groupings]
