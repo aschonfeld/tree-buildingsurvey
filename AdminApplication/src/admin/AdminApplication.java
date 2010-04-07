@@ -78,6 +78,9 @@ public class AdminApplication extends JFrame {
     	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	parent.questionDisplayFrame.pack();
     	parent.questionDisplayFrame.setVisible(true);
+    	//parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	//parent.shortestPathTableFrame.pack();
+    	//parent.shortestPathTableFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -97,10 +100,7 @@ public class AdminApplication extends JFrame {
 		setJMenuBar(actionHandler.createMenuBar());
 		validate();
 		repaint();
-		//leftSplitPane.remove(pathTable);
-	    //pathTable = new ShortestPathTable();
-	    //leftSplitPane.add(pathTable);
-	    //leftSplitPane.revalidate();
+	    //parent.shortestPathTableFrame.refreshTable();
 	    treeView.paintComponent();
     }
     
