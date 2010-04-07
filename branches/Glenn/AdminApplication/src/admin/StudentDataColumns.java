@@ -1,4 +1,5 @@
 package admin;
+import java.awt.Color;
 import java.util.ArrayList;
 
 
@@ -38,13 +39,23 @@ public class StudentDataColumns {
     	public boolean isAlwaysVisible() {
     		if (this.getClass().getSimpleName().equals("Student_Name")) return true;
     		return false;
-    	}    	
-    	
+    	}
+    	   	
     	public void toggleVisible() {
     		if(isAlwaysVisible()) return;
     		this.visible = !visible;
     	}
     	
+    	public Color getBackgroundColor(Object data) {
+    		if (this.getClass().getSimpleName().contains("Grouping")) {
+    			Float fData = (Float) data;
+    			float value = fData.floatValue();
+    			if(value <= 1.0) return Color.red;
+    			if(value <= 1.25) return Color.yellow;
+    			return Color.green;
+    		}
+    		return Color.white;
+    	}
     }
     
     class Student_Name extends ColumnDataHandler {

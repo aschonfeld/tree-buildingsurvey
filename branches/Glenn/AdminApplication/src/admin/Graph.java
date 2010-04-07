@@ -36,7 +36,8 @@ public class Graph implements Renderable {
 	private int graphDirection = 0;
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
 	private String[] pathIndexNames = null;
-	private int unconnected = 99;
+	private int unconnected = 9999;
+	private int maxPathLength = 0;
 	private GraphType type = GraphType.Unscored;
 	
 	public enum GraphType {
@@ -385,9 +386,29 @@ public class Graph implements Renderable {
 				//System.out.println(i + "|" + j + "=" + path[i][j]);
 			}
 		}
+		setUnconnectedPathLengths();
 	}
 
-
+	// unconnected path length = max connected path length + 1
+	private void setUnconnectedPathLengths() {
+		maxPathLength = 0;
+		for(int i = 0; i < vertices.size(); i++) {
+			for(int j = 0; j < vertices.size(); j++) {
+				if (path[i][j] < unconnected) {
+					if(path[i][j] > maxPathLength) maxPathLength = path[i][j];
+				}
+			}
+		}
+		maxPathLength++;
+		for(int i = 0; i < vertices.size(); i++) {
+			for(int j = 0; j < vertices.size(); j++) {
+				if (path[i][j] == unconnected) {
+					path[i][j] = maxPathLength;
+				}
+			}
+		}
+	}
+	
 	public void calulateOrganismPathLengths() {
 		if(InvToInv != null) return;
 		InvToInv = new PathPair(0, 0);
@@ -468,7 +489,7 @@ public class Graph implements Renderable {
 	}
 	
 	public float calcAverage(PathPair p) {
-		if (p.numPaths == 0) return -1.0f;
+		if (p.numPaths == 0) return maxPathLength;
 		float returnVal = (float) p.pathSums;
 		returnVal /= (float) p.numPaths;
 		return returnVal;

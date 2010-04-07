@@ -8,6 +8,7 @@ public class AdminMultiWindow extends WindowAdapter {
 	public AdminApplication adminApplicationFrame;
 	public StudentDataTable studentDataTableFrame;
 	public QuestionDisplay questionDisplayFrame;
+	//public ShortestPathTable shortestPathTableFrame;
 	
 	public AdminMultiWindow() {
 		adminApplicationFrame = new AdminApplication();
@@ -19,5 +20,7 @@ public class AdminMultiWindow extends WindowAdapter {
 	    questionDisplayFrame = new QuestionDisplay(adminApplicationFrame);
 	    questionDisplayFrame.setLocation(200, 200);
 	    //questionDisplayFrame.setVisible(true);
+	    //shortestPathTableFrame = new ShortestPathTable();
+	    //shortestPathTableFrame.setLocation(300, 300);
 	}
 }

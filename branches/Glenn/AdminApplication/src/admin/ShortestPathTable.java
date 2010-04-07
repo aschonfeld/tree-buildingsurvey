@@ -4,12 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class ShortestPathTable extends JPanel {
+public class ShortestPathTable extends JFrame {
 
 	/**
 	 * 
@@ -18,14 +19,25 @@ public class ShortestPathTable extends JPanel {
     public JTable table = null;
     public DefaultTableModel tableModel = null;
     public ArrayList<String> columnNames = null;
+    JScrollPane tablePane = null;
     
     public ShortestPathTable() {
-    	super(new BorderLayout());
+    	super("ShortestPathTable");
         loadTable();
         table = new JTable(tableModel);
-        JScrollPane tablePane = new JScrollPane(table);
+        tablePane = new JScrollPane(table);
         tablePane.setPreferredSize(new Dimension(420, 130));
         add(tablePane);
+    }
+    
+    public void refreshTable() {
+    	remove(tablePane);
+        loadTable();
+        table = new JTable(tableModel);
+        tablePane = new JScrollPane(table);
+        tablePane.setPreferredSize(new Dimension(420, 130));
+        add(tablePane);
+        repaint();
     }
     
     public void loadTable() {
