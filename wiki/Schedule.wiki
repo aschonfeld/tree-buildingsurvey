@@ -14,13 +14,17 @@ The schedule for the fall semester has been moved to [FallSchedule here].
   * _April 1-10_: First draft of deployable Applet (Jon/Andrew)
     * Includes reading and writing from file
     * _April 5th_: Version released on test server that does not correctly write to file due to permissions(Andrew)
-  * _Sometime between April 1st and April 15th_: Meeting with Professor White to iron out final scoring specs
+  * April 13: Meeting with Professor White to iron out final scoring specs
+  * April 13: Finish Dev Guide and JavaDoc for Model section (Jon)
   * _April 15-30_: Finish scoring algorithm and migrate changes to Standalone App & whatever possible to Admin version of Applet
-  * _April 11-20_: Second draft of deployable Applet (Jon/Andrew)
+  * April 20: Finish Dev Guide and JavaDoc for View (Jon)
+  * _April 11-20_: Second draft of deployable Applet (Jon)
     * Includes creation of new classes, students, etc.
   * _April 1-20_: Researching Servlet-to-Applet technology for technology presentation (Andrew)
   * _April 20_: Technology Presentation
+  * April 27 : Finish Dev guide and JavaDoc for Controller (Jon)
   * _May 1_: *Code Freeze*
+  * May 4: Finalize Dev Guide and JavaDoc (tie up loose ends) (Jon)
   * _May 11_: Deliver final versions of Applet & Standalone Scoring application to professor White
   * _May 1-20_: Poster creation
   
