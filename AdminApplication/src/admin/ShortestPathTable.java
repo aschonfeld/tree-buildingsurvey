@@ -43,8 +43,9 @@ public class ShortestPathTable extends JFrame {
     public void loadTable() {
     	if(tableModel != null) while(tableModel.getRowCount() > 0) tableModel.removeRow(0);
     	Graph g = AdminApplication.getCurrentGraph();
-    	int[][] path = g.getShortestPaths();
-    	String[] vertexNames = g.getPathIndexNames();
+    	double[][] path = g.getUniformShortestPaths();
+    	//String[] vertexNames = g.getPathIndexNames();
+    	String[] vertexNames = AdminApplication.getCommonVertexNames();
     	int rows = vertexNames.length;
     	int columns = rows + 1;
         columnNames = new ArrayList<String>();

@@ -78,9 +78,9 @@ public class AdminApplication extends JFrame {
     	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	parent.questionDisplayFrame.pack();
     	parent.questionDisplayFrame.setVisible(true);
-    	//parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	//parent.shortestPathTableFrame.pack();
-    	//parent.shortestPathTableFrame.setVisible(true);
+    	parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	parent.shortestPathTableFrame.pack();
+    	parent.shortestPathTableFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -100,7 +100,7 @@ public class AdminApplication extends JFrame {
 		setJMenuBar(actionHandler.createMenuBar());
 		validate();
 		repaint();
-	    //parent.shortestPathTableFrame.refreshTable();
+	    parent.shortestPathTableFrame.refreshTable();
 	    treeView.paintComponent();
     }
     
@@ -118,6 +118,28 @@ public class AdminApplication extends JFrame {
     
     public static void toggleShowNames() {showNames = !showNames;}
  
+    public static ArrayList<Vertex> getCommonVertices() {
+    	return commonVertices;
+    }
+    
+    public static String[] getCommonVertexNames() {
+    	String[] returnVal = new String[commonVertices.size()];
+    	int index = 0;
+    	for(Vertex v: commonVertices) {
+    		returnVal[index] = v.getName();
+    		index++;
+    	}
+    	return returnVal;
+    }
+    
+    public static int getVertexIndexByName(String name) {
+    	int index = 0;
+    	for(Vertex v: commonVertices) {
+    		if(v.getName().equals(name)) return index;
+    		index++;
+    	}
+    	return -1;
+    }
 
     public void drawCurrentGraph(Graphics g) {
     	Graph graph = getCurrentGraph();	

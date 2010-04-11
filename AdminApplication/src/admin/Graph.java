@@ -35,6 +35,7 @@ public class Graph implements Renderable {
 	private boolean labelled = false;
 	private int graphDirection = 0;
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
+	private double uniformPath[][] = null; // standard input to neural network
 	private String[] pathIndexNames = null;
 	private int unconnected = 9999;
 	private int maxPathLength = 0;
@@ -387,6 +388,26 @@ public class Graph implements Renderable {
 			}
 		}
 		setUnconnectedPathLengths();
+		calculateUniformPathArray();
+	}
+	
+	private void calculateUniformPathArray() {
+		ArrayList<Vertex> commonVertices = AdminApplication.getCommonVertices();
+		uniformPath = new double[commonVertices.size()][commonVertices.size()];
+		for(int i = 0; i < commonVertices.size(); i++) {
+			for(int j = 0; j < commonVertices.size(); j++) {
+				uniformPath[i][j] = (double) maxPathLength;
+			}
+		}
+		for(int row = 0; row < pathIndexNames.length; row++) {
+			if(vertices.get(row).getType() != VertexType.ORGANISM) continue;
+			int uniformRow = AdminApplication.getVertexIndexByName(pathIndexNames[row]);
+			for(int col = 0; col < pathIndexNames.length; col++) {
+				if(vertices.get(col).getType() != VertexType.ORGANISM) continue;
+				int uniformCol = AdminApplication.getVertexIndexByName(pathIndexNames[col]);
+				uniformPath[uniformRow][uniformCol] = (double) path[row][col];
+			}
+		}
 	}
 
 	// unconnected path length = max connected path length + 1
@@ -618,6 +639,13 @@ public class Graph implements Renderable {
 			runFloydWarshall();
 		}
 		return path;
+	}
+	
+	public double[][] getUniformShortestPaths() {
+		if(uniformPath == null) {
+			runFloydWarshall();
+		}
+		return uniformPath;
 	}
 	
 	public String[] getPathIndexNames() {
