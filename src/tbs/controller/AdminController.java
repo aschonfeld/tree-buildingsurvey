@@ -93,16 +93,25 @@ public class AdminController extends TBSController
 		Cursor c = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
 		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
+		
+		int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth());
         int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
-        Rectangle hullButtons = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + view.getVerticalBar().getWidth()),
-				model.getApplet().getHeight() - (view.getHorizontalBar().getHeight() + totalHullButtonsHeight),
-				TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+        Rectangle hullButtons = new Rectangle();
+        if(view.isHullMenuDisplayed())
+        	hullButtons = new Rectangle(hullHeaderEnd - TBSGraphics.groupsButtonWidth,
+        			TBSGraphics.buttonsHeight, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+        
 		if (x > scrollWidth && x < (studentButtonWidth+scrollWidth)){
 			int studentIndex = (y + view.getStudentYOffset()) / (TBSGraphics.studentNodeHeight+TBSGraphics.ySpacing);
 			if(studentIndex < model.getStudents().size())
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(y < TBSGraphics.buttonsHeight)  {
-			if(x >= model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth()))
+			if(x >= (hullHeaderEnd - TBSGraphics.groupsButtonWidth) && x < hullHeaderEnd){
+				if(view.isHullMenuDisplayed())
+					view.getHullTimer().restart();
+				else
+					view.getHullTimer().start();
+			}else if(x >= model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth()))
 				c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			else if(x >= TBSGraphics.questionButtonsStart){
 				buttonIndex = (x - TBSGraphics.questionButtonsStart) / TBSGraphics.buttonsWidth;
@@ -110,6 +119,10 @@ public class AdminController extends TBSController
 					c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			}
 		} else if(hullButtons.contains(x, y)){
+			if(view.isHullMenuDisplayed())
+				view.getHullTimer().restart();
+			else
+				view.getHullTimer().start();
 			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.getDisplayAllTooltips()){
 			if(!view.isTooltipRunning()){
@@ -155,13 +168,16 @@ public class AdminController extends TBSController
 			}
 		}
 		
+		int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + view.getVerticalBar().getWidth());
 		int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
-		Rectangle hullButtons = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.hullButtonWidth + view.getVerticalBar().getWidth()),
-				model.getApplet().getHeight() - (view.getHorizontalBar().getHeight() + totalHullButtonsHeight),
-				TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+		Rectangle hullButtons = new Rectangle();
+        if(view.isHullMenuDisplayed())
+        	hullButtons = new Rectangle(hullHeaderEnd - TBSGraphics.groupsButtonWidth,
+        			TBSGraphics.buttonsHeight, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
 		if(hullButtons.contains(x, y)){
-			int hullIndex = (y - (hullButtons.y - hullButtons.height)) / TBSGraphics.hullButtonHeight;
-			model.getHulls().get(hullIndex-model.getHulls().size()).toggleHull();
+			int hullIndex = (y - TBSGraphics.buttonsHeight) / TBSGraphics.hullButtonHeight;
+			model.getHulls().get(hullIndex).toggleHull();
+			view.getHullTimer().stop();
 			return;
 		}
 				

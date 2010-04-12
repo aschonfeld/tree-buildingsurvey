@@ -84,6 +84,7 @@ public class TBSApplet extends JApplet {
 				TBSGraphics.textHeight = TBSGraphics.getStringBounds(g2,"QOgj").height;
 				TBSGraphics.checkWidth = TBSGraphics.getStringBounds(g2, " \u2713").width;
 				TBSGraphics.arrowWidth = TBSGraphics.getStringBounds(g2, " \u2192").width;
+				TBSGraphics.groupCtWidth = TBSGraphics.getStringBounds(g2, " (3)").width;
 
 				PropertyLoader.loaderLocation = this.getClass();
 				List<OrganismNode> organisms = loadOrganisms(g2);
