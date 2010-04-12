@@ -116,6 +116,7 @@ public class TBSGraphics {
 	public static int maxStudentNameWidth = 150;
 	public static int checkWidth = 0;
 	public static int arrowWidth = 0;
+	public static int groupCtWidth = 0;
 
 
 	/**
@@ -263,14 +264,19 @@ public class TBSGraphics {
 	public static int spaceBeforeQuestionButtons = 60;
 
 	/**
-	 * Width of question buttons. Set in [TBSModel.???]
+	 * Width of question buttons. Set in [TBSView]
 	 */ 
 	public static int questionButtonsWidth = 0;
 	
 	/**
-	 * Width of question buttons. Set in [TBSModel.???]
+	 * Width of names buttons. Set in [TBSView]
 	 */ 
 	public static int namesButtonWidth = 0;
+	
+	/**
+	 * Width of groups buttons. Set in [TBSView]
+	 */ 
+	public static int groupsButtonWidth = 0;
 
 	/**
 	 * Starting x-coordinate of question buttons. Set in [TBSModel.???]
