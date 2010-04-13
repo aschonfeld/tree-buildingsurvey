@@ -448,6 +448,7 @@ public class TBSGraphics {
 		emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
 		selectedNodeBorderColor = Color.GREEN;
 		buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
+		buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
 		buttonInactiveBgColor = new Color(205,188,181);
 		buttonInactiveFntColor = new Color(139,125,123);
