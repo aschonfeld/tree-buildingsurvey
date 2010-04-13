@@ -204,7 +204,10 @@ public class StudentDataTable extends JFrame {
                 for (int i = minIndex; i <= maxIndex; i++) {
                     if (lsm.isSelectedIndex(i)) {
                         output.append(" " + i);
-                        if(!isAdjusting) parent.setCurrentGraph(i);
+                        if(!isAdjusting) {
+                        	int selectedRow = table.convertRowIndexToModel(i);
+                        	parent.setCurrentGraph(selectedRow);
+                        }
                     }
                 }
             }

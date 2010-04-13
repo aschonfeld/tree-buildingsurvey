@@ -92,7 +92,7 @@ public class AdminApplication extends JFrame {
             }
         });
     }
-   
+        
     public void setCurrentGraph(int index) {
     	currentGraphIndex = index;
 		currentGraphIndex %= graphs.size();
