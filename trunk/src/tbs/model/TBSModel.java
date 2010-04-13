@@ -21,18 +21,70 @@ import tbs.view.prompt.Prompt;
 public abstract class TBSModel 
 {
 
+	/**
+	*	Reference to the TBSApplet
+	*/
 	private TBSApplet applet;
+
+	/**
+	* 	Reference to the view object
+	*/
 	private TBSView view;
+
+	/**
+	*	Reference to the controller
+	*/
 	private TBSController controller;
+
+	/**
+	*	Prompts are the objects used to display information to the student
+	*	and to elicit answers to the post-survey questions
+	*/
 	private Prompt prompt;
+	
+	/**
+	*	Student - MUST DO
+	*/
 	private Student student;
+
+	/**
+	*	At any given moment, one model element is selected, meaning it can
+	*	be the object of button click "verbs", such as "link" or "delete". 
+	*/
 	private ModelElement selectedElement;
+	
+	/**
+	*	(StudentModel) The list of objects being manipulated by the student.
+	*/	
 	private List<ModelElement> elements;
+
+	/**
+	*	Each model element has a unique serial number; MESerialNumber
+	*	keeps track of the most recently assigned number, ensuring
+	*	uniqueness.
+	*/
 	private int MESerialNumber;
+
+	/**
+	* 	Are there elements in the tree?
+	*/
 	private boolean elementsInTree;
+
+	/**
+	*	Are there emptyNodes in the tree?
+	*/
 	private boolean emptyNodesInTree;
+
+	/**
+	*	Has the student connected objects in the tree?
+	*/
 	private boolean connectionsInTree;
 
+
+	/**
+	*	The constructor for TBSModel simply sets the local reference to
+	*	TBSApplet and initializes certain variables to null/false values.
+	*/
 	public TBSModel(TBSApplet applet, List<OrganismNode> organisms){
 		this.applet = applet;
 		selectedElement = null;
@@ -51,17 +103,28 @@ public abstract class TBSModel
 		return controller;
 	}
 
+	/**
+	*	Associates this Model with a Conroller.
+	*/
 	public void setController( TBSController controller ) {
 		this.controller = controller;
 	}
 
+	/**
+	*	Returns the Student object MUST REVIEW 
+	*/
 	public Student getStudent() {
 		return student;
 	}
 
+	/**
+	*	Associates this Model with a Student 	
+	*/
 	public void setStudent( Student selectedStudent ) {
 		this.student = selectedStudent;
 	}
+
+
 
 	/**
 	 * Returns a handle for the View associated with this Model
@@ -70,6 +133,9 @@ public abstract class TBSModel
 		return view;
 	}
 
+	/**
+	*	Associates this Model with a View
+	*/
 	public void setView( TBSView view ) {
 		this.view = view;
 	}
@@ -81,21 +147,39 @@ public abstract class TBSModel
 		return applet;
 	}
 
+
+	/**
+	*	Puts the applet in a "prompt" state - this can have various
+	*	meanings, depending on the particular Prompt used.	
+	*/
 	public void promptUser(Prompt prompt) {
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
 
+
+	/**
+	*	Puts the applet in a "prompt" state - this can have various
+	*	meanings, depending on the particular Prompt used.	HOW DIFFERENT
+	*	FROM promptUser?
+	*/
 	public void setPrompt(Prompt prompt){
 		prompt.setFinished(false);
 		this.prompt = prompt;
 		view.refreshGraphics();
 	}
 
+	/**
+	*	Return the current prompt object; usually this will be null.
+	*/
 	public Prompt getPrompt() {
 		return prompt;
 	}
 
+	/**
+	*	Set the current Prompt to null, putting the applet in normal
+	*	interaction mode.
+	*/
 	public void clearPrompt() {
 		this.prompt = null;
 	}
@@ -103,7 +187,7 @@ public abstract class TBSModel
 	/**
 	 * Returns a serial number for a model element. Serial numbers start
 	 * at 0 and simply increment; they are unique within a tree, but not
-	 * outside it.
+	 * across trees.
 	 */
 	public int getSerial()
 	{
@@ -113,18 +197,35 @@ public abstract class TBSModel
 		return sn;
 	}
 
+	/**
+	*	Manually set MESerialNumber to some value. Generally a bad idea to
+	*	mess with this, since duplicate serial numbers will produce all
+	*	sorts of strange and difficult bugs.
+	*/
 	public void setMESerialNumber( int serialNumber ) {
 		MESerialNumber = serialNumber;
 	}
 
+
+	/**
+	*	Set serialNumber to one place past the end of the current elements
+	*	list. 	
+	*/
 	public void refreshSerial(){
 		MESerialNumber = elements.size();
 	}
 	
+	/**
+	*	Returns the identity of the currently selected element. 
+	*/
 	public ModelElement getSelectedElement() {
 		return selectedElement;
 	}
 
+
+	/**
+	*	Select an element (de-selecting the previously-selected element)
+	*/
 	public void setSelectedElement(ModelElement selectedModelElement) {
 		this.selectedElement = selectedModelElement;
 	}
@@ -136,16 +237,22 @@ public abstract class TBSModel
 		return elements;
 	}
 
+	/**
+	*	Populate the model with a list of elements.
+	*/
 	public void setElements( List<ModelElement> elements ) {
 		this.elements = elements;
 	}
 
+	/**
+	*	Returns the number of elements in the model.
+	*/
 	public int elementCount(){
 		return elements.size();
 	}
 
 	/**
-	 * returns the ith ModelElement in the list.
+	 * returns the ModelElement and the indicated point in the list.
 	 */
 	public ModelElement getElement(int index){
 		return elements.get(index);
@@ -166,7 +273,11 @@ public abstract class TBSModel
 	public void addElement(int index, ModelElement m){
 		elements.add(index, m);
 	}
-
+	
+	/**
+	* 	Removes ModelElement m from the model. The element is not retained
+	* 	by the Model, but see the undo routines.
+	*/
 	public void removeElement(ModelElement m){
 		elements.remove(m);
 	}
@@ -175,6 +286,12 @@ public abstract class TBSModel
 		elements.remove(index);
 	}
 
+	/**
+	*	Remove all non-OrganismNode elements from the model, deleting all
+	*	connections. Return all OrganismNodes to the inactive column.
+	*	Reset state variables, and otherwise return the tree to its
+	*	initial state.
+	*/
 	public void resetModel(){
 		List<ModelElement> modelElements = getElements();
 		while(modelElements.size() > TBSGraphics.numOfOrganisms+1)
@@ -437,6 +554,11 @@ public abstract class TBSModel
 			emptyNodesInTree = true;
 		}
 	}
+	
+	/**
+	*	Sets up connections in model based on information suppled via the
+	*	perl script that loads the applet. 
+	*/
 
 	public void loadConnection(String[] data, List<ModelElement> tempTree) throws NumberFormatException {
 		int from=0,to=0;
@@ -465,6 +587,8 @@ public abstract class TBSModel
 	 * Trace connection from a Node (fromConnection) indicated by <-
 	 * Written for testing connections; functionality may not have
 	 * survived rewrite of connections methodology.
+	 *
+ 	 * NOT USED CURRENTLY - REVIEW FOR VALIDITY, RETAIN FOR TESTING
 	 */
 	public void printConnections()
 	{
@@ -490,6 +614,11 @@ public abstract class TBSModel
 		return export.toString();
 	}
 	
+
+	/**
+	* 	Error-checking method, reviews list of elements and looks for
+	* 	duplicate ID numbers, connections to non-existent objects. 
+	*/
 	public void checkElementsIntegrity(){
 		Set<Integer> ids = new HashSet<Integer>();
 		for(ModelElement element : elements){
