@@ -43,7 +43,16 @@ public class AdminView extends TBSView {
 	private JScrollBar studentBar;
 	private int studentYOffset = 0;
 	
+	private Timer dropDownTimer;
+	private boolean displayDropDownMenu = false;
+	private ActionListener dropDownHider = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			dropDownTimer.stop();
+		}
+	};
+	
 	private Timer hullTimer;
+	private boolean displayHullMenu = false;
 	private ActionListener hullHider = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			hullTimer.stop();
@@ -64,6 +73,7 @@ public class AdminView extends TBSView {
 			studentBar = new JScrollBar();
 		}
 		hullTimer = new Timer(1000, hullHider);
+		dropDownTimer = new Timer(1000, dropDownHider);
 		positionButtons(g2);
 		positionModelElements(g2);
 	}
@@ -85,12 +95,51 @@ public class AdminView extends TBSView {
 		studentYOffset = yo;
 	}
 	
+	public boolean isDropDownMenuDisplayed(){
+		if(displayDropDownMenu)
+			return true;
+		return dropDownTimer.isRunning();
+	}
+	
+	public void setDisplayDropDownMenu(Boolean displayDropDownMenu){
+		if(!this.displayDropDownMenu && this.displayDropDownMenu == displayDropDownMenu)
+			return;
+		this.displayDropDownMenu = displayDropDownMenu;
+		if(!this.displayDropDownMenu){
+			if(dropDownTimer.isRunning())
+				dropDownTimer.restart();
+			else
+				dropDownTimer.start();
+		}else
+			dropDownTimer.stop();
+	}
+	
 	public boolean isHullMenuDisplayed(){
+		if(displayHullMenu)
+			return true;
 		return hullTimer.isRunning();
 	}
 	
-	public Timer getHullTimer(){
-		return hullTimer;
+	public void setDisplayHullMenu(Boolean displayHullMenu){
+		if(!this.displayHullMenu && this.displayHullMenu == displayHullMenu)
+			return;
+		this.displayHullMenu = displayHullMenu;
+		if(!this.displayHullMenu){
+			if(hullTimer.isRunning())
+				hullTimer.restart();
+			else
+				hullTimer.start();
+		}else{
+			hullTimer.stop();
+			setDisplayDropDownMenu(true);
+		}
+	}
+	
+	public void closeDropDowns(){
+		hullTimer.stop();
+		displayHullMenu = false;
+		dropDownTimer.stop();
+		displayDropDownMenu = false;
 	}
 
 	/**
@@ -122,32 +171,43 @@ public class AdminView extends TBSView {
 				buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 			}
 
-			//Print Button
-			buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + getVerticalBar().getWidth()),
-					0,TBSGraphics.buttonsWidth/2, TBSGraphics.buttonsHeight);
-			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, "Print",
-					buttonRect.x, upperY, buttonRect.width, 0);
-
-			//Show All Tooltips Button
-			buttonRect = new Rectangle(buttonRect.x - TBSGraphics.namesButtonWidth,
-					0,TBSGraphics.namesButtonWidth, TBSGraphics.buttonsHeight);
-			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-			g2.setColor(Color.gray);
-			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
-					buttonRect.x, upperY, buttonRect.width, 0);
-			
-			//Group Hulls Button
-			buttonRect = new Rectangle(buttonRect.x - TBSGraphics.groupsButtonWidth,
+			//Drop Down Menu Button
+			buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth()),
 					0,TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight);
 			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
-			TBSGraphics.drawCenteredString(g2, "Groups (" + model.getHulls().size() + ")",
+			TBSGraphics.drawCenteredString(g2, "Menu",
 					buttonRect.x, upperY, buttonRect.width, 0);
+			
+			if(isDropDownMenuDisplayed()){
+				//Print Button
+				upperY += TBSGraphics.buttonsHeight;
+				buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				TBSGraphics.drawCenteredString(g2, "Print",
+						buttonRect.x, upperY, buttonRect.width, 0);
+				
+				//Show All Tooltips Button
+				upperY += TBSGraphics.buttonsHeight;
+				buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
+						buttonRect.x, upperY, buttonRect.width, 0);
+				
+				//Group Hulls Button
+				upperY += TBSGraphics.buttonsHeight;
+				buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				TBSGraphics.drawCenteredString(g2, "Groups (" + model.getHulls().size() + ")",
+						buttonRect.x, upperY, buttonRect.width, 0);
+			}
 		}
 	}
 	
@@ -213,16 +273,16 @@ public class AdminView extends TBSView {
 		if(!getScreenPrintMode()){
 			if(model.getPrompt() == null || model.getPrompt().renderElements()){
 				Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,model.getHulls());
-				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.buttonsWidth/2 + TBSGraphics.namesButtonWidth + getVerticalBar().getWidth());
+				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
 				TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
 				TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-				Rectangle hullButton = new Rectangle(hullHeaderEnd - TBSGraphics.groupsButtonWidth,
-						TBSGraphics.buttonsHeight, TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
+				Rectangle hullButton = new Rectangle(hullHeaderEnd - TBSGraphics.hullButtonWidth,
+						TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
 				ConvexHull ch;
 				for(int i=0; i<model.getHulls().size();i++){
 					ch=model.getHulls().get(i);
 					//Render Button
-					if(hullTimer.isRunning()){
+					if(isHullMenuDisplayed()){
 						g2.setColor(TBSGraphics.hullColors[i]);
 						g2.fill(hullButton);
 						TBSGraphics.drawCenteredString(g2,
@@ -242,18 +302,10 @@ public class AdminView extends TBSView {
 						g2.setStroke(new BasicStroke());
 					}
 					g2.setColor(Color.BLACK);
-					if(hullTimer.isRunning())
+					if(isHullMenuDisplayed())
 						g2.draw(hullButton);
 					hullButton.setLocation(hullButton.x, hullButton.y + TBSGraphics.hullButtonHeight);
 				}
-				/*TBSGraphics.drawCenteredString(g2,
-						"Area",
-						hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
-				hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);
-				TBSGraphics.drawCenteredString(g2,
-						"View Group",
-						hullButton.x, hullButton.y, hullButton.width, hullButton.height, TBSGraphics.emptyNodeColor);
-				hullButton.setLocation(hullButton.x, hullButton.y - TBSGraphics.hullButtonHeight);*/
 			}
 		}
 	}
