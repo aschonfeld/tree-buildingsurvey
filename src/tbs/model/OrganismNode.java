@@ -14,15 +14,20 @@ public class OrganismNode extends Node
 {
 	private BufferedImage img;
 	private String organismType;
+	private String organismSubType;
 	private Point defaultPoint;
 	private int stringWidth;
 	private int imageStartX = -1;
 	private int stringAreaLeftX = -1;
 
-	public OrganismNode(int id, String name, String organismType, Point anchorPoint, BufferedImage i, int stringWidth) 
+	public OrganismNode(int id, String name, String[] organismInfo, Point anchorPoint, BufferedImage i, int stringWidth) 
 	{
 		super(id, name);
-		this.organismType = organismType;
+		this.organismType = organismInfo[1];
+		if(organismInfo.length > 2)
+			this.organismSubType = organismInfo[2];
+		else
+			this.organismSubType = "";
 		img = i;
 		defaultPoint = new Point();
 		this.stringWidth = stringWidth;
@@ -76,6 +81,10 @@ public class OrganismNode extends Node
 
 	public String getOrganismType() {
 		return organismType;
+	}
+	
+	public String getOrganismSubType() {
+		return organismSubType;
 	}
 	
 	/*

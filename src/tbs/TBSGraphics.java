@@ -242,7 +242,8 @@ public class TBSGraphics {
 	 */
 	public static int hullButtonHeight = 0;
 	
-	public static Color[] hullColors = new Color[]{Color.MAGENTA, Color.ORANGE, Color.PINK};
+	public static Color[] hullColors = new Color[]{Color.MAGENTA,
+		Color.ORANGE, Color.PINK, new Color(0,100,0)};
 
 	/**
 	 * Width of buttons. Set in [TBSModel.???]
@@ -436,7 +437,7 @@ public class TBSGraphics {
 		buttonEnd = Color.BLACK;
 		buttonInactiveBgColor = Color.WHITE;
 		buttonInactiveFntColor = Color.BLACK;
-		hullColors = new Color[]{Color.BLACK,Color.BLACK,Color.BLACK};
+		hullColors = new Color[]{Color.BLACK,Color.BLACK,Color.BLACK,Color.BLACK};
 	}
 	
 	public static void setColorsForDisplay(){
@@ -452,6 +453,6 @@ public class TBSGraphics {
 		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
 		buttonInactiveBgColor = new Color(205,188,181);
 		buttonInactiveFntColor = new Color(139,125,123);
-		hullColors = new Color[]{Color.MAGENTA,Color.ORANGE,Color.PINK};
+		hullColors = new Color[]{Color.MAGENTA,Color.ORANGE,Color.PINK,new Color(0,100,0)};
 	}
 }

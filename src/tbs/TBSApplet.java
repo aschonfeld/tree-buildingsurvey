@@ -172,7 +172,7 @@ public class TBSApplet extends JApplet {
 					TBSGraphics.maxOrganismImageWidth = img.getWidth();
 				if(img.getHeight() > TBSGraphics.maxOrganismImageHeight) 
 					TBSGraphics.maxOrganismImageHeight = img.getHeight();
-				organisms.add(new OrganismNode( i, name, splitValue[1], new Point(), img, d.width));
+				organisms.add(new OrganismNode( i, name, splitValue, new Point(), img, d.width));
 				imageis.close();
 				i++;
 			}

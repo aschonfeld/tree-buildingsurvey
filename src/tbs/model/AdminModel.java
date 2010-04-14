@@ -97,29 +97,35 @@ public class AdminModel extends TBSModel
 	}
 	
 	public void calculateHullCollisions(){
-		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
+		Map<String, List<Point>> levelOneVertices = new HashMap<String, List<Point>>();
+		Map<String, List<Point>> levelTwoVertices = new HashMap<String, List<Point>>();
 		Rectangle rect;
 		for(ModelElement m : inTreeElements()){
 			if(m instanceof OrganismNode){
-				if(typeVertices.containsKey(((OrganismNode) m).getOrganismType())){
-					rect = ((OrganismNode) m).getRectangle();
-					typeVertices.get(((OrganismNode) m).getOrganismType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-				}else{
-					rect = ((OrganismNode) m).getRectangle();
+				rect = ((OrganismNode) m).getRectangle();
+				if(levelOneVertices.containsKey(((OrganismNode) m).getOrganismType()))
+					levelOneVertices.get(((OrganismNode) m).getOrganismType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+				else{
 					List<Point> temp = new LinkedList<Point>();
 					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					typeVertices.put(((OrganismNode) m).getOrganismType(), temp);
+					levelOneVertices.put(((OrganismNode) m).getOrganismType(), temp);
+				}
+				if(!TBSUtils.isStringEmpty(((OrganismNode) m).getOrganismSubType())){
+					if(levelTwoVertices.containsKey(((OrganismNode) m).getOrganismSubType()))
+						levelTwoVertices.get(((OrganismNode) m).getOrganismSubType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+					else{
+						List<Point> temp = new LinkedList<Point>();
+						temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+						levelTwoVertices.put(((OrganismNode) m).getOrganismSubType(), temp);
+					}
 				}
 			}
 		}
 		hulls = new LinkedList<ConvexHull>();
+		List<ConvexHull> hullsTemp = new LinkedList<ConvexHull>();
 		hullCollisions = new LinkedList<String>();
-		int i = 0;
-		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet()){
+		for(Map.Entry<String, List<Point>> e : levelOneVertices.entrySet())
 			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
-			i++;
-		}
-		
 		for(int i1=0;i1<hulls.size();i1++){
 			for(int i2=hulls.size()-1;i2>i1;i2--){
 				Area intersect = new Area(); 
@@ -131,6 +137,24 @@ public class AdminModel extends TBSModel
 					.append(" group collides with the ").append(hulls.get(i2).getHullName())
 					.append(" group.").toString());
 			}
+		}
+		
+		if(levelTwoVertices.size() > 1){
+			for(Map.Entry<String, List<Point>> e : levelTwoVertices.entrySet())
+				hullsTemp.add(new ConvexHull(2, e.getValue(), e.getKey()));
+			for(int i1=0;i1<hullsTemp.size();i1++){
+				for(int i2=hullsTemp.size()-1;i2>i1;i2--){
+					Area intersect = new Area(); 
+					intersect.add(new Area(hullsTemp.get(i1).getHullShape())); 
+					intersect.intersect(new Area(hullsTemp.get(i2).getHullShape())); 
+					if (!intersect.isEmpty())
+						hullCollisions.add(new StringBuffer(" \u2022 ")
+						.append(hullsTemp.get(i1).getHullName())
+						.append(" group collides with the ").append(hullsTemp.get(i2).getHullName())
+						.append(" group.").toString());
+				}
+			}
+			hulls.addAll(hullsTemp);
 		}
 	}
 
