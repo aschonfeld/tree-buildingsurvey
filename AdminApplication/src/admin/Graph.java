@@ -284,28 +284,41 @@ public class Graph implements Renderable {
 *****************************************************/
 	public void loadHulls(){
 		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
+		Map<String, List<Point>> subTypeVertices = new HashMap<String, List<Point>>();
 		Rectangle rect;
+		String type = null, subType = null;
 		for(Vertex v : vertices){
 			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
-				if(typeVertices.containsKey(v.getInfo().getType())){
-					rect = new Rectangle(v.upperLeft.x,
-							v.upperLeft.y,
-							v.getInfo().getImage().getWidth(),
-							v.getInfo().getImage().getHeight());
-					typeVertices.get(v.getInfo().getType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+				type = v.getInfo().getType();
+				subType = "";
+				if(!"Invert".equals(type)){
+					subType = type;
+					type = "Vert";
 				}
+				rect = new Rectangle(v.upperLeft.x,
+						v.upperLeft.y,
+						v.getInfo().getImage().getWidth(),
+						v.getInfo().getImage().getHeight());
+				if(typeVertices.containsKey(type))
+					typeVertices.get(type).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
 				else{
 					List<Point> temp = new LinkedList<Point>();
-					rect = new Rectangle(v.upperLeft.x,
-							v.upperLeft.y,
-							v.getInfo().getImage().getWidth(),
-							v.getInfo().getImage().getHeight());
 					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					typeVertices.put(v.getInfo().getType(), temp);
+					typeVertices.put(type, temp);
+				}
+				if(!Common.isStringEmpty(subType)){
+					if(subTypeVertices.containsKey(subType))
+						subTypeVertices.get(subType).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+					else{
+						List<Point> temp = new LinkedList<Point>();
+						temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+						subTypeVertices.put(subType, temp);
+					}
 				}
 			}
 		}
 		hulls = new ArrayList<ConvexHull>();
+		List<ConvexHull> tempHulls = new ArrayList<ConvexHull>();
 		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
 			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
 		outerloop:
@@ -319,6 +332,11 @@ public class Graph implements Renderable {
 					break outerloop;
 				}
 			}
+		}
+		if(subTypeVertices.size() > 1){
+			for(Map.Entry<String, List<Point>> e : subTypeVertices.entrySet())
+				tempHulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
+			hulls.addAll(tempHulls);
 		}
 	}
 	
