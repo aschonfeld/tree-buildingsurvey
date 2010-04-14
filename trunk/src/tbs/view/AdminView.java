@@ -205,7 +205,7 @@ public class AdminView extends TBSView {
 				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 				g2.setColor(Color.gray);
 				g2.draw(buttonRect);
-				TBSGraphics.drawCenteredString(g2, "Groups (" + model.getHulls().size() + ")",
+				TBSGraphics.drawCenteredString(g2, "\u25C0 Groups (" + model.getHulls().size() + ")",
 						buttonRect.x, upperY, buttonRect.width, 0);
 			}
 		}
