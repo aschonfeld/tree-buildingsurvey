@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +149,7 @@ public class TBSApplet extends JApplet {
 			TBSGraphics.numOfOrganisms = props.size();
 			BufferedImage img = null;
 			String name, value;
-			String[] splitValue;
+			List<String> splitValue;
 			int i =0;
 			Set<String> keys = new TreeSet<String>();
 			for(Object o : props.keySet())
@@ -161,8 +162,8 @@ public class TBSApplet extends JApplet {
 				if(d.height > TBSGraphics.maxOrganismStringHeight) 
 					TBSGraphics.maxOrganismStringHeight = d.height;
 				value = props.getProperty(key).toString();
-				splitValue = value.split(",");
-				imageFilename = new StringBuffer("images/").append(splitValue[0]).toString();
+				splitValue = Arrays.asList(value.split(","));
+				imageFilename = new StringBuffer("images/").append(splitValue.get(0)).toString();
 				URL imageURL = this.getClass().getResource(imageFilename);
 				URLConnection imageconn = (URLConnection) imageURL.openConnection(); 
 				imageconn.setRequestProperty("REFERER", getDocumentBase().toString()); 
@@ -172,7 +173,7 @@ public class TBSApplet extends JApplet {
 					TBSGraphics.maxOrganismImageWidth = img.getWidth();
 				if(img.getHeight() > TBSGraphics.maxOrganismImageHeight) 
 					TBSGraphics.maxOrganismImageHeight = img.getHeight();
-				organisms.add(new OrganismNode( i, name, splitValue, new Point(), img, d.width));
+				organisms.add(new OrganismNode( i, name, splitValue.subList(1, splitValue.size()), new Point(), img, d.width));
 				imageis.close();
 				i++;
 			}

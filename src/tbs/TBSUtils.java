@@ -4,11 +4,17 @@
 package tbs;
 
 import java.awt.Point;
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import tbs.graphanalysis.ConvexHull;
+import tbs.graphanalysis.HullCollision;
+import tbs.model.AdminModel;
 import tbs.model.Node;
 
 public class TBSUtils {
@@ -111,6 +117,52 @@ public class TBSUtils {
   
 	public static boolean isStringEmpty(String s){
 		return (s == null || s.length() == 0);
+	}
+	
+	public static String commaSeparated(Collection<?> values){
+		StringBuffer returnVal = new StringBuffer();
+		Iterator<?> iter = values.iterator();
+		while(iter.hasNext()){
+			String value = iter.next().toString();
+			returnVal.append(value).append(",");
+		}
+		if(returnVal.length() > 0)
+			return returnVal.deleteCharAt(returnVal.lastIndexOf(",")).toString();
+		else
+			return returnVal.toString();
+	}
+	
+	public static List<HullCollision> hullCollisions(List<ConvexHull> hulls){
+		List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
+		ConvexHull ch1, ch2;
+		if(hulls.size() > 1){
+			for(int i1=0;i1<hulls.size();i1++){
+				for(int i2=hulls.size()-1;i2>i1;i2--){
+					ch1 = hulls.get(i1);
+					ch2 = hulls.get(i2);
+					Area intersect = new Area(ch1.getHullShape()); 
+					intersect.intersect(new Area(ch2.getHullShape())); 
+					if (!intersect.isEmpty())
+						hullCollisions.add(new HullCollision(1, i1, ch1, i2, ch2));
+				}
+			}
+		}
+		return hullCollisions;
+	}
+	
+	public static List<String> collisonText(AdminModel model){
+		List<String> collisionText = new LinkedList<String>();
+		collisionText.addAll(collisionText(model.getHullCollisions(false)));
+		for(ConvexHull ch : model.getHulls(false))
+			collisionText.addAll(collisionText(ch.getChildCollisions()));
+		return collisionText;
+	}
+	
+	private static List<String> collisionText(List<HullCollision> collisions){
+		List<String> collisionText = new LinkedList<String>();
+		for(HullCollision hc : collisions)
+			collisionText.add(hc.getAnalysisText());
+		return collisionText;
 	}
 
 }

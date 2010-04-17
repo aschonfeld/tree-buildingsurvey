@@ -3,9 +3,6 @@
 
 package tbs.model;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +13,7 @@ import tbs.TBSUtils;
 import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.Edge;
 import tbs.graphanalysis.Graph;
+import tbs.graphanalysis.HullCollision;
 import tbs.graphanalysis.Vertex;
 import tbs.model.admin.Student;
 import tbs.view.TBSButtonType;
@@ -31,7 +29,7 @@ public class AdminModel extends TBSModel
 	private AnalysisPrompt analysisPrompt;
 	private List<Student> students;
 	private List<ConvexHull> hulls;
-	private List<String> hullCollisions;
+	private List<HullCollision> hullCollisions;
 	private Graph graph;
 
 	public AdminModel(TBSApplet applet,	List<OrganismNode> organisms, List<Student> students) {
@@ -97,69 +95,44 @@ public class AdminModel extends TBSModel
 	}
 	
 	public void calculateHullCollisions(){
-		Map<String, List<Point>> levelOneVertices = new HashMap<String, List<Point>>();
-		Map<String, List<Point>> levelTwoVertices = new HashMap<String, List<Point>>();
-		Rectangle rect;
+		Map<String, List<OrganismNode>> organismGroups = new HashMap<String, List<OrganismNode>>();
 		for(ModelElement m : inTreeElements()){
 			if(m instanceof OrganismNode){
-				rect = ((OrganismNode) m).getRectangle();
-				if(levelOneVertices.containsKey(((OrganismNode) m).getOrganismType()))
-					levelOneVertices.get(((OrganismNode) m).getOrganismType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+				if(organismGroups.containsKey(((OrganismNode) m).getTypes().get(1)))
+					organismGroups.get(((OrganismNode) m).getTypes().get(1)).add((OrganismNode) m);
 				else{
-					List<Point> temp = new LinkedList<Point>();
-					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					levelOneVertices.put(((OrganismNode) m).getOrganismType(), temp);
-				}
-				if(!TBSUtils.isStringEmpty(((OrganismNode) m).getOrganismSubType())){
-					if(levelTwoVertices.containsKey(((OrganismNode) m).getOrganismSubType()))
-						levelTwoVertices.get(((OrganismNode) m).getOrganismSubType()).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					else{
-						List<Point> temp = new LinkedList<Point>();
-						temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-						levelTwoVertices.put(((OrganismNode) m).getOrganismSubType(), temp);
-					}
+					List<OrganismNode> temp = new LinkedList<OrganismNode>();
+					temp.add((OrganismNode) m);
+					organismGroups.put(((OrganismNode) m).getTypes().get(1), temp);
 				}
 			}
 		}
 		hulls = new LinkedList<ConvexHull>();
-		List<ConvexHull> hullsTemp = new LinkedList<ConvexHull>();
-		hullCollisions = new LinkedList<String>();
-		for(Map.Entry<String, List<Point>> e : levelOneVertices.entrySet())
-			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
-		for(int i1=0;i1<hulls.size();i1++){
-			for(int i2=hulls.size()-1;i2>i1;i2--){
-				Area intersect = new Area(); 
-				intersect.add(new Area(hulls.get(i1).getHullShape())); 
-				intersect.intersect(new Area(hulls.get(i2).getHullShape())); 
-				if (!intersect.isEmpty())
-					hullCollisions.add(new StringBuffer(" \u2022 ")
-					.append(hulls.get(i1).getHullName())
-					.append(" group collides with the ").append(hulls.get(i2).getHullName())
-					.append(" group.").toString());
-			}
-		}
-		
-		if(levelTwoVertices.size() > 1){
-			for(Map.Entry<String, List<Point>> e : levelTwoVertices.entrySet())
-				hullsTemp.add(new ConvexHull(2, e.getValue(), e.getKey()));
-			for(int i1=0;i1<hullsTemp.size();i1++){
-				for(int i2=hullsTemp.size()-1;i2>i1;i2--){
-					Area intersect = new Area(); 
-					intersect.add(new Area(hullsTemp.get(i1).getHullShape())); 
-					intersect.intersect(new Area(hullsTemp.get(i2).getHullShape())); 
-					if (!intersect.isEmpty())
-						hullCollisions.add(new StringBuffer(" \u2022 ")
-						.append(hullsTemp.get(i1).getHullName())
-						.append(" group collides with the ").append(hullsTemp.get(i2).getHullName())
-						.append(" group.").toString());
-				}
-			}
-			hulls.addAll(hullsTemp);
-		}
+		for(Map.Entry<String, List<OrganismNode>> e : organismGroups.entrySet())
+			hulls.add(new ConvexHull(e.getValue(), e.getKey()));
+		hullCollisions = TBSUtils.hullCollisions(hulls);
 	}
 
-	public List<ConvexHull> getHulls() {return hulls;}
-	public List<String> getHullCollisions() {return hullCollisions;}
+	public List<ConvexHull> getHulls(Boolean all) {
+		if(!all)
+			return hulls;
+		List<ConvexHull> allHulls = new LinkedList<ConvexHull>();
+		for(ConvexHull hull : hulls){
+			allHulls.add(hull);
+			allHulls.addAll(hull.getChildren());
+		}
+		return allHulls;
+	}
+	
+	public List<HullCollision> getHullCollisions(Boolean all) {
+		if(!all)
+			return hullCollisions;
+		List<HullCollision> allCollisions = new LinkedList<HullCollision>();
+		allCollisions.addAll(hullCollisions);
+		for(ConvexHull hull : hulls)
+			allCollisions.addAll(hull.getChildCollisions());
+		return allCollisions;
+	}
 	
 	public void loadGraph(){
 		graph = new Graph(getStudent().getName());

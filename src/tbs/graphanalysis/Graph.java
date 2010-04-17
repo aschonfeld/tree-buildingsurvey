@@ -3,12 +3,7 @@ package tbs.graphanalysis;
 //explicit list needed since some dumbass put List in both awt and util
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.geom.Area;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class Graph implements Renderable {
@@ -226,38 +221,6 @@ public class Graph implements Renderable {
 	}
 
 
-/*****************************************************
-* Convex Hull Calculations                           *
-* (for checking geometric arrangement of organsisms) *
-*****************************************************/
-	public boolean checkConvexHullCollision(){
-		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
-		for(Vertex v : vertices){
-			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
-				if(typeVertices.containsKey(v.getInfo().getType()))
-					typeVertices.get(v.getInfo().getType()).add(v.upperLeftAdj);
-				else{
-					List<Point> temp = new LinkedList<Point>();
-					temp.add(v.upperLeftAdj);
-					typeVertices.put(v.getInfo().getType(), temp);
-				}
-			}
-		}
-		List<ConvexHull> hulls = new LinkedList<ConvexHull>();
-		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
-			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
-		for(int i1=0;i1<hulls.size();i1++){
-			for(int i2=hulls.size()-1;i2>i1;i2--){
-				Area intersect = new Area(); 
-				intersect.add(new Area(hulls.get(i1).getHullShape())); 
-				intersect.intersect(new Area(hulls.get(i2).getHullShape())); 
-				if (!intersect.isEmpty())
-					return true;
-			}
-		}
-		return false;
-	}
-
 /***************************************
 * Shortest Path Calculations           *
 * (for checking grouping of organisms) *
@@ -374,13 +337,13 @@ public class Graph implements Renderable {
 	}
 	
 	public boolean testPair(Vertex v1, Vertex v2, String type1, String type2) {
-		if(v1.getInfo().getType().equals(type1)) {
-			if(v2.getInfo().getType().equals(type2)) {
+		if(v1.getInfo().getTypes().containsValue(type1)) {
+			if(v2.getInfo().getTypes().containsValue(type2)) {
 				return true;
 			}
 		}
-		if(v2.getInfo().getType().equals(type1)) {
-			if(v1.getInfo().getType().equals(type2)) {
+		if(v2.getInfo().getTypes().containsValue(type1)) {
+			if(v1.getInfo().getTypes().containsValue(type2)) {
 				return true;
 			}
 		}	

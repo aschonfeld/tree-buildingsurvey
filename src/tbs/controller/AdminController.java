@@ -15,6 +15,8 @@ import java.awt.print.PrinterJob;
 import java.util.List;
 
 import tbs.TBSGraphics;
+import tbs.graphanalysis.ConvexHull;
+import tbs.graphanalysis.HullCollision;
 import tbs.model.AdminModel;
 import tbs.model.Node;
 import tbs.model.OrganismNode;
@@ -94,17 +96,36 @@ public class AdminController extends TBSController
 		int scrollWidth = view.hasStudentScroll() ? view.getStudentBar().getWidth() : 0;
 		int studentButtonWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth;
 		
-		boolean displayHullMenu = false, displayDropDownMenu = false;
+		boolean displayDropDownMenu = false,
+			displayHullMenu = false,
+			displayCollisionMenu = false;
 		int dropDownStart = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + view.getVerticalBar().getWidth());
-		Rectangle dropDownMenuButtons = new Rectangle(), hullButtons = new Rectangle();
+		Rectangle dropDownMenuButtons = new Rectangle(),
+			hullButtons = new Rectangle(),
+			collisionButtons = new Rectangle();
+		List<ConvexHull> hulls = null;
+		List<HullCollision> collisions = null;
+		int dropDownButtonCount = 2;
 		if(view.isDropDownMenuDisplayed()){
-			dropDownMenuButtons = new Rectangle(dropDownStart,
-					TBSGraphics.buttonsHeight, TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight*3);
+			hulls = model.getHulls(true);
+			if(hulls.size() > 0){
+				dropDownButtonCount = 3;
+				int totalHullButtonsHeight = hulls.size() * TBSGraphics.hullButtonHeight;
+				if(view.isHullMenuDisplayed())
+					hullButtons = new Rectangle(dropDownStart - TBSGraphics.hullButtonWidth,
+							TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
 
-			int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
-			if(view.isHullMenuDisplayed())
-				hullButtons = new Rectangle(dropDownStart - TBSGraphics.hullButtonWidth,
-						TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+				collisions = model.getHullCollisions(true);
+				if(collisions.size() > 0){
+					dropDownButtonCount = 4;
+					int totalCollisionButtonsHeight = collisions.size() * TBSGraphics.collisionButtonHeight;
+					if(view.isCollisionMenuDisplayed())
+						collisionButtons = new Rectangle(dropDownStart - TBSGraphics.collisionButtonWidth,
+								TBSGraphics.buttonsHeight*4, TBSGraphics.collisionButtonWidth, totalCollisionButtonsHeight);
+				}
+			}
+			dropDownMenuButtons = new Rectangle(dropDownStart,
+					TBSGraphics.buttonsHeight, TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight*dropDownButtonCount);
 		}
 		if (x > scrollWidth && x < (studentButtonWidth+scrollWidth)){
 			int studentIndex = (y + view.getStudentYOffset()) / (TBSGraphics.studentNodeHeight+TBSGraphics.ySpacing);
@@ -122,10 +143,22 @@ public class AdminController extends TBSController
 			displayDropDownMenu = true;
 			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			int ddButtonIndex = (y - TBSGraphics.buttonsHeight) / TBSGraphics.buttonsHeight;
-			if(ddButtonIndex == 2)
-				displayHullMenu = true;
+			if(ddButtonIndex <= (dropDownButtonCount - 1)){
+				switch(ddButtonIndex){
+				case 2:
+					displayHullMenu = true;
+					break;
+				case 3:
+					displayCollisionMenu = true;
+					break;
+				}
+			}
 		} else if(hullButtons.contains(x, y)){
 			displayHullMenu = true;
+			displayDropDownMenu = true;
+			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+		} else if(collisionButtons.contains(x, y)){
+			displayCollisionMenu = true;
 			displayDropDownMenu = true;
 			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 		} else if(TBSButtonType.TREE.equals(getButtonClicked()) && !view.getDisplayAllTooltips()){
@@ -140,6 +173,7 @@ public class AdminController extends TBSController
 		}
 		view.setAppletCursor(c);
 		view.setDisplayHullMenu(displayHullMenu);
+		view.setDisplayCollisionMenu(displayCollisionMenu);
 		view.setDisplayDropDownMenu(displayDropDownMenu);
 	}
 	
@@ -166,20 +200,38 @@ public class AdminController extends TBSController
 			}
 		}
 		
-		Rectangle dropDownMenuButtons = new Rectangle(), hullButtons = new Rectangle();
-		if(view.isDropDownMenuDisplayed()){
-			dropDownMenuButtons = new Rectangle(dropDownStart,
-					TBSGraphics.buttonsHeight, TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight*3);
+		Rectangle dropDownMenuButtons = new Rectangle(),
+			hullButtons = new Rectangle(),
+			collisionButtons = new Rectangle();
+		List<ConvexHull> hulls = null;
+		List<HullCollision> collisions = null;
+		int dropDownButtonCount = 2;
+		if(view.isDropDownMenuDisplayed()){			
+			hulls = model.getHulls(true);
+			if(hulls.size() > 0){
+				dropDownButtonCount = 3;
+				int totalHullButtonsHeight = hulls.size() * TBSGraphics.hullButtonHeight;
+				if(view.isHullMenuDisplayed())
+					hullButtons = new Rectangle(dropDownStart - TBSGraphics.hullButtonWidth,
+							TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
 
-			int totalHullButtonsHeight = model.getHulls().size() * TBSGraphics.hullButtonHeight;
-			if(view.isHullMenuDisplayed())
-				hullButtons = new Rectangle(dropDownStart - TBSGraphics.hullButtonWidth,
-						TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, totalHullButtonsHeight);
+				collisions = model.getHullCollisions(true);
+				if(collisions.size() > 0){
+					dropDownButtonCount = 4;
+					int totalCollisionButtonsHeight = collisions.size() * TBSGraphics.collisionButtonHeight;
+					if(view.isCollisionMenuDisplayed())
+						collisionButtons = new Rectangle(dropDownStart - TBSGraphics.collisionButtonWidth,
+								TBSGraphics.buttonsHeight*4, TBSGraphics.collisionButtonWidth, totalCollisionButtonsHeight);
+				}
+			}
+			dropDownMenuButtons = new Rectangle(dropDownStart,
+					TBSGraphics.buttonsHeight, TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight*dropDownButtonCount);
 		}
 		
 		if(dropDownMenuButtons.contains(x, y)){
 			int ddButtonIndex = (y - TBSGraphics.buttonsHeight) / TBSGraphics.buttonsHeight;
-			switch(ddButtonIndex){
+			if(ddButtonIndex <= (dropDownButtonCount - 1)){
+				switch(ddButtonIndex){
 				case 0:
 					view.closeDropDowns();
 					PrinterJob printJob = PrinterJob.getPrinterJob();
@@ -199,10 +251,19 @@ public class AdminController extends TBSController
 				case 2:
 					view.setDisplayHullMenu(true);
 					break;
+				case 3:
+					view.setDisplayCollisionMenu(true);
+					break;
+				}
 			}
 		} else if(hullButtons.contains(x, y)){
 			int hullIndex = (y - (TBSGraphics.buttonsHeight*3)) / TBSGraphics.hullButtonHeight;
-			model.getHulls().get(hullIndex).toggleHull();
+			hulls.get(hullIndex).toggleHull();
+			view.closeDropDowns();
+			return;
+		} else if(collisionButtons.contains(x, y)){
+			int collisionIndex = (y - (TBSGraphics.buttonsHeight*4)) / TBSGraphics.collisionButtonHeight;
+			collisions.get(collisionIndex).toggleCollision();
 			view.closeDropDowns();
 			return;
 		}
