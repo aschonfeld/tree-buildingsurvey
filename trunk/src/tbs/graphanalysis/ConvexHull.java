@@ -1,8 +1,15 @@
 package tbs.graphanalysis;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.geom.Line2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import tbs.TBSUtils;
+import tbs.model.OrganismNode;
 
 /**
  * A class that demonstrates the graph algorithm, by accepting a group
@@ -14,16 +21,18 @@ import java.util.List;
  *  
  */
 public class ConvexHull {
-	/** 
-	 * Variable indicates which algorithm we are using
-	 */
-	public static final int Brute = 1;
-	public static final int QUICK = 2;
-
 	/**
 	 * Stores all the points
 	 */
 	private List<Point> points = new LinkedList<Point>();
+	
+	private ConvexHull parent = null;
+	
+	private int level;
+	
+	private List<ConvexHull> children = new LinkedList<ConvexHull>();
+	
+	private List<HullCollision> childCollisions;
 	
 	/**
 	 * Stores shape of the hull for collision detection
@@ -33,8 +42,8 @@ public class ConvexHull {
 	/**
 	 * Stores all the lines in the Hull
 	 */
-	private List<Line> hull;
-	private List<Line> tempHull;
+	private List<HullLine> hull;
+	private List<HullLine> tempHull;
 
 	/**
 	 * Stores the name of the Hull
@@ -48,71 +57,101 @@ public class ConvexHull {
 	 */
 	private Point currPt = new Point();
 	
-	public ConvexHull(int algor, List<Point> points, String hullName) {
-		this.points = points;
+	/**
+	 * Constructor for base level hull (no parent)
+	 */
+	public ConvexHull(List<OrganismNode> nodes, String hullName) {
+		this(nodes, hullName, null);
+	}
+	
+	/**
+	 * Constructor for child hull (has parent)
+	 */
+	public ConvexHull(List<OrganismNode> nodes, String hullName, ConvexHull parent) {
+		this.level = parent == null ? 1 : parent.getLevel()+1;
+		
+		//Construct points as well as any children hull that exist
+		this.points = new LinkedList<Point>();
+		Map<String, List<OrganismNode>> childrenGroups = new HashMap<String, List<OrganismNode>>();
+		for(OrganismNode o : nodes){
+			this.points.add(o.getCenter());
+			if(o.getTypes().containsKey(level+1)){
+				if(childrenGroups.containsKey(o.getTypes().get(level+1)))
+					childrenGroups.get(o.getTypes().get(level+1)).add(o);
+				else{
+					List<OrganismNode> temp = new LinkedList<OrganismNode>();
+					temp.add(o);
+					childrenGroups.put(o.getTypes().get(level+1), temp);
+				}
+			}
+		}
+		
 		this.hullName = hullName;
+		this.parent = parent;
 		displayHull = false;
 		hullShape = new Polygon();
-		hull = new LinkedList<Line>();
-		switch (algor) {
-			case Brute:
-			BruteForce();
-			break;
-			case QUICK:
-			quickHull();
-			break;
-			default:    System.out.println("Error in call algor\n");
-		}
+		hull = new LinkedList<HullLine>();
+		quickHull();
 		if(hull.size() > 0){
-			hullShape.addPoint(hull.get(0).point1.x, hull.get(0).point1.y);
-			hullShape.addPoint(hull.get(0).point2.x, hull.get(0).point2.y);
-			for(int i=1;i<hull.size();i++)
-				hullShape.addPoint(hull.get(i).point2.x, hull.get(i).point2.y);	
+			for(HullLine hl : hull){
+				if(!hullShape.contains(hl.getPoint1()))
+					hullShape.addPoint(hl.getPoint1().x, hl.getPoint1().y);
+				if(!hullShape.contains(hl.getPoint2()))
+					hullShape.addPoint(hl.getPoint2().x, hl.getPoint2().y);
+			}
 		}
+		children = new LinkedList<ConvexHull>();
+		if(childrenGroups.size() > 0){
+			for(Map.Entry<String, List<OrganismNode>> e : childrenGroups.entrySet())
+				children.add(new ConvexHull(e.getValue(), e.getKey(), this));
+		}
+		childCollisions = TBSUtils.hullCollisions(children);
+		
 	}
 
 	public Polygon getHullShape() {return hullShape;}
-	public List<Line> getHull() {return hull;}
+	public List<HullLine> getHull() {return hull;}
 	public String getHullName() {return hullName;}
 	public Boolean getDisplayHull() {return displayHull;}
 	public void setDisplayHull(Boolean displayHull) {this.displayHull = displayHull;}
+	public ConvexHull getParent() {
+		return parent;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public List<ConvexHull> getChildren() {
+		List<ConvexHull> allChildren = new LinkedList<ConvexHull>();
+		for(ConvexHull child : children){
+			allChildren.add(child);
+			allChildren.addAll(child.getChildren());
+		}
+		return allChildren;
+	}
+
+	public List<HullCollision> getChildCollisions() {
+		return childCollisions;
+	}
+
 	public void toggleHull(){this.displayHull = !displayHull;}
-	public String toString(){return hullName + " \u2713";}
+	public String toString(){return hullName + (displayHull ? " \u2713" : "");}
+	
+	public void render(Graphics2D g2, int xOffset, int yOffset){
+		for(HullLine l : hull)
+			g2.draw(new Line2D.Double(l.getPoint1().x - xOffset,
+					l.getPoint1().y - yOffset,
+					l.getPoint2().x - xOffset,
+					l.getPoint2().y - yOffset));
+	}
 	 
 
-	/**
-	  * Brute Force Algorithm implementation
-	  */
-	 public void BruteForce() {
-		 boolean leftMost, rightMost;
-		 for (int x = 0; x < points.size(); x++) {
-			 for (int y = (x+1); y < points.size(); y++) {
-				 leftMost  = true;
-				 rightMost = true;
-				 Line temp = new Line(points.get(x), points.get(y));
-
-				 for (int z = 0; z < points.size(); z++) {
-					 currPt = points.get(z);
-					 
-					 if ((z != x) && (z != y)) {
-						 if (temp.onLeft(points.get(z)))
-							 leftMost = false;
-						 else
-							 rightMost = false;
-					 }
-				 }
-
-				 if (leftMost || rightMost)
-					 hull.add(new Line(points.get(x), points.get(y)));
-			 }
-		 }
-	 }
-
-	 /** 
+	/** 
 	  * Quick Hull Algorithm implementation.
 	  */
 	 public void quickHull() {
-		 tempHull = new LinkedList<Line>();
+		 tempHull = new LinkedList<HullLine>();
 		 List<Point> P1 = new LinkedList<Point>();
 		 List<Point> P2 = new LinkedList<Point>();
 		 Point l = points.get(0);
@@ -138,7 +177,7 @@ public class ConvexHull {
 			 }
 		 }
 
-		 Line lr = new Line(l, r);
+		 HullLine lr = new HullLine(l, r);
 		 
 		 /* find out each point is over or under the line formed by the two points */
 		 /* with min and max x-coord, and put them in 2 group according to whether */
@@ -166,14 +205,14 @@ public class ConvexHull {
 
 		 /* put the upper hull result in final result */
 		 for (int k=0; k<tempHull.size(); k++)
-			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
+			 hull.add(new HullLine(tempHull.get(k).getPoint1(), tempHull.get(k).getPoint2()));
 		 
 		 /* calculate the lower hull */
 		 quick(P2, l, r, 1);
 
 		 /* append the result from lower hull to final result */
 		 for (int k=0; k<tempHull.size(); k++)
-			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
+			 hull.add(new HullLine(tempHull.get(k).getPoint1(), tempHull.get(k).getPoint2()));
 
 	 }
 
@@ -185,12 +224,12 @@ public class ConvexHull {
 	  */
 	 public synchronized void quick(List<Point> P, Point l, Point r, int faceDir) {
 		 if (P.size() == 2) {
-			 tempHull.add(new Line(P.get(0), P.get(1)));
+			 tempHull.add(new HullLine(P.get(0), P.get(1)));
 			 return;
 		 } else {
 			 int hAt = splitAt(P, l, r);
-			 Line lh = new Line(l, P.get(hAt));
-			 Line hr = new Line(P.get(hAt), r);
+			 HullLine lh = new HullLine(l, P.get(hAt));
+			 HullLine hr = new HullLine(P.get(hAt), r);
 			 List<Point> P1 = new LinkedList<Point>();
 			 List<Point> P2 = new LinkedList<Point>();
 
@@ -241,14 +280,14 @@ public class ConvexHull {
 	  */
 	 public synchronized int splitAt(List<Point> P, Point l, Point r) {
 		 double    maxDist = 0;
-		 Line newLn = new Line(l, r);
+		 HullLine newLn = new HullLine(l, r);
 
 		 int x3 = 0, y3 = 0;
 		 double distance = 0;
 		 int farPt = 0;
 
 		 for (int i = 0; i < (P.size() - 2); i++) {
-			 if (newLn.slopeUndefine) {
+			 if (newLn.isSlopeUndefine()) {
 				 x3 = l.x;
 				 y3 = P.get(i).y;
 			 } else {
@@ -256,10 +295,10 @@ public class ConvexHull {
 					 x3 = P.get(i).x;
 					 y3 = l.y;
 				 } else {
-					 x3 = (int) (((P.get(i).x + newLn.slope *
-							 (newLn.slope * l.x - l.y + P.get(i).y))
-									 / (1 + newLn.slope * newLn.slope)));
-					 y3 = (int) ((newLn.slope * (x3 - l.x) + l.y));
+					 x3 = (int) (((P.get(i).x + newLn.getSlope() *
+							 (newLn.getSlope() * l.x - l.y + P.get(i).y))
+									 / (1 + newLn.getSlope() * newLn.getSlope())));
+					 y3 = (int) ((newLn.getSlope() * (x3 - l.x) + l.y));
 				 }
 			 }
 			 int x1 = P.get(i).x;
@@ -281,68 +320,4 @@ public class ConvexHull {
 			 return false;
 		 return ((ConvexHull) o).getHullName().equals(hullName);
 	 }
-	 
-	 public class Line {
-			private Point point1;
-			private Point point2;
-			private float    slope;
-			private boolean  slopeUndefine;
-
-			/**
-			 * Line constructor.
-			 */
-			public Line(Point p1, Point p2) {
-				point1 = p1;
-				point2 = p2;
-				if (p1.x == p2.x)
-					slopeUndefine = true;
-				else {    
-					if (p2.y == p1.y)
-						slope = (float)0;
-					else
-						slope = (float) (p2.y - p1.y) / (p2.x - p1.x);
-					slopeUndefine = false;
-				}
-			}
-
-			/**
-			 * Given a Check point and determine if this check point is lying on the
-			 * left side or right side of the first point of the line.
-			 */
-			public boolean onLeft(Point chkpt) {
-				if (this.slopeUndefine) {
-					if (chkpt.x < point1.x) return true;
-					else {
-						if (chkpt.x == point1.x) {
-							if (((chkpt.y > point1.y) && (chkpt.y < point2.y)) ||
-									((chkpt.y > point2.y) && (chkpt.y < point1.y)))
-								return true;
-							else
-								return false;
-						}
-						else return false;
-					}
-				}
-				else {            
-					/* multiply the result to avoid the rounding error */
-					int x3 = (int) (((chkpt.x + slope * (slope * point1.x 
-							- point1.y + chkpt.y)) /
-							(1 + slope * slope)) * 10000);
-					int y3 = (int) ((slope * (x3 / 10000 - point1.x) + point1.y) * 10000);
-
-					if (slope == (float)0) {
-						if ((chkpt.y*10000) > y3) return true; else return false; }
-					else { if (slope > (float)0) {
-						if (x3 > (chkpt.x * 10000)) return true; else return false; }
-					else {
-						if ((chkpt.x * 10000) > x3) return true; else return false; }
-					}
-				}
-			}
-
-			public Point getPoint1() {return point1;}
-			public Point getPoint2() {return point2;}
-			public float getSlope() {return slope;}
-			public boolean isSlopeUndefine() {return slopeUndefine;}
-		}
 }

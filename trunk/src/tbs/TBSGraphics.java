@@ -242,6 +242,16 @@ public class TBSGraphics {
 	 */
 	public static int hullButtonHeight = 0;
 	
+	/**
+	 * Width of hull buttons. Set in [TBSModel.???]
+	 */ 
+	public static int collisionButtonWidth = 0;
+	
+	/**
+	 * Height of collision buttons. Set in  [TBSModel.???]
+	 */
+	public static int collisionButtonHeight = 0;
+	
 	public static Color[] hullColors = new Color[]{Color.MAGENTA,
 		Color.ORANGE, Color.PINK, new Color(0,100,0)};
 

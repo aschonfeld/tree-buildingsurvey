@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tbs.TBSGraphics;
+import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.view.prompt.Prompt;
 
@@ -42,13 +43,14 @@ public class AnalysisPrompt extends Prompt
 	public void paintComponent(Graphics2D g2) {
 		setGraphics(g2);
 		if(analysisText.isEmpty()){
+			List<String> collisonText = TBSUtils.collisonText(model);
 			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
 					"1) All organism nodes terminal: " + (model.getGraph().allOrganismsTerminal() ? "Yes" : "No"),
 					getWidth() - TBSGraphics.padding.width * 2));
 			analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
 					"2) All organism nodes included: " + (model.outOfTreeElements().isEmpty() ? "Yes" : "No"),
 					getWidth() - TBSGraphics.padding.width * 2));
-			if(model.getHullCollisions().isEmpty()){
+			if(collisonText.isEmpty()){
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
 						"3) There are no collisions between organism groups(Mammal, Invert, NMV)",
 						getWidth() - TBSGraphics.padding.width * 2));
@@ -56,7 +58,7 @@ public class AnalysisPrompt extends Prompt
 				analysisText.addAll(TBSGraphics.breakStringByLineWidth(g2,
 						"3) There were the following collisions between organism groups:",
 						getWidth() - TBSGraphics.padding.width * 2));
-				analysisText.addAll(model.getHullCollisions());
+				analysisText.addAll(collisonText);
 			}
 				
 		}

@@ -1,24 +1,26 @@
 package tbs.graphanalysis;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class VertexInfo {
 
 	private String name;
-	private String type;
+	private Map<Integer,String> types;
 	private BufferedImage image;
 	private VertexType vertexType;
 	
 	public VertexInfo(String name){
 		this.name = name;
-		type = "";
+		types = new HashMap<Integer, String>();
 		image = null;
 		vertexType = VertexType.EMPTY;
 	}
 	
-	public VertexInfo(String name, String type, BufferedImage image){
+	public VertexInfo(String name, Map<Integer,String> types, BufferedImage image){
 		this(name);
-		this.type = type;
+		this.types = types;
 		this.image = image;
 		vertexType = VertexType.ORGANISM;
 	}
@@ -27,8 +29,8 @@ public class VertexInfo {
 		return name;
 	}
 
-	public String getType() {
-		return type;
+	public Map<Integer,String> getTypes() {
+		return types;
 	}
 
 	public BufferedImage getImage() {

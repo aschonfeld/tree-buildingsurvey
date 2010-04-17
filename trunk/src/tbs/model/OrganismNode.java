@@ -5,6 +5,9 @@ package tbs.model;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import tbs.TBSGraphics;
 import tbs.graphanalysis.Vertex;
@@ -13,21 +16,22 @@ import tbs.graphanalysis.VertexInfo;
 public class OrganismNode extends Node
 {
 	private BufferedImage img;
-	private String organismType;
-	private String organismSubType;
+	private Map<Integer, String> types;
 	private Point defaultPoint;
 	private int stringWidth;
 	private int imageStartX = -1;
 	private int stringAreaLeftX = -1;
 
-	public OrganismNode(int id, String name, String[] organismInfo, Point anchorPoint, BufferedImage i, int stringWidth) 
+	public OrganismNode(int id, String name, List<String> types, Point anchorPoint, BufferedImage i, int stringWidth) 
 	{
 		super(id, name);
-		this.organismType = organismInfo[1];
-		if(organismInfo.length > 2)
-			this.organismSubType = organismInfo[2];
-		else
-			this.organismSubType = "";
+		this.types = new HashMap<Integer, String>();
+		int index=1;
+		for(String type : types){
+			this.types.put(index, type);
+			index++;
+		}
+		
 		img = i;
 		defaultPoint = new Point();
 		this.stringWidth = stringWidth;
@@ -50,6 +54,10 @@ public class OrganismNode extends Node
 
 	public Point getDefaultPoint() {
 		return new Point(0, (TBSGraphics.buttonsHeight + 10) + (getId()*(TBSGraphics.organismNodeHeight + TBSGraphics.ySpacing)));
+	}
+
+	public Map<Integer, String> getTypes() {
+		return types;
 	}
 
 	public void reset(){
@@ -79,14 +87,6 @@ public class OrganismNode extends Node
 		return stringWidth;
 	}
 
-	public String getOrganismType() {
-		return organismType;
-	}
-	
-	public String getOrganismSubType() {
-		return organismSubType;
-	}
-	
 	/*
 	 * This is a default method that is used by setScreenString in the 
 	 * Controller & also some logging to get information about a
@@ -99,6 +99,6 @@ public class OrganismNode extends Node
 	}
 
 	public Vertex convertToVertex() {
-		return new Vertex(new VertexInfo(getName(), organismType, img), getAnchorPoint());
+		return new Vertex(new VertexInfo(getName(), types, img), getAnchorPoint());
 	}
 }
