@@ -18,10 +18,10 @@ public class HullCollision {
 	private int level;
 	private String hull1;
 	private int hull1Index;
-	private List<HullLine> hull1Lines;
+	private List<Point> hull1Points;
 	private String hull2;
 	private int hull2Index;
-	private List<HullLine> hull2Lines;
+	private List<Point> hull2Points;
 	private String analysisText;
 	private Boolean displayCollision;
 	
@@ -36,10 +36,10 @@ public class HullCollision {
 		this.level = level;
 		this.hull1 = hull1.getHullName();
 		this.hull1Index = hull1Index;
-		this.hull1Lines = hull1.getHull();
+		this.hull1Points = hull1.getHull();
 		this.hull2 = hull2.getHullName();
 		this.hull2Index = hull2Index;
-		this.hull2Lines = hull2.getHull();
+		this.hull2Points = hull2.getHull();
 		analysisText = new StringBuffer(" \u2022 ").append(hull1)
 		.append(" group collides with the ")
 		.append(hull2).append(" group.").toString();
@@ -48,38 +48,12 @@ public class HullCollision {
 	
 	public void render(Graphics2D g2, int xOffset, int yOffset){
 		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon();
-		List<Point> hull1ShapePoints = new LinkedList<Point>(), hull2ShapePoints = new LinkedList<Point>();
-		List<HullLine> adjHull1, adjHull2;
-		Point point1, point2;
-		adjHull1 = new LinkedList<HullLine>();
-		for(HullLine l : hull1Lines){
-			point1 = new Point(l.getPoint1().x - xOffset, l.getPoint1().y - yOffset);
-			point2 = new Point(l.getPoint2().x - xOffset, l.getPoint2().y - yOffset);
-			adjHull1.add(new HullLine(point1, point2));
-			if(!hull1ShapePoints.contains(point1))
-				hull1ShapePoints.add(point1);
-			if(!hull1ShapePoints.contains(point2))
-				hull1ShapePoints.add(point2);
-		}
-		Collections.sort(hull1ShapePoints, pointComparator);
 		
-		adjHull2 = new LinkedList<HullLine>();
-		for(HullLine l : hull2Lines){
-			point1 = new Point(l.getPoint1().x - xOffset, l.getPoint1().y - yOffset);
-			point2 = new Point(l.getPoint2().x - xOffset, l.getPoint2().y - yOffset);
-			adjHull2.add(new HullLine(point1, point2));
-			if(!hull2ShapePoints.contains(point1))
-				hull2ShapePoints.add(point1);
-			if(!hull2ShapePoints.contains(point2))
-				hull2ShapePoints.add(point2);
-		}
-		Collections.sort(hull2ShapePoints, pointComparator);
+		for(Point p : hull1Points)
+			hull1Shape.addPoint(p.x - xOffset, p.y - yOffset);
 		
-		for(Point p : hull1ShapePoints)
-			hull1Shape.addPoint(p.x, p.y);
-		
-		for(Point p : hull2ShapePoints)
-			hull2Shape.addPoint(p.x, p.y);
+		for(Point p : hull2Points)
+			hull2Shape.addPoint(p.x - xOffset, p.y - yOffset);
 		
 		Area intersect = new Area(hull1Shape); 
 		intersect.intersect(new Area(hull2Shape)); 
@@ -88,14 +62,8 @@ public class HullCollision {
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(TBSGraphics.hullColors[hull1Index]);
 		g2.draw(hull1Shape);
-		//for(HullLine l : adjHull1)
-		//	g2.draw(new Line2D.Double(l.getPoint1().x, l.getPoint1().y,
-		//			l.getPoint2().x, l.getPoint2().y));
 		g2.setColor(TBSGraphics.hullColors[hull2Index]);
 		g2.draw(hull2Shape);
-		//for(HullLine l : adjHull2)
-		//	g2.draw(new Line2D.Double(l.getPoint1().x, l.getPoint1().y,
-		//			l.getPoint2().x, l.getPoint2().y));
 		g2.setStroke(new BasicStroke());
 	}
 	
