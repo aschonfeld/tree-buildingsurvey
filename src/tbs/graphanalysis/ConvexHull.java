@@ -65,7 +65,14 @@ public class ConvexHull {
 		this.hullName = hullName;
 		this.parent = parent;
 		displayHull = false;
-		GrahamScan();
+		hull = new ArrayList<Point>();
+		hullShape = new Polygon();
+		if(points.size() < 3){
+			hull.addAll(points);
+			for(Point p : hull)
+				hullShape.addPoint(p.x, p.y);
+		}else
+			GrahamScan();
 		children = new LinkedList<ConvexHull>();
 		if(childrenGroups.size() > 0){
 			for(Map.Entry<String, List<OrganismNode>> e : childrenGroups.entrySet())
@@ -168,8 +175,7 @@ public class ConvexHull {
             }
         }
 		hullPoints.push(polarPoints.get(0).getPoint());
-		hull = new ArrayList<Point>(hullPoints);
-		hullShape = new Polygon();
+		hull.addAll(hullPoints);
 		for(Point p : hull)
 			hullShape.addPoint(p.x, p.y);
 	}
