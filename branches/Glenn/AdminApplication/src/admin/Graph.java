@@ -42,10 +42,15 @@ public class Graph implements Renderable {
 	private GraphType type = GraphType.Unscored;
 	
 	public enum GraphType {
+		Perfect,
+		PerfectAlmost,
 		Tree,
 	    Web,
 	    Islands,
-	    Other,
+	    InsufficientLinks,
+	    ILGoodGrouping,
+	    ILBadGrouping,
+	    Garbage,
 	    // NOTE: Type "Test" is for non-student trees
 	    // Only student trees should be used for machine learning
 		Test,

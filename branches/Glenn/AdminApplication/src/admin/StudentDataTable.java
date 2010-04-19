@@ -105,6 +105,7 @@ public class StudentDataTable extends JFrame {
         	ColumnDataHandler cdh = columnDataHandlers.get(col);
         	if(cdh.getClass().getSimpleName().equals("Graph_Type")) {
         		// row must be selected in order for cell to be editable
+        		// RESTORE ME AFTER CLASSIFICATION
         		if(row != parent.getCurrentGraphIndex()) return false;
         		if(data[row][col] == Graph.GraphType.Test) return false;
         		return true;
