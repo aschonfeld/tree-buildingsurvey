@@ -17,11 +17,12 @@ public class Student {
 
 	private int index;
 	private String name;
+	private String databaseName;
 	private List<String> nodeName;
 	private String lastUpdate;
 	private Date lastUpdateTimestamp;
-	private SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMMM yyyy h:mm a");
+	private SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMMM yyyy");
 	private String tree;
 	private Map<OpenQuestionButtonType, Response> openResponses;
 	private String section;
@@ -39,6 +40,7 @@ public class Student {
 			createNewStudent();
 			return;
 		}
+		databaseName = studentData[0].trim();
 		setName(studentData[0].trim());
 		setLastUpdate(studentData[1].substring(1).trim());
 		setTree(studentData[2].substring(1).trim());
@@ -51,6 +53,47 @@ public class Student {
 			splitIndex++;
 		}
 		section = studentData[6].substring(1).trim();
+		if(TBSUtils.isStringEmpty(section))
+			arrows = true;
+		else{
+			String[] sectionSplit = section.split(" ");
+			if(sectionSplit.length < 2)
+				arrows = true;
+			else{
+				try{
+					int sectionNum = Integer.parseInt(sectionSplit[1]);
+					if(sectionNum%2 == 0)
+						arrows = true;
+					else
+						arrows = false;
+				}catch(NumberFormatException e){
+					System.out.println("Error parsing section number (" + section + ") defaulting arrows to true");
+					arrows = true;
+				}
+			}
+		}
+		this.index = index;
+		nodeName = new LinkedList<String>();
+	}
+	
+	public Student(String[] studentData, int index){
+		openResponses = new HashMap<OpenQuestionButtonType, Response>();
+		if(studentData == null || studentData.length == 0){
+			createNewStudent();
+			return;
+		}
+		setName(studentData[0]);
+		setLastUpdate(studentData[1]);
+		setTree(studentData[2]);
+		int splitIndex = 3;
+		for(OpenQuestionButtonType response : OpenQuestionButtonType.values()){
+			if(response.isRadio())
+				openResponses.put(response, new RadioResponse(studentData[splitIndex],response.getRadioQuestionCount()));
+			else
+				openResponses.put(response, new WrittenResponse(studentData[splitIndex]));
+			splitIndex++;
+		}
+		section = studentData[6];
 		if(TBSUtils.isStringEmpty(section))
 			arrows = true;
 		else{
@@ -91,6 +134,10 @@ public class Student {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getDatabaseName() {
+		return databaseName;
 	}
 
 	public String getLastUpdate() {
