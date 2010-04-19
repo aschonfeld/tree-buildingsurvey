@@ -11,10 +11,14 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -60,6 +64,13 @@ public class TBSApplet extends JApplet {
 	private TBSApplet app = this;
 	private boolean admin;
 	private String browser;
+	
+	private String webServerStr = null;
+    private String hostName = "localhost";
+	private int port = 8080;
+    private String servletPath = "/TBS_Servlet/DBServlet";
+     
+
 
 	/**
 	 * INIT instantiates TBSGraphics and TBSModel, and calls the
@@ -70,6 +81,15 @@ public class TBSApplet extends JApplet {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				// get the host name and port of the applet's web server        
+		        //URL hostURL = getCodeBase();
+				//hostName = hostURL.getHost();
+		        //port = hostURL.getPort();
+				
+				if (port == -1)
+					port = 80;
+				webServerStr = "http://" + hostName + ":" + port + servletPath;
+				
 				TBSGraphics.appletWidth = getWidth();
 				TBSGraphics.appletHeight = getHeight();
 				browser = getParameter("Browser");
@@ -89,8 +109,7 @@ public class TBSApplet extends JApplet {
 
 				PropertyLoader.loaderLocation = this.getClass();
 				List<OrganismNode> organisms = loadOrganisms(g2);
-				String adminStr = getParameter("Admin");
-				admin = Boolean.parseBoolean(adminStr);
+				admin = true;
 				String studentDataString;
 				if(!admin){
 					studentDataString = getParameter("student");
@@ -102,14 +121,7 @@ public class TBSApplet extends JApplet {
 					studentModel.setPrompt(new WelcomePrompt(studentModel));
 					model = studentModel;
 				}else{
-					int studentCt = 0;//Default number of radio questions
-					String numOfStudents = getParameter("StudentCount");
-					try{
-						studentCt = Integer.parseInt(numOfStudents);
-					} catch(NumberFormatException e) {
-						System.out.println(new StringBuffer("TBSApplet:Error parsing student count(value-").append(numOfStudents).append(")").toString());
-					}
-					List<Student> students = loadStudents(g2, studentCt);
+					List<Student> students = loadSurveys(g2);
 					AdminModel adminModel = new AdminModel(app, organisms, students);
 					AdminView view = new AdminView(g2, adminModel);
 					AdminController controller = new AdminController(adminModel, view);
@@ -185,18 +197,19 @@ public class TBSApplet extends JApplet {
 		return organisms;
 	}
 
-	public List<Student> loadStudents(Graphics2D g2, int studentParameterCount){
+	public List<Student> loadSurveys(Graphics2D g2){
 		TBSGraphics.studentNodeHeight = 0;
 		List<Student> students = new LinkedList<Student>();
+		List<String[]> importedStudents = getStudentSurveys();
 		int lines = 0;
-		String studentDataString;
-		for(int i=1; i<=studentParameterCount; i++){
-			studentDataString = getParameter("student"+i);
-			Student temp = new Student(studentDataString, i-1);
+		int index = 0;
+		for(String[] importedStudent : importedStudents){
+			Student temp = new Student(importedStudent, index);
 			temp.setNodeName(TBSGraphics.breakStringByLineWidth(g2, temp.getName(), TBSGraphics.maxStudentNameWidth));
 			if(temp.getNodeName().size() > lines) 
 				lines = temp.getNodeName().size();
 			students.add(temp);
+			index++;
 		}
 		TBSGraphics.studentNodeHeight = lines * TBSGraphics.textHeight;
 		TBSGraphics.studentNodeHeight += TBSGraphics.padding.width * 2;
@@ -312,6 +325,113 @@ public class TBSApplet extends JApplet {
 	public String getAppletInfo(){
 		return "Diversity of Life Survey Applet, Version 1.3\n"
 		+ "Copyright Tree Building Survey Group,2010";
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<String[]> getStudentSurveys()
+	{
+        ObjectInputStream inputFromServlet = null;
+        List<String[]> surveys = null;
+        
+	    try
+	    {     
+	        String servletGET = webServerStr + "?" 
+	                            + URLEncoder.encode("UserOption","UTF-8") + "=" 
+	                            + URLEncoder.encode("Surveys","UTF-8");
+	        
+            URL studentDBservlet = new URL( servletGET );
+            URLConnection servletConnection = studentDBservlet.openConnection();  
+	        	    
+	        inputFromServlet = new ObjectInputStream(servletConnection.getInputStream());
+			surveys = (List<String[]>) inputFromServlet.readObject();
+	        
+	    } catch (Exception e) {
+	        System.out.println(e.toString());
+	    }
+
+        return surveys;          
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<String[]> getStudents()
+	{
+        ObjectInputStream inputFromServlet = null;
+        List<String[]> surveys = null;
+        
+	    try
+	    {     
+	        String servletGET = webServerStr + "?" 
+	                            + URLEncoder.encode("UserOption","UTF-8") + "=" 
+	                            + URLEncoder.encode("Students","UTF-8");
+	        
+            URL studentDBservlet = new URL( servletGET );
+            URLConnection servletConnection = studentDBservlet.openConnection();  
+	        	    
+	        inputFromServlet = new ObjectInputStream(servletConnection.getInputStream());
+			surveys = (List<String[]>) inputFromServlet.readObject();
+	        
+	    } catch (Exception e) {
+	        System.out.println(e.toString());
+	    }
+
+        return surveys;    
+	}
+	
+	 /**
+     *  Register a new student.
+     *
+     *  This is accomplished by showing a registration dialog box.  The user
+     *  enters name, e-mail, company, etc.  This information is 
+     */
+	protected void saveStudent(Student student)
+	{
+	    String[] studentData = new String[4];
+	    studentData[0] = model.getStudent().getDatabaseName();
+	    studentData[1] = getTree();
+	    studentData[2] = getQ1();
+	    studentData[3] = getQ2();
+	    
+		try
+        {
+            URL studentDBservlet = new URL( webServerStr );
+            URLConnection servletConnection = studentDBservlet.openConnection();  
+	        
+            servletConnection.setDoInput(true);          
+	        servletConnection.setDoOutput(true);
+            servletConnection.setUseCaches (false);
+            servletConnection.setRequestProperty
+                ("Content-Type", "application/octet-stream");
+            ObjectOutputStream outputToServlet = null;
+            
+            try
+            {
+    	        outputToServlet = new ObjectOutputStream(servletConnection.getOutputStream());
+    	        outputToServlet.writeObject(studentData);
+    	        
+    	        outputToServlet.flush();	        
+    	        outputToServlet.close();
+            }
+            catch (IOException e){
+              System.out.println(e.toString());    
+            }
+	        	        
+            BufferedReader inFromServlet = null;
+            try
+            {
+    	        inFromServlet = new BufferedReader(new InputStreamReader(servletConnection.getInputStream()));	        
+                String str;
+                while (null != ((str = inFromServlet.readLine())))
+                    System.out.println("Reading servlet response: " + str);
+                
+                inFromServlet.close();
+            } catch (IOException e) {
+            	System.out.println(e.toString());    
+            }	        
+            
+	    } catch (Exception e) {
+	    	System.out.println(e.toString());    
+	    }
+	    
 	}
 }
 

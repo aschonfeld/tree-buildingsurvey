@@ -38,6 +38,8 @@ public class AdminModel extends TBSModel
 		Student student = this.students.get(0);
 		setStudent(student);
 		String tree = student.getTree();
+		hulls = new LinkedList<ConvexHull>();
+		hullCollisions = new LinkedList<HullCollision>();
 		if(!TBSUtils.isStringEmpty(tree)){
 			loadTree(tree);
 			calculateHullCollisions();
@@ -62,6 +64,8 @@ public class AdminModel extends TBSModel
 			setStudent(student);
 			String tree = student.getTree();
 			resetModel();
+			hulls = new LinkedList<ConvexHull>();
+			hullCollisions = new LinkedList<HullCollision>();
 			if(!TBSUtils.isStringEmpty(tree)){
 				loadTree(tree);
 				calculateHullCollisions();
