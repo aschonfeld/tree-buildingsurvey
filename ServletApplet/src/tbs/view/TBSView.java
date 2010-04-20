@@ -80,6 +80,7 @@ public abstract class TBSView extends JComponent implements Printable{
 		displayAllTooltips = false;
 		cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 		screenPrintMode = false;
+		setFocusable(true);
 	}
 	
 	public Cursor getAppletCursor(){

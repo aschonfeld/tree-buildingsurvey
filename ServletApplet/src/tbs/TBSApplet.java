@@ -82,9 +82,9 @@ public class TBSApplet extends JApplet {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				// get the host name and port of the applet's web server        
-		        //URL hostURL = getCodeBase();
-				//hostName = hostURL.getHost();
-		        //port = hostURL.getPort();
+		        URL hostURL = getCodeBase();
+				hostName = hostURL.getHost();
+		        port = hostURL.getPort();
 				
 				if (port == -1)
 					port = 80;
@@ -109,7 +109,8 @@ public class TBSApplet extends JApplet {
 
 				PropertyLoader.loaderLocation = this.getClass();
 				List<OrganismNode> organisms = loadOrganisms(g2);
-				admin = true;
+				String adminStr = getParameter("Admin");
+				admin = Boolean.parseBoolean(adminStr);
 				String studentDataString;
 				if(!admin){
 					studentDataString = getParameter("student");
@@ -127,13 +128,13 @@ public class TBSApplet extends JApplet {
 					AdminController controller = new AdminController(adminModel, view);
 					adminModel.setView(view);
 					adminModel.setController(controller);
-					model = adminModel;
-					
+					model = adminModel;	
 				}
 				add(model.getView());
 				model.getView().addMouseListener(model.getController());
 				model.getView().addMouseMotionListener(model.getController());
 				model.getView().addKeyListener(model.getController());
+				model.getView().requestFocus();
 			}});
 	}
 
@@ -383,7 +384,7 @@ public class TBSApplet extends JApplet {
      *  This is accomplished by showing a registration dialog box.  The user
      *  enters name, e-mail, company, etc.  This information is 
      */
-	protected void saveStudent(Student student)
+	public void saveStudent()
 	{
 	    String[] studentData = new String[4];
 	    studentData[0] = model.getStudent().getDatabaseName();
@@ -393,7 +394,11 @@ public class TBSApplet extends JApplet {
 	    
 		try
         {
-            URL studentDBservlet = new URL( webServerStr );
+			String servletGET = webServerStr + "?" 
+			+ URLEncoder.encode("UserOption","UTF-8") + "=" 
+			+ URLEncoder.encode("Save","UTF-8");
+			
+			URL studentDBservlet = new URL( servletGET );
             URLConnection servletConnection = studentDBservlet.openConnection();  
 	        
             servletConnection.setDoInput(true);          
@@ -432,6 +437,48 @@ public class TBSApplet extends JApplet {
 	    	System.out.println(e.toString());    
 	    }
 	    
+	}
+	
+	 /**
+     *  Register a new student.
+     *
+     *  This is accomplished by showing a registration dialog box.  The user
+     *  enters name, e-mail, company, etc.  This information is 
+     */
+	public String[] login(String[] loginData)
+	{ 
+		ObjectInputStream inputFromServlet = null;
+		String[] student = new String[]{"","","","","","",""};
+		
+		try
+		{
+			String servletGET = webServerStr + "?" 
+			+ URLEncoder.encode("UserOption","UTF-8") + "=" 
+			+ URLEncoder.encode("Login","UTF-8");
+
+			URL studentDBservlet = new URL( servletGET );
+			URLConnection servletConnection = studentDBservlet.openConnection();  
+
+			servletConnection.setDoInput(true);          
+			servletConnection.setDoOutput(true);
+			servletConnection.setUseCaches (false);
+			servletConnection.setRequestProperty
+			("Content-Type", "application/octet-stream");
+			ObjectOutputStream outputToServlet = null;
+			outputToServlet = new ObjectOutputStream(servletConnection.getOutputStream());
+			outputToServlet.writeObject(loginData);
+
+			outputToServlet.flush();	        
+			outputToServlet.close();
+
+			inputFromServlet = new ObjectInputStream(servletConnection.getInputStream());
+			student = (String[]) inputFromServlet.readObject();
+
+		} catch (Exception e) {
+			System.out.println(e.toString());    
+		}
+		
+		return student;	    
 	}
 }
 

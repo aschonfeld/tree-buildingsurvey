@@ -42,9 +42,25 @@ public class StudentModel extends TBSModel
 		buttonStates = new HashMap<TBSButtonType, Boolean>();
 		for(TBSButtonType b : TBSButtonType.getButtons(false))
 			buttonStates.put(b, b.isActiveWhenCreated());
-		Student student = new Student(studentString, 1);
+		Student student = new Student(new String[]{}, 1);
+		setStudent(student);
+		helpPrompt = new HelpPrompt(this);
+		writtenQuestionPrompt = new WrittenQuestionPrompt(this);
+		textEntryBox = new TextEntryBox(this);
+		history = new Stack<Command>();
+		/*
+		 * Until Professor White says otherwise we will be eliminating the radio
+		 * portion of the open-response
+		 * radioQuestionPrompt = new RadioQuestionPrompt(this);
+		 */
+		sct = null;
+	}
+	
+	public void loggedIn(String[] studentData) {
+		Student student = new Student(studentData, 1);
 		setStudent(student);
 		String tree = student.getTree();
+		resetModel();
 		if(!TBSUtils.isStringEmpty(tree)){
 			loadTree(tree);
 			int inTreeElementCount = inTreeElements().size();
@@ -62,14 +78,7 @@ public class StudentModel extends TBSModel
 		}
 		helpPrompt = new HelpPrompt(this);
 		writtenQuestionPrompt = new WrittenQuestionPrompt(this);
-    	textEntryBox = new TextEntryBox(this);
-		history = new Stack<Command>();
-		/*
-		 * Until Professor White says otherwise we will be eliminating the radio
-		 * portion of the open-response
-		 * radioQuestionPrompt = new RadioQuestionPrompt(this);
-		 */
-		sct = null;
+		textEntryBox = new TextEntryBox(this);
 	}
 
 	public Stack<Command> getHistory() {
