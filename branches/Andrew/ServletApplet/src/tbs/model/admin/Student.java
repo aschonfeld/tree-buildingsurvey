@@ -40,7 +40,6 @@ public class Student {
 			createNewStudent();
 			return;
 		}
-		databaseName = studentData[0].trim();
 		setName(studentData[0].trim());
 		setLastUpdate(studentData[1].substring(1).trim());
 		setTree(studentData[2].substring(1).trim());
@@ -82,6 +81,7 @@ public class Student {
 			createNewStudent();
 			return;
 		}
+		databaseName = studentData[0];
 		setName(studentData[0]);
 		setLastUpdate(studentData[1]);
 		setTree(studentData[2]);

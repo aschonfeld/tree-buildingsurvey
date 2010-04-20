@@ -21,6 +21,8 @@ public enum TBSButtonType {
 	//SAVE("Save", false, true, false, false, false, false),
 	CLEAR("Clear", false, false, false, true, false, false),
 	HELP("Help",false, true, false, false, false, false),
+	SAVE("Save", false, true, false, true, false, false),
+	LOGOUT("Logout", false, true, false, true, false, false),
 	TREE("Tree",false, true, false, false, false, true),
 	OPEN_RESPONSE("Open Responses",false, true, false, false, false, true),
 	ANALYSIS("Analysis",false, true, false, false, false, true);

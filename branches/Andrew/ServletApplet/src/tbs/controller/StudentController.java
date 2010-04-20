@@ -28,7 +28,9 @@ import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.StudentLoginPrompt;
 import tbs.view.prompt.student.TextEntryBox;
+import tbs.view.prompt.student.WelcomePrompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
 /**
@@ -242,7 +244,9 @@ public class StudentController extends TBSController
 						break;
 					}
 					model.clearPrompt();
-				}else
+				}else if(prompt instanceof WelcomePrompt)
+					model.setPrompt(new StudentLoginPrompt(model));
+				else
 					model.clearPrompt();
 			}
 			return;
@@ -452,6 +456,12 @@ public class StudentController extends TBSController
 				break;
 			case HELP:
 				model.helpUser();
+				break;
+			case SAVE:
+				model.getApplet().saveStudent();
+				break;
+			case LOGOUT:
+				model.setPrompt(new StudentLoginPrompt(model));
 				break;
 		}
 		model.setSelectedElement(null);
