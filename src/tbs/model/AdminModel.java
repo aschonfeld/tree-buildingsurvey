@@ -3,12 +3,14 @@
 
 package tbs.model;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import tbs.TBSApplet;
+import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.Edge;
@@ -19,6 +21,7 @@ import tbs.model.admin.Student;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.admin.AnalysisPrompt;
+import tbs.view.prompt.admin.ColorEditorPrompt;
 import tbs.view.prompt.admin.RadioQuestionReviewPrompt;
 import tbs.view.prompt.admin.WrittenQuestionReviewPrompt;
 
@@ -31,6 +34,8 @@ public class AdminModel extends TBSModel
 	private List<ConvexHull> hulls;
 	private List<HullCollision> hullCollisions;
 	private Graph graph;
+	private Map<String, Color> groupColorAssoc;
+	private ColorEditorPrompt colorEditor;
 
 	public AdminModel(TBSApplet applet,	List<OrganismNode> organisms, List<Student> students) {
 		super(applet, organisms);
@@ -49,6 +54,17 @@ public class AdminModel extends TBSModel
 		 * portion of the open-response
 		 * radioQuestionReviewPrompt = new RadioQuestionReviewPrompt(this);
 		 */
+		groupColorAssoc = new HashMap<String, Color>();
+		int defaultColorIndex = 0;
+		for(OrganismNode o : organisms){
+			for(String group : o.getTypes().values()){
+				if(!groupColorAssoc.containsKey(group)){
+					groupColorAssoc.put(group, TBSGraphics.defualtGroupColors[defaultColorIndex]);
+					defaultColorIndex++;
+				}
+			}
+		}
+		colorEditor = new ColorEditorPrompt(this);
 	}
 
 	public void changeSavedTree(int studentIndex){
@@ -94,6 +110,10 @@ public class AdminModel extends TBSModel
 		}
 	}
 	
+	public void editColors(){
+		setPrompt(colorEditor);
+	}
+	
 	public void calculateHullCollisions(){
 		Map<String, List<OrganismNode>> organismGroups = new HashMap<String, List<OrganismNode>>();
 		for(ModelElement m : inTreeElements()){
@@ -108,8 +128,10 @@ public class AdminModel extends TBSModel
 			}
 		}
 		hulls = new LinkedList<ConvexHull>();
-		for(Map.Entry<String, List<OrganismNode>> e : organismGroups.entrySet())
-			hulls.add(new ConvexHull(e.getValue(), e.getKey()));
+		for(Map.Entry<String, List<OrganismNode>> e : organismGroups.entrySet()){
+			if(e.getValue().size() > 2)
+				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
+		}
 		hullCollisions = TBSUtils.hullCollisions(hulls);
 	}
 
@@ -132,6 +154,19 @@ public class AdminModel extends TBSModel
 		for(ConvexHull hull : hulls)
 			allCollisions.addAll(hull.getChildCollisions());
 		return allCollisions;
+	}
+	
+	public Map<String, Color> getColorChooser(){
+		return groupColorAssoc;
+	}
+	
+	public Color getGroupColor(String group){
+		Color returnVal = Color.BLACK;
+		if(!getView().getScreenPrintMode()){
+			if(groupColorAssoc.containsKey(group))
+				returnVal = groupColorAssoc.get(group);
+		}
+		return returnVal;
 	}
 	
 	public void loadGraph(){

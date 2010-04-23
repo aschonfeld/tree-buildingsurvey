@@ -16,6 +16,7 @@ import tbs.controller.TBSController;
 import tbs.model.admin.Student;
 import tbs.view.TBSView;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.WelcomePrompt;
 
 
 public abstract class TBSModel 
@@ -79,6 +80,9 @@ public abstract class TBSModel
 	*	Has the student connected objects in the tree?
 	*/
 	private boolean connectionsInTree;
+	
+	private boolean welcomePromptShown = false;
+
 
 
 	/**
@@ -166,7 +170,13 @@ public abstract class TBSModel
 	public void setPrompt(Prompt prompt){
 		prompt.setFinished(false);
 		this.prompt = prompt;
+		if(prompt instanceof WelcomePrompt)
+			welcomePromptShown = true;
 		view.refreshGraphics();
+	}
+	
+	public boolean getWelcomePromptShown() {
+		return welcomePromptShown;
 	}
 
 	/**

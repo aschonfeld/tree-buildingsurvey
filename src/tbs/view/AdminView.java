@@ -63,7 +63,7 @@ public class AdminView extends TBSView {
 	private boolean displayCollisionMenu = false;
 	private ActionListener collisionHider = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			hullTimer.stop();
+			collisionTimer.stop();
 		}
 	};
 	
@@ -238,6 +238,14 @@ public class AdminView extends TBSView {
 				
 				//Group Hulls Button
 				if(model.getHulls(true).size() > 0){
+					//Group Color Editor
+					upperY += TBSGraphics.buttonsHeight;
+					buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+					g2.setColor(Color.gray);
+					g2.draw(buttonRect);
+					TBSGraphics.drawCenteredString(g2, "Group Colors", buttonRect.x, upperY, buttonRect.width, 0);
+					
 					upperY += TBSGraphics.buttonsHeight;
 					buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
 					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
@@ -328,22 +336,19 @@ public class AdminView extends TBSView {
 				TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
 				TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
 				Rectangle hullButton = new Rectangle(hullHeaderEnd - TBSGraphics.hullButtonWidth,
-						TBSGraphics.buttonsHeight*3, TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
+						TBSGraphics.buttonsHeight*4, TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
 				int index=0;
-				Color hullColor;
 				for(ConvexHull ch : hulls){
-					hullColor = TBSGraphics.hullColors[index];
 					if(ch.getDisplayHull()){
 						//Render Hull
 						g2.setStroke(new BasicStroke(3));
-						g2.setColor(hullColor);
+						g2.setColor(model.getGroupColor(ch.getHullName()));
 						ch.render(g2, getXOffset(), getYOffset());
 						g2.setStroke(new BasicStroke());
 					}
 					//Render Button
 					if(isHullMenuDisplayed()){
-						g2.setColor(hullColor);
-						g2.fill(hullButton);
+						TBSGraphics.renderButtonBackground(g2, hullButton, false);
 						TBSGraphics.drawCenteredString(g2, ch.toString(),
 								hullButton.x, hullButton.y, hullButton.width, hullButton.height);
 						g2.draw(hullButton);
@@ -365,18 +370,15 @@ public class AdminView extends TBSView {
 				TBSGraphics.collisionButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
 				TBSGraphics.collisionButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
 				Rectangle collisionButton = new Rectangle(hullHeaderEnd - TBSGraphics.collisionButtonWidth,
-						TBSGraphics.buttonsHeight*4, TBSGraphics.collisionButtonWidth, TBSGraphics.collisionButtonHeight);
+						TBSGraphics.buttonsHeight*5, TBSGraphics.collisionButtonWidth, TBSGraphics.collisionButtonHeight);
 				int index=0;
-				Color hullColor;
 				for(HullCollision hc : collisions){
-					hullColor = TBSGraphics.hullColors[index];
 					//Render Collision
 					if(hc.getDisplayCollision())
-						hc.render(g2, getXOffset(), getYOffset());
+						hc.render(g2, getXOffset(), getYOffset(), model);
 					//Render Button
 					if(isCollisionMenuDisplayed()){
-						g2.setColor(hullColor);
-						g2.fill(collisionButton);
+						TBSGraphics.renderButtonBackground(g2, collisionButton, false);
 						TBSGraphics.drawCenteredString(g2, hc.toString(),
 								collisionButton.x, collisionButton.y, collisionButton.width, collisionButton.height);
 						g2.draw(collisionButton);

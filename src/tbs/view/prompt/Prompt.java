@@ -266,6 +266,23 @@ public abstract class Prompt {
 		}
 	}
 	
+	public void drawButtons(Rectangle buttonArea, Object[] buttons, String selected)
+	{
+		if(buttons.length > 0){
+			Rectangle buttonRect = new Rectangle(buttonArea.x, buttonArea.y,
+					buttonArea.width/buttons.length, buttonArea.height);
+			for(Object button: buttons) {
+				TBSGraphics.renderButtonBackground(g2, buttonRect, 
+						button.toString().equals(selected));
+				g2.setColor(Color.gray);
+				g2.draw(buttonRect);
+				TBSGraphics.drawCenteredString(g2, button.toString(), buttonRect.x,
+						buttonRect.y, buttonRect.width, buttonRect.height);
+				buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
+			}
+		}
+	}
+	
 	public void drawUtilityButton(Rectangle utilityButton, int utilityType){
 		TBSGraphics.renderButtonBackground(g2, utilityButton, false);
 		g2.setColor(Color.BLACK);
@@ -377,5 +394,9 @@ public abstract class Prompt {
 	
 	public int getSelectedButtonIndex(int mouseX, int buttonCount){
 		return ((mouseX - bottomButtons.x) * buttonCount) / promptSize.width;
+	}
+	
+	public int getSelectedButtonIndex(int mouseX, int buttonCount, Rectangle buttonArea){
+		return ((mouseX - buttonArea.x) * buttonCount) / promptSize.width;
 	}
 }

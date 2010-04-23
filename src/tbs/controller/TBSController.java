@@ -5,6 +5,7 @@ package tbs.controller;
 
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -25,7 +26,7 @@ import tbs.view.TBSView;
  * in examining students' work and viewing statistical patterns in the
  * trees produced.  
  **/
-public abstract class TBSController implements MouseListener, MouseMotionListener, KeyListener
+public abstract class TBSController implements MouseListener, MouseMotionListener, KeyListener, ComponentListener
 {
   private TBSModel model;
   private TBSView view;

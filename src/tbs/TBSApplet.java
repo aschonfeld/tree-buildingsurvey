@@ -40,6 +40,7 @@ import tbs.view.AdminView;
 import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.ResizeWarningPrompt;
 import tbs.view.prompt.student.WelcomePrompt;
 import tbs.view.prompt.student.WrittenQuestionPrompt;
 
@@ -86,7 +87,8 @@ public class TBSApplet extends JApplet {
 				TBSGraphics.checkWidth = TBSGraphics.getStringBounds(g2, " \u2713").width;
 				TBSGraphics.arrowWidth = TBSGraphics.getStringBounds(g2, " \u2192").width;
 				TBSGraphics.groupCtWidth = TBSGraphics.getStringBounds(g2, " (3)").width;
-
+				TBSGraphics.RGBEntryBoxWidth = TBSGraphics.getStringBounds(g2, "000").width;
+				
 				PropertyLoader.loaderLocation = this.getClass();
 				List<OrganismNode> organisms = loadOrganisms(g2);
 				String adminStr = getParameter("Admin");
@@ -99,7 +101,10 @@ public class TBSApplet extends JApplet {
 					StudentController controller = new StudentController(studentModel, view);
 					studentModel.setView(view);
 					studentModel.setController(controller);
-					studentModel.setPrompt(new WelcomePrompt(studentModel));
+					if(view.getWidth() <= 945 || view.getHeight() <= 575)
+						studentModel.setPrompt(new ResizeWarningPrompt(model, view.getWidth()));
+					else
+						studentModel.setPrompt(new WelcomePrompt(studentModel));
 					model = studentModel;
 				}else{
 					int studentCt = 0;//Default number of radio questions
@@ -122,6 +127,7 @@ public class TBSApplet extends JApplet {
 				model.getView().addMouseListener(model.getController());
 				model.getView().addMouseMotionListener(model.getController());
 				model.getView().addKeyListener(model.getController());
+				model.getView().addComponentListener(model.getController());
 			}});
 	}
 

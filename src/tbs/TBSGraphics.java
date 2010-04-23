@@ -252,9 +252,14 @@ public class TBSGraphics {
 	 */
 	public static int collisionButtonHeight = 0;
 	
-	public static Color[] hullColors = new Color[]{Color.MAGENTA,
-		Color.ORANGE, Color.PINK, new Color(0,100,0)};
-
+	public static Color[] defualtGroupColors = new Color[]{Color.MAGENTA,
+		Color.ORANGE, Color.PINK, new Color(0,100,0),
+		Color.BLUE, Color.CYAN, Color.GREEN, Color.LIGHT_GRAY,
+		Color.YELLOW, Color.WHITE};
+	public static Pattern colorChooserPattern = Pattern.compile("[0-9]");
+	
+	public static int RGBEntryBoxWidth = 0;
+	
 	/**
 	 * Width of buttons. Set in [TBSModel.???]
 	 */ 
@@ -447,7 +452,6 @@ public class TBSGraphics {
 		buttonEnd = Color.BLACK;
 		buttonInactiveBgColor = Color.WHITE;
 		buttonInactiveFntColor = Color.BLACK;
-		hullColors = new Color[]{Color.BLACK,Color.BLACK,Color.BLACK,Color.BLACK};
 	}
 	
 	public static void setColorsForDisplay(){
@@ -463,6 +467,5 @@ public class TBSGraphics {
 		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
 		buttonInactiveBgColor = new Color(205,188,181);
 		buttonInactiveFntColor = new Color(139,125,123);
-		hullColors = new Color[]{Color.MAGENTA,Color.ORANGE,Color.PINK,new Color(0,100,0)};
 	}
 }

@@ -6,6 +6,7 @@ package tbs.controller;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -28,7 +29,9 @@ import tbs.view.OpenQuestionButtonType;
 import tbs.view.StudentView;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
+import tbs.view.prompt.student.ResizeWarningPrompt;
 import tbs.view.prompt.student.TextEntryBox;
+import tbs.view.prompt.student.WelcomePrompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
 /**
@@ -572,4 +575,20 @@ public class StudentController extends TBSController
     	if((n.getY() + n.getHeight()) > view.getHeight() + view.getYOffset())
     		n.setY((view.getHeight()+ view.getYOffset())-n.getHeight());
     }
+
+	public void componentHidden(ComponentEvent ce) {}
+	public void componentMoved(ComponentEvent ce) {}
+	public void componentResized(ComponentEvent ce) {
+		if(view.getWidth() <= 945 || view.getHeight() <= 575){
+			model.setPrompt(new ResizeWarningPrompt(model, view.getWidth()));
+		}else{
+			if(model.getPrompt() instanceof ResizeWarningPrompt){
+				model.clearPrompt();
+				if(!model.getWelcomePromptShown())
+					model.setPrompt(new WelcomePrompt(model));
+			}
+		}
+	}
+
+	public void componentShown(ComponentEvent ce) {}
 }

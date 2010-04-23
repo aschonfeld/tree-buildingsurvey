@@ -143,7 +143,7 @@ public class TBSUtils {
 					Area intersect = new Area(ch1.getHullShape()); 
 					intersect.intersect(new Area(ch2.getHullShape())); 
 					if (!intersect.isEmpty())
-						hullCollisions.add(new HullCollision(1, i1, ch1, i2, ch2));
+						hullCollisions.add(new HullCollision(1, ch1, ch2));
 				}
 			}
 		}
