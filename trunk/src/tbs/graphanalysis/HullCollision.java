@@ -6,21 +6,17 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.geom.Area;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
-import tbs.TBSGraphics;
+import tbs.model.AdminModel;
 
 public class HullCollision {
 
 	private int level;
 	private String hull1;
-	private int hull1Index;
 	private List<Point> hull1Points;
 	private String hull2;
-	private int hull2Index;
 	private List<Point> hull2Points;
 	private String analysisText;
 	private Boolean displayCollision;
@@ -31,14 +27,11 @@ public class HullCollision {
 		}
 	};
 	
-	public HullCollision(int level, int hull1Index, ConvexHull hull1,
-			int hull2Index, ConvexHull hull2){
+	public HullCollision(int level, ConvexHull hull1, ConvexHull hull2){
 		this.level = level;
 		this.hull1 = hull1.getHullName();
-		this.hull1Index = hull1Index;
 		this.hull1Points = hull1.getHull();
 		this.hull2 = hull2.getHullName();
-		this.hull2Index = hull2Index;
 		this.hull2Points = hull2.getHull();
 		analysisText = new StringBuffer(" \u2022 ").append(hull1)
 		.append(" group collides with the ")
@@ -46,7 +39,7 @@ public class HullCollision {
 		displayCollision = false;
 	}
 	
-	public void render(Graphics2D g2, int xOffset, int yOffset){
+	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model){
 		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon();
 		
 		for(Point p : hull1Points)
@@ -60,9 +53,9 @@ public class HullCollision {
 		g2.setColor(Color.RED);
 		g2.fill(intersect);
 		g2.setStroke(new BasicStroke(3));
-		g2.setColor(TBSGraphics.hullColors[hull1Index]);
+		g2.setColor(model.getGroupColor(hull1));
 		g2.draw(hull1Shape);
-		g2.setColor(TBSGraphics.hullColors[hull2Index]);
+		g2.setColor(model.getGroupColor(hull2));
 		g2.draw(hull2Shape);
 		g2.setStroke(new BasicStroke());
 	}
