@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.properties.PropertyLoader;
+import tbs.view.dropdown.DropDownMenu;
+import tbs.view.dropdown.DropDownRowRenderer;
 import tbs.view.prompt.Prompt;
 
 public class ColorEditorPrompt extends Prompt
@@ -47,29 +50,23 @@ public class ColorEditorPrompt extends Prompt
 	
 	//Prompt sizing information
 	private String selectedGroup;
-	private Color selectedColor;
 	private List<String> headerText;
-	private List<String> groupNames;
 	
-	private Rectangle groupSelection;
-	private Rectangle defaultColorSelection;
 	private TreeMap<Integer, RGBEntryBox> rgbEntryBoxes;
 	private Integer rgbSelection;
 	private Rectangle customColor;
 	
+	private DropDownMenu<String> groupDD;
+	private DropDownMenu<Color> colorDD;
+	
 	public ColorEditorPrompt(AdminModel model) {
-		super(true, false, new Dimension(600,0), model);
+		super(true, true, new Dimension(400,0), model);
 		this.model = model;
 		setMinimizedTitle("Group Colors");
 		chooserProps = PropertyLoader.getProperties("colorchooser");
 		headerText = new LinkedList<String>();
-		groupNames = new LinkedList<String>();
-		groupNames.addAll(model.getColorChooser().keySet());
 		selectedGroup = "";
-		selectedColor = null;
 		
-		groupSelection = new Rectangle();
-		defaultColorSelection = new Rectangle();
 		rgbEntryBoxes = new TreeMap<Integer, RGBEntryBox>();
 		rgbEntryBoxes.put(1, new RGBEntryBox("R"));
 		rgbEntryBoxes.put(2, new RGBEntryBox("G"));
@@ -82,6 +79,23 @@ public class ColorEditorPrompt extends Prompt
 		pressedKeys.add(KeyEvent.VK_DELETE);
 		pressedKeys.add(KeyEvent.VK_RIGHT);
 		pressedKeys.add(KeyEvent.VK_LEFT);
+		DropDownRowRenderer groupRowRenderer = new DropDownRowRenderer() {
+			public void renderRow(Object[] data, Rectangle row, Graphics2D g2) {
+				TBSGraphics.drawCenteredString(g2, data[0].toString(), row.x, row.y,
+						row.width, row.height);
+			}
+		};
+		groupDD = new DropDownMenu<String>(model.getColorChooser().keySet(), groupRowRenderer);
+		DropDownRowRenderer colorRowRenderer = new DropDownRowRenderer() {
+			public void renderRow(Object[] data, Rectangle row, Graphics2D g2) {
+				Rectangle temp = new Rectangle(row.x+2, row.y+2, row.width-4, row.height-4);
+				g2.setColor((Color)data[0]);
+				g2.fill(temp);
+				g2.setColor(Color.BLACK);
+			}
+		};
+		colorDD = new DropDownMenu<Color>(Arrays.asList(TBSGraphics.defualtGroupColors), colorRowRenderer);
+		colorDD.setRenderSelection(false);
 	}
 
 
@@ -92,13 +106,14 @@ public class ColorEditorPrompt extends Prompt
 			setFinished(true);
 			timer.stop();
 		}else{
-			if(groupSelection.contains(e.getPoint()))
-				selectedGroup = groupNames.get(
-						getSelectedButtonIndex(e.getPoint().x, groupNames.size(), groupSelection));
-			else if(defaultColorSelection.contains(e.getPoint())){
-				if(selectedGroup != null){
-					selectedColor = TBSGraphics.defualtGroupColors[getSelectedButtonIndex(e.getPoint().x, TBSGraphics.defualtGroupColors.length, defaultColorSelection)];
-					model.getColorChooser().put(selectedGroup, selectedColor);
+			if(groupDD.isMouseOver(e)){
+				groupDD.mousePressed(e);
+				selectedGroup = groupDD.getSelection();
+			}else if(colorDD.isMouseOver(e)){
+				colorDD.mousePressed(e);
+				if(selectedGroup != null && colorDD.getSelection() != null){
+					model.getColorChooser().put(selectedGroup, colorDD.getSelection());
+					colorDD.clearSelection();
 				}
 			}else if(customColor.contains(e.getPoint())){
 				if(selectedGroup != null){
@@ -107,14 +122,12 @@ public class ColorEditorPrompt extends Prompt
 							rgbEntryBoxes.get(3).getValue());
 					model.getColorChooser().put(selectedGroup, color);
 				}
-			}
-			else{
+			}else{
 				for(Map.Entry<Integer, RGBEntryBox> rgbEntryBox : rgbEntryBoxes.entrySet()){
 					if(rgbEntryBox.getValue().getArea().contains(e.getPoint())){
 						rgbSelection = rgbEntryBox.getKey();
 						cursorIsOn = true;
 						cursorIndex = 0;
-						selectedColor = null;
 						timer.start();
 					}
 				}
@@ -181,7 +194,7 @@ public class ColorEditorPrompt extends Prompt
 			}else
 				text = headerText;
 			
-			calculateValues(headerText.size() + 13, true);
+			calculateValues(headerText.size() + 12, true);
 			drawBox();
 			drawButtons(new String[]{"Exit"});
 			drawHeader("Edit Group Color Associations");
@@ -190,35 +203,23 @@ public class ColorEditorPrompt extends Prompt
 			incrementStringY();
 			drawHeader("Select Group");
 			incrementStringY();
-			groupSelection = new Rectangle(getX(), getStringY(), getWidth(), TBSGraphics.textHeight + TBSGraphics.padding.height);
-			drawButtons(groupSelection, groupNames.toArray(), selectedGroup);
+			groupDD.setY(getStringY());
 			incrementStringYMulti(2);
-			drawHeader("Default Colors");
+			TBSGraphics.drawCenteredString(g2, "Default Colors",
+					getX(), getStringY(), getWidth()/2,
+					TBSGraphics.textHeight + TBSGraphics.padding.height,
+					TBSGraphics.selectedPromptTextColor);
+			TBSGraphics.drawCenteredString(g2, "Default Colors",
+					getX()+(getWidth()/2), getStringY(), getWidth()/2,
+					TBSGraphics.textHeight + TBSGraphics.padding.height,
+					TBSGraphics.selectedPromptTextColor);
 			incrementStringY();
-			defaultColorSelection = new Rectangle(getX(), getStringY(),getWidth(), TBSGraphics.textHeight + TBSGraphics.padding.height);
-			drawDefaultColors(defaultColorSelection, TBSGraphics.defualtGroupColors);
-			incrementStringYMulti(2);
-			//Render RGB Entry boxes
-			drawHeader("Create Color");
-			incrementStringY();
+			colorDD.setY(getStringY());
 			drawEntryBoxes();
-			incrementStringY();
+			incrementStringYMulti(2);
 			drawColorSelection();
-		}
-	}
-	
-	public void drawDefaultColors(Rectangle buttonArea, Color[] buttons)
-	{
-		if(buttons.length > 0){
-			Rectangle buttonRect = new Rectangle(buttonArea.x, buttonArea.y,
-					buttonArea.width/buttons.length, buttonArea.height);
-			for(Color button: buttons) {
-				getGraphics().setColor(button);
-				getGraphics().fill(buttonRect);
-				getGraphics().setColor(Color.BLACK);
-				getGraphics().draw(buttonRect);
-				buttonRect.setLocation(buttonRect.x + buttonRect.width, buttonRect.y);
-			}
+			groupDD.render(g2, getX(), getWidth(), model.getColorChooser().keySet());
+			colorDD.render(g2, getX(), getWidth()/2, new LinkedList<String>());
 		}
 	}
 	
@@ -226,7 +227,7 @@ public class ColorEditorPrompt extends Prompt
 		int labelWidth = TBSGraphics.get2DStringBounds(getGraphics(), rgbEntryBoxes.keySet()).width;
 		int entryWidth = TBSGraphics.RGBEntryBoxWidth + (2 * TBSGraphics.emptyNodePadding);
 		int entryHeight = TBSGraphics.textHeight + TBSGraphics.padding.height;
-		int x = (getX() + (getWidth()/2)) - (((labelWidth+8+entryWidth)*3)/2);
+		int x = ((getX() + (getWidth()/2)) + (getWidth()/4)) - ((((labelWidth+8+entryWidth)*3)+20+entryWidth)/2);
 		Rectangle temp = null;
 		for(Map.Entry<Integer, RGBEntryBox> rgbEntryBox : rgbEntryBoxes.entrySet()){
 			TBSGraphics.drawCenteredString(getGraphics(),
@@ -247,8 +248,8 @@ public class ColorEditorPrompt extends Prompt
 			rgbEntryBox.getValue().setArea(temp);
 			x += temp.width;
 		}
-		TBSGraphics.drawCenteredString(getGraphics(), "=", x, temp.y, 30, temp.height + TBSGraphics.padding.height);
-		customColor = new Rectangle(x+temp.width, temp.y, TBSGraphics.textHeight + TBSGraphics.padding.height, temp.height);
+		TBSGraphics.drawCenteredString(getGraphics(), "=", x, temp.y, 20, temp.height + TBSGraphics.padding.height);
+		customColor = new Rectangle(x+20, temp.y, TBSGraphics.textHeight + TBSGraphics.padding.height, temp.height);
 		Color color = new Color(rgbEntryBoxes.get(1).getValue(),
 				rgbEntryBoxes.get(2).getValue(),
 				rgbEntryBoxes.get(3).getValue());
@@ -286,7 +287,7 @@ public class ColorEditorPrompt extends Prompt
 	public void drawColorSelection() {
 		if(!TBSUtils.isStringEmpty(selectedGroup)){
 			int groupWidth = TBSGraphics.getStringBounds(getGraphics(),selectedGroup + " = ").width + 4;
-			int questionX = getX() + TBSGraphics.padding.width;
+			int questionX = (getX() + getWidth()/2) - (groupWidth/2+(TBSGraphics.textHeight + TBSGraphics.padding.height/2));
 			drawString(selectedGroup + " = ", questionX, getStringY());
 			questionX += groupWidth;
 			Rectangle colorRect = new Rectangle(questionX, getStringY(),
@@ -318,15 +319,15 @@ public class ColorEditorPrompt extends Prompt
 			return true;
 		if(getCloseButton().contains(e.getPoint()))
 			return true;
-		if(defaultColorSelection.contains(e.getPoint()))
-			return true;
 		if(customColor.contains(e.getPoint()))
 			return true;
 		for(Map.Entry<Integer, RGBEntryBox> rgbEntryBox : rgbEntryBoxes.entrySet()){
 			if(rgbEntryBox.getValue().getArea().contains(e.getPoint()))
 				return true;
 		}
-		return groupSelection.contains(e.getPoint());
+		if(colorDD.isMouseOver(e))
+			return true;
+		return groupDD.isMouseOver(e);
 	}
 	
 	public class RGBEntryBox {
