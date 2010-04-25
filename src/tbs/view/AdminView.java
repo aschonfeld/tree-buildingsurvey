@@ -21,6 +21,7 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.HullCollision;
+import tbs.graphanalysis.OptimalHulls;
 import tbs.model.AdminModel;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyLoader;
@@ -67,6 +68,14 @@ public class AdminView extends TBSView {
 		}
 	};
 	
+	private Timer optimalTimer;
+	private boolean displayOptimalMenu = false;
+	private ActionListener optimalHider = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			optimalTimer.stop();
+		}
+	};
+	
 	public AdminView(Graphics2D g2, AdminModel m) {
 		super(true, m);
 		model = m;
@@ -82,6 +91,7 @@ public class AdminView extends TBSView {
 		}
 		hullTimer = new Timer(1000, hullHider);
 		collisionTimer = new Timer(1000, collisionHider);
+		optimalTimer = new Timer(1000, optimalHider);
 		dropDownTimer = new Timer(1000, dropDownHider);
 		positionButtons(g2);
 		positionModelElements(g2);
@@ -143,6 +153,8 @@ public class AdminView extends TBSView {
 			setDisplayDropDownMenu(true);
 			collisionTimer.stop();
 			displayCollisionMenu = false;
+			optimalTimer.stop();
+			displayOptimalMenu = false;
 		}
 	}
 	
@@ -166,6 +178,33 @@ public class AdminView extends TBSView {
 			setDisplayDropDownMenu(true);
 			hullTimer.stop();
 			displayHullMenu = false;
+			optimalTimer.stop();
+			displayOptimalMenu = false;
+		}
+	}
+	
+	public boolean isOptimalMenuDisplayed(){
+		if(displayOptimalMenu)
+			return true;
+		return optimalTimer.isRunning();
+	}
+	
+	public void setDisplayOptimalMenu(Boolean displayOptimalMenu){
+		if(!this.displayOptimalMenu && this.displayOptimalMenu == displayOptimalMenu)
+			return;
+		this.displayOptimalMenu = displayOptimalMenu;
+		if(!this.displayOptimalMenu){
+			if(optimalTimer.isRunning())
+				optimalTimer.restart();
+			else
+				optimalTimer.start();
+		}else{
+			optimalTimer.stop();
+			setDisplayDropDownMenu(true);
+			hullTimer.stop();
+			displayHullMenu = false;
+			collisionTimer.stop();
+			displayCollisionMenu = false;
 		}
 	}
 	
@@ -174,6 +213,8 @@ public class AdminView extends TBSView {
 		displayHullMenu = false;
 		collisionTimer.stop();
 		displayCollisionMenu = false;
+		optimalTimer.stop();
+		displayOptimalMenu = false;
 		dropDownTimer.stop();
 		displayDropDownMenu = false;
 	}
@@ -186,6 +227,8 @@ public class AdminView extends TBSView {
 		if(!getScreenPrintMode()){
 			renderGroupSelection(g2);
 			renderCollisionSelection(g2);
+			renderOptimalSelection(g2);
+			
 			TBSButtonType buttonClicked = model.getController().getButtonClicked();
 			if(buttonClicked == null || model.getPrompt() == null)
 				buttonClicked = TBSButtonType.TREE;
@@ -254,14 +297,23 @@ public class AdminView extends TBSView {
 					TBSGraphics.drawCenteredString(g2, "\u25C0 Groups (" + model.getHulls(true).size() + ")",
 							buttonRect.x, upperY, buttonRect.width, 0);
 					
-					//Hull Collisions Button
 					if(model.getHullCollisions(true).size() > 0){
+						//Hull Collisions Button
 						upperY += TBSGraphics.buttonsHeight;
 						buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
 						TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 						g2.setColor(Color.gray);
 						g2.draw(buttonRect);
 						TBSGraphics.drawCenteredString(g2, "\u25C0 Collisions (" + model.getHullCollisions(true).size() + ")",
+								buttonRect.x, upperY, buttonRect.width, 0);
+						
+						//Optimal Hulls Button
+						upperY += TBSGraphics.buttonsHeight;
+						buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+						TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+						g2.setColor(Color.gray);
+						g2.draw(buttonRect);
+						TBSGraphics.drawCenteredString(g2, "\u25C0 Optimal Groups (" + model.getOptimalHulls(true).size() + ")",
 								buttonRect.x, upperY, buttonRect.width, 0);
 					}
 				}
@@ -385,6 +437,36 @@ public class AdminView extends TBSView {
 					}
 					g2.setColor(Color.BLACK);
 					collisionButton.setLocation(collisionButton.x, collisionButton.y + TBSGraphics.collisionButtonHeight);
+					index++;
+				}
+			}
+		}
+	}
+	
+	public void renderOptimalSelection(Graphics2D g2){
+		if(!getScreenPrintMode()){
+			if(model.getPrompt() == null || model.getPrompt().renderElements()){
+				List<OptimalHulls> optimalHulls = model.getOptimalHulls(true);
+				Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,optimalHulls);
+				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
+				TBSGraphics.optimalButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
+				TBSGraphics.optimalButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+				Rectangle optimalButton = new Rectangle(hullHeaderEnd - TBSGraphics.optimalButtonWidth,
+						TBSGraphics.buttonsHeight*6, TBSGraphics.optimalButtonWidth, TBSGraphics.optimalButtonHeight);
+				int index=0;
+				for(OptimalHulls oh : optimalHulls){
+					//Render Collision
+					if(oh.getDisplay())
+						oh.render(g2, getXOffset(), getYOffset(), model);
+					//Render Button
+					if(isOptimalMenuDisplayed()){
+						TBSGraphics.renderButtonBackground(g2, optimalButton, false);
+						TBSGraphics.drawCenteredString(g2, oh.toString(),
+								optimalButton.x, optimalButton.y, optimalButton.width, optimalButton.height);
+						g2.draw(optimalButton);
+					}
+					g2.setColor(Color.BLACK);
+					optimalButton.setLocation(optimalButton.x, optimalButton.y + TBSGraphics.optimalButtonHeight);
 					index++;
 				}
 			}

@@ -172,7 +172,7 @@ public abstract class TBSView extends JComponent implements Printable{
 		buttonDimensions = TBSGraphics.getStringBounds(g2,"Names");
 		TBSGraphics.namesButtonWidth = buttonDimensions.width + TBSGraphics.checkWidth + TBSGraphics.padding.width * 2;
 		
-		buttonDimensions = TBSGraphics.getStringBounds(g2,"\u25C0 Collisions");
+		buttonDimensions = TBSGraphics.getStringBounds(g2,"\u25C0 Optimal Groups");
 		TBSGraphics.groupsButtonWidth = buttonDimensions.width + TBSGraphics.groupCtWidth + TBSGraphics.padding.width * 2;
 		
 	}

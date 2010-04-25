@@ -4,6 +4,7 @@
 package tbs;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -140,14 +141,20 @@ public class TBSUtils {
 				for(int i2=hulls.size()-1;i2>i1;i2--){
 					ch1 = hulls.get(i1);
 					ch2 = hulls.get(i2);
-					Area intersect = new Area(ch1.getHullShape()); 
-					intersect.intersect(new Area(ch2.getHullShape())); 
-					if (!intersect.isEmpty())
+					if (collide(ch1.getHullShape(), ch2.getHullShape()))
 						hullCollisions.add(new HullCollision(1, ch1, ch2));
 				}
 			}
 		}
 		return hullCollisions;
+	}
+	
+	public static boolean collide(Polygon p1, Polygon p2){
+		if(p1 == null || p2 == null)
+			return false;
+		Area intersect = new Area(p1); 
+		intersect.intersect(new Area(p2)); 
+		return !intersect.isEmpty();
 	}
 	
 	public static List<String> collisonText(AdminModel model){
@@ -164,5 +171,4 @@ public class TBSUtils {
 			collisionText.add(hc.getAnalysisText());
 		return collisionText;
 	}
-
 }
