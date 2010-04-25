@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import tbs.model.ModelElement;
+import tbs.view.dropdown.SubDropDownType;
 
 /**
  * This class encapsulates the constants used in graphics handling for
@@ -233,19 +234,33 @@ public class TBSGraphics {
 	public static int buttonsHeight = 0;
 
 	/**
-	 * Height of hull buttons. Set in  [AdminView.renderSubDropDown]
+	 * Width of hull buttons. Set in  [AdminView.renderSubDropDown]
 	 */
-	public static Dimension hullButton = new Dimension();
+	public static int hullButtonWidth = 0;
 	
 	/**
 	 * Width of collision buttons. Set in [AdminView.renderSubDropDown]
 	 */ 
-	public static Dimension collisionButton = new Dimension();
+	public static int collisionButtonWidth = 0;
 	
 	/**
 	 * Width of optimal buttons. Set in [AdminView.renderSubDropDown]
 	 */ 
-	public static Dimension optimalButton = new Dimension();
+	public static int optimalButtonWidth = 0;
+	
+	public static void setSubDropDownWidth(SubDropDownType type, int width){
+		switch(type){
+			case HULL:
+				hullButtonWidth = width;
+				break;
+			case COLLISION:
+				collisionButtonWidth = width;
+				break;
+			case OPTIMAL_HULL:
+				optimalButtonWidth = width;
+				break;
+		}
+	}
 	
 	public static Color[] defualtGroupColors = new Color[]{Color.MAGENTA,
 		Color.ORANGE, Color.PINK, new Color(0,100,0),
