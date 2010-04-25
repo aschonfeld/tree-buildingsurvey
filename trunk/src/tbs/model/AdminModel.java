@@ -16,6 +16,7 @@ import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.Edge;
 import tbs.graphanalysis.Graph;
 import tbs.graphanalysis.HullCollision;
+import tbs.graphanalysis.OptimalHulls;
 import tbs.graphanalysis.Vertex;
 import tbs.model.admin.Student;
 import tbs.view.TBSButtonType;
@@ -146,6 +147,11 @@ public class AdminModel extends TBSModel
 		return allHulls;
 	}
 	
+	public void deselectHulls(){
+		for(ConvexHull ch : getHulls(true))
+			ch.setDisplayHull(false);
+	}
+	
 	public List<HullCollision> getHullCollisions(Boolean all) {
 		if(!all)
 			return hullCollisions;
@@ -154,6 +160,29 @@ public class AdminModel extends TBSModel
 		for(ConvexHull hull : hulls)
 			allCollisions.addAll(hull.getChildCollisions());
 		return allCollisions;
+	}
+	
+	public void deselectCollisions(){
+		for(HullCollision hc : getHullCollisions(true))
+			hc.setDisplayCollision(false);
+	}
+	
+	public List<OptimalHulls> getOptimalHulls(Boolean all){
+		List<OptimalHulls> optimalHulls = new LinkedList<OptimalHulls>();
+		for(HullCollision hc : hullCollisions)
+				optimalHulls.add(hc.getOptimalHulls());
+		if(all){
+			for(ConvexHull hull : hulls){
+				for(HullCollision hc : hull.getChildCollisions())
+					optimalHulls.add(hc.getOptimalHulls());
+			}
+		}
+		return optimalHulls;
+	}
+	
+	public void deselectOptimalHulls(){
+		for(OptimalHulls oh : getOptimalHulls(true))
+			oh.setDisplay(false);
 	}
 	
 	public Map<String, Color> getColorChooser(){

@@ -23,11 +23,13 @@ public class ConvexHull {
 		}
 	};
 	
-	private List<Point> points = new LinkedList<Point>();
+	private List<OrganismNode> nodes;
+	private List<Point> points;
 	private ConvexHull parent = null;
 	private int level;
 	private List<Point> hull;
 	private Polygon hullShape;
+	private Point centroid;
 	private String hullName;
 	private List<ConvexHull> children = new LinkedList<ConvexHull>();
 	private List<HullCollision> childCollisions;
@@ -45,6 +47,7 @@ public class ConvexHull {
 	 */
 	public ConvexHull(List<OrganismNode> nodes, String hullName, ConvexHull parent) {
 		this.level = parent == null ? 1 : parent.getLevel()+1;
+		this.nodes = nodes;
 		
 		//Construct points as well as any children hull that exist
 		this.points = new LinkedList<Point>();
@@ -73,6 +76,7 @@ public class ConvexHull {
 				hullShape.addPoint(p.x, p.y);
 		}else
 			GrahamScan();
+		
 		children = new LinkedList<ConvexHull>();
 		if(childrenGroups.size() > 0){
 			for(Map.Entry<String, List<OrganismNode>> e : childrenGroups.entrySet())
@@ -99,9 +103,9 @@ public class ConvexHull {
 		return allChildren;
 	}
 
-	public List<HullCollision> getChildCollisions() {
-		return childCollisions;
-	}
+	public List<HullCollision> getChildCollisions() {return childCollisions;}
+	public Point getCentroid() {return centroid;}
+	public List<OrganismNode> getNodes() {return nodes;}
 
 	public void toggleHull(){this.displayHull = !displayHull;}
 	public String toString(){return hullName + (displayHull ? " \u2713" : "");}
@@ -176,8 +180,15 @@ public class ConvexHull {
         }
 		hullPoints.push(polarPoints.get(0).getPoint());
 		hull.addAll(hullPoints);
-		for(Point p : hull)
+		int centroidX = 0, centroidY = 0;
+		for(Point p : hull){
 			hullShape.addPoint(p.x, p.y);
+			centroidX += p.x;
+			centroidY += p.y;
+		}
+		centroidX = (centroidX/hull.size());
+		centroidY = (centroidY/hull.size());
+		centroid = new Point(centroidX, centroidY);
 	}
 	
 	public static boolean formsLeftTurn(Point a, Point b, Point c) {
