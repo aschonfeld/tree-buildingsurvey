@@ -8,21 +8,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JScrollBar;
-import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
+import tbs.graphanalysis.ConvexHull;
+import tbs.graphanalysis.HullCollision;
 import tbs.graphanalysis.OptimalHulls;
 import tbs.model.AdminModel;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyLoader;
 import tbs.view.dropdown.SubDropDown;
+import tbs.view.dropdown.SubDropDownType;
 
 /**
  * TBSView contains the logic for rendering the information contained in
@@ -41,38 +44,13 @@ public class AdminView extends TBSView {
 	private boolean hasStudentScroll = false;
 	private JScrollBar studentBar;
 	private int studentYOffset = 0;
+	private Rectangle mainDropDown;
+	private Map<SubDropDownType, Rectangle> subDropDowns;
 	
-	private Timer dropDownTimer;
 	private boolean displayDropDownMenu = false;
-	private ActionListener dropDownHider = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			dropDownTimer.stop();
-		}
-	};
-	
-	private Timer hullTimer;
 	private boolean displayHullMenu = false;
-	private ActionListener hullHider = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			hullTimer.stop();
-		}
-	};
-	
-	private Timer collisionTimer;
 	private boolean displayCollisionMenu = false;
-	private ActionListener collisionHider = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			collisionTimer.stop();
-		}
-	};
-	
-	private Timer optimalTimer;
 	private boolean displayOptimalMenu = false;
-	private ActionListener optimalHider = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			optimalTimer.stop();
-		}
-	};
 	
 	public AdminView(Graphics2D g2, AdminModel m) {
 		super(true, m);
@@ -87,10 +65,10 @@ public class AdminView extends TBSView {
 		}else{
 			studentBar = new JScrollBar();
 		}
-		hullTimer = new Timer(1000, hullHider);
-		collisionTimer = new Timer(1000, collisionHider);
-		optimalTimer = new Timer(1000, optimalHider);
-		dropDownTimer = new Timer(1000, dropDownHider);
+		mainDropDown = new Rectangle();
+		subDropDowns = new HashMap<SubDropDownType, Rectangle>();
+		for(SubDropDownType sddType : SubDropDownType.values())
+			subDropDowns.put(sddType, new Rectangle());
 		positionButtons(g2);
 		positionModelElements(g2);
 	}
@@ -112,109 +90,84 @@ public class AdminView extends TBSView {
 		studentYOffset = yo;
 	}
 	
-	public boolean isDropDownMenuDisplayed(){
-		if(displayDropDownMenu)
-			return true;
-		return dropDownTimer.isRunning();
-	}
-	
 	public void setDisplayDropDownMenu(Boolean displayDropDownMenu){
-		if(!this.displayDropDownMenu && this.displayDropDownMenu == displayDropDownMenu)
-			return;
 		this.displayDropDownMenu = displayDropDownMenu;
-		if(!this.displayDropDownMenu){
-			if(dropDownTimer.isRunning())
-				dropDownTimer.restart();
-			else
-				dropDownTimer.start();
-		}else
-			dropDownTimer.stop();
-	}
-	
-	public boolean isHullMenuDisplayed(){
-		if(displayHullMenu)
-			return true;
-		return hullTimer.isRunning();
+		if(!this.displayDropDownMenu)
+			mainDropDown = new Rectangle();
 	}
 	
 	public void setDisplayHullMenu(Boolean displayHullMenu){
-		if(!this.displayHullMenu && this.displayHullMenu == displayHullMenu)
-			return;
 		this.displayHullMenu = displayHullMenu;
-		if(!this.displayHullMenu){
-			if(hullTimer.isRunning())
-				hullTimer.restart();
-			else
-				hullTimer.start();
-		}else{
-			hullTimer.stop();
+		if(!this.displayHullMenu)
+			subDropDowns.put(SubDropDownType.HULL, new Rectangle());
+		else{
 			setDisplayDropDownMenu(true);
-			collisionTimer.stop();
 			displayCollisionMenu = false;
-			optimalTimer.stop();
 			displayOptimalMenu = false;
 		}
-	}
-	
-	public boolean isCollisionMenuDisplayed(){
-		if(displayCollisionMenu)
-			return true;
-		return collisionTimer.isRunning();
 	}
 	
 	public void setDisplayCollisionMenu(Boolean displayCollisionMenu){
 		if(!this.displayCollisionMenu && this.displayCollisionMenu == displayCollisionMenu)
 			return;
 		this.displayCollisionMenu = displayCollisionMenu;
-		if(!this.displayCollisionMenu){
-			if(collisionTimer.isRunning())
-				collisionTimer.restart();
-			else
-				collisionTimer.start();
-		}else{
-			collisionTimer.stop();
+		if(!this.displayCollisionMenu)
+			subDropDowns.put(SubDropDownType.COLLISION, new Rectangle());
+		else{
 			setDisplayDropDownMenu(true);
-			hullTimer.stop();
 			displayHullMenu = false;
-			optimalTimer.stop();
 			displayOptimalMenu = false;
 		}
 	}
 	
-	public boolean isOptimalMenuDisplayed(){
-		if(displayOptimalMenu)
-			return true;
-		return optimalTimer.isRunning();
-	}
-	
 	public void setDisplayOptimalMenu(Boolean displayOptimalMenu){
-		if(!this.displayOptimalMenu && this.displayOptimalMenu == displayOptimalMenu)
-			return;
 		this.displayOptimalMenu = displayOptimalMenu;
-		if(!this.displayOptimalMenu){
-			if(optimalTimer.isRunning())
-				optimalTimer.restart();
-			else
-				optimalTimer.start();
-		}else{
-			optimalTimer.stop();
+		if(!this.displayOptimalMenu)
+			subDropDowns.put(SubDropDownType.OPTIMAL_HULL, new Rectangle());
+			
+		else{
 			setDisplayDropDownMenu(true);
-			hullTimer.stop();
 			displayHullMenu = false;
-			collisionTimer.stop();
 			displayCollisionMenu = false;
 		}
 	}
 	
+	public void displaySubDropDown(SubDropDownType type){
+		boolean displayMenu = false, displayHull = false, displayCollision = false,
+			displayOptimal = false;
+		if(type != null){
+			switch(type){
+				case HULL:
+					displayHull = true;
+					break;
+				case COLLISION:
+					displayCollision = true;
+					break;
+				case OPTIMAL_HULL:
+					displayOptimal = true;
+					break;
+			}
+			displayMenu = true;
+		}
+		setDisplayHullMenu(displayHull);
+		setDisplayCollisionMenu(displayCollision);
+		setDisplayOptimalMenu(displayOptimal);
+		setDisplayDropDownMenu(displayMenu);
+	}
+	
 	public void closeDropDowns(){
-		hullTimer.stop();
 		displayHullMenu = false;
-		collisionTimer.stop();
 		displayCollisionMenu = false;
-		optimalTimer.stop();
 		displayOptimalMenu = false;
-		dropDownTimer.stop();
 		displayDropDownMenu = false;
+	}
+
+	public Rectangle getMainDropDown() {
+		return mainDropDown;
+	}
+	
+	public Rectangle getSubDropDown(SubDropDownType type) {
+		return subDropDowns.get(type);
 	}
 
 	/**
@@ -222,17 +175,7 @@ public class AdminView extends TBSView {
 	 */
 	public void renderButtons(Graphics2D g2)
 	{
-		if(!getScreenPrintMode()){
-			Dimension temp = renderSubDropDown(g2, model.getHulls(true), isHullMenuDisplayed(), 4);
-			if(temp != null)
-				TBSGraphics.hullButton = temp;
-			temp = renderSubDropDown(g2, model.getHullCollisions(true), isCollisionMenuDisplayed(), 5);
-			if(temp != null)
-				TBSGraphics.collisionButton = temp;
-			temp = renderSubDropDown(g2, model.getOptimalHulls(true), isOptimalMenuDisplayed(), 6);
-			if(temp != null)
-				TBSGraphics.optimalButton = temp;
-			
+		if(!getScreenPrintMode()){			
 			TBSButtonType buttonClicked = model.getController().getButtonClicked();
 			if(buttonClicked == null || model.getPrompt() == null)
 				buttonClicked = TBSButtonType.TREE;
@@ -255,43 +198,76 @@ public class AdminView extends TBSView {
 				buttonRect.setLocation(buttonRect.x + TBSGraphics.buttonsWidth, buttonRect.y);
 			}
 
+			/*
+			 * Render the item(s) that have been selected by the user from the sub drop-downs
+			 * (hulls, collisions, optimal groups) now so that when the user hovers over the
+			 * drop-down menu it will display above the item.
+			 */
+			List<ConvexHull> hulls = model.getHulls(true);
+			List<HullCollision> collisions = model.getHullCollisions(true);
+			List<OptimalHulls> optimals = model.getOptimalHulls(true);
+			
+			for(SubDropDown sdd : hulls){
+				if(sdd.getDisplay())
+					sdd.render(g2, getXOffset(), getYOffset(), model);
+			}
+			for(SubDropDown sdd : collisions){
+				if(sdd.getDisplay())
+					sdd.render(g2, getXOffset(), getYOffset(), model);
+			}
+			for(SubDropDown sdd : optimals){
+				if(sdd.getDisplay())
+					sdd.render(g2, getXOffset(), getYOffset(), model);
+			}
+			mainDropDown.setLocation(model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth()),
+					TBSGraphics.buttonsHeight);
 			//Drop Down Menu Button
-			buttonRect = new Rectangle(model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth()),
-					0,TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight);
+			buttonRect = new Rectangle(mainDropDown.x, 0, TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight);
 			TBSGraphics.renderButtonBackground(g2, buttonRect, false);
 			g2.setColor(Color.gray);
 			g2.draw(buttonRect);
 			TBSGraphics.drawCenteredString(g2, "Menu",
 					buttonRect.x, upperY, buttonRect.width, 0);
-			
-			if(isDropDownMenuDisplayed()){
-				//Print Button
-				upperY = drawDropDownButton(g2, upperY, buttonRect, "Print");
+			if(displayDropDownMenu){
+				mainDropDown.setSize(TBSGraphics.groupsButtonWidth, TBSGraphics.buttonsHeight*model.getDropDownButtonCount());
 				
-				//Show All Tooltips Button
+				upperY = drawDropDownButton(g2, upperY, buttonRect, "Print");
 				upperY = drawDropDownButton(g2, upperY, buttonRect, 
 						"Names & Groups" + (getDisplayAllTooltips() ? " \u2713" : ""));
 				
-				//Group Hulls Button
-				if(model.getHulls(true).size() > 0){
-					//Group Color Editor
+				if(model.getDropDownButtonCount() >= 5){
 					upperY = drawDropDownButton(g2, upperY, buttonRect, "Group Colors");
-					
-					//Group Hulls Button
+					upperY = drawDropDownButton(g2, upperY, buttonRect, "Deselect All");
 					upperY = drawDropDownButton(g2, upperY, buttonRect,
 							"\u25C0 Groups (" + model.getHulls(true).size() + ")");
 					
-					if(model.getHullCollisions(true).size() > 0){
-						//Hull Collisions Button
+					if(model.getDropDownButtonCount() == 7){
 						upperY = drawDropDownButton(g2, upperY, buttonRect,
 								"\u25C0 Collisions (" + model.getHullCollisions(true).size() + ")");
-						
-						//Optimal Hulls Button
 						drawDropDownButton(g2, upperY, buttonRect,
 								"\u25C0 Optimal Groups (" + model.getOptimalHulls(true).size() + ")");
 					}
 				}
+			}else
+				mainDropDown.setSize(0,0);
+			
+			List<SubDropDown> displayedGroup = new LinkedList<SubDropDown>();
+			SubDropDownType displayedType = null;
+			if(displayHullMenu){
+				displayedGroup.addAll(hulls);
+				displayedType = SubDropDownType.HULL;
 			}
+			if(displayCollisionMenu){
+				displayedGroup.addAll(collisions);
+				displayedType = SubDropDownType.COLLISION;
+			}
+			if(displayOptimalMenu){
+				displayedGroup.addAll(optimals);
+				displayedType = SubDropDownType.OPTIMAL_HULL;
+			}
+			if(!displayedGroup.isEmpty())
+				renderSubDropDown(g2, displayedGroup, displayedType);
+
 		}
 	}
 	
@@ -364,35 +340,30 @@ public class AdminView extends TBSView {
 		}
 	}
 	
-	private Dimension renderSubDropDown(Graphics2D g2, List<? extends SubDropDown> items, boolean menuDisplayed, int depth){
-		Dimension returnInfo = null;
+	private void renderSubDropDown(Graphics2D g2, List<? extends SubDropDown> items, SubDropDownType type){
 		if(!getScreenPrintMode()){
 				if(model.getPrompt() == null || model.getPrompt().renderElements()){
 					Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,items);
-					int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
+					int headerEnd = mainDropDown.x;
 					int buttonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-					int buttonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-					returnInfo = new Dimension(buttonWidth, buttonHeight);
-					Rectangle hullButton = new Rectangle(hullHeaderEnd - buttonWidth,
-							TBSGraphics.buttonsHeight*depth, buttonWidth, buttonHeight);
-					int index=0;
+					TBSGraphics.setSubDropDownWidth(type, buttonWidth);
+					Rectangle subButton = new Rectangle(headerEnd - buttonWidth,
+							TBSGraphics.buttonsHeight*type.getDropDownIndex(), buttonWidth, TBSGraphics.buttonsHeight);
+					Rectangle subButtons = new Rectangle(subButton.x, subButton.y, subButton.width, 0);
 					for(SubDropDown item : items){						
-						//Render Button
-						if(menuDisplayed){
-							TBSGraphics.renderButtonBackground(g2, hullButton, false);
-							TBSGraphics.drawCenteredString(g2, item.toString(),
-									hullButton.x, hullButton.y, hullButton.width, hullButton.height);
-							g2.draw(hullButton);
-						}
-						g2.setColor(Color.BLACK);
-						if(item.getDisplay())
-							item.render(g2, getXOffset(), getYOffset(), model);
-						hullButton.setLocation(hullButton.x, hullButton.y + hullButton.height);
-						index++;
+						TBSGraphics.renderButtonBackground(g2, subButton, false);
+						TBSGraphics.drawCenteredString(g2, item.toString(),
+								subButton.x, subButton.y, subButton.width, subButton.height);
+						g2.draw(subButton);
+						subButtons.setSize(subButtons.width, subButtons.height + subButton.height);
+						subButton.setLocation(subButton.x, subButton.y + subButton.height);
 					}
+					if(subButtons.height == 0)
+						subDropDowns.put(type, new Rectangle());
+					else
+						subDropDowns.put(type, subButtons);
 				}
 			}
-		return returnInfo;
 	}
 
 	/**

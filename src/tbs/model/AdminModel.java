@@ -21,6 +21,7 @@ import tbs.graphanalysis.Vertex;
 import tbs.model.admin.Student;
 import tbs.view.TBSButtonType;
 import tbs.view.dropdown.SubDropDown;
+import tbs.view.dropdown.SubDropDownType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.admin.AnalysisPrompt;
 import tbs.view.prompt.admin.ColorEditorPrompt;
@@ -38,12 +39,14 @@ public class AdminModel extends TBSModel
 	private Graph graph;
 	private Map<String, Color> groupColorAssoc;
 	private ColorEditorPrompt colorEditor;
+	private int dropDownButtonCount;
 
 	public AdminModel(TBSApplet applet,	List<OrganismNode> organisms, List<Student> students) {
 		super(applet, organisms);
 		this.students = students;
 		Student student = this.students.get(0);
 		setStudent(student);
+		dropDownButtonCount = 2;
 		String tree = student.getTree();
 		if(!TBSUtils.isStringEmpty(tree)){
 			loadTree(tree);
@@ -80,6 +83,7 @@ public class AdminModel extends TBSModel
 			setStudent(student);
 			String tree = student.getTree();
 			resetModel();
+			dropDownButtonCount = 2;
 			if(!TBSUtils.isStringEmpty(tree)){
 				loadTree(tree);
 				calculateHullCollisions();
@@ -134,7 +138,11 @@ public class AdminModel extends TBSModel
 			if(e.getValue().size() > 2)
 				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
 		}
+		if(hulls.size() > 0)
+			dropDownButtonCount = 5;
 		hullCollisions = TBSUtils.hullCollisions(hulls);
+		if(hullCollisions.size() > 0)
+			dropDownButtonCount = 7;
 	}
 
 	public List<ConvexHull> getHulls(Boolean all) {
@@ -171,16 +179,41 @@ public class AdminModel extends TBSModel
 		return optimalHulls;
 	}
 	
-	public void deselectItems(int indicator){
+	public void displaySubDropDownItem(SubDropDownType type, int index){
+		SubDropDown selection = null;
+		switch(type){
+			case HULL:
+				selection = getHulls(true).get(index);
+				break;
+			case COLLISION:
+				selection = getHullCollisions(true).get(index);
+				break;
+			case OPTIMAL_HULL:
+				selection = getOptimalHulls(true).get(index);
+				break;
+		}
+		boolean previousDisplay = selection.getDisplay();
+		//Close previous selections
+		for(SubDropDownType sdd : SubDropDownType.values()){
+			if(sdd.equals(type)){
+				if(!type.getViewMultiple())
+					deselectItems(sdd);
+			}else
+				deselectItems(sdd);
+		}
+		selection.setDisplay(!previousDisplay);
+	}
+	
+	public void deselectItems(SubDropDownType type){
 		List<SubDropDown> items = new LinkedList<SubDropDown>();
-		switch(indicator){
-			case 1:
+		switch(type){
+			case HULL:
 				items.addAll(getHulls(true));
 				break;
-			case 2:
+			case COLLISION:
 				items.addAll(getHullCollisions(true));
 				break;
-			case 3:
+			case OPTIMAL_HULL:
 				items.addAll(getOptimalHulls(true));
 				break;
 		}
@@ -188,6 +221,15 @@ public class AdminModel extends TBSModel
 			item.setDisplay(false);
 	}
 	
+	public void deselectAllItems(){
+		for(SubDropDownType sdd : SubDropDownType.values())
+			deselectItems(sdd);
+	}
+	
+	public int getDropDownButtonCount() {
+		return dropDownButtonCount;
+	}
+
 	public Map<String, Color> getColorChooser(){
 		return groupColorAssoc;
 	}
