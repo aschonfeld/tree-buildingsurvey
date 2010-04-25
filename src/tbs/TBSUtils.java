@@ -17,6 +17,7 @@ import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.HullCollision;
 import tbs.model.AdminModel;
 import tbs.model.Node;
+import tbs.view.dropdown.SubDropDown;
 
 public class TBSUtils {
 
@@ -170,5 +171,16 @@ public class TBSUtils {
 		for(HullCollision hc : collisions)
 			collisionText.add(hc.getAnalysisText());
 		return collisionText;
+	}
+	
+	public static String commaSeparatedString(Collection<?> strings){
+		StringBuilder buff = new StringBuilder(); 
+	    String sep = ""; 
+	    for (Object str : strings) { 
+	        buff.append(sep); 
+	        buff.append(str.toString()); 
+	        sep = ", "; 
+	    } 
+	    return buff.toString(); 
 	}
 }

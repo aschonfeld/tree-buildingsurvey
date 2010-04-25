@@ -12,8 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import tbs.model.AdminModel;
+import tbs.view.dropdown.SubDropDown;
 
-public class HullCollision {
+public class HullCollision extends SubDropDown{
 
 	private int level;
 	private ConvexHull hull1;
@@ -21,7 +22,6 @@ public class HullCollision {
 	private List<Point> collisionPoints;
 	private Point centroid;
 	private String analysisText;
-	private Boolean displayCollision;
 	private OptimalHulls optimalHulls;
 	
 	public HullCollision(int level, ConvexHull hull1, ConvexHull hull2){
@@ -31,7 +31,6 @@ public class HullCollision {
 		analysisText = new StringBuffer(" \u2022 ").append(hull1)
 		.append(" group collides with the ")
 		.append(hull2).append(" group.").toString();
-		displayCollision = false;
 		
 		Area intersect = new Area(hull1.getHullShape()); 
 		intersect.intersect(new Area(hull2.getHullShape()));
@@ -83,14 +82,11 @@ public class HullCollision {
 	}
 	
 	public String getAnalysisText(){return analysisText;}	
-	public Boolean getDisplayCollision() {return displayCollision;}
-	public void setDisplayCollision(Boolean displayCollision) {this.displayCollision = displayCollision;}
 	public Point getCentroid() {return centroid;}
 	public ConvexHull getHull1(){return hull1;}
 	public ConvexHull getHull2(){return hull2;}
 	public int getLevel(){return level;}
 	public OptimalHulls getOptimalHulls(){return optimalHulls;}
-	public void toggleCollision(){this.displayCollision = !displayCollision;}
-	public String toString(){return hull1.getHullName() + " - " + hull2.getHullName() + (displayCollision ? " \u2713" : "");}
+	public String toString(){return hull1.getHullName() + " - " + hull2.getHullName() + (getDisplay() ? " \u2713" : "");}
 	
 }

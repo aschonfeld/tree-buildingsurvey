@@ -13,19 +13,19 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.model.OrganismNode;
+import tbs.view.dropdown.SubDropDown;
 
-public class OptimalHulls {
+public class OptimalHulls extends SubDropDown {
 
 	private String hull1;
 	private String hull2;
 	private int level;
+	private String text;
 	
 	private List<Point> optimalHull1Points;
 	private List<OrganismNode> removedHull1Nodes;
 	private List<Point> optimalHull2Points;
 	private List<OrganismNode> removedHull2Nodes;
-	
-	private boolean display=false;
 	
 	public OptimalHulls(HullCollision collision){
 		removedHull1Nodes = new LinkedList<OrganismNode>();
@@ -97,6 +97,17 @@ public class OptimalHulls {
 		}
 		optimalHull1Points = hull1Points;
 		optimalHull2Points = hull2Points;
+		StringBuffer textBuff = new StringBuffer("\"Optimal Groups\" is optimization of the current student's arrangement of organisms so that groupings no longer collide.");
+		textBuff.append(" This particular optimization required the removal of ");
+		textBuff.append(removedHull1Nodes.size()).append(" ").append(hull1);
+		if(removedHull1Nodes.size() > 1)
+			textBuff.append("s");
+		textBuff.append(" and ");
+		textBuff.append(removedHull2Nodes.size()).append(" ").append(hull2);
+		if(removedHull2Nodes.size() > 1)
+			textBuff.append("s");
+		textBuff.append(" in order to eliminate group collisions.");
+		text = textBuff.toString();
 	}
 	
 	
@@ -135,10 +146,6 @@ public class OptimalHulls {
 		}
 	}
 	
-	public Boolean getDisplay() {return display;}
-	public void setDisplay(Boolean display) {this.display = display;}
-	public void toggleDisplay(){this.display = !display;}
-	public String toString(){return hull1 + " - " + hull2 + (display ? " \u2713" : "");}
-	
-	
+	public String toString(){return hull1 + " - " + hull2 + (getDisplay() ? " \u2713" : "");}
+	public String getText(){return text;}	
 }

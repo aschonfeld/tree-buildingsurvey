@@ -233,34 +233,19 @@ public class TBSGraphics {
 	public static int buttonsHeight = 0;
 
 	/**
-	 * Width of hull buttons. Set in [AdminView.renderGoupSelection]
-	 */ 
-	public static int hullButtonWidth = 0;
-	
-	/**
-	 * Height of hull buttons. Set in  [AdminView.renderGoupSelection]
+	 * Height of hull buttons. Set in  [AdminView.renderSubDropDown]
 	 */
-	public static int hullButtonHeight = 0;
+	public static Dimension hullButton = new Dimension();
 	
 	/**
-	 * Width of collision buttons. Set in [AdminView.renderCollisionSelection]
+	 * Width of collision buttons. Set in [AdminView.renderSubDropDown]
 	 */ 
-	public static int collisionButtonWidth = 0;
+	public static Dimension collisionButton = new Dimension();
 	
 	/**
-	 * Height of collision buttons. Set in  [AdminView.renderCollisionSelection]
-	 */
-	public static int collisionButtonHeight = 0;
-	
-	/**
-	 * Width of optimal buttons. Set in [AdminView.renderOptimalSelection]
+	 * Width of optimal buttons. Set in [AdminView.renderSubDropDown]
 	 */ 
-	public static int optimalButtonWidth = 0;
-	
-	/**
-	 * Height of optimal buttons. Set in  [AdminView.renderOptimalSelection]
-	 */
-	public static int optimalButtonHeight = 0;
+	public static Dimension optimalButton = new Dimension();
 	
 	public static Color[] defualtGroupColors = new Color[]{Color.MAGENTA,
 		Color.ORANGE, Color.PINK, new Color(0,100,0),

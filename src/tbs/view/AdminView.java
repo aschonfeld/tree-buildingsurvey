@@ -3,7 +3,6 @@
 
 package tbs.view;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,12 +18,11 @@ import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
-import tbs.graphanalysis.ConvexHull;
-import tbs.graphanalysis.HullCollision;
 import tbs.graphanalysis.OptimalHulls;
 import tbs.model.AdminModel;
 import tbs.model.admin.Student;
 import tbs.properties.PropertyLoader;
+import tbs.view.dropdown.SubDropDown;
 
 /**
  * TBSView contains the logic for rendering the information contained in
@@ -225,9 +223,15 @@ public class AdminView extends TBSView {
 	public void renderButtons(Graphics2D g2)
 	{
 		if(!getScreenPrintMode()){
-			renderGroupSelection(g2);
-			renderCollisionSelection(g2);
-			renderOptimalSelection(g2);
+			Dimension temp = renderSubDropDown(g2, model.getHulls(true), isHullMenuDisplayed(), 4);
+			if(temp != null)
+				TBSGraphics.hullButton = temp;
+			temp = renderSubDropDown(g2, model.getHullCollisions(true), isCollisionMenuDisplayed(), 5);
+			if(temp != null)
+				TBSGraphics.collisionButton = temp;
+			temp = renderSubDropDown(g2, model.getOptimalHulls(true), isOptimalMenuDisplayed(), 6);
+			if(temp != null)
+				TBSGraphics.optimalButton = temp;
 			
 			TBSButtonType buttonClicked = model.getController().getButtonClicked();
 			if(buttonClicked == null || model.getPrompt() == null)
@@ -262,63 +266,44 @@ public class AdminView extends TBSView {
 			
 			if(isDropDownMenuDisplayed()){
 				//Print Button
-				upperY += TBSGraphics.buttonsHeight;
-				buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-				g2.setColor(Color.gray);
-				g2.draw(buttonRect);
-				TBSGraphics.drawCenteredString(g2, "Print",
-						buttonRect.x, upperY, buttonRect.width, 0);
+				upperY = drawDropDownButton(g2, upperY, buttonRect, "Print");
 				
 				//Show All Tooltips Button
-				upperY += TBSGraphics.buttonsHeight;
-				buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-				TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-				g2.setColor(Color.gray);
-				g2.draw(buttonRect);
-				TBSGraphics.drawCenteredString(g2, "Names" + (getDisplayAllTooltips() ? " \u2713" : ""),
-						buttonRect.x, upperY, buttonRect.width, 0);
+				upperY = drawDropDownButton(g2, upperY, buttonRect, 
+						"Names & Groups" + (getDisplayAllTooltips() ? " \u2713" : ""));
 				
 				//Group Hulls Button
 				if(model.getHulls(true).size() > 0){
 					//Group Color Editor
-					upperY += TBSGraphics.buttonsHeight;
-					buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-					g2.setColor(Color.gray);
-					g2.draw(buttonRect);
-					TBSGraphics.drawCenteredString(g2, "Group Colors", buttonRect.x, upperY, buttonRect.width, 0);
+					upperY = drawDropDownButton(g2, upperY, buttonRect, "Group Colors");
 					
-					upperY += TBSGraphics.buttonsHeight;
-					buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-					TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-					g2.setColor(Color.gray);
-					g2.draw(buttonRect);
-					TBSGraphics.drawCenteredString(g2, "\u25C0 Groups (" + model.getHulls(true).size() + ")",
-							buttonRect.x, upperY, buttonRect.width, 0);
+					//Group Hulls Button
+					upperY = drawDropDownButton(g2, upperY, buttonRect,
+							"\u25C0 Groups (" + model.getHulls(true).size() + ")");
 					
 					if(model.getHullCollisions(true).size() > 0){
 						//Hull Collisions Button
-						upperY += TBSGraphics.buttonsHeight;
-						buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-						TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-						g2.setColor(Color.gray);
-						g2.draw(buttonRect);
-						TBSGraphics.drawCenteredString(g2, "\u25C0 Collisions (" + model.getHullCollisions(true).size() + ")",
-								buttonRect.x, upperY, buttonRect.width, 0);
+						upperY = drawDropDownButton(g2, upperY, buttonRect,
+								"\u25C0 Collisions (" + model.getHullCollisions(true).size() + ")");
 						
 						//Optimal Hulls Button
-						upperY += TBSGraphics.buttonsHeight;
-						buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
-						TBSGraphics.renderButtonBackground(g2, buttonRect, false);
-						g2.setColor(Color.gray);
-						g2.draw(buttonRect);
-						TBSGraphics.drawCenteredString(g2, "\u25C0 Optimal Groups (" + model.getOptimalHulls(true).size() + ")",
-								buttonRect.x, upperY, buttonRect.width, 0);
+						drawDropDownButton(g2, upperY, buttonRect,
+								"\u25C0 Optimal Groups (" + model.getOptimalHulls(true).size() + ")");
 					}
 				}
 			}
 		}
+	}
+	
+	private int drawDropDownButton(Graphics2D g2, int upperY, Rectangle buttonRect, String label){
+		upperY += TBSGraphics.buttonsHeight;
+		buttonRect.setLocation(buttonRect.x, buttonRect.y + TBSGraphics.buttonsHeight);
+		TBSGraphics.renderButtonBackground(g2, buttonRect, false);
+		g2.setColor(Color.gray);
+		g2.draw(buttonRect);
+		TBSGraphics.drawCenteredString(g2, label,
+				buttonRect.x, upperY, buttonRect.width, 0);
+		return upperY;
 	}
 	
 	public void renderElements(Graphics2D g2) {
@@ -379,98 +364,35 @@ public class AdminView extends TBSView {
 		}
 	}
 	
-	public void renderGroupSelection(Graphics2D g2){
+	private Dimension renderSubDropDown(Graphics2D g2, List<? extends SubDropDown> items, boolean menuDisplayed, int depth){
+		Dimension returnInfo = null;
 		if(!getScreenPrintMode()){
-			if(model.getPrompt() == null || model.getPrompt().renderElements()){
-				List<ConvexHull> hulls = model.getHulls(true);
-				Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,hulls);
-				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
-				TBSGraphics.hullButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-				TBSGraphics.hullButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-				Rectangle hullButton = new Rectangle(hullHeaderEnd - TBSGraphics.hullButtonWidth,
-						TBSGraphics.buttonsHeight*4, TBSGraphics.hullButtonWidth, TBSGraphics.hullButtonHeight);
-				int index=0;
-				for(ConvexHull ch : hulls){
-					if(ch.getDisplayHull()){
-						//Render Hull
-						g2.setStroke(new BasicStroke(3));
-						g2.setColor(model.getGroupColor(ch.getHullName()));
-						ch.render(g2, getXOffset(), getYOffset());
-						g2.setStroke(new BasicStroke());
+				if(model.getPrompt() == null || model.getPrompt().renderElements()){
+					Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,items);
+					int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
+					int buttonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
+					int buttonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
+					returnInfo = new Dimension(buttonWidth, buttonHeight);
+					Rectangle hullButton = new Rectangle(hullHeaderEnd - buttonWidth,
+							TBSGraphics.buttonsHeight*depth, buttonWidth, buttonHeight);
+					int index=0;
+					for(SubDropDown item : items){						
+						//Render Button
+						if(menuDisplayed){
+							TBSGraphics.renderButtonBackground(g2, hullButton, false);
+							TBSGraphics.drawCenteredString(g2, item.toString(),
+									hullButton.x, hullButton.y, hullButton.width, hullButton.height);
+							g2.draw(hullButton);
+						}
+						g2.setColor(Color.BLACK);
+						if(item.getDisplay())
+							item.render(g2, getXOffset(), getYOffset(), model);
+						hullButton.setLocation(hullButton.x, hullButton.y + hullButton.height);
+						index++;
 					}
-					//Render Button
-					if(isHullMenuDisplayed()){
-						TBSGraphics.renderButtonBackground(g2, hullButton, false);
-						TBSGraphics.drawCenteredString(g2, ch.toString(),
-								hullButton.x, hullButton.y, hullButton.width, hullButton.height);
-						g2.draw(hullButton);
-					}
-					g2.setColor(Color.BLACK);
-					hullButton.setLocation(hullButton.x, hullButton.y + TBSGraphics.hullButtonHeight);
-					index++;
 				}
 			}
-		}
-	}
-	
-	public void renderCollisionSelection(Graphics2D g2){
-		if(!getScreenPrintMode()){
-			if(model.getPrompt() == null || model.getPrompt().renderElements()){
-				List<HullCollision> collisions = model.getHullCollisions(true);
-				Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,collisions);
-				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
-				TBSGraphics.collisionButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-				TBSGraphics.collisionButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-				Rectangle collisionButton = new Rectangle(hullHeaderEnd - TBSGraphics.collisionButtonWidth,
-						TBSGraphics.buttonsHeight*5, TBSGraphics.collisionButtonWidth, TBSGraphics.collisionButtonHeight);
-				int index=0;
-				for(HullCollision hc : collisions){
-					//Render Collision
-					if(hc.getDisplayCollision())
-						hc.render(g2, getXOffset(), getYOffset(), model);
-					//Render Button
-					if(isCollisionMenuDisplayed()){
-						TBSGraphics.renderButtonBackground(g2, collisionButton, false);
-						TBSGraphics.drawCenteredString(g2, hc.toString(),
-								collisionButton.x, collisionButton.y, collisionButton.width, collisionButton.height);
-						g2.draw(collisionButton);
-					}
-					g2.setColor(Color.BLACK);
-					collisionButton.setLocation(collisionButton.x, collisionButton.y + TBSGraphics.collisionButtonHeight);
-					index++;
-				}
-			}
-		}
-	}
-	
-	public void renderOptimalSelection(Graphics2D g2){
-		if(!getScreenPrintMode()){
-			if(model.getPrompt() == null || model.getPrompt().renderElements()){
-				List<OptimalHulls> optimalHulls = model.getOptimalHulls(true);
-				Dimension buttonDimensions = TBSGraphics.get2DStringBounds(g2,optimalHulls);
-				int hullHeaderEnd = model.getApplet().getWidth()-(TBSGraphics.groupsButtonWidth + getVerticalBar().getWidth());
-				TBSGraphics.optimalButtonWidth = buttonDimensions.width + TBSGraphics.padding.width * 2;
-				TBSGraphics.optimalButtonHeight = buttonDimensions.height + TBSGraphics.padding.height * 2;
-				Rectangle optimalButton = new Rectangle(hullHeaderEnd - TBSGraphics.optimalButtonWidth,
-						TBSGraphics.buttonsHeight*6, TBSGraphics.optimalButtonWidth, TBSGraphics.optimalButtonHeight);
-				int index=0;
-				for(OptimalHulls oh : optimalHulls){
-					//Render Collision
-					if(oh.getDisplay())
-						oh.render(g2, getXOffset(), getYOffset(), model);
-					//Render Button
-					if(isOptimalMenuDisplayed()){
-						TBSGraphics.renderButtonBackground(g2, optimalButton, false);
-						TBSGraphics.drawCenteredString(g2, oh.toString(),
-								optimalButton.x, optimalButton.y, optimalButton.width, optimalButton.height);
-						g2.draw(optimalButton);
-					}
-					g2.setColor(Color.BLACK);
-					optimalButton.setLocation(optimalButton.x, optimalButton.y + TBSGraphics.optimalButtonHeight);
-					index++;
-				}
-			}
-		}
+		return returnInfo;
 	}
 
 	/**
@@ -478,25 +400,35 @@ public class AdminView extends TBSView {
 	 */
 	public void renderScreenString(Graphics2D g2) {
 		if(!getScreenPrintMode()){
-			TBSButtonType buttonClicked = model.getController().getButtonClicked();
-			int yStep = TBSGraphics.buttonsHeight;
-
-			if(buttonClicked == null || model.getPrompt() == null)
-				buttonClicked = TBSButtonType.TREE;
-
-			Properties adminProps = PropertyLoader.getProperties("admin");
-			StringBuffer screenString = new StringBuffer(String.format(adminProps.getProperty(buttonClicked.name()), model.getStudent().getName()));
-			if(TBSButtonType.TREE.equals(buttonClicked)){
-				String lastUpdate = model.getStudent().getLastUpdate();
-				if(lastUpdate != null && lastUpdate.length() > 0)
-					screenString.append("(Last Update: ").append(lastUpdate).append(")");
+			String screenString = null;
+			for(OptimalHulls oh : model.getOptimalHulls(true)){
+				if(oh.getDisplay()){
+					screenString = oh.getText();
+					break;
+				}
 			}
+			if(screenString == null){
+				TBSButtonType buttonClicked = model.getController().getButtonClicked();
+				if(buttonClicked == null || model.getPrompt() == null)
+					buttonClicked = TBSButtonType.TREE;
+
+				Properties adminProps = PropertyLoader.getProperties("admin");
+				StringBuffer screenStringBuff = new StringBuffer(String.format(adminProps.getProperty(buttonClicked.name()), model.getStudent().getName()));
+				if(TBSButtonType.TREE.equals(buttonClicked)){
+					String lastUpdate = model.getStudent().getLastUpdate();
+					if(lastUpdate != null && lastUpdate.length() > 0)
+						screenStringBuff.append("(Last Update: ").append(lastUpdate).append(")");
+				}
+				screenString = screenStringBuff.toString();
+			}
+			
+			int yStep = TBSGraphics.buttonsHeight;
 			int studentWidth = TBSGraphics.maxStudentNameWidth + TBSGraphics.checkWidth + TBSGraphics.arrowWidth + 
 			+ getVerticalBar().getWidth() + (hasStudentScroll ? studentBar.getWidth() : 0);
 			int width = model.getApplet().getWidth() - studentWidth;
 			int x = (model.getApplet().getWidth() - studentWidth)/2 + (studentWidth-getVerticalBar().getWidth());
 
-			List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString.toString(), width);
+			List<String> lines = TBSGraphics.breakStringByLineWidth(g2, screenString, width);
 			int yVal = model.getApplet().getHeight() - (TBSGraphics.buttonsHeight * (lines.size()+1));
 			for(String line : lines) {
 				Dimension d = TBSGraphics.getStringBounds(g2, line);
