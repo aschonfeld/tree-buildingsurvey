@@ -1,4 +1,5 @@
 package tbs.graphanalysis;
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -13,9 +14,11 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import tbs.TBSUtils;
+import tbs.model.AdminModel;
 import tbs.model.OrganismNode;
+import tbs.view.dropdown.SubDropDown;
 
-public class ConvexHull {
+public class ConvexHull extends SubDropDown{
 	
 	public static Comparator<PolarPoint> polarPointComparator = new Comparator<PolarPoint>() {
 		public int compare( PolarPoint p1, PolarPoint p2 ) {
@@ -33,8 +36,6 @@ public class ConvexHull {
 	private String hullName;
 	private List<ConvexHull> children = new LinkedList<ConvexHull>();
 	private List<HullCollision> childCollisions;
-	private Boolean displayHull;
-	
 	/**
 	 * Constructor for base level hull (no parent)
 	 */
@@ -67,7 +68,6 @@ public class ConvexHull {
 		
 		this.hullName = hullName;
 		this.parent = parent;
-		displayHull = false;
 		hull = new ArrayList<Point>();
 		hullShape = new Polygon();
 		if(points.size() < 3){
@@ -89,8 +89,6 @@ public class ConvexHull {
 	public String getHullName() {return hullName;}
 	public List<Point> getHull(){return hull;}
 	public Polygon getHullShape(){return hullShape;}
-	public Boolean getDisplayHull() {return displayHull;}
-	public void setDisplayHull(Boolean displayHull) {this.displayHull = displayHull;}
 	public ConvexHull getParent() {return parent;}
 	public int getLevel() {return level;}
 
@@ -107,14 +105,16 @@ public class ConvexHull {
 	public Point getCentroid() {return centroid;}
 	public List<OrganismNode> getNodes() {return nodes;}
 
-	public void toggleHull(){this.displayHull = !displayHull;}
-	public String toString(){return hullName + (displayHull ? " \u2713" : "");}
+	public String toString(){return hullName + (getDisplay() ? " \u2713" : "");}
 	
-	public void render(Graphics2D g2, int xOffset, int yOffset){
+	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model){
+		g2.setStroke(new BasicStroke(3));
+		g2.setColor(model.getGroupColor(hullName));		
 		Polygon temp = new Polygon();
 		for(Point p : hull)
 			temp.addPoint(p.x - xOffset, p.y - yOffset);
 		g2.draw(temp);
+		g2.setStroke(new BasicStroke());
 	}
 	 
 	public void GrahamScan(){
