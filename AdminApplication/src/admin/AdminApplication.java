@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -34,6 +36,7 @@ public class AdminApplication extends JFrame {
 	public static TreeMap<String, Graph> studentNameToTree = null;
 	public static ArrayList<Graph> graphs;
 	private static ArrayList<Vertex> commonVertices = null; //organism nodes
+	private static Map<String, Color> groupColors;
 	private static ArrayList<VertexInfo> commonImages = null; //this simplifies things
 	private static int currentGraphIndex = 0;
 	public static AdminMultiWindow parent;
@@ -205,8 +208,8 @@ public class AdminApplication extends JFrame {
 				loadVerticesFromDirectory();
 		commonVertices = new ArrayList<Vertex>();
 		commonImages = new ArrayList<VertexInfo>();
-    	for(Map.Entry<String, VertexInfo> e : organismNameToImage.entrySet()) {
-            commonVertices.add(new Vertex(e.getValue(), new Point(0,0)));
+		for(Map.Entry<String, VertexInfo> e : organismNameToImage.entrySet()) {
+    		commonVertices.add(new Vertex(e.getValue(), new Point(0,0)));
             commonImages.add(e.getValue());
     	}
     }
@@ -214,26 +217,34 @@ public class AdminApplication extends JFrame {
     public static TreeMap<String, VertexInfo> loadVerticesFromDirectory() {
         TreeMap<String, VertexInfo> organismNameToImage = 
 				new TreeMap<String, VertexInfo>();
+        groupColors = new HashMap<String, Color>();
         try {
         	// read names of organisms and image file names from list.txt
         	BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream("images/list.txt")));
         	String line = null;
-        	String[] parseLine = null;
+        	List<String> parseLine = null;
         	String name = null;
         	StringBuffer imgFname = null;
-        	String type = null;
+        	List<String> types = null;
         	BufferedImage img = null;
+        	int index = 0;
         	while ((line = reader.readLine()) != null) {
         		// load image from files, and map organism name to image
-        		parseLine = line.split(",");
-        		name = parseLine[0];
-        		imgFname = new StringBuffer("images/").append(parseLine[1]);
-        		type = parseLine[2];
+        		parseLine = Arrays.asList(line.split(","));
+        		name = parseLine.get(0);
+        		imgFname = new StringBuffer("images/").append(parseLine.get(1));
+        		types = parseLine.subList(2, parseLine.size());
+        		for(String type : types){
+        			if(!groupColors.containsKey(type)){
+        				groupColors.put(type, Common.defualtGroupColors[index]);
+        				index++;
+        			}
+        		}
         		// System.out.println(organismName + " " + organismImageFilename);
         		InputStream imageis= new FileInputStream(imgFname.toString());
         		img = ImageIO.read(imageis);
-        		organismNameToImage.put(name, new VertexInfo(name, type, img));
+        		organismNameToImage.put(name, new VertexInfo(name, types, img));
         		imageis.close();
         	}
         	reader.close();
@@ -499,6 +510,17 @@ public class AdminApplication extends JFrame {
 		} catch (IOException e) {
 			System.out.println("Could not export data file:" + e);
 		}		
+	}
+	
+	public static Map<String, Color> getColorChooser(){
+		return groupColors;
+	}
+	
+	public static Color getGroupColor(String group){
+		Color returnVal = Color.BLACK;
+		if(groupColors.containsKey(group))
+			returnVal = groupColors.get(group);
+		return returnVal;
 	}
     
 }

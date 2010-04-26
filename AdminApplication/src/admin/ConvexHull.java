@@ -1,280 +1,198 @@
 package admin;
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeMap;
 
-/**
- * A class that demonstrates the graph algorithm, by accepting a group
- * of points from the current graph and by way of either the Quick Hull
- * algorithm or Brute Force algorithm, the Convex Hull of those points 
- * is calculated and returned in the form of a List of lines or points.
- * 
- * @author Jeff C. So(University of Lethbridge) & Andrew Schonfeld
- *  
- */
-public class ConvexHull {
-	/** 
-	 * Variable indicates which algorithm we are using
-	 */
-	public static final int Brute = 1;
-	public static final int QUICK = 2;
-
-	/**
-	 * Stores all the points
-	 */
-	private List<Point> points = new LinkedList<Point>();
+public class ConvexHull extends Displayable implements Renderable{
 	
-	/**
-	 * Stores shape of the hull for collision detection
-	 */
+	public static Comparator<PolarPoint> polarPointComparator = new Comparator<PolarPoint>() {
+		public int compare( PolarPoint p1, PolarPoint p2 ) {
+			return p2.getPolarAngle().compareTo(p1.getPolarAngle());
+		}
+	};
+	
+	private List<Vertex> nodes;
+	private List<Point> points;
+	private ConvexHull parent = null;
+	private int level;
+	private List<Point> hull;
 	private Polygon hullShape;
-	
-	/**
-	 * Stores all the lines in the Hull
-	 */
-	private List<Line> hull;
-	private List<Line> tempHull;
-
-	/**
-	 * Stores the name of the Hull
-	 */
+	private Point centroid;
 	private String hullName;
-	
-	private Boolean displayHull;
+	private List<ConvexHull> children = new LinkedList<ConvexHull>();
+	private List<HullCollision> childCollisions;
+	/**
+	 * Constructor for base level hull (no parent)
+	 */
+	public ConvexHull(List<Vertex> nodes, String hullName) {
+		this(nodes, hullName, null);
+	}
 	
 	/**
-	 * The point we are comparing with the chkLn
+	 * Constructor for child hull (has parent)
 	 */
-	private Point currPt = new Point();
-	
-	public ConvexHull(int algor, List<Point> points, String hullName) {
-		this.points = points;
+	public ConvexHull(List<Vertex> nodes, String hullName, ConvexHull parent) {
+		this.level = parent == null ? 1 : parent.getLevel()+1;
+		this.nodes = nodes;
+		
+		//Construct points as well as any children hull that exist
+		this.points = new LinkedList<Point>();
+		Map<String, List<Vertex>> childrenGroups = new HashMap<String, List<Vertex>>();
+		for(Vertex v : nodes){
+			this.points.add(v.getCenter());
+			if(v.getInfo().getTypes().containsKey(level+1)){
+				if(childrenGroups.containsKey(v.getInfo().getTypes().get(level+1)))
+					childrenGroups.get(v.getInfo().getTypes().get(level+1)).add(v);
+				else{
+					List<Vertex> temp = new LinkedList<Vertex>();
+					temp.add(v);
+					childrenGroups.put(v.getInfo().getTypes().get(level+1), temp);
+				}
+			}
+		}
+		
 		this.hullName = hullName;
-		displayHull = false;
+		this.parent = parent;
+		hull = new ArrayList<Point>();
 		hullShape = new Polygon();
-		hull = new LinkedList<Line>();
-		switch (algor) {
-			case Brute:
-			BruteForce();
-			break;
-			case QUICK:
-			quickHull();
-			break;
-			default:    System.out.println("Error in call algor\n");
+		if(points.size() < 3){
+			hull.addAll(points);
+			for(Point p : hull)
+				hullShape.addPoint(p.x, p.y);
+		}else
+			GrahamScan();
+		
+		children = new LinkedList<ConvexHull>();
+		if(childrenGroups.size() > 0){
+			for(Map.Entry<String, List<Vertex>> e : childrenGroups.entrySet())
+				children.add(new ConvexHull(e.getValue(), e.getKey(), this));
 		}
-		if(hull.size() > 0){
-			hullShape.addPoint(hull.get(0).point1.x, hull.get(0).point1.y);
-			hullShape.addPoint(hull.get(0).point2.x, hull.get(0).point2.y);
-			for(int i=1;i<hull.size();i++)
-				hullShape.addPoint(hull.get(i).point2.x, hull.get(i).point2.y);	
-		}
+		childCollisions = Common.hullCollisions(children);
+		
 	}
 
-	public Polygon getHullShape() {return hullShape;}
-	public List<Line> getHull() {return hull;}
 	public String getHullName() {return hullName;}
-	public Boolean getDisplayHull() {return displayHull;}
-	public void setDisplayHull(Boolean displayHull) {this.displayHull = displayHull;}
-	public void toggleHull(){this.displayHull = !displayHull;}
-	public String toString(){return hullName + " \u2713";}
+	public List<Point> getHull(){return hull;}
+	public Polygon getHullShape(){return hullShape;}
+	public ConvexHull getParent() {return parent;}
+	public int getLevel() {return level;}
+
+	public List<ConvexHull> getChildren() {
+		List<ConvexHull> allChildren = new LinkedList<ConvexHull>();
+		for(ConvexHull child : children){
+			allChildren.add(child);
+			allChildren.addAll(child.getChildren());
+		}
+		return allChildren;
+	}
+
+	public List<HullCollision> getChildCollisions() {return childCollisions;}
+	public Point getCentroid() {return centroid;}
+	public List<Vertex> getNodes() {return nodes;}
+
+	public String toString(){return hullName + (getDisplay() ? " \u2713" : "");}
+	
+	public void render(Graphics g, Point offset){
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(3));
+		g2.setColor(AdminApplication.getGroupColor(hullName));		
+		Polygon temp = new Polygon();
+		for(Point p : hull)
+			temp.addPoint(p.x - offset.x, p.y - offset.y);
+		g2.draw(temp);
+		g2.setStroke(new BasicStroke());
+	}
 	 
+	public void GrahamScan(){
+		//Find the minimum y-coord, in case of tie find leftmost point out of those
+		List<Point> allPoints = new LinkedList<Point>();
+		allPoints.addAll(points);
+		int indexOfMin = 0;
+		Point minimum = allPoints.get(0);
+		for(int i=1; i<allPoints.size(); i++){
+			if(allPoints.get(i).y <= minimum.y){
+				if(allPoints.get(i).y == minimum.y){
+					if(allPoints.get(i).x < minimum.x){
+						minimum = allPoints.get(i);
+						indexOfMin = i;
+					}
+				}else{
+					minimum = allPoints.get(i);
+					indexOfMin = i;
+				}
+			}
+		}
+		
+		/*
+		 * Sort the remaining points by polar-angle in counter-clockwise order
+		 * around 'leftMost', in case of two points having the same angle
+		 * remove all but the farthest from 'leftMost'.
+		 */
+		allPoints.remove(indexOfMin);
+		Map<Double, PolarPoint> polarAngles = new TreeMap<Double, PolarPoint>();
+		for(Point p : allPoints){
+			Point vector = new Point(p.x - minimum.x, p.y - minimum.y);
+			Double polarAngle = Math.atan2(vector.y, vector.x);
+			if(polarAngles.containsKey(polarAngle)){
+				if(minimum.distance(polarAngles.get(polarAngle).getPoint()) < minimum.distance(p))
+					polarAngles.put(polarAngle, new PolarPoint(p, polarAngle));
+			}else
+				polarAngles.put(polarAngle, new PolarPoint(p, polarAngle));
+		}
+		
+		//Sort points in counterclockwise order (increasing polar angle)
+		List<PolarPoint> polarPoints = new LinkedList<PolarPoint>();
+		for(PolarPoint pp : polarAngles.values())
+			polarPoints.add(pp);
+		Collections.sort(polarPoints, polarPointComparator);
+		polarPoints.add(0, new PolarPoint(minimum));
+		
+		Stack<Point> hullPoints = new Stack<Point>();
+		hullPoints.push(polarPoints.get(0).getPoint());
+		hullPoints.push(polarPoints.get(1).getPoint());
+		hullPoints.push(polarPoints.get(2).getPoint());
+		for (int i = 3; i < polarPoints.size(); i++) {
+			Point head = polarPoints.get(i).getPoint();
+			Point middle = hullPoints.pop();
+			Point tail = hullPoints.pop();
+            if (formsLeftTurn(tail, middle, head)) {
+            	hullPoints.push(tail);
+            	hullPoints.push(middle);
+            	hullPoints.push(head);
+            } else {
+            	hullPoints.push(tail);
+                i--;
+            }
+        }
+		hullPoints.push(polarPoints.get(0).getPoint());
+		hull.addAll(hullPoints);
+		int centroidX = 0, centroidY = 0;
+		for(Point p : hull){
+			hullShape.addPoint(p.x, p.y);
+			centroidX += p.x;
+			centroidY += p.y;
+		}
+		centroidX = (centroidX/hull.size());
+		centroidY = (centroidY/hull.size());
+		centroid = new Point(centroidX, centroidY);
+	}
+	
+	public static boolean formsLeftTurn(Point a, Point b, Point c) {
+		return (((a.x - b.x)*(c.y - b.y)) - ((c.x - b.x)*(a.y - b.y))) >= 0;
+    }
 
-	/**
-	  * Brute Force Algorithm implementation
-	  */
-	 public void BruteForce() {
-		 boolean leftMost, rightMost;
-		 for (int x = 0; x < points.size(); x++) {
-			 for (int y = (x+1); y < points.size(); y++) {
-				 leftMost  = true;
-				 rightMost = true;
-				 Line temp = new Line(points.get(x), points.get(y));
-
-				 for (int z = 0; z < points.size(); z++) {
-					 currPt = points.get(z);
-					 
-					 if ((z != x) && (z != y)) {
-						 if (temp.onLeft(points.get(z)))
-							 leftMost = false;
-						 else
-							 rightMost = false;
-					 }
-				 }
-
-				 if (leftMost || rightMost)
-					 hull.add(new Line(points.get(x), points.get(y)));
-			 }
-		 }
-	 }
-
-	 /** 
-	  * Quick Hull Algorithm implementation.
-	  */
-	 public void quickHull() {
-		 tempHull = new LinkedList<Line>();
-		 List<Point> P1 = new LinkedList<Point>();
-		 List<Point> P2 = new LinkedList<Point>();
-		 Point l = points.get(0);
-		 Point r = points.get(0);
-		 int minX = l.x;
-		 int maxX = l.x;
-		 int minAt = 0;
-		 int maxAt = 0;	
-
-		 /* find the max and min x-coord point */
-		 for (int i = 1; i < points.size(); i++) {
-			 currPt = points.get(i);	
-			 if (currPt.x > maxX) {
-				 r = currPt;
-				 maxX = currPt.x;
-				 maxAt = i;
-			 }
-
-			 if (currPt.x < minX) {
-				 l = currPt;
-				 minX = currPt.x;
-				 minAt = i;
-			 }
-		 }
-
-		 Line lr = new Line(l, r);
-		 
-		 /* find out each point is over or under the line formed by the two points */
-		 /* with min and max x-coord, and put them in 2 group according to whether */
-		 /* they are above or under                                                */
-		 for (int i = 0; i < points.size(); i++) {
-			 if ((i != maxAt) && (i != minAt)) {
-				 currPt = points.get(i);
-				 if (lr.onLeft(currPt))
-					 P1.add(currPt);
-				 else
-					 P2.add(currPt);
-			 }
-
-		 };
-
-		 /* put the max and min x-cord points in each group */
-		 P1.add(l);
-		 P1.add(r);
-
-		 P2.add(l);
-		 P2.add(r);
-
-		 /* calculate the upper hull */
-		 quick(P1, l, r, 0);
-
-		 /* put the upper hull result in final result */
-		 for (int k=0; k<tempHull.size(); k++)
-			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
-		 
-		 /* calculate the lower hull */
-		 quick(P2, l, r, 1);
-
-		 /* append the result from lower hull to final result */
-		 for (int k=0; k<tempHull.size(); k++)
-			 hull.add(new Line(tempHull.get(k).point1, tempHull.get(k).point2));
-
-	 }
-
-
-	 /**
-	  * Recursive method to find out the Hull.
-	  * faceDir is 0 if we are calculating the upper hull.
-	  * faceDir is 1 if we are calculating the lower hull.
-	  */
-	 public synchronized void quick(List<Point> P, Point l, Point r, int faceDir) {
-		 if (P.size() == 2) {
-			 tempHull.add(new Line(P.get(0), P.get(1)));
-			 return;
-		 } else {
-			 int hAt = splitAt(P, l, r);
-			 Line lh = new Line(l, P.get(hAt));
-			 Line hr = new Line(P.get(hAt), r);
-			 List<Point> P1 = new LinkedList<Point>();
-			 List<Point> P2 = new LinkedList<Point>();
-
-			 for (int i = 0; i < (P.size() - 2); i++) {
-				 if (i != hAt) {
-					 currPt = P.get(i);
-					 if (faceDir == 0) {
-						 if (lh.onLeft(currPt))
-							 P1.add(currPt);
-
-						 if ((hr.onLeft(currPt)))
-							 P2.add(currPt);
-					 } else {
-						 if (!(lh.onLeft(currPt)))
-							 P1.add(currPt);
-
-						 if (!(hr.onLeft(currPt)))
-							 P2.add(currPt);
-					 }
-				 }
-			 }
-
-			 P1.add(l);
-			 P1.add(P.get(hAt));
-
-			 P2.add(P.get(hAt));
-			 P2.add(r);
-
-			 Point h = P.get(hAt);
-
-			 if (faceDir == 0) {
-				 quick(P1, l, h, 0);
-				 quick(P2, h, r, 0);
-			 } else {
-				 quick(P1, l, h, 1);
-				 quick(P2, h, r, 1);
-			 }
-			 return;
-		 }
-	 }
-
-	 /**
-	  * Find out a point which is in the Hull for sure among a group of points
-	  * Since all the point are on the same side of the line formed by l and r,
-	  * so the point with the longest distance perpendicular to this line is 
-	  * the point we are looking for.
-	  * Return the index of this point in the Vector/
-	  */
-	 public synchronized int splitAt(List<Point> P, Point l, Point r) {
-		 double    maxDist = 0;
-		 Line newLn = new Line(l, r);
-
-		 int x3 = 0, y3 = 0;
-		 double distance = 0;
-		 int farPt = 0;
-
-		 for (int i = 0; i < (P.size() - 2); i++) {
-			 if (newLn.slopeUndefine) {
-				 x3 = l.x;
-				 y3 = P.get(i).y;
-			 } else {
-				 if (r.y == l.y) {
-					 x3 = P.get(i).x;
-					 y3 = l.y;
-				 } else {
-					 x3 = (int) (((P.get(i).x + newLn.slope *
-							 (newLn.slope * l.x - l.y + P.get(i).y))
-									 / (1 + newLn.slope * newLn.slope)));
-					 y3 = (int) ((newLn.slope * (x3 - l.x) + l.y));
-				 }
-			 }
-			 int x1 = P.get(i).x;
-			 int y1 = P.get(i).y;
-			 distance = Math.sqrt(Math.pow((y1-y3), 2) + Math.pow((x1-x3), 2));
-
-			 if (distance > maxDist) {
-				 maxDist = distance;
-				 farPt = i;
-			 }
-		 }
-		 return farPt;
-	 }
-	 
-	 public boolean equals( Object o ) {
+	public boolean equals( Object o ) {
 		 if ( this == o )
 			 return true;
 		 if ( !(o instanceof ConvexHull) )
@@ -282,67 +200,26 @@ public class ConvexHull {
 		 return ((ConvexHull) o).getHullName().equals(hullName);
 	 }
 	 
-	 public class Line {
-			private Point point1;
-			private Point point2;
-			private float    slope;
-			private boolean  slopeUndefine;
+	 public class PolarPoint{
+		 
+		 private Double polarAngle;
+		 private Point point;
+		 
+		 public PolarPoint(Point point){
+			 this(point, new Double("0"));
+		 }
+		 
+		 public PolarPoint(Point point, Double polarAngle){
+			 this.point = point;
+			 this.polarAngle = polarAngle;
+		 }
 
-			/**
-			 * Line constructor.
-			 */
-			public Line(Point p1, Point p2) {
-				point1 = p1;
-				point2 = p2;
-				if (p1.x == p2.x)
-					slopeUndefine = true;
-				else {    
-					if (p2.y == p1.y)
-						slope = (float)0;
-					else
-						slope = (float) (p2.y - p1.y) / (p2.x - p1.x);
-					slopeUndefine = false;
-				}
-			}
-
-			/**
-			 * Given a Check point and determine if this check point is lying on the
-			 * left side or right side of the first point of the line.
-			 */
-			public boolean onLeft(Point chkpt) {
-				if (this.slopeUndefine) {
-					if (chkpt.x < point1.x) return true;
-					else {
-						if (chkpt.x == point1.x) {
-							if (((chkpt.y > point1.y) && (chkpt.y < point2.y)) ||
-									((chkpt.y > point2.y) && (chkpt.y < point1.y)))
-								return true;
-							else
-								return false;
-						}
-						else return false;
-					}
-				}
-				else {            
-					/* multiply the result to avoid the rounding error */
-					int x3 = (int) (((chkpt.x + slope * (slope * point1.x 
-							- point1.y + chkpt.y)) /
-							(1 + slope * slope)) * 10000);
-					int y3 = (int) ((slope * (x3 / 10000 - point1.x) + point1.y) * 10000);
-
-					if (slope == (float)0) {
-						if ((chkpt.y*10000) > y3) return true; else return false; }
-					else { if (slope > (float)0) {
-						if (x3 > (chkpt.x * 10000)) return true; else return false; }
-					else {
-						if ((chkpt.x * 10000) > x3) return true; else return false; }
-					}
-				}
-			}
-
-			public Point getPoint1() {return point1;}
-			public Point getPoint2() {return point2;}
-			public float getSlope() {return slope;}
-			public boolean isSlopeUndefine() {return slopeUndefine;}
+		public Double getPolarAngle() {
+			return polarAngle;
 		}
+
+		public Point getPoint() {
+			return point;
+		}		 
+	 }
 }

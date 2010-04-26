@@ -1,15 +1,9 @@
 package admin;
 
 //explicit list needed since some dumbass put List in both awt and util
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +18,8 @@ public class Graph implements Renderable {
 	private ArrayList<Vertex> vertices;
 	private ArrayList<Vertex> organisms;
 	private ArrayList<Edge> edges;
-	private ArrayList<ConvexHull> hulls;
+	private List<ConvexHull> hulls;
+	private List<HullCollision> hullCollisions;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional = true;
 	private boolean allOrgsInTree;
@@ -285,67 +280,113 @@ public class Graph implements Renderable {
 
 /*****************************************************
 * Convex Hull Calculations                           *
-* (for checking geometric arrangement of organsisms) *
+* (for checking geometric arrangement of organisms) *
 *****************************************************/
 	public void loadHulls(){
-		Map<String, List<Point>> typeVertices = new HashMap<String, List<Point>>();
-		Map<String, List<Point>> subTypeVertices = new HashMap<String, List<Point>>();
-		Rectangle rect;
-		String type = null, subType = null;
+		Map<String, List<Vertex>> organismGroups = new HashMap<String, List<Vertex>>();
 		for(Vertex v : vertices){
-			if(VertexInfo.VertexType.ORGANISM.equals(v.getType())){
-				type = v.getInfo().getType();
-				subType = "";
-				if(!"Invert".equals(type)){
-					subType = type;
-					type = "Vert";
-				}
-				rect = new Rectangle(v.upperLeft.x,
-						v.upperLeft.y,
-						v.getInfo().getImage().getWidth(),
-						v.getInfo().getImage().getHeight());
-				if(typeVertices.containsKey(type))
-					typeVertices.get(type).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
+			if(VertexType.ORGANISM.equals(v.getType())){
+				if(organismGroups.containsKey(v.getInfo().getTypes().get(1)))
+					organismGroups.get(v.getInfo().getTypes().get(1)).add(v);
 				else{
-					List<Point> temp = new LinkedList<Point>();
-					temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					typeVertices.put(type, temp);
-				}
-				if(!Common.isStringEmpty(subType)){
-					if(subTypeVertices.containsKey(subType))
-						subTypeVertices.get(subType).add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-					else{
-						List<Point> temp = new LinkedList<Point>();
-						temp.add(new Point((int)rect.getCenterX(), (int)rect.getCenterY()));
-						subTypeVertices.put(subType, temp);
-					}
+					List<Vertex> temp = new LinkedList<Vertex>();
+					temp.add(v);
+					organismGroups.put(v.getInfo().getTypes().get(1), temp);
 				}
 			}
 		}
-		hulls = new ArrayList<ConvexHull>();
-		List<ConvexHull> tempHulls = new ArrayList<ConvexHull>();
-		for(Map.Entry<String, List<Point>> e : typeVertices.entrySet())
-			hulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
-		outerloop:
-		for(int i1=0;i1<hulls.size();i1++){
-			for(int i2=hulls.size()-1;i2>i1;i2--){
-				Area intersect = new Area(); 
-				intersect.add(new Area(hulls.get(i1).getHullShape())); 
-				intersect.intersect(new Area(hulls.get(i2).getHullShape())); 
-				if (!intersect.isEmpty()){
-					hasHullCollisions = true;	
-					break outerloop;
-				}
-			}
+		hulls = new LinkedList<ConvexHull>();
+		for(Map.Entry<String, List<Vertex>> e : organismGroups.entrySet()){
+			if(e.getValue().size() > 2)
+				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
 		}
-		if(subTypeVertices.size() > 1){
-			for(Map.Entry<String, List<Point>> e : subTypeVertices.entrySet())
-				tempHulls.add(new ConvexHull(2, e.getValue(), e.getKey()));
-			hulls.addAll(tempHulls);
-		}
+		hullCollisions = Common.hullCollisions(hulls);
+		if(hullCollisions.size() > 0)
+			hasHullCollisions = true;
 	}
 	
-	public ArrayList<ConvexHull> getHulls(){return hulls;}
+	public List<ConvexHull> getHulls(Boolean all) {
+		if(!all)
+			return hulls;
+		List<ConvexHull> allHulls = new LinkedList<ConvexHull>();
+		for(ConvexHull hull : hulls){
+			allHulls.add(hull);
+			allHulls.addAll(hull.getChildren());
+		}
+		return allHulls;
+	}
+	
+	public List<HullCollision> getHullCollisions(Boolean all) {
+		if(!all)
+			return hullCollisions;
+		List<HullCollision> allCollisions = new LinkedList<HullCollision>();
+		allCollisions.addAll(hullCollisions);
+		for(ConvexHull hull : hulls)
+			allCollisions.addAll(hull.getChildCollisions());
+		return allCollisions;
+	}
+	
+	public List<OptimalHulls> getOptimalHulls(Boolean all){
+		List<OptimalHulls> optimalHulls = new LinkedList<OptimalHulls>();
+		for(HullCollision hc : hullCollisions)
+				optimalHulls.add(hc.getOptimalHulls());
+		if(all){
+			for(ConvexHull hull : hulls){
+				for(HullCollision hc : hull.getChildCollisions())
+					optimalHulls.add(hc.getOptimalHulls());
+			}
+		}
+		return optimalHulls;
+	}
+	
+	public String displaySubDropDownItem(SubDropDownType type, int index){
+		Displayable selection = null;
+		switch(type){
+			case HULL:
+				selection = getHulls(true).get(index);
+				break;
+			case COLLISION:
+				selection = getHullCollisions(true).get(index);
+				break;
+			case OPTIMAL_HULL:
+				selection = getOptimalHulls(true).get(index);
+				break;
+		}
+		boolean previousDisplay = selection.getDisplay();
+		//Close previous selections
+		for(SubDropDownType sdd : SubDropDownType.values()){
+			if(sdd.equals(type)){
+				if(!type.getViewMultiple())
+					deselectItems(sdd);
+			}else
+				deselectItems(sdd);
+		}
+		selection.setDisplay(!previousDisplay);
+		return selection.toString();
+	}
+	
+	public void deselectItems(SubDropDownType type){
+		List<Displayable> items = new LinkedList<Displayable>();
+		switch(type){
+			case HULL:
+				items.addAll(getHulls(true));
+				break;
+			case COLLISION:
+				items.addAll(getHullCollisions(true));
+				break;
+			case OPTIMAL_HULL:
+				items.addAll(getOptimalHulls(true));
+				break;
+		}
+		for(Displayable item : items)
+			item.setDisplay(false);
+	}
+	
+	public void deselectAllItems(){
+		for(SubDropDownType sdd : SubDropDownType.values())
+			deselectItems(sdd);
+	}
+	
 	public Boolean getHasHullCollisions(){return hasHullCollisions;}
 
 /***************************************
@@ -504,13 +545,13 @@ public class Graph implements Renderable {
 	}
 	
 	public boolean testPair(Vertex v1, Vertex v2, String type1, String type2) {
-		if(v1.getInfo().getType().equals(type1)) {
-			if(v2.getInfo().getType().equals(type2)) {
+		if(v1.getInfo().getTypes().containsKey(type1)) {
+			if(v2.getInfo().getTypes().containsKey(type2)) {
 				return true;
 			}
 		}
-		if(v2.getInfo().getType().equals(type1)) {
-			if(v1.getInfo().getType().equals(type2)) {
+		if(v2.getInfo().getTypes().containsKey(type1)) {
+			if(v1.getInfo().getTypes().containsKey(type2)) {
 				return true;
 			}
 		}	
@@ -564,30 +605,17 @@ public class Graph implements Renderable {
 			e.setDirectional(directional);
 			e.render(g, offset);
 		}
-		for(ConvexHull hull : hulls){
-			if(hull.getDisplayHull()){
-				for(ConvexHull.Line line : hull.getHull()){
-					Line2D temp = new Line2D.Double(line.getPoint1().x - offset.x,
-							line.getPoint1().y - offset.y,
-							line.getPoint2().x - offset.x,
-							line.getPoint2().y - offset.y);
-					Graphics2D g2 = (Graphics2D) g;
-					g2.setStroke(new BasicStroke(3));
-					g2.setColor(Common.hullColor);
-					g2.draw(temp);
-					g2.setStroke(new BasicStroke());
-					if(temp.getP1().distance(temp.getP2()) > 100){
-						int xVal = (int) temp.getBounds().getCenterX();
-						int yVal = (int) temp.getBounds().getCenterY();
-						Dimension dim = Common.getStringBounds(g2, hull.getHullName());
-						xVal -= (dim.width+4)/2;
-						g2.setColor(Color.BLACK);
-						g2.fill(new Rectangle(xVal, yVal - (dim.height+4), dim.width+4, dim.height+4));
-						Common.drawCenteredString(g2, hull.getHullName(), xVal, yVal-2, 0,
-								0, Common.hullColor, Common.font);
-					}
-				}
-			}
+		for(ConvexHull hull : getHulls(true)){
+			if(hull.getDisplay())
+				hull.render(g, offset);
+		}
+		for(HullCollision collision : getHullCollisions(true)){
+			if(collision.getDisplay())
+				collision.render(g, offset);
+		}
+		for(OptimalHulls optimalHull : getOptimalHulls(true)){
+			if(optimalHull.getDisplay())
+				optimalHull.render(g, offset);
 		}
 	}
 

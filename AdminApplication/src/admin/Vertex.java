@@ -233,7 +233,7 @@ public class Vertex implements Renderable {
 		Common.drawCenteredString(g2, info.getName(), bounds.x, bounds.y, bounds.width, bounds.height, Common.emptyNodeNameColor);
 	}
 
-	private Rectangle getVertexBounds() {
+	public Rectangle getVertexBounds() {
 		if(info.getImage() != null) {
 			return new Rectangle(upperLeftAdj.x, upperLeftAdj.y, 
 					info.getImage().getWidth(), info.getImage().getHeight());
@@ -248,6 +248,18 @@ public class Vertex implements Renderable {
 					Common.emptyNodeHeight);
 			}
 		}
+	}
+	
+	public Rectangle getRectangle(){
+		return new Rectangle(upperLeft.x,
+				upperLeft.y,
+				info.getImage().getWidth(),
+				info.getImage().getHeight());
+	}
+	
+	public Point getCenter(){
+		Rectangle temp = getRectangle();
+		return new Point((int) temp.getCenterX(), (int) temp.getCenterY());
 	}
 	
 	public Point getUpperLeft() {
