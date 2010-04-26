@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.font.TextLayout;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
@@ -24,6 +26,11 @@ public class Common {
     public static Color connectionColor = new Color(0.5f, 1.0f, 0.5f);
     public static Color hullColor = Color.GREEN;
     public static Color emptyNodeColor = new Color(0.5f, 0.5f, 1.0f);
+    public static Color[] defualtGroupColors = new Color[]{Color.MAGENTA,
+		Color.ORANGE, Color.PINK, new Color(0,100,0),
+		Color.BLUE, Color.CYAN, Color.GREEN, Color.LIGHT_GRAY,
+		Color.YELLOW, Color.WHITE};
+	
     
     public static Dimension padding = new Dimension(10,5);
 
@@ -161,6 +168,30 @@ public class Common {
     		   widthBrokenString.add(currentLine);
     	   return widthBrokenString;
        }
+       
+       public static List<HullCollision> hullCollisions(List<ConvexHull> hulls){
+   		List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
+   		ConvexHull ch1, ch2;
+   		if(hulls.size() > 1){
+   			for(int i1=0;i1<hulls.size();i1++){
+   				for(int i2=hulls.size()-1;i2>i1;i2--){
+   					ch1 = hulls.get(i1);
+   					ch2 = hulls.get(i2);
+   					if (collide(ch1.getHullShape(), ch2.getHullShape()))
+   						hullCollisions.add(new HullCollision(1, ch1, ch2));
+   				}
+   			}
+   		}
+   		return hullCollisions;
+   	}
+   	
+   	public static boolean collide(Polygon p1, Polygon p2){
+   		if(p1 == null || p2 == null)
+   			return false;
+   		Area intersect = new Area(p1); 
+   		intersect.intersect(new Area(p2)); 
+   		return !intersect.isEmpty();
+   	}
        
        public static void setColorsForPrinting(){
     	   backgroundColor = Color.WHITE;

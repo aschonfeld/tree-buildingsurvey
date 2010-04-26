@@ -1,24 +1,31 @@
 package admin;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class VertexInfo {
 
 	private String name;
-	private String type;
+	private Map<Integer, String> types;
 	private BufferedImage image;
 	private VertexType vertexType;
 	
 	public VertexInfo(String name){
 		this.name = name;
-		type = "";
+		this.types = new HashMap<Integer, String>();
 		image = null;
 		vertexType = VertexType.EMPTY;
 	}
 	
-	public VertexInfo(String name, String type, BufferedImage image){
+	public VertexInfo(String name, List<String> types, BufferedImage image){
 		this(name);
-		this.type = type;
+		int index=1;
+		for(String type : types){
+			this.types.put(index, type);
+			index++;
+		}
 		this.image = image;
 		vertexType = VertexType.ORGANISM;
 	}
@@ -27,8 +34,8 @@ public class VertexInfo {
 		return name;
 	}
 
-	public String getType() {
-		return type;
+	public Map<Integer, String> getTypes() {
+		return types;
 	}
 
 	public BufferedImage getImage() {

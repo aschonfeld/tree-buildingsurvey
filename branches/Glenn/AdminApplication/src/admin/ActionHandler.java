@@ -4,17 +4,16 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import admin.StudentDataColumns.ColumnDataHandler;
 
@@ -94,10 +93,43 @@ public class ActionHandler extends JPanel {
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			ConvexHull temp = parent.getCurrentGraph().getHulls().get(hullIndex);
-			temp.toggleHull();
 			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText(temp.getHullName() + (temp.getDisplayHull() ? " \u2713" : ""));
+			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.HULL,
+					hullIndex));
+		}
+	}
+	
+	public class CollisionAction extends AbstractAction {
+
+		private static final long serialVersionUID = 3382645405034163126L;
+		private int collisionIndex;
+		public CollisionAction(int collisionIndex) {
+			super();
+			this.collisionIndex = collisionIndex;
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent e) {
+			JMenuItem item = (JMenuItem)e.getSource();
+			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.COLLISION,
+					collisionIndex));
+		}
+	}
+	
+	public class OptimalAction extends AbstractAction {
+
+		private static final long serialVersionUID = 3382645405034163126L;
+		private int optimalIndex;
+		public OptimalAction(int optimalIndex) {
+			super();
+			this.optimalIndex = optimalIndex;
+		}
+
+		//@0verride
+		public void actionPerformed(ActionEvent e) {
+			JMenuItem item = (JMenuItem)e.getSource();
+			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.OPTIMAL_HULL,
+					optimalIndex));
 		}
 	}
 	
@@ -176,16 +208,44 @@ public class ActionHandler extends JPanel {
         names.addActionListener(new NamesAction());
         fileMenu.add(names);
         Graph tempGraph = parent.getCurrentGraph();
-        if(!tempGraph.getHulls().isEmpty()){
-        	JMenu submenu = new JMenu("Hulls");
-        	for(int i=0;i<tempGraph.getHulls().size();i++){
-        		ConvexHull tempCH = tempGraph.getHulls().get(i);
-        		JMenuItem menuItem = new JMenuItem(tempCH.getHullName() +
-        				(tempCH.getDisplayHull() ? " \u2713" : ""));
+        List<ConvexHull> groups = tempGraph.getHulls(true);
+        if(!groups.isEmpty()){
+        	JMenu groupMenu = new JMenu("Groups");
+        	for(int i=0;i<groups.size();i++){
+        		ConvexHull tempCH = groups.get(i);
+        		JMenuItem menuItem = new JMenuItem(tempCH.toString());
         		menuItem.addActionListener(new HullAction(i));
-        		submenu.add(menuItem);
+        		groupMenu.add(menuItem);
         	}
-        	fileMenu.add(submenu);
+        	fileMenu.add(groupMenu);
+        	List<HullCollision> collisions = tempGraph.getHullCollisions(true);
+        	if(!collisions.isEmpty()){
+        		JMenu collisionMenu = new JMenu("Group Collisions");
+        		for(int i=0;i<collisions.size();i++){
+        			HullCollision tempHC = collisions.get(i);
+        			JMenuItem menuItem = new JMenuItem(tempHC.toString());
+        			menuItem.addActionListener(new CollisionAction(i));
+        			collisionMenu.add(menuItem);
+        		}
+        		fileMenu.add(collisionMenu);
+        		List<OptimalHulls> optimalHulls = tempGraph.getOptimalHulls(true);
+        		JMenu optimalMenu = new JMenu("Optimal Groups");
+        		for(int i=0;i<optimalHulls.size();i++){
+        			OptimalHulls tempOH = optimalHulls.get(i);
+        			JMenuItem menuItem = new JMenuItem(tempOH.toString());
+        			menuItem.addActionListener(new OptimalAction(i));
+        			optimalMenu.add(menuItem);
+        		}
+        		fileMenu.add(optimalMenu);
+        		JMenuItem deselect = new JMenuItem("Clear Selections");
+        		ActionListener deselectListener = new ActionListener() {
+        			public void actionPerformed(ActionEvent actionEvent) {
+        				parent.getCurrentGraph().deselectAllItems();
+        			}
+        		};
+        		deselect.addActionListener(deselectListener);
+        		fileMenu.add(deselect);
+        	}
         }
         fileMenu.add(exitItem);
         
