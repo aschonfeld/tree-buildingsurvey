@@ -1,19 +1,31 @@
 package admin;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import admin.StudentDataColumns.ColumnDataHandler;
 
@@ -210,6 +222,15 @@ public class ActionHandler extends JPanel {
         Graph tempGraph = parent.getCurrentGraph();
         List<ConvexHull> groups = tempGraph.getHulls(true);
         if(!groups.isEmpty()){
+        	final JMenuItem colorEditorItem = new JMenuItem("Group Colors");
+        	final JDialog colorEditor = getColorEditor();
+        	ActionListener colorEditorListener = new ActionListener() {
+    			public void actionPerformed(ActionEvent actionEvent) {
+    				colorEditor.setVisible(true);
+    			}
+    		};
+    		colorEditorItem.addActionListener(colorEditorListener);
+    		fileMenu.add(colorEditorItem);
         	JMenu groupMenu = new JMenu("Groups");
         	for(int i=0;i<groups.size();i++){
         		ConvexHull tempCH = groups.get(i);
@@ -237,15 +258,15 @@ public class ActionHandler extends JPanel {
         			optimalMenu.add(menuItem);
         		}
         		fileMenu.add(optimalMenu);
-        		JMenuItem deselect = new JMenuItem("Clear Selections");
-        		ActionListener deselectListener = new ActionListener() {
-        			public void actionPerformed(ActionEvent actionEvent) {
-        				parent.getCurrentGraph().deselectAllItems();
-        			}
-        		};
-        		deselect.addActionListener(deselectListener);
-        		fileMenu.add(deselect);
         	}
+        	JMenuItem deselect = new JMenuItem("Clear Selections");
+    		ActionListener deselectListener = new ActionListener() {
+    			public void actionPerformed(ActionEvent actionEvent) {
+    				parent.getCurrentGraph().deselectAllItems();
+    			}
+    		};
+    		deselect.addActionListener(deselectListener);
+    		fileMenu.add(deselect);
         }
         fileMenu.add(exitItem);
         
@@ -280,5 +301,77 @@ public class ActionHandler extends JPanel {
 
 
     	return menuBar;
+    }
+    
+    public JDialog getColorEditor(){
+    	JDialog colorDialog = new JDialog(parent, "Edit Group Colors", true);
+    	colorDialog.setSize(500, 550);
+    	JPanel colorEditor = new JPanel(new BorderLayout());
+
+    	//Set up the banner at the top of the window
+    	final JLabel groupLabel = new JLabel();
+    	groupLabel.setForeground(Color.WHITE);
+    	groupLabel.setBackground(Color.blue);
+    	groupLabel.setOpaque(true);
+    	groupLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+    	groupLabel.setPreferredSize(new Dimension(100, 65));
+        
+        JPanel groupPanel = new JPanel(new BorderLayout());
+        groupPanel.add(groupLabel, BorderLayout.CENTER);
+        groupPanel.setBorder(BorderFactory.createTitledBorder("Selected Group"));
+
+        Set<String> groups = AdminApplication.getColorChooser().keySet();
+    	final JComboBox groupSelection = new JComboBox();
+    	groupSelection.setSize(100, 40);
+    	String selectedGroup = null;
+    	for (String group : groups){
+    		groupSelection.addItem(group);
+    		if(selectedGroup == null)
+    			selectedGroup = group;
+    	}
+    	groupSelection.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			String selectedGroup = ((JComboBox) e.getSource()).getSelectedItem().toString();
+    			groupLabel.setText(selectedGroup);
+    			groupLabel.setBackground(AdminApplication.getColorChooser().get(selectedGroup));
+    		}
+    	});
+    	groupLabel.setText(selectedGroup);
+    	groupLabel.setHorizontalAlignment(JLabel.CENTER);
+    	groupLabel.setBackground(AdminApplication.getColorChooser().get(selectedGroup));
+    	
+        //Set up color chooser for setting text color
+        final JColorChooser tcc = new JColorChooser(colorEditor.getForeground());
+        ChangeListener colorEditorListener = new ChangeListener() {
+        	public void stateChanged(ChangeEvent e) {
+        		
+                Color newColor = tcc.getColor();
+                groupLabel.setBackground(newColor);
+                Set<String> groups = AdminApplication.getColorChooser().keySet();
+                int index = 0;
+                int selectedIndex = groupSelection.getSelectedIndex();
+                String selectedGroup = "";
+                for(String group : groups){
+                	if(index == selectedIndex){
+                		selectedGroup = group;
+                		break;
+                	}
+                	index++;
+                }
+                AdminApplication.getColorChooser().put(selectedGroup, newColor);
+            }
+		};
+        tcc.getSelectionModel().addChangeListener(colorEditorListener);
+        tcc.setBorder(BorderFactory.createTitledBorder("Choose Group Color"));
+
+        JPanel selectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectionPanel.add(groupSelection);
+        selectionPanel.setBorder(BorderFactory.createTitledBorder("Select Group"));
+        
+        colorEditor.add(selectionPanel, BorderLayout.PAGE_START);
+        colorEditor.add(groupPanel, BorderLayout.CENTER);
+        colorEditor.add(tcc, BorderLayout.PAGE_END);
+        colorDialog.getContentPane().add(colorEditor);
+        return colorDialog;
     }
 }
