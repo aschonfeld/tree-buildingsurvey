@@ -52,13 +52,12 @@ public class HullCollision extends Displayable implements Renderable{
 		centroidX = (centroidX/collisionPoints.size());
 		centroidY = (centroidY/collisionPoints.size());
 		centroid = new Point(centroidX, centroidY);
-		optimalHulls = new OptimalHulls(this);
 	}
 	
 	public void render(Graphics g, Point offset){
 		Graphics2D g2 = (Graphics2D) g;
 		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon(),
-			collisonShape = new Polygon();
+			collisionShape = new Polygon();
 		
 		for(Point p : hull1.getHull())
 			hull1Shape.addPoint(p.x - offset.x, p.y - offset.y);
@@ -67,10 +66,10 @@ public class HullCollision extends Displayable implements Renderable{
 			hull2Shape.addPoint(p.x - offset.x, p.y - offset.y);
 		
 		for(Point p : collisionPoints)
-			collisonShape.addPoint(p.x - offset.x, p.y - offset.y);
+			collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
 		
 		g2.setColor(new Color(255,36,0,160));
-		g2.fill(collisonShape);
+		g2.fill(collisionShape);
 		
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(AdminApplication.getGroupColor(hull1.getHullName()));
@@ -84,8 +83,15 @@ public class HullCollision extends Displayable implements Renderable{
 	public Point getCentroid() {return centroid;}
 	public ConvexHull getHull1(){return hull1;}
 	public ConvexHull getHull2(){return hull2;}
+	public List<Point> getCollisionPoints(){return collisionPoints;}
 	public int getLevel(){return level;}
-	public OptimalHulls getOptimalHulls(){return optimalHulls;}
+	
+	public OptimalHulls getOptimalHulls(){
+		if(optimalHulls == null)
+			optimalHulls = new OptimalHulls(this);
+		return optimalHulls;
+	}
+	
 	public String toString(){return hull1.getHullName() + " - " + hull2.getHullName() + (getDisplay() ? " \u2713" : "");}
 	
 }

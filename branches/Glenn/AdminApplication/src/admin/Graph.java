@@ -21,13 +21,13 @@ public class Graph implements Renderable {
 	private List<ConvexHull> hulls;
 	private List<HullCollision> hullCollisions;
 	private TreeMap<Integer, Vertex> idToVertex;
-	private boolean directional = true;
+	private boolean directional;
 	private boolean allOrgsInTree;
-	private boolean hasBranches = false;
-	private boolean hasHullCollisions = false;
+	private boolean hasBranches;
+	private boolean hasHullCollisions;
 	private String studentName;
-	private ArrayList<String> answers = null;
-	private boolean labelled = false;
+	private ArrayList<String> answers;
+	private boolean labelled;
 	private int graphDirection = 0;
 	private int path[][] = null; // length of shortest path from x->y = path[x][y]
 	private double uniformPath[][] = null; // standard input to neural network
@@ -57,13 +57,20 @@ public class Graph implements Renderable {
 		}
 	}
 
-	Graph(String studentName) {
+	public Graph(String studentName) {
 		this.studentName=studentName;
 		vertices = new ArrayList<Vertex>();
 		organisms = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
 		idToVertex = new TreeMap<Integer, Vertex>();
 		answers = new ArrayList<String>();
+		hulls = new LinkedList<ConvexHull>();
+		hullCollisions = new LinkedList<HullCollision>();
+		directional = true;
+		allOrgsInTree = false;
+		hasBranches = false;
+		hasHullCollisions = false;
+		labelled = false;
 	}
 	
 	public GraphType getType() {

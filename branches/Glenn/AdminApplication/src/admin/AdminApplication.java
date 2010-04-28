@@ -9,10 +9,15 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,13 +53,21 @@ public class AdminApplication extends JFrame {
 		treeView = new TreeView();
 		treeController = new TreeController();
 		initCommonVertices();
+		clearStudentData();
 		loadTreesFromDirectory();
 		try{
 			loadTreesFromDB();
 		}catch(Exception e){
 			System.out.println("Error loading students from database: " + e);
 			System.out.println("Database Connection could not be made.  Loading Student tree from local file.");
-			loadTreesFromParamTags();
+			String filePath = new String("trees/studentTrees");
+			try{
+				BufferedReader reader = new BufferedReader(new 
+						InputStreamReader(new FileInputStream(filePath)));
+				loadTreesFromParamTags(reader);
+			}catch(FileNotFoundException fnfe){
+				System.out.println("Could not find file: " + filePath);
+			}
 		}
 		treeMapToArrayList();
 		add(new JScrollPane(treeView));
@@ -112,7 +125,12 @@ public class AdminApplication extends JFrame {
     }
     
     public static Graph getCurrentGraph(){
-		return graphs.get(currentGraphIndex);
+    	if(currentGraphIndex < graphs.size())
+    		return graphs.get(currentGraphIndex);
+    	else{
+    		currentGraphIndex = 0;
+    		return new Graph("");
+    	}
 	}
     
     public static int getCurrentGraphIndex() {
@@ -255,7 +273,6 @@ public class AdminApplication extends JFrame {
     }
     
 	public static void loadTreesFromDirectory() {
-		studentNameToTree = new TreeMap<String, Graph>();
 		try {
 			String filePath = new String("trees/testTrees");
 			BufferedReader reader = new BufferedReader(new 
@@ -265,53 +282,10 @@ public class AdminApplication extends JFrame {
         		String studentName = linein;
         		System.out.println("STUDENT: " + studentName);
         		linein = reader.readLine();
-        		String[] treeItems = linein.split("#"); // remove '=' at start
         		Graph graph = new Graph(studentName);
         		graph.setType(Graph.GraphType.Test);
-        		for(String elements: treeItems) 
-				{
-        			// load vertices
-					String[] attributes = elements.split(":");
-        			if(attributes.length < 6) continue;
-        			String type = attributes[0];
-        			int id = Integer.parseInt(attributes[1]);
-        			String elementName = attributes[2];
-        			int x = Integer.parseInt(attributes[3]);
-        			int y = Integer.parseInt(attributes[4]);
-        			boolean inTree = Boolean.parseBoolean(attributes[5]);
-        			if("O".equals(type)) 
-					{
-        				if(inTree) 
-						{
-        					graph.addVertex(
-     							id, new Vertex(commonImages.get(id), new Point(x, y)));
-        				}
-        			}
-        			if("E".equals(type)) 
-					{
-        				// only empty nodes in tree (exclude immortalNode)
-        				if(inTree) 
-						{
-        					graph.addVertex(id, new Vertex(new
-								VertexInfo(elementName), new Point(x, y)));
-        				}
-        			}
-        		}
-        		for(String elements: treeItems) 
-				{
-        			// load connections
-        			String[] attributes = elements.split(":");
-        			String type = attributes[0];
-        			if(!type.equals("C")) continue;
-        			int id1 = Integer.parseInt(attributes[2]);
-        			int id2 = Integer.parseInt(attributes[3]);
-        			System.out.println(id1 + " " + id2);
-        			Vertex v1 = graph.getVertexByID(id1);
-        			Vertex v2 = graph.getVertexByID(id2);
-        			graph.addEdge(new Edge(v1, v2));
-        		}
-        		graph.loadHulls();
-        		studentNameToTree.put(new String("0_TEST_" + studentName), graph);
+        		studentNameToTree.put(new String("0_TEST_" + studentName),
+        				updateGraphTree(linein, graph));
         		linein = reader.readLine();
         	}
         	reader.close();
@@ -319,71 +293,61 @@ public class AdminApplication extends JFrame {
         	e.printStackTrace();
         }
     }
-    
-	public static void loadTreesFromParamTags() {
+	
+	public static void loadTreesFromDB() throws Exception {
+		AdminJdbcDao dao = new AdminJdbcDao();
+		List<String[]> studentSurveys = dao.loadSurveys();
+		List<String[]> students = dao.loadStudents();
+		for(String[] studentSurvey : studentSurveys)
+			loadStudent(studentSurvey);
+		
+		//Update directionality information
+		for(String[] student : students){
+			String name = student[0];
+			String section = student[1].substring(8,10);
+			int iSection = Integer.parseInt(section);
+			if(studentNameToTree.containsKey(name))
+				studentNameToTree.get(name).setDirectional(iSection % 2 == 0);
+		}
+	}
+	
+	public static String loadStudentsFromURL(URL url, String password){
+		try{
+			String passwd = URLEncoder.encode(password, "UTF-8");//lab09acce55
+			String adminVal = URLEncoder.encode("true", "UTF-8");
+
+			//https://www.securebio.umb.edu/cgi-bin/TreeSurvey.pl
+			URLConnection connection = url.openConnection();
+			connection.setDoOutput(true);
+
+			OutputStreamWriter out = new OutputStreamWriter(
+					connection.getOutputStream());
+			out.write("Passwd=" + passwd + "&AdminValue=" + adminVal);
+			out.close();
+
+			BufferedReader in = new BufferedReader(
+					new InputStreamReader(
+							connection.getInputStream()));
+
+			loadTreesFromParamTags(in);
+		}catch(Exception e){
+			return e.toString();
+		}
+		return null;
+	}
+	
+	public static void loadTreesFromParamTags(BufferedReader reader) {
+		
 		try {
-			String filePath = new String("trees/studentTrees");
-			BufferedReader reader = new BufferedReader(new 
-					InputStreamReader(new FileInputStream(filePath)));
 			String linein = reader.readLine();
 			while(linein != null) {
-				String[] paramParse = linein.split("\" value=\"");
-				String studentData = paramParse[1];
-				String[] studentDataItems = 
-					studentData.split(Pattern.quote("+="));
-				String studentName = studentDataItems[0];
-				String treeData = studentDataItems[2];
-				ArrayList<String> answers = new ArrayList<String>();
-				answers.add(studentDataItems[3]);
-				answers.add(studentDataItems[4]);
-				String section = studentDataItems[6].substring(8,10);
-				int iSection = Integer.parseInt(section);
-				boolean directional = iSection % 2 == 0;
-				String[] treeItems = treeData.split("#"); // remove '=' at start
-				Graph graph = new Graph(studentName);
-				graph.setAnswers(answers);
-				for(String elements: treeItems){   //load vertices
-					String[] attributes = elements.split(":");
-					if(attributes.length < 6) continue;
-					String type = attributes[0];
-					int id = Integer.parseInt(attributes[1]);
-					String elementName = attributes[2];
-					int x = Integer.parseInt(attributes[3]);
-					int y = Integer.parseInt(attributes[4]);
-					boolean inTree = Boolean.parseBoolean(attributes[5]);
-					if("O".equals(type)) 
-					{
-						if(inTree) 
-						{
-							graph.addVertex(id, new Vertex(commonImages.get(id), 
-									new Point(x, y)));
-						}
-					}
-					if("E".equals(type)) 
-					{
-						// only empty nodes in tree (exclude immortalNode)
-						if(inTree) 
-						{
-							graph.addVertex(id, new Vertex(
-									new VertexInfo(elementName), new Point(x, y)));
-						}	
-					}
+				if(linein.startsWith("<param name=\"Student")){
+					String[] paramParse = linein.split("\" value=\"");
+					String studentData = paramParse[1];
+					String[] studentDataItems = 
+						studentData.split(Pattern.quote("+="));
+					loadStudent(studentDataItems);
 				}
-				for(String elements: treeItems) 
-				{
-					// load connections
-					String[] attributes = elements.split(":");
-					String type = attributes[0];
-					if(!"C".equals(type)) continue;
-					int id1 = Integer.parseInt(attributes[2]);
-					int id2 = Integer.parseInt(attributes[3]);
-					Vertex v1 = graph.getVertexByID(id1);
-					Vertex v2 = graph.getVertexByID(id2);
-					graph.addEdge(new Edge(v1, v2));
-				}
-				graph.setDirectional(directional);
-				graph.loadHulls();
-				studentNameToTree.put(studentName, graph);
 				linein = reader.readLine();
 			}
 			reader.close();
@@ -392,97 +356,80 @@ public class AdminApplication extends JFrame {
 		}
 	}
 	
-	public static void loadTreesFromDB() throws Exception {
-		AdminJdbcDao dao = new AdminJdbcDao();
-		List<String[]> studentSurveys = dao.loadSurveys();
-		List<String[]> students = dao.loadStudents();
-		for(String[] studentSurvey : studentSurveys) {
-			String studentName = studentSurvey[0];
-			String treeData = studentSurvey[2];
-			ArrayList<String> answers = new ArrayList<String>();
-			answers.add(studentSurvey[3]);
-			answers.add(studentSurvey[4]);
-			String[] treeItems = treeData.split("#"); // remove '=' at start
-			Graph graph = new Graph(studentName);
-			graph.setAnswers(answers);
-			for(String elements: treeItems){   //load vertices
-				String[] attributes = elements.split(":");
-				if(attributes.length < 6) continue;
-				String type = attributes[0];
-				int id = Integer.parseInt(attributes[1]);
-				String elementName = attributes[2];
-				int x = Integer.parseInt(attributes[3]);
-				int y = Integer.parseInt(attributes[4]);
-				boolean inTree = Boolean.parseBoolean(attributes[5]);
-				if("O".equals(type)) 
-				{
-					if(inTree) 
-					{
-						graph.addVertex(id, new Vertex(commonImages.get(id), 
-								new Point(x, y)));
-					}
-				}
-				if("E".equals(type)) 
-				{
-					// only empty nodes in tree (exclude immortalNode)
-					if(inTree) 
-					{
-						graph.addVertex(id, new Vertex(
-								new VertexInfo(elementName), new Point(x, y)));
-					}	
-				}
-			}
-			for(String elements: treeItems) 
+	private static void loadStudent(String[] studentDataItems){
+		String studentName = studentDataItems[0];
+		String treeData = studentDataItems[2];
+		ArrayList<String> answers = new ArrayList<String>();
+		answers.add(studentDataItems[3]);
+		answers.add(studentDataItems[4]);
+		String section = studentDataItems[6].substring(8,10);
+		int iSection = Integer.parseInt(section);
+		boolean directional = iSection % 2 == 0;
+		Graph graph = new Graph(studentName);
+		graph.setAnswers(answers);
+		graph.setDirectional(directional);
+		studentNameToTree.put(studentName, updateGraphTree(treeData, graph));
+	}
+	
+	public static Graph updateGraphTree(String treeData, Graph graph){
+		String[] treeItems = treeData.split("#");
+		for(String elements: treeItems){   //load vertices
+			String[] attributes = elements.split(":");
+			if(attributes.length < 6) continue;
+			String type = attributes[0];
+			int id = Integer.parseInt(attributes[1]);
+			String elementName = attributes[2];
+			int x = Integer.parseInt(attributes[3]);
+			int y = Integer.parseInt(attributes[4]);
+			boolean inTree = Boolean.parseBoolean(attributes[5]);
+			if("O".equals(type)) 
 			{
-				// load connections
-				String[] attributes = elements.split(":");
-				String type = attributes[0];
-				if(!"C".equals(type)) continue;
-				int id1 = Integer.parseInt(attributes[2]);
-				int id2 = Integer.parseInt(attributes[3]);
-				//System.out.println(id1 + " " + id2);
-				Vertex v1 = graph.getVertexByID(id1);
-				Vertex v2 = graph.getVertexByID(id2);
-				graph.addEdge(new Edge(v1, v2));
+				if(inTree) 
+				{
+					graph.addVertex(id, new Vertex(commonImages.get(id), 
+							new Point(x, y)));
+				}
 			}
-			graph.loadHulls();
-			
-			studentNameToTree.put(studentName, graph);
+			if("E".equals(type)) 
+			{
+				// only empty nodes in tree (exclude immortalNode)
+				if(inTree) 
+				{
+					graph.addVertex(id, new Vertex(
+							new VertexInfo(elementName), new Point(x, y)));
+				}	
+			}
 		}
-		
-		//Update directionality information
-		for(String[] student : students){
-			String name = student[0];
-			String section = student[1].substring(8,10);
-			int iSection = Integer.parseInt(section);
-			Graph temp = studentNameToTree.get(name);
-			if(temp != null)
-				temp.setDirectional(iSection % 2 == 0);
+		for(String elements: treeItems) 
+		{
+			// load connections
+			String[] attributes = elements.split(":");
+			String type = attributes[0];
+			if(!"C".equals(type)) continue;
+			int id1 = Integer.parseInt(attributes[2]);
+			int id2 = Integer.parseInt(attributes[3]);
+			Vertex v1 = graph.getVertexByID(id1);
+			Vertex v2 = graph.getVertexByID(id2);
+			graph.addEdge(new Edge(v1, v2));
 		}
+		graph.loadHulls();
+		return graph;
+	}
+	
+	public static void clearStudentData(){
+		studentNameToTree = new TreeMap<String, Graph>();
+		graphs = new ArrayList<Graph>();
 	}
 	
 
 	//convert treeMap to ArrayList
 
-	private void treeMapToArrayList()
+	private static void treeMapToArrayList()
 	{
-		graphs = new ArrayList<Graph>();
-
-		while (!studentNameToTree.isEmpty())
-		{
-//			Graph thisGraph= studentNameToTree.pollFirstEntry().getValue();
-//			tried this - only good under 1.6 - I'm 1.5 at the moment.		
-
-			String key = studentNameToTree.firstKey();
-			Graph thisGraph = studentNameToTree.remove(key);
-
-			//might as well build these lists now and get it done
-			
-			thisGraph.initRelations();
-
-			//put it in the arraylist
-
-			graphs.add(thisGraph);
+		for(Map.Entry<String,Graph> e : studentNameToTree.entrySet()){
+			Graph temp = e.getValue();
+			temp.initRelations();
+			graphs.add(temp);
 		}
 	}
 	
