@@ -1,6 +1,7 @@
 package admin;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -9,12 +10,16 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -24,6 +29,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -131,17 +139,26 @@ public class ActionHandler extends JPanel {
 	public class OptimalAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3382645405034163126L;
+		private JMenu parentMenu;
 		private int optimalIndex;
-		public OptimalAction(int optimalIndex) {
+		private boolean quick;
+		public OptimalAction(JMenu parentMenu, int optimalIndex, boolean quick) {
 			super();
+			this.parentMenu = parentMenu;
 			this.optimalIndex = optimalIndex;
+			this.quick = quick;
 		}
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.OPTIMAL_HULL,
-					optimalIndex));
+			OptimalHulls oh = parent.getCurrentGraph().getOptimalHulls(true).get(optimalIndex);
+			if(!oh.getDisplay())
+				parentMenu.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.OPTIMAL_HULL,
+						optimalIndex));
+			if(quick)
+				oh.fullOptimization();
+			else
+				oh.startOptimization();
 		}
 	}
 	
@@ -216,6 +233,26 @@ public class ActionHandler extends JPanel {
         printItem = new JMenuItem(printAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
+        //Data Import
+        final JMenuItem dataImport = new JMenuItem("Import Data");
+    	final JDialog dataImporter = getDataImporter();
+    	ActionListener dataImportListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				dataImporter.setVisible(true);
+			}
+		};
+		dataImport.addActionListener(dataImportListener);
+		fileMenu.add(dataImport);
+		//Reset Data
+		final JMenuItem dataReset = new JMenuItem("Reset Data");
+		ActionListener dataResetListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AdminApplication.clearStudentData();
+			}
+		};
+		dataReset.addActionListener(dataResetListener);
+		fileMenu.add(dataReset);
+		
         JMenuItem names = new JMenuItem("Display Names" + (parent.showNames ? " \u2713" : ""));
         names.addActionListener(new NamesAction());
         fileMenu.add(names);
@@ -242,21 +279,22 @@ public class ActionHandler extends JPanel {
         	List<HullCollision> collisions = tempGraph.getHullCollisions(true);
         	if(!collisions.isEmpty()){
         		JMenu collisionMenu = new JMenu("Group Collisions");
+        		JMenu optimalMenu = new JMenu("Optimal Groups");
         		for(int i=0;i<collisions.size();i++){
         			HullCollision tempHC = collisions.get(i);
-        			JMenuItem menuItem = new JMenuItem(tempHC.toString());
-        			menuItem.addActionListener(new CollisionAction(i));
-        			collisionMenu.add(menuItem);
+        			JMenuItem HCItem = new JMenuItem(tempHC.toString());
+        			HCItem.addActionListener(new CollisionAction(i));
+        			collisionMenu.add(HCItem);
+        			final JMenu optimalSubMenu = new JMenu(tempHC.toString());
+        			JMenuItem quickItem = new JMenuItem("Show");
+        			quickItem.addActionListener(new OptimalAction(optimalSubMenu, i, true));
+        			optimalSubMenu.add(quickItem);
+        			JMenuItem iterativeItem = new JMenuItem("Watch");
+        			iterativeItem.addActionListener(new OptimalAction(optimalSubMenu, i, false));
+        			optimalSubMenu.add(iterativeItem);
+        			optimalMenu.add(optimalSubMenu);
         		}
         		fileMenu.add(collisionMenu);
-        		List<OptimalHulls> optimalHulls = tempGraph.getOptimalHulls(true);
-        		JMenu optimalMenu = new JMenu("Optimal Groups");
-        		for(int i=0;i<optimalHulls.size();i++){
-        			OptimalHulls tempOH = optimalHulls.get(i);
-        			JMenuItem menuItem = new JMenuItem(tempOH.toString());
-        			menuItem.addActionListener(new OptimalAction(i));
-        			optimalMenu.add(menuItem);
-        		}
         		fileMenu.add(optimalMenu);
         	}
         	JMenuItem deselect = new JMenuItem("Clear Selections");
@@ -373,5 +411,66 @@ public class ActionHandler extends JPanel {
         colorEditor.add(tcc, BorderLayout.PAGE_END);
         colorDialog.getContentPane().add(colorEditor);
         return colorDialog;
+    }
+    
+    public JDialog getDataImporter(){
+    	JDialog importDialog = new JDialog(parent, "Import Data", true);
+    	importDialog.setSize(500, 550);
+    	JPanel urlImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    	final JLabel errorLabel  = new JLabel();
+    	errorLabel.setBorder(BorderFactory.createTitledBorder("Error"));
+    	final JTextField urlField = new JTextField(30);
+    	urlField.setText("https://www.securebio.umb.edu/cgi-bin/TreeSurvey.pl");
+    	urlField.setBorder(BorderFactory.createTitledBorder("Enter URL"));
+    	final JPasswordField passwordField = new JPasswordField(20);
+    	passwordField.setBorder(BorderFactory.createTitledBorder("Enter Admin Password"));
+        final JButton importURLButton = new JButton("Import");
+        importURLButton.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			String urlText = urlField.getText();
+    			URL url;
+    			try{
+    				url = new URL(urlText);
+    				errorLabel.setVisible(false);
+    			}catch(IOException ioe){
+    				errorLabel.setText("Invalid URL");
+    				errorLabel.setVisible(true);
+    				return;
+    			}
+    			char[] pass = passwordField.getPassword();
+    			if (!isPasswordCorrect(pass)) {
+    				errorLabel.setText("Invalid Password");
+    				errorLabel.setVisible(true);
+    				return;
+    			}
+    			AdminApplication.loadStudentsFromURL(url, String.valueOf(pass));
+    		}
+    	});
+        urlImport.add(urlField);
+        urlImport.add(passwordField);
+        urlImport.add(errorLabel);
+        urlImport.add(importURLButton);
+        
+        
+        JTabbedPane importTabs = new JTabbedPane();
+        importTabs.add(urlImport, "URL");
+        importDialog.getContentPane().add(importTabs);
+        return importDialog;
+    }
+    
+    private static boolean isPasswordCorrect(char[] input) {
+        boolean isCorrect = true;
+        char[] correctPassword = {'l','a','b','0','9','a','c','c','e','5','5'};
+
+        if (input.length != correctPassword.length) {
+            isCorrect = false;
+        } else {
+            isCorrect = Arrays.equals (input, correctPassword);
+        }
+
+        //Zero out the password.
+        Arrays.fill(correctPassword,'0');
+
+        return isCorrect;
     }
 }
