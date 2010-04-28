@@ -59,7 +59,7 @@ public class HullCollision extends SubDropDown{
 	
 	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model){
 		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon(),
-			collisonShape = new Polygon();
+			collisionShape = new Polygon();
 		
 		for(Point p : hull1.getHull())
 			hull1Shape.addPoint(p.x - xOffset, p.y - yOffset);
@@ -68,10 +68,10 @@ public class HullCollision extends SubDropDown{
 			hull2Shape.addPoint(p.x - xOffset, p.y - yOffset);
 		
 		for(Point p : collisionPoints)
-			collisonShape.addPoint(p.x - xOffset, p.y - yOffset);
+			collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
 		
 		g2.setColor(new Color(255,36,0,160));
-		g2.fill(collisonShape);
+		g2.fill(collisionShape);
 		
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(model.getGroupColor(hull1.getHullName()));
