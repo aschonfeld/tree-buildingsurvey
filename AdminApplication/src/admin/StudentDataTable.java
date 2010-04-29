@@ -1,6 +1,7 @@
 package admin;
 
 import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -29,7 +30,9 @@ public class StudentDataTable extends JFrame {
     public static StudentDataColumns studentDataColumns;
     static AdminApplication parent;
     static HumanScoring humanScoring;
-
+    static Rectangle savedRect;
+    static ArrayList<SortKey> sortKeys;
+    
     public StudentDataTable(AdminApplication parent) {
         super("TBS Student Data");
         this.parent = parent;
@@ -40,6 +43,16 @@ public class StudentDataTable extends JFrame {
         add(tablePane);
         setSize(new Dimension(928, 762));
         setJMenuBar(parent.actionHandler.getDataMenuBar(studentDataColumns));
+    }
+    
+    public void saveTableState() {
+    	sortKeys = new ArrayList<SortKey>(table.getRowSorter().getSortKeys());
+    	savedRect = table.getVisibleRect();
+    }
+    
+    public void restoreTableState() {
+    	table.getRowSorter().setSortKeys(sortKeys);
+    	table.scrollRectToVisible(savedRect);
     }
     
     public class StudentDataTableModel extends AbstractTableModel {
@@ -139,7 +152,15 @@ public class StudentDataTable extends JFrame {
     						(table, value, isSelected, hasFocus, row, column);
     		ColumnDataHandler cdh;
     		cdh = studentDataTableModel.columnDataHandlers.get(column);
-    		tableRenderer.setBackground(cdh.getBackgroundColor(value));
+    		Color backgroundColor = cdh.getBackgroundColor(value);
+    		int selectedRow = table.convertRowIndexToModel(row);
+    		if(backgroundColor == StudentDataColumns.defaultBackgroundColor) {
+    			if(selectedRow == parent.getCurrentGraphIndex()) {
+    				// make selected row light blue (except for groupings)
+    				backgroundColor = new Color(0.7f, 0.7f, 1.0f);
+    			}
+    		}
+    		tableRenderer.setBackground(backgroundColor);
     		return tableRenderer;
     	}
     }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class StudentDataColumns {
 	
     public ArrayList<ColumnDataHandler> columnDataHandlers;
+    public static Color defaultBackgroundColor = Color.WHITE;
     
 	StudentDataColumns() {
     	columnDataHandlers = new ArrayList<ColumnDataHandler>();
@@ -54,7 +55,7 @@ public class StudentDataColumns {
     			if(value <= 1.25) return Color.yellow;
     			return Color.green;
     		}
-    		return Color.white;
+    		return defaultBackgroundColor;
     	}
     }
     
