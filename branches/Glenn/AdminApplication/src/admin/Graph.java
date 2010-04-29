@@ -346,7 +346,7 @@ public class Graph implements Renderable {
 		return optimalHulls;
 	}
 	
-	public String displaySubDropDownItem(SubDropDownType type, int index){
+	public void displaySubDropDownItem(SubDropDownType type, int index){
 		Displayable selection = null;
 		switch(type){
 			case HULL:
@@ -369,7 +369,6 @@ public class Graph implements Renderable {
 				deselectItems(sdd);
 		}
 		selection.setDisplay(!previousDisplay);
-		return selection.toString();
 	}
 	
 	public void deselectItems(SubDropDownType type){
@@ -602,8 +601,9 @@ public class Graph implements Renderable {
 				int xVal = (v.upperLeft.x - offset.x) + (v.getInfo().getImage().getWidth()/2);
 				int yVal = v.upperLeft.y - (offset.y + Common.ySpacing);
 				g.setFont(Common.tooltipFont);
-				xVal -= Common.getStringBounds((Graphics2D) g, v.getInfo().getName()).width/2;
-				Common.drawCenteredString((Graphics2D) g, v.getInfo().getName(), xVal, yVal, 0,
+				String tooltipString = v.getInfo().getName() + " - " + Common.commaSeparatedString(v.getInfo().getTypes().values()); 
+				xVal -= Common.getStringBounds((Graphics2D) g, tooltipString).width/2;
+				Common.drawCenteredString((Graphics2D) g, tooltipString, xVal, yVal, 0,
 						0, Common.tooltipColor, Common.tooltipFont);
 				g.setFont(Common.font);
 			}

@@ -208,13 +208,15 @@ public class OptimalHulls extends Displayable implements Renderable {
 			g2.draw(new Rectangle2D.Double(bounds.x-(1.5+offset.x), bounds.y-(1.5+offset.y),
 					bounds.width + 3, bounds.height + 3));
 			g2.setStroke(new BasicStroke());
-			int xVal = (bounds.x - offset.x) + (v.getInfo().getImage().getWidth()/2);
-			int yVal = bounds.y - (offset.y + Common.ySpacing);
-			g2.setFont(Common.tooltipFont);
-			xVal -= Common.getStringBounds(g2, v.getInfo().getTypes().get(level)).width/2;
-			Common.drawCenteredString(g2, v.getInfo().getTypes().get(level), xVal, yVal, 0,
-					0, Common.tooltipColor, Common.tooltipFont);
-			g2.setFont(Common.font);
+			if(!AdminApplication.showNames){
+				int xVal = (bounds.x - offset.x) + (v.getInfo().getImage().getWidth()/2);
+				int yVal = bounds.y - (offset.y + Common.ySpacing);
+				g2.setFont(Common.tooltipFont);
+				xVal -= Common.getStringBounds(g2, v.getInfo().getTypes().get(level)).width/2;
+				Common.drawCenteredString(g2, v.getInfo().getTypes().get(level), xVal, yVal, 0,
+						0, Common.tooltipColor, Common.tooltipFont);
+				g2.setFont(Common.font);
+			}
 		}
 	}
 	
