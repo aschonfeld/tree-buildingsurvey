@@ -1,80 +1,109 @@
-#summary Developer's Guide: Prompt
+#summary Developer's Guide: Prompt (INCOMPLETE)
 = Introduction =
 Prompt is the overall class of objects used for communication with the student. 
 Prompt stands in for a number of Swing objects (JLabel, JOptionPane, and so forth). Swing components are avoided throughout the TBSApplet due to observed incompatibilies with Java configurations on certain operating systems, most notably OS X. Prompt provides a way to display and elicit information using lower-level (and therefore more broadly compatible) methods. Being custom-built, they interact nicely with the rest of TBS and suit the look and feel of the applet. 
 
 = Extending classes=
 
-Prompts:
+StudentModel Prompts:
 HelpPrompt, RadioQuestionPrompt, ResizeWarning, TextEntryBox, WelcomePrompt, WrittenQuestionPrompt, YesNoPrompt
+AdminModelPrompts:
+AnalysisPrompt, ColorEditorPrompt, RadioQuestionReviewPrompt, WrittenQuestionReviewPrompt
 
 = Details =
 Prompt is an abstract class underlying all "prompt" objects in the Applet. The source code is very informative, what follows is essentially the source with annotations. See specific Prompt objects for more detailed commentary on particular implementations. 
 
+
+=Fields=
+         private TBSModel model; 
        private Graphics2D g2; 
+References to the current model and graphics context.
+
          private Point anchorPoint; 
+
+Defines the prompt's location in the window. 
+
          private Dimension promptSize; 
-         private boolean renderClose; 
+Defines the Prompt's space in the window
+
          private Rectangle closeButton; 
-         private boolean renderMinimize; 
          private Rectangle minimizeButton; 
          private Rectangle bottomButtons; 
+
+Used to represent the locations of the various buttons used by different prompts. (note the inherent limitation of this set of objects to our particular needs: to put buttons in other locations, for example, would require modifying the abstract class. This is not a general Swing-killer)
+
          private int buttonHeight = TBSGraphics.textHeight + TBSGraphics.padding.height; 
+
+Sets button height to the height of one row of text plus padding. See [TBSGraphics] for these constants. 
+
          private int stringY = 0; 
+
+
+
+         private boolean renderMinimize; 
+         private boolean renderClose; 
+
+FILL IN
           
-         private TBSModel model; 
+
          private boolean finished; 
-         private boolean renderButtonsAndString; 
-         private boolean renderElements; 
-          
+Used for closing this prompt. 
+
+
+         
          private boolean minimizationInProgress = false; 
          private boolean maximizationInProgress = false; 
+
+For tracking minimization and maximization state. See () for implementation.
+
          private int resizeIndex; 
          private int xIncr, yIncr, wIncr, hIncr; 
+
+
          private boolean minimizedState = false; 
+Prompts are not minimized when created. 
+
          private String minimizedTitle; 
-          
-         public Prompt(boolean renderButtonsAndString, boolean renderElements, Dimension promptSize, 
-                         TBSModel model){ 
-                 finished = false; 
-                 this.renderButtonsAndString = renderButtonsAndString; 
-                 this.renderElements = renderElements; 
-                 this.promptSize = promptSize; 
-                 anchorPoint = new Point(); 
-                 closeButton = new Rectangle(); 
-                 minimizeButton = new Rectangle(); 
-                 bottomButtons = new Rectangle(); 
-                 this.model = model; 
-                 renderClose = true; 
-                 renderMinimize = false; 
-         } 
-          
-         public Graphics2D getGraphics() {return g2;} 
-         public void setGraphics( Graphics2D g2 ) {this.g2 = g2;} 
-         public Dimension getPromptSize() {return promptSize;} 
-         public int getWidth(){return promptSize.width;} 
-         public int getUnpaddedWidth(){return promptSize.width - (TBSGraphics.padding.width*2);} 
-         public int getHeight(){return promptSize.height;} 
-         public void setAnchorPoint(Point anchorPoint){this.anchorPoint = anchorPoint;} 
-         public int getX(){return anchorPoint.x;} 
-         public int getY(){return anchorPoint.y;} 
-         public Rectangle getCloseButton() {return closeButton;} 
-         public void setCloseButton( Rectangle closeButton ) {this.closeButton = closeButton;} 
-         public Rectangle getMinimizeButton() {return minimizeButton;} 
-         public void setMinimizeButton( Rectangle minimizeButton ) {this.minimizeButton = minimizeButton;} 
-         public Rectangle getBottomButtons() {return bottomButtons;} 
-         public int getStringY() {return stringY;} 
-         public void setStringY( int stringY ) {this.stringY = stringY;} 
-         public void incrementStringY(){ stringY += buttonHeight;} 
-         public void incrementStringY(int value){ stringY += value;} 
-         public void incrementStringYMulti(int value){ stringY += buttonHeight * value;} 
-         public void setBottomButtons( Rectangle bottomButtons ) {this.bottomButtons = bottomButtons;} 
-  
-         public boolean renderButtonsAndString() {return renderButtonsAndString;} 
-         public boolean renderElements() {return renderElements;} 
-         public void setRenderClose(boolean renderClose) {this.renderClose = renderClose;} 
-         public void setRenderMinimize(boolean renderMinimize) {this.renderMinimize = renderMinimize;} 
-                  
-         public boolean getMinimizedState(){return minimizedState;} 
-         public void setMinimizedTitle(String minimizedTitle){this.minimizedTitle = minimizedTitle;} 
+
+FILL IN
+
+         private boolean renderButtonsAndString; 
+         private boolean renderElements; 
+ 
+FILL IN 
      
+
+
+
+
+=Methods=
+
+    public Prompt(boolean renderButtonsAndString, boolean renderElements, Dimension promptSize, TBSModel model)
+
+Default constructor for Prompt objects.
+
+Prompt.java defines accessors for the above fields. Use of "get" prefix on getters is inconsistent, but logical. See Prompt.java for method names. 
+     
+
+
+setFinished(boolean finished) 
+Use this setter to close a Prompt. The Prompt will close itself down. 
+
+void paintComponent(Graphics2D g2)
+
+Display instructions go here.
+
+isOverButton(MouseEvent e)
+
+returns true if the reported MouseEvent (a click) occurs over a button
+
+getCursor( MouseEvent e )
+returns the correct Cursor for the current state
+FILL IN here
+
+
+ mousePressed(MouseEvent e)          
+ keyPressed(KeyEvent e) 
+ keyTyped(KeyEvent e) 
+
+Prompts capture these Events, handling instructions go here.
