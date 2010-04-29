@@ -4,7 +4,7 @@
 
 INCOMPLETE
 
-TBSGraphics contains constants and static methods used for graphics throughout the TBS Applet. Static constants are either hard-coded or set according to environment. When constants are set elsewhere in the code, this page indicates where this occurs as well as the rationale for the constant. 
+TBSGraphics contains constants and static methods used for graphics throughout the [TBSApplet TBS Applet]. Static constants are either hard-coded or set according to environment. When constants are set elsewhere in the code, this page indicates where this occurs as well as the rationale for the constant. 
 
 Constants:
   * Applet height & width are set according to height and width parameters passed by frame page. 
