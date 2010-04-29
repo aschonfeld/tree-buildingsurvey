@@ -541,9 +541,8 @@ public class Graph implements Renderable {
 	public ArrayList<PathPair> getPathPairs(Vertex from, Vertex to) {
 		ArrayList<PathPair> returnVal = new ArrayList<PathPair>();
 		if(testPair(from, to, "Invert", "Invert")) returnVal.add(InvToInv);
-		if(testPair(from, to, "Invert", "Mammal")) returnVal.add(InvToVert);
-		if(testPair(from, to, "Invert", "NMV")) returnVal.add(InvToVert);
-		if(returnVal.size() == 0) returnVal.add(VertToVert);
+		if(testPair(from, to, "Invert", "Vert")) returnVal.add(InvToVert);
+		if(testPair(from, to, "Vert", "Vert")) returnVal.add(VertToVert);
 		if(testPair(from, to, "Mammal", "Mammal")) returnVal.add(MammalToMammal);
 		if(testPair(from, to, "NMV", "Mammal")) returnVal.add(MammalToNMV);
 		if(testPair(from, to, "NMV", "NMV")) returnVal.add(NMVToNMV);
@@ -551,13 +550,13 @@ public class Graph implements Renderable {
 	}
 	
 	public boolean testPair(Vertex v1, Vertex v2, String type1, String type2) {
-		if(v1.getInfo().getTypes().containsKey(type1)) {
-			if(v2.getInfo().getTypes().containsKey(type2)) {
+		if(v1.getInfo().getTypes().containsValue(type1)) {
+			if(v2.getInfo().getTypes().containsValue(type2)) {
 				return true;
 			}
 		}
-		if(v2.getInfo().getTypes().containsKey(type1)) {
-			if(v1.getInfo().getTypes().containsKey(type2)) {
+		if(v2.getInfo().getTypes().containsValue(type1)) {
+			if(v1.getInfo().getTypes().containsValue(type2)) {
 				return true;
 			}
 		}	
