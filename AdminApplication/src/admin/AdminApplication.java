@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -52,6 +53,8 @@ public class AdminApplication extends JFrame {
 		actionHandler = new ActionHandler();
 		treeView = new TreeView();
 		treeController = new TreeController();
+		studentNameToTree = new TreeMap<String, Graph>();
+		graphs = new ArrayList<Graph>();
 		initCommonVertices();
 		clearStudentData();
 		loadTreesFromDirectory();
@@ -111,13 +114,18 @@ public class AdminApplication extends JFrame {
         
     public void setCurrentGraph(int index) {
     	currentGraphIndex = index;
-		currentGraphIndex %= graphs.size();
-		parent.questionDisplayFrame.setAnswersText(graphs.get(currentGraphIndex).getAnswers());
+    	if(!graphs.isEmpty())
+    		currentGraphIndex %= graphs.size();
+		parent.questionDisplayFrame.setAnswersText(getCurrentGraph().getAnswers());
 		setJMenuBar(actionHandler.createMenuBar());
 		validate();
 		repaint();
 	    parent.shortestPathTableFrame.refreshTable();
+	    parent.shortestPathTableFrame.validate();
+	    parent.studentDataTableFrame.refreshTable();
+	    parent.studentDataTableFrame.validate();
 	    treeView.paintComponent();
+	    
     }
     
     public void printGraphInfo() {
@@ -329,24 +337,71 @@ public class AdminApplication extends JFrame {
 					new InputStreamReader(
 							connection.getInputStream()));
 
+			clearStudentTree();
 			loadTreesFromParamTags(in);
+			treeMapToArrayList();
 		}catch(Exception e){
 			return e.toString();
 		}
 		return null;
 	}
 	
+	public static String loadStudentsFromFiles(File folder){
+		try{
+			if(folder.isDirectory()){
+				clearStudentTree();
+				for(File f : folder.listFiles()){
+					BufferedReader reader = new BufferedReader(new 
+							InputStreamReader(new FileInputStream(f.getPath())));
+					String linein = reader.readLine();
+					String[] studentInfo = linein.split(",");
+					Graph graph = new Graph(studentInfo[0]);
+					int iSection = Integer.parseInt(studentInfo[1]);
+					boolean directional = iSection % 2 == 0;
+					graph.setDirectional(directional);
+					linein = reader.readLine();
+					String lastUpdate = linein;
+					linein = reader.readLine();
+					ArrayList<String> answers = new ArrayList<String>();
+					answers.add(linein);
+					linein = reader.readLine();
+					answers.add(linein);
+					graph.setAnswers(answers);
+					linein = reader.readLine();
+					studentNameToTree.put(studentInfo[0], updateGraphTree(linein, graph));
+					reader.close();
+				}
+				treeMapToArrayList();
+			}
+			return null;
+		}catch(Exception e){
+			return e.toString();
+		}
+	}
+	
 	public static void loadTreesFromParamTags(BufferedReader reader) {
 		
 		try {
 			String linein = reader.readLine();
+			StringBuffer student = new StringBuffer();
+			boolean readingLine = false;
 			while(linein != null) {
+				if(readingLine){
+					student.append(linein);
+					if(linein.trim().endsWith("+=\">")){
+						readingLine = false;
+						parseParamTag(student.toString());
+						student = new StringBuffer();
+					}
+				}
 				if(linein.startsWith("<param name=\"Student")){
-					String[] paramParse = linein.split("\" value=\"");
-					String studentData = paramParse[1];
-					String[] studentDataItems = 
-						studentData.split(Pattern.quote("+="));
-					loadStudent(studentDataItems);
+					readingLine = true;
+					student.append(linein);
+					if(linein.trim().endsWith("+=\">")){
+						readingLine = false;
+						parseParamTag(student.toString());
+						student = new StringBuffer();
+					}
 				}
 				linein = reader.readLine();
 			}
@@ -356,19 +411,32 @@ public class AdminApplication extends JFrame {
 		}
 	}
 	
+	private static void parseParamTag(String param){
+		String[] paramParse = param.split("\" value=\"");
+		String studentData = paramParse[1];
+		String[] studentDataItems = 
+			studentData.split(Pattern.quote("+="));
+		loadStudent(studentDataItems);
+	}
+	
 	private static void loadStudent(String[] studentDataItems){
-		String studentName = studentDataItems[0];
-		String treeData = studentDataItems[2];
-		ArrayList<String> answers = new ArrayList<String>();
-		answers.add(studentDataItems[3]);
-		answers.add(studentDataItems[4]);
-		String section = studentDataItems[6].substring(8,10);
-		int iSection = Integer.parseInt(section);
-		boolean directional = iSection % 2 == 0;
-		Graph graph = new Graph(studentName);
-		graph.setAnswers(answers);
-		graph.setDirectional(directional);
-		studentNameToTree.put(studentName, updateGraphTree(treeData, graph));
+		String studentName = "";
+		try{
+			studentName = studentDataItems[0];
+			String treeData = studentDataItems[2];
+			ArrayList<String> answers = new ArrayList<String>();
+			answers.add(studentDataItems[3]);
+			answers.add(studentDataItems[4]);
+			String section = studentDataItems[6].substring(8,10);
+			int iSection = Integer.parseInt(section);
+			boolean directional = iSection % 2 == 0;
+			Graph graph = new Graph(studentName);
+			graph.setAnswers(answers);
+			graph.setDirectional(directional);
+			studentNameToTree.put(studentName, updateGraphTree(treeData, graph));
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Error processing data for, " + studentName + ": " + studentDataItems);
+		}
 	}
 	
 	public static Graph updateGraphTree(String treeData, Graph graph){
@@ -385,19 +453,15 @@ public class AdminApplication extends JFrame {
 			if("O".equals(type)) 
 			{
 				if(inTree) 
-				{
 					graph.addVertex(id, new Vertex(commonImages.get(id), 
 							new Point(x, y)));
-				}
 			}
 			if("E".equals(type)) 
 			{
 				// only empty nodes in tree (exclude immortalNode)
 				if(inTree) 
-				{
 					graph.addVertex(id, new Vertex(
 							new VertexInfo(elementName), new Point(x, y)));
-				}	
 			}
 		}
 		for(String elements: treeItems) 
@@ -417,13 +481,16 @@ public class AdminApplication extends JFrame {
 	}
 	
 	public static void clearStudentData(){
-		studentNameToTree = new TreeMap<String, Graph>();
-		graphs = new ArrayList<Graph>();
+		clearStudentTree();
+		graphs.clear();
+	}
+	
+	public static void clearStudentTree(){
+		studentNameToTree.clear();
 	}
 	
 
 	//convert treeMap to ArrayList
-
 	private static void treeMapToArrayList()
 	{
 		for(Map.Entry<String,Graph> e : studentNameToTree.entrySet()){

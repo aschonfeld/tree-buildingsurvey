@@ -1,7 +1,6 @@
 package admin;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -10,15 +9,15 @@ import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -48,6 +47,9 @@ public class ActionHandler extends JPanel {
 	public Action printAction;
 	public Action exportAction;
 	public AdminApplication parent;
+	private List<JMenuItem> hullItems;
+	private List<JMenuItem> collisionItems;
+	private List<JMenu> optimalItems;
 	
 	
 	public class ExitAction extends AbstractAction {
@@ -76,7 +78,7 @@ public class ActionHandler extends JPanel {
 		public void actionPerformed(ActionEvent arg0) {
 			parent.printGraphInfo();
 			PrinterJob printJob = PrinterJob.getPrinterJob();
-			printJob.setPrintable(parent.treeView);
+			printJob.setPrintable(AdminApplication.treeView);
 			if (printJob.printDialog()){
 				try { 
 					printJob.print();
@@ -96,9 +98,9 @@ public class ActionHandler extends JPanel {
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			parent.toggleShowNames();
+			AdminApplication.toggleShowNames();
 			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText("Display Names" + (parent.showNames ? " \u2713" : ""));
+			item.setText("Display Names" + (AdminApplication.showNames ? " \u2713" : ""));
 		}
 	}
 	
@@ -113,9 +115,9 @@ public class ActionHandler extends JPanel {
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.HULL,
-					hullIndex));
+			AdminApplication.getCurrentGraph().displaySubDropDownItem(SubDropDownType.HULL,
+					hullIndex);
+			redrawBooleans();
 		}
 	}
 	
@@ -130,35 +132,36 @@ public class ActionHandler extends JPanel {
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			JMenuItem item = (JMenuItem)e.getSource();
-			item.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.COLLISION,
-					collisionIndex));
+			AdminApplication.getCurrentGraph().displaySubDropDownItem(SubDropDownType.COLLISION,
+					collisionIndex);
+			redrawBooleans();
 		}
 	}
 	
 	public class OptimalAction extends AbstractAction {
 
 		private static final long serialVersionUID = 3382645405034163126L;
-		private JMenu parentMenu;
 		private int optimalIndex;
 		private boolean quick;
-		public OptimalAction(JMenu parentMenu, int optimalIndex, boolean quick) {
+		public OptimalAction(int optimalIndex, boolean quick) {
 			super();
-			this.parentMenu = parentMenu;
 			this.optimalIndex = optimalIndex;
 			this.quick = quick;
 		}
 
 		//@0verride
 		public void actionPerformed(ActionEvent e) {
-			OptimalHulls oh = parent.getCurrentGraph().getOptimalHulls(true).get(optimalIndex);
-			if(!oh.getDisplay())
-				parentMenu.setText(parent.getCurrentGraph().displaySubDropDownItem(SubDropDownType.OPTIMAL_HULL,
-						optimalIndex));
+			OptimalHulls oh = AdminApplication.getCurrentGraph().getOptimalHulls(true).get(optimalIndex);
+			if(!oh.getDisplay()){
+				AdminApplication.getCurrentGraph().displaySubDropDownItem(SubDropDownType.OPTIMAL_HULL,
+						optimalIndex);
+				redrawBooleans();
+			}
 			if(quick)
 				oh.fullOptimization();
 			else
 				oh.startOptimization();
+			
 		}
 	}
 	
@@ -166,11 +169,9 @@ public class ActionHandler extends JPanel {
 		
 		private static final long serialVersionUID = -251547965416261110L;
 		private ColumnDataHandler cdh;
-		private int index;
-		public ColumnDisplayAction(ColumnDataHandler cdh, int index) {
+		public ColumnDisplayAction(ColumnDataHandler cdh) {
 			super(cdh.getName() + (cdh.isVisible() ? " \u2713" : ""));
 			this.cdh = cdh;
-			this.index = index;
 		}
 
 		//@0verride
@@ -178,7 +179,7 @@ public class ActionHandler extends JPanel {
 			cdh.toggleVisible();
 			JMenuItem item = (JMenuItem) e.getSource();
 			item.setText(cdh.getName() + (cdh.isVisible() ? " \u2713" : ""));
-			parent.parent.studentDataTableFrame.refreshTable();
+			AdminApplication.parent.studentDataTableFrame.refreshTable();
 		}
 	}
 	
@@ -212,6 +213,10 @@ public class ActionHandler extends JPanel {
         exitAction = new ExitAction();
         printAction = new PrintAction();
         exportAction = new ExportAction();
+        hullItems = new LinkedList<JMenuItem>();
+    	collisionItems = new LinkedList<JMenuItem>();
+    	optimalItems = new LinkedList<JMenu>();
+    	
     }
     
     public void setParent(AdminApplication parent) {
@@ -219,6 +224,9 @@ public class ActionHandler extends JPanel {
     }
     
     public JMenuBar createMenuBar() {
+    	hullItems.clear();
+    	collisionItems.clear();
+    	optimalItems.clear();
         JMenuBar menuBar;
         JMenu fileMenu;
         JMenuItem printItem;
@@ -248,15 +256,16 @@ public class ActionHandler extends JPanel {
 		ActionListener dataResetListener = new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AdminApplication.clearStudentData();
+				parent.setCurrentGraph(0);
 			}
 		};
 		dataReset.addActionListener(dataResetListener);
 		fileMenu.add(dataReset);
 		
-        JMenuItem names = new JMenuItem("Display Names" + (parent.showNames ? " \u2713" : ""));
+        JMenuItem names = new JMenuItem("Display Vertex Info" + (AdminApplication.showNames ? " \u2713" : ""));
         names.addActionListener(new NamesAction());
         fileMenu.add(names);
-        Graph tempGraph = parent.getCurrentGraph();
+        Graph tempGraph = AdminApplication.getCurrentGraph();
         List<ConvexHull> groups = tempGraph.getHulls(true);
         if(!groups.isEmpty()){
         	final JMenuItem colorEditorItem = new JMenuItem("Group Colors");
@@ -274,6 +283,7 @@ public class ActionHandler extends JPanel {
         		JMenuItem menuItem = new JMenuItem(tempCH.toString());
         		menuItem.addActionListener(new HullAction(i));
         		groupMenu.add(menuItem);
+        		hullItems.add(menuItem);
         	}
         	fileMenu.add(groupMenu);
         	List<HullCollision> collisions = tempGraph.getHullCollisions(true);
@@ -285,14 +295,16 @@ public class ActionHandler extends JPanel {
         			JMenuItem HCItem = new JMenuItem(tempHC.toString());
         			HCItem.addActionListener(new CollisionAction(i));
         			collisionMenu.add(HCItem);
+        			collisionItems.add(HCItem);
         			final JMenu optimalSubMenu = new JMenu(tempHC.toString());
         			JMenuItem quickItem = new JMenuItem("Show");
-        			quickItem.addActionListener(new OptimalAction(optimalSubMenu, i, true));
+        			quickItem.addActionListener(new OptimalAction(i, true));
         			optimalSubMenu.add(quickItem);
         			JMenuItem iterativeItem = new JMenuItem("Watch");
-        			iterativeItem.addActionListener(new OptimalAction(optimalSubMenu, i, false));
+        			iterativeItem.addActionListener(new OptimalAction(i, false));
         			optimalSubMenu.add(iterativeItem);
         			optimalMenu.add(optimalSubMenu);
+        			optimalItems.add(optimalSubMenu);
         		}
         		fileMenu.add(collisionMenu);
         		fileMenu.add(optimalMenu);
@@ -300,7 +312,8 @@ public class ActionHandler extends JPanel {
         	JMenuItem deselect = new JMenuItem("Clear Selections");
     		ActionListener deselectListener = new ActionListener() {
     			public void actionPerformed(ActionEvent actionEvent) {
-    				parent.getCurrentGraph().deselectAllItems();
+    				AdminApplication.getCurrentGraph().deselectAllItems();
+    				redrawBooleans();
     			}
     		};
     		deselect.addActionListener(deselectListener);
@@ -326,7 +339,7 @@ public class ActionHandler extends JPanel {
     	int index = 0;
     	for(ColumnDataHandler cdh: studentDataColumns.columnDataHandlers) {
     		if(cdh.isAlwaysVisible()) continue;
-    		showColumnsMenu.add(new ColumnDisplayAction(cdh, index));
+    		showColumnsMenu.add(new ColumnDisplayAction(cdh));
     		index++;
     	}
     	menuBar.add(fileMenu);
@@ -414,63 +427,138 @@ public class ActionHandler extends JPanel {
     }
     
     public JDialog getDataImporter(){
-    	JDialog importDialog = new JDialog(parent, "Import Data", true);
-    	importDialog.setSize(500, 550);
+    	final JDialog importDialog = new JDialog(parent, "Import Data", true);
+    	importDialog.setSize(525, 425);
+    	//URL Import
     	JPanel urlImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    	final JPanel errorPanel = new JPanel();
+        errorPanel.setSize(375, 200);
     	final JLabel errorLabel  = new JLabel();
+    	errorLabel.setSize(475, 200);
     	errorLabel.setBorder(BorderFactory.createTitledBorder("Error"));
+    	errorPanel.add(errorLabel);
+    	errorPanel.setVisible(false);
+    	JPanel urlPanel = new JPanel();
     	final JTextField urlField = new JTextField(30);
     	urlField.setText("https://www.securebio.umb.edu/cgi-bin/TreeSurvey.pl");
-    	urlField.setBorder(BorderFactory.createTitledBorder("Enter URL"));
+    	urlPanel.add(urlField);
+    	urlPanel.setBorder(BorderFactory.createTitledBorder("Enter URL"));
+    	JPanel passPanel = new JPanel();
     	final JPasswordField passwordField = new JPasswordField(20);
-    	passwordField.setBorder(BorderFactory.createTitledBorder("Enter Admin Password"));
-        final JButton importURLButton = new JButton("Import");
+    	passPanel.add(passwordField);
+    	passPanel.setBorder(BorderFactory.createTitledBorder("Enter Admin Password"));
+    	final JButton importURLButton = new JButton("Import");
         importURLButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			String urlText = urlField.getText();
     			URL url;
     			try{
     				url = new URL(urlText);
-    				errorLabel.setVisible(false);
-    			}catch(IOException ioe){
-    				errorLabel.setText("Invalid URL");
-    				errorLabel.setVisible(true);
+    				errorPanel.setVisible(false);
+    			}catch(Exception ex){
+    				passwordField.setText("");
+    				errorLabel.setText(ex.toString());
+    				errorPanel.setVisible(true);
     				return;
     			}
     			char[] pass = passwordField.getPassword();
-    			if (!isPasswordCorrect(pass)) {
+    			if (!Common.isPasswordCorrect(pass)) {
+    				passwordField.setText("");
     				errorLabel.setText("Invalid Password");
-    				errorLabel.setVisible(true);
+    				errorPanel.setVisible(true);
     				return;
     			}
-    			AdminApplication.loadStudentsFromURL(url, String.valueOf(pass));
+    			String error = AdminApplication.loadStudentsFromURL(url, String.valueOf(pass));
+    			if(error != null){
+    				errorLabel.setText(error);
+    				errorPanel.setVisible(true);
+    			}else{
+    				errorPanel.setVisible(false);
+    				parent.setCurrentGraph(0);
+    				importDialog.setVisible(false);
+    			}
+    			passwordField.setText("");
     		}
     	});
-        urlImport.add(urlField);
-        urlImport.add(passwordField);
-        urlImport.add(errorLabel);
+        urlImport.add(urlPanel);
+        urlImport.add(passPanel);
         urlImport.add(importURLButton);
         
+        //Student File Import
+        JPanel fileImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JFileChooser folderChooser = new JFileChooser();
+    	folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	folderChooser.setBorder(BorderFactory.createTitledBorder("Select Folder"));
+    	folderChooser.setControlButtonsAreShown(false);
+    	final JButton importFileButton = new JButton("Import Files From Folder");
+    	importFileButton.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			
+    			String error = AdminApplication.loadStudentsFromFiles(folderChooser.getSelectedFile());
+    			if(error != null){
+    				errorLabel.setText(error);
+    				errorPanel.setVisible(true);
+    			}else{
+    				errorPanel.setVisible(false);
+    				parent.setCurrentGraph(0);
+    				importDialog.setVisible(false);
+    			}
+    		}
+    	});
+        fileImport.add(folderChooser);
+        fileImport.add(importFileButton);
+        
+        //DB Import
+        JPanel dbImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JButton importDBButton = new JButton("Import");
+    	importDBButton.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			
+    			String error = AdminApplication.loadStudentsFromFiles(folderChooser.getSelectedFile());
+    			if(error != null){
+    				errorLabel.setText(error);
+    				errorPanel.setVisible(true);
+    			}else{
+    				errorPanel.setVisible(false);
+    				parent.setCurrentGraph(0);
+    				importDialog.setVisible(false);
+    			}
+    		}
+    	});
+    	dbImport.add(importDBButton);
         
         JTabbedPane importTabs = new JTabbedPane();
         importTabs.add(urlImport, "URL");
-        importDialog.getContentPane().add(importTabs);
+        importTabs.add(fileImport, "File");
+        importTabs.add(dbImport, "Database");
+        ChangeListener tabChangeListener = new ChangeListener() {
+        	public void stateChanged(ChangeEvent changeEvent) {
+        		errorLabel.setText("");
+				errorPanel.setVisible(false);
+        	}
+        };
+        importTabs.addChangeListener(tabChangeListener);
+        JPanel masterPanel = new JPanel();
+        masterPanel.setLayout(new BoxLayout(masterPanel, BoxLayout.Y_AXIS));
+        masterPanel.add(errorPanel);
+        masterPanel.add(importTabs);
+        importDialog.getContentPane().add(masterPanel);
         return importDialog;
     }
     
-    private static boolean isPasswordCorrect(char[] input) {
-        boolean isCorrect = true;
-        char[] correctPassword = {'l','a','b','0','9','a','c','c','e','5','5'};
-
-        if (input.length != correctPassword.length) {
-            isCorrect = false;
-        } else {
-            isCorrect = Arrays.equals (input, correctPassword);
-        }
-
-        //Zero out the password.
-        Arrays.fill(correctPassword,'0');
-
-        return isCorrect;
+    public void redrawBooleans(){
+    	if(!hullItems.isEmpty()){
+    		List<ConvexHull> groups = AdminApplication.getCurrentGraph().getHulls(true);
+    		for(int i=0;i<groups.size();i++)
+    			hullItems.get(i).setText(groups.get(i).toString());
+    		if(!collisionItems.isEmpty()){
+    			List<HullCollision> collisions = AdminApplication.getCurrentGraph().getHullCollisions(true);
+    			for(int i=0;i<collisions.size();i++)
+    				collisionItems.get(i).setText(collisions.get(i).toString());
+    	    	List<OptimalHulls> optimals = AdminApplication.getCurrentGraph().getOptimalHulls(true);
+    	    	for(int i=0;i<optimals.size();i++)
+    	    		optimalItems.get(i).setText(optimals.get(i).toString());
+    		}
+    	}
     }
 }

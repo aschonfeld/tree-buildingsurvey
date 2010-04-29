@@ -9,6 +9,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -192,6 +193,33 @@ public class Common {
    		intersect.intersect(new Area(p2)); 
    		return !intersect.isEmpty();
    	}
+   	
+   	public static boolean isPasswordCorrect(char[] input) {
+        boolean isCorrect = true;
+        char[] correctPassword = {'l','a','b','0','9','a','c','c','e','5','5'};
+
+        if (input.length != correctPassword.length) {
+            isCorrect = false;
+        } else {
+            isCorrect = Arrays.equals (input, correctPassword);
+        }
+
+        //Zero out the password.
+        Arrays.fill(correctPassword,'0');
+
+        return isCorrect;
+    }
+   	
+   	public static String commaSeparatedString(Collection<?> strings){
+		StringBuilder buff = new StringBuilder(); 
+	    String sep = ""; 
+	    for (Object str : strings) { 
+	        buff.append(sep); 
+	        buff.append(str.toString()); 
+	        sep = ", "; 
+	    } 
+	    return buff.toString(); 
+	}
        
        public static void setColorsForPrinting(){
     	   backgroundColor = Color.WHITE;
