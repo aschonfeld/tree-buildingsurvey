@@ -126,23 +126,26 @@ public class OptimalHulls extends SubDropDown {
 		g2.draw(hull1Shape);
 		g2.setColor(model.getGroupColor(hull2));
 		g2.draw(hull2Shape);
-		renderRemoved(g2, removedHull1Nodes, xOffset, yOffset);
-		renderRemoved(g2, removedHull2Nodes, xOffset, yOffset);
+		boolean showNames = model.getView().getDisplayAllTooltips();
+		renderRemoved(g2, removedHull1Nodes, xOffset, yOffset, showNames);
+		renderRemoved(g2, removedHull2Nodes, xOffset, yOffset, showNames);
 	}
 	
-	public void renderRemoved(Graphics2D g2, List<OrganismNode> nodes, int xOffset, int yOffset){
+	public void renderRemoved(Graphics2D g2, List<OrganismNode> nodes, int xOffset, int yOffset, boolean showNames){
 		for(OrganismNode o : nodes){
 			g2.setStroke(new BasicStroke(3));
 			g2.setColor(Color.RED);
 			g2.draw(new Rectangle2D.Double(o.getX()-(1.5+xOffset), o.getY()-(1.5+yOffset), o.getWidth() + 3, o.getHeight() + 3));
 			g2.setStroke(new BasicStroke());
-			int xVal = (o.getX() + (o.getWidth()/2)) - xOffset;
-			int yVal = (o.getY()-o.getHeight()) - yOffset;
-			g2.setFont(TBSGraphics.tooltipFont);
-			xVal -= TBSGraphics.getStringBounds(g2, o.getTypes().get(level)).width/2;
-			TBSGraphics.drawCenteredString(g2, o.getTypes().get(level), xVal, yVal, 0,
-					TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
-			g2.setFont(TBSGraphics.font);
+			if(!showNames){
+				int xVal = (o.getX() + (o.getWidth()/2)) - xOffset;
+				int yVal = (o.getY()-o.getHeight()) - yOffset;
+				g2.setFont(TBSGraphics.tooltipFont);
+				xVal -= TBSGraphics.getStringBounds(g2, o.getTypes().get(level)).width/2;
+				TBSGraphics.drawCenteredString(g2, o.getTypes().get(level), xVal, yVal, 0,
+						TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
+				g2.setFont(TBSGraphics.font);
+			}
 		}
 	}
 	
