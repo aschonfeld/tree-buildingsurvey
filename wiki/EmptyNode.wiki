@@ -9,4 +9,18 @@ Empty Nodes differ from [OrganismNode Organism Nodes] in that they can be create
 
 = Method Details =
 
+getHeight() 
+getWidth() 
+Get the dimensions of this EmptyNode, for rendering. Height does not change, but width is changed as text is entered. 
 setAlteredWidth() is called to inform the Empty Node of its new horizontal dimension when it has been labelled. 
+
+isBeingLabeled() 
+setBeingLabeled(boolean beingLabeled)
+Used by the [StudentController Controller] to manage the act of labelling this node. 
+(is that right? Controller?)
+
+toString()
+Returns a string for this node, either "Branch Node" or name string + "Node"
+
+convertToVertex() 
+Turn this node into a Vertex. (must track where this is used)
