@@ -17,7 +17,6 @@ import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.HullCollision;
 import tbs.model.AdminModel;
 import tbs.model.Node;
-import tbs.view.dropdown.SubDropDown;
 
 public class TBSUtils {
 
@@ -119,19 +118,6 @@ public class TBSUtils {
   
 	public static boolean isStringEmpty(String s){
 		return (s == null || s.length() == 0);
-	}
-	
-	public static String commaSeparated(Collection<?> values){
-		StringBuffer returnVal = new StringBuffer();
-		Iterator<?> iter = values.iterator();
-		while(iter.hasNext()){
-			String value = iter.next().toString();
-			returnVal.append(value).append(",");
-		}
-		if(returnVal.length() > 0)
-			return returnVal.deleteCharAt(returnVal.lastIndexOf(",")).toString();
-		else
-			return returnVal.toString();
 	}
 	
 	public static List<HullCollision> hullCollisions(List<ConvexHull> hulls){

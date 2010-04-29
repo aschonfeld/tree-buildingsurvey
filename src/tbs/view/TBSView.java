@@ -230,7 +230,7 @@ public abstract class TBSView extends JComponent implements Printable{
 			g2.setFont(TBSGraphics.tooltipFont);
 			StringBuffer tooltipValue = new StringBuffer(on.getName());
 			if(this instanceof AdminView)
-				tooltipValue.append(" - ").append(TBSUtils.commaSeparated(on.getTypes().values()));
+				tooltipValue.append(" - ").append(TBSUtils.commaSeparatedString(on.getTypes().values()));
 			xVal -= TBSGraphics.getStringBounds(g2, tooltipValue.toString()).width/2;
 			TBSGraphics.drawCenteredString(g2, tooltipValue.toString(), xVal, yVal, 0,
 					TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);

@@ -159,7 +159,7 @@ public class AdminController extends TBSController
 				Node n = elementMouseIsHoveringOver(x,y);
 				if(n != null && n instanceof OrganismNode){
 					OrganismNode o = (OrganismNode) n;
-					String tooltipString = o.getName() + " - " + TBSUtils.commaSeparated(o.getTypes().values());
+					String tooltipString = o.getName() + " - " + TBSUtils.commaSeparatedString(o.getTypes().values());
 					view.updateTooltip(tooltipString,
 							new Point(o.getX() + (o.getWidth()/2), o.getY()-o.getHeight()));
 				}
