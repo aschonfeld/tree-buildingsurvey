@@ -97,9 +97,9 @@ public class AdminApplication extends JFrame {
     	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	parent.questionDisplayFrame.pack();
     	parent.questionDisplayFrame.setVisible(true);
-    	parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	parent.shortestPathTableFrame.pack();
-    	parent.shortestPathTableFrame.setVisible(true);
+    	//parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	//parent.shortestPathTableFrame.pack();
+    	//parent.shortestPathTableFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -120,12 +120,17 @@ public class AdminApplication extends JFrame {
 		setJMenuBar(actionHandler.createMenuBar());
 		validate();
 		repaint();
-	    parent.shortestPathTableFrame.refreshTable();
-	    parent.shortestPathTableFrame.validate();
+		
+		//Uncomment the next two lines to show shortest path table:
+	    //parent.shortestPathTableFrame.refreshTable();
+	    //parent.shortestPathTableFrame.validate();
+	    
+		parent.studentDataTableFrame.saveTableState();
 	    parent.studentDataTableFrame.refreshTable();
 	    parent.studentDataTableFrame.validate();
-	    treeView.paintComponent();
+	    parent.studentDataTableFrame.restoreTableState();
 	    
+		treeView.paintComponent();
     }
     
     public void printGraphInfo() {
