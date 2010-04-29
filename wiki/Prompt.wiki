@@ -1,0 +1,80 @@
+#summary Developer's Guide: Prompt
+= Introduction =
+Prompt is the overall class of objects used for communication with the student. 
+Prompt stands in for a number of Swing objects (JLabel, JOptionPane, and so forth). Swing components are avoided throughout the TBSApplet due to observed incompatibilies with Java configurations on certain operating systems, most notably OS X. Prompt provides a way to display and elicit information using lower-level (and therefore more broadly compatible) methods. Being custom-built, they interact nicely with the rest of TBS and suit the look and feel of the applet. 
+
+= Extending classes=
+
+Prompts:
+HelpPrompt, RadioQuestionPrompt, ResizeWarning, TextEntryBox, WelcomePrompt, WrittenQuestionPrompt, YesNoPrompt
+
+= Details =
+Prompt is an abstract class underlying all "prompt" objects in the Applet. The source code is very informative, what follows is essentially the source with annotations. See specific Prompt objects for more detailed commentary on particular implementations. 
+
+       private Graphics2D g2; 
+         private Point anchorPoint; 
+         private Dimension promptSize; 
+         private boolean renderClose; 
+         private Rectangle closeButton; 
+         private boolean renderMinimize; 
+         private Rectangle minimizeButton; 
+         private Rectangle bottomButtons; 
+         private int buttonHeight = TBSGraphics.textHeight + TBSGraphics.padding.height; 
+         private int stringY = 0; 
+          
+         private TBSModel model; 
+         private boolean finished; 
+         private boolean renderButtonsAndString; 
+         private boolean renderElements; 
+          
+         private boolean minimizationInProgress = false; 
+         private boolean maximizationInProgress = false; 
+         private int resizeIndex; 
+         private int xIncr, yIncr, wIncr, hIncr; 
+         private boolean minimizedState = false; 
+         private String minimizedTitle; 
+          
+         public Prompt(boolean renderButtonsAndString, boolean renderElements, Dimension promptSize, 
+                         TBSModel model){ 
+                 finished = false; 
+                 this.renderButtonsAndString = renderButtonsAndString; 
+                 this.renderElements = renderElements; 
+                 this.promptSize = promptSize; 
+                 anchorPoint = new Point(); 
+                 closeButton = new Rectangle(); 
+                 minimizeButton = new Rectangle(); 
+                 bottomButtons = new Rectangle(); 
+                 this.model = model; 
+                 renderClose = true; 
+                 renderMinimize = false; 
+         } 
+          
+         public Graphics2D getGraphics() {return g2;} 
+         public void setGraphics( Graphics2D g2 ) {this.g2 = g2;} 
+         public Dimension getPromptSize() {return promptSize;} 
+         public int getWidth(){return promptSize.width;} 
+         public int getUnpaddedWidth(){return promptSize.width - (TBSGraphics.padding.width*2);} 
+         public int getHeight(){return promptSize.height;} 
+         public void setAnchorPoint(Point anchorPoint){this.anchorPoint = anchorPoint;} 
+         public int getX(){return anchorPoint.x;} 
+         public int getY(){return anchorPoint.y;} 
+         public Rectangle getCloseButton() {return closeButton;} 
+         public void setCloseButton( Rectangle closeButton ) {this.closeButton = closeButton;} 
+         public Rectangle getMinimizeButton() {return minimizeButton;} 
+         public void setMinimizeButton( Rectangle minimizeButton ) {this.minimizeButton = minimizeButton;} 
+         public Rectangle getBottomButtons() {return bottomButtons;} 
+         public int getStringY() {return stringY;} 
+         public void setStringY( int stringY ) {this.stringY = stringY;} 
+         public void incrementStringY(){ stringY += buttonHeight;} 
+         public void incrementStringY(int value){ stringY += value;} 
+         public void incrementStringYMulti(int value){ stringY += buttonHeight * value;} 
+         public void setBottomButtons( Rectangle bottomButtons ) {this.bottomButtons = bottomButtons;} 
+  
+         public boolean renderButtonsAndString() {return renderButtonsAndString;} 
+         public boolean renderElements() {return renderElements;} 
+         public void setRenderClose(boolean renderClose) {this.renderClose = renderClose;} 
+         public void setRenderMinimize(boolean renderMinimize) {this.renderMinimize = renderMinimize;} 
+                  
+         public boolean getMinimizedState(){return minimizedState;} 
+         public void setMinimizedTitle(String minimizedTitle){this.minimizedTitle = minimizedTitle;} 
+     
