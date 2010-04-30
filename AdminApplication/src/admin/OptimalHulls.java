@@ -10,31 +10,25 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Timer;
 
 public class OptimalHulls extends Displayable implements Renderable {
 
-	private String hull1;
-	private String hull2;
-	private List<Point> originalHull1;
-	private List<Point> originalHull2;
-	private List<Vertex> originalVertices1;
-	private List<Vertex> originalVertices2;
+	private List<ConvexHull> hulls;
 	private Point originalCentroid;
 	private int level;
+	private String commaSepGroups;
 	private String text;
 	
-	private List<Point> optimalHull1Points;
-	private List<Vertex> removedHull1Nodes;
-	private List<Vertex> remainingHull1Nodes;
-	private ConvexHull inProgressHull1;
-	private List<Point> optimalHull2Points;
-	private List<Vertex> removedHull2Nodes;
-	private List<Vertex> remainingHull2Nodes;
-	private ConvexHull inProgressHull2;
+	private Map<String, List<Point>> optimalHullPoints;
+	private Map<String, List<Vertex>> removedHullNodes;
+	private Map<String, List<Vertex>> remainingHullNodes;
+	private Map<String, ConvexHull> inProgressHulls;
 	private Point centroidInProgress;
 	
 	private Timer iterationWait;
@@ -52,27 +46,12 @@ public class OptimalHulls extends Displayable implements Renderable {
 	
 	public OptimalHulls(HullCollision collision){
 		level = collision.getLevel();
-		
-		ConvexHull h1 = collision.getHull1();
-		hull1 = h1.getHullName();
-		originalHull1 = new LinkedList<Point>();
-		originalHull1.addAll(h1.getHull());
-		originalVertices1 = new LinkedList<Vertex>();
-		originalVertices1.addAll(h1.getNodes());
-		removedHull1Nodes = new LinkedList<Vertex>();
-		remainingHull1Nodes = new LinkedList<Vertex>();
-		optimalHull1Points = new LinkedList<Point>();
-		
-		ConvexHull h2 = collision.getHull2();
-		hull2 = h2.getHullName();
-		originalHull2 = new LinkedList<Point>();
-		originalHull2.addAll(h2.getHull());
-		originalVertices2 = new LinkedList<Vertex>();
-		originalVertices2.addAll(h2.getNodes());
-		removedHull2Nodes = new LinkedList<Vertex>();
-		remainingHull2Nodes = new LinkedList<Vertex>();
-		optimalHull2Points = new LinkedList<Point>();
-		
+		hulls = collision.getHulls();
+		commaSepGroups = Common.commaSeparatedString(hulls);
+		removedHullNodes = new HashMap<String, List<Vertex>>();
+		remainingHullNodes = new HashMap<String, List<Vertex>>();
+		optimalHullPoints = new HashMap<String, List<Point>>();
+		inProgressHulls = new HashMap<String, ConvexHull>();
 		originalCentroid = collision.getCentroid();
 		iterationWait = new Timer(1000, iterate);
 		initOptimization();
@@ -89,18 +68,20 @@ public class OptimalHulls extends Displayable implements Renderable {
 	}
 	
 	private void initOptimization(){
-		optimalHull1Points.clear();
-		optimalHull1Points.addAll(originalHull1);
-		optimalHull2Points.clear();
-		optimalHull2Points.addAll(originalHull2);
-		remainingHull1Nodes.clear();
-		remainingHull1Nodes.addAll(originalVertices1);
-		removedHull1Nodes.clear();
-		inProgressHull1 = new ConvexHull(remainingHull1Nodes, "");
-		remainingHull2Nodes.clear();
-		remainingHull2Nodes.addAll(originalVertices2);
-		removedHull2Nodes.clear();
-		inProgressHull2 = new ConvexHull(remainingHull2Nodes, "");
+		String key;
+		List<Vertex> remaining;
+		List<Point> optimal;
+		for(ConvexHull hull : hulls){
+			key = hull.getHullName();
+			removedHullNodes.put(key, new LinkedList<Vertex>());
+			remaining = new LinkedList<Vertex>();
+			remaining.addAll(hull.getNodes());
+			remainingHullNodes.put(key, remaining);
+			optimal = new LinkedList<Point>();
+			optimal.addAll(hull.getHull());
+			optimalHullPoints.put(key, optimal);
+			inProgressHulls.put(key, new ConvexHull(remaining, ""));
+		}
 		centroidInProgress = originalCentroid;
 		collision = new LinkedList<Point>();
 		collisionExists = true;
@@ -108,49 +89,36 @@ public class OptimalHulls extends Displayable implements Renderable {
 	
 	private void iterateOptimization(){
 		int closest=0;
-		boolean isH1 = true;
-		double smallestDist = centroidInProgress.distance(optimalHull1Points.get(0));
-		for(int i=1;i<optimalHull1Points.size();i++){
-			double temp = centroidInProgress.distance(optimalHull1Points.get(i));
-			if(temp < smallestDist){
-				smallestDist = temp;
-				closest = i;
-			}
-		}
-		for(int i=0;i<optimalHull2Points.size();i++){
-			double temp = centroidInProgress.distance(optimalHull2Points.get(i));
-			if(temp < smallestDist){
-				smallestDist = temp;
-				closest = i;
-				isH1 = false;
-			}
-		}
-		if(isH1){
-			Point p = optimalHull1Points.remove(closest);
-			for(Vertex v : remainingHull1Nodes){
-				if(v.getRectangle().contains(p)){
-					removedHull1Nodes.add(v);
-					break;
+		String closestKey = "";
+		List<Point> points;
+		Double smallestDist = null;
+		for(Map.Entry<String, List<Point>> optimal : optimalHullPoints.entrySet()){
+			points = optimal.getValue();
+			for(int i=0;i<points.size();i++){
+				Double temp = centroidInProgress.distance(points.get(i));
+				if(smallestDist == null || temp < smallestDist){
+					smallestDist = temp;
+					closest = i;
+					closestKey = optimal.getKey();
 				}
 			}
-			remainingHull1Nodes.remove(removedHull1Nodes.get(removedHull1Nodes.size()-1));
-			inProgressHull1 = new ConvexHull(remainingHull1Nodes, "");
-			optimalHull1Points = inProgressHull1.getHull();
-		}else{
-			Point p = optimalHull2Points.remove(closest);
-			for(Vertex v : remainingHull2Nodes){
-				if(v.getRectangle().contains(p)){
-					removedHull2Nodes.add(v);
-					break;
-				}
-			}
-			remainingHull2Nodes.remove(removedHull2Nodes.get(removedHull2Nodes.size()-1));
-			inProgressHull2 = new ConvexHull(remainingHull2Nodes, "");
-			optimalHull2Points = inProgressHull2.getHull();
 		}
-		collisionExists = Common.collide(inProgressHull1.getHullShape(), inProgressHull2.getHullShape());
+		Point p = optimalHullPoints.get(closestKey).remove(closest);
+		for(Vertex v : remainingHullNodes.get(closestKey)){
+			if(v.getRectangle().contains(p)){
+				removedHullNodes.get(closestKey).add(v);
+				break;
+			}
+		}
+		remainingHullNodes.get(closestKey).remove(removedHullNodes.get(closestKey).get(removedHullNodes.get(closestKey).size()-1));
+		inProgressHulls.put(closestKey, new ConvexHull(remainingHullNodes.get(closestKey), ""));
+		optimalHullPoints.put(closestKey, inProgressHulls.get(closestKey).getHull());
+		
+		List<ConvexHull> temp = new LinkedList<ConvexHull>();
+		temp.addAll(inProgressHulls.values());
+		collisionExists = Common.collide(temp);
 		if(collisionExists){
-			HullCollision tempHC = new HullCollision(0, inProgressHull1, inProgressHull2);
+			HullCollision tempHC = new HullCollision(0, temp);
 			centroidInProgress = tempHC.getCentroid();
 			collision = tempHC.getCollisionPoints();
 		}
@@ -159,13 +127,13 @@ public class OptimalHulls extends Displayable implements Renderable {
 	private void createText(){
 		StringBuffer textBuff = new StringBuffer("\"Optimal Groups\" is optimization of the current student's arrangement of organisms so that groupings no longer collide.");
 		textBuff.append(" This particular optimization required the removal of ");
-		textBuff.append(removedHull1Nodes.size()).append(" ").append(hull1);
-		if(removedHull1Nodes.size() > 1)
-			textBuff.append("s");
-		textBuff.append(" and ");
-		textBuff.append(removedHull2Nodes.size()).append(" ").append(hull2);
-		if(removedHull2Nodes.size() > 1)
-			textBuff.append("s");
+		String sep = "";
+		for(Map.Entry<String, List<Vertex>> removed : removedHullNodes.entrySet()){
+			textBuff.append(sep).append(removed.getValue().size()).append(" ").append(removed.getKey());
+			if(removed.getValue().size() > 1)
+				textBuff.append("s");
+			sep = ", "; 
+		}
 		textBuff.append(" in order to eliminate group collisions.");
 		text = textBuff.toString();
 	}
@@ -181,21 +149,20 @@ public class OptimalHulls extends Displayable implements Renderable {
 			g2.setColor(new Color(255,36,0,160));
 			g2.fill(collisionShape);
 		}
-		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon();
-
-		for(Point p : optimalHull1Points)
-			hull1Shape.addPoint(p.x - offset.x, p.y - offset.y);
-
-		for(Point p : optimalHull2Points)
-			hull2Shape.addPoint(p.x - offset.x, p.y - offset.y);
-
+		Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
+		for(Map.Entry<String, List<Point>> optimal : optimalHullPoints.entrySet()){
+			Polygon shape = new Polygon();
+			for(Point p : optimal.getValue())
+				shape.addPoint(p.x - offset.x, p.y - offset.y);
+			hullShapes.put(optimal.getKey(), shape);
+		}
 		g2.setStroke(new BasicStroke(3));
-		g2.setColor(AdminApplication.getGroupColor(hull1));
-		g2.draw(hull1Shape);
-		g2.setColor(AdminApplication.getGroupColor(hull2));
-		g2.draw(hull2Shape);
-		renderRemoved(g2, removedHull1Nodes, offset);
-		renderRemoved(g2, removedHull2Nodes, offset);
+		for(Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()){
+			g2.setColor(AdminApplication.getGroupColor(hullShape.getKey()));
+			g2.draw(hullShape.getValue());
+		}
+		for(Map.Entry<String, List<Vertex>> removed : removedHullNodes.entrySet())
+			renderRemoved(g2, removed.getValue(), offset);
 		
 	}
 	
@@ -220,7 +187,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 		}
 	}
 	
-	public String toString(){return hull1 + " - " + hull2 + (getDisplay() ? " \u2713" : "");}
+	public String toString(){return commaSepGroups + (getDisplay() ? " \u2713" : "");}
 	public String getText(){return text;}	
 	public void startOptimization(){
 		initOptimization();

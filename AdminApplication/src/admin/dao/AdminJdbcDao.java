@@ -1,5 +1,6 @@
 package admin.dao;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +21,7 @@ public class AdminJdbcDao extends BaseJdbcDao {
 	 *             if an SQLException occurs.
 	 * 
 	 */
-	public List<String[]> loadSurveys() throws Exception{
+	public List<String[]> loadSurveys(String username, String password) throws Exception{
 		System.out.println(String.format("Fetching Surveys. SQL is [%s].", SQL_LOAD_SURVEYS));
 		ResultSetRowHandler<String[]> handler = new ResultSetRowHandler<String[]>() {
 			public String[] handle(ResultSet rs) throws SQLException {
@@ -33,7 +34,8 @@ public class AdminJdbcDao extends BaseJdbcDao {
 				return new String[]{name,date,tree,Q1,Q2};
 			}
 		};
-		return executeQuery("trees", SQL_LOAD_SURVEYS, handler, new InParam[]{});
+		Connection conn = getConnection("trees", username, password);
+		return executeQuery(SQL_LOAD_SURVEYS, handler, conn, true, new InParam[]{});
 	}
 	
 	/**
@@ -47,7 +49,7 @@ public class AdminJdbcDao extends BaseJdbcDao {
 	 *             if an SQLException occurs.
 	 * 
 	 */
-	public List<String[]> loadStudents() throws Exception{
+	public List<String[]> loadStudents(String username, String password) throws Exception{
 		System.out.println(String.format("Fetching Students. SQL is [%s].", SQL_LOAD_STUDENTS));
 		ResultSetRowHandler<String[]> handler = new ResultSetRowHandler<String[]>() {
 			public String[] handle(ResultSet rs) throws SQLException {
@@ -57,6 +59,7 @@ public class AdminJdbcDao extends BaseJdbcDao {
 				return new String[]{name,section};
 			}
 		};
-		return executeQuery("grades", SQL_LOAD_STUDENTS, handler, new InParam[]{});
+		Connection conn = getConnection("grades", username, password);
+		return executeQuery(SQL_LOAD_STUDENTS, handler, conn, true, new InParam[]{});
 	}
 }

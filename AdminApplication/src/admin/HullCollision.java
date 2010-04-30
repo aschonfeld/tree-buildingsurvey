@@ -15,23 +15,23 @@ import java.util.List;
 public class HullCollision extends Displayable implements Renderable{
 
 	private int level;
-	private ConvexHull hull1;
-	private ConvexHull hull2;
+	private List<ConvexHull> hulls;
 	private List<Point> collisionPoints;
 	private Point centroid;
+	private String commaSepGroups;
 	private String analysisText;
 	private OptimalHulls optimalHulls;
 	
-	public HullCollision(int level, ConvexHull hull1, ConvexHull hull2){
+	public HullCollision(int level, List<ConvexHull> hulls){
 		this.level = level;
-		this.hull1 = hull1;
-		this.hull2 = hull2;
-		analysisText = new StringBuffer(" \u2022 ").append(hull1)
-		.append(" group collides with the ")
-		.append(hull2).append(" group.").toString();
+		this.hulls = hulls;
+		commaSepGroups = Common.commaSeparatedString(hulls);
+		analysisText = new StringBuffer(" \u2022 Groups ").append(commaSepGroups)
+		.append(" have a collision.").toString();
 		
-		Area intersect = new Area(hull1.getHullShape()); 
-		intersect.intersect(new Area(hull2.getHullShape()));
+		Area intersect = new Area(hulls.get(0).getHullShape());
+   		for(int i=1;i<hulls.size();i++)
+   			intersect.intersect(new Area(hulls.get(i).getHullShape())); 
 		
 		AffineTransform at = new AffineTransform();
 		PathIterator pi = intersect.getPathIterator(at);
@@ -56,14 +56,7 @@ public class HullCollision extends Displayable implements Renderable{
 	
 	public void render(Graphics g, Point offset){
 		Graphics2D g2 = (Graphics2D) g;
-		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon(),
-			collisionShape = new Polygon();
-		
-		for(Point p : hull1.getHull())
-			hull1Shape.addPoint(p.x - offset.x, p.y - offset.y);
-		
-		for(Point p : hull2.getHull())
-			hull2Shape.addPoint(p.x - offset.x, p.y - offset.y);
+		Polygon collisionShape = new Polygon();
 		
 		for(Point p : collisionPoints)
 			collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
@@ -72,17 +65,16 @@ public class HullCollision extends Displayable implements Renderable{
 		g2.fill(collisionShape);
 		
 		g2.setStroke(new BasicStroke(3));
-		g2.setColor(AdminApplication.getGroupColor(hull1.getHullName()));
-		g2.draw(hull1Shape);
-		g2.setColor(AdminApplication.getGroupColor(hull2.getHullName()));
-		g2.draw(hull2Shape);
+		for(ConvexHull hull : hulls){
+			g2.setColor(AdminApplication.getGroupColor(hull.getHullName()));
+			hull.render(g2, offset);
+		}
 		g2.setStroke(new BasicStroke());
 	}
 	
 	public String getAnalysisText(){return analysisText;}	
 	public Point getCentroid() {return centroid;}
-	public ConvexHull getHull1(){return hull1;}
-	public ConvexHull getHull2(){return hull2;}
+	public List<ConvexHull> getHulls(){return hulls;}
 	public List<Point> getCollisionPoints(){return collisionPoints;}
 	public int getLevel(){return level;}
 	
@@ -92,6 +84,6 @@ public class HullCollision extends Displayable implements Renderable{
 		return optimalHulls;
 	}
 	
-	public String toString(){return hull1.getHullName() + " - " + hull2.getHullName() + (getDisplay() ? " \u2713" : "");}
+	public String toString(){return  commaSepGroups + (getDisplay() ? " \u2713" : "");}
 	
 }

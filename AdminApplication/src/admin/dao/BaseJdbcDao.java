@@ -82,8 +82,8 @@ public abstract class BaseJdbcDao {
      * @return a connection.
      * @throws SQLException if an error occurs while retrieving the connection.
      */
-    protected static Connection getConnection(String database) throws Exception {
-        return DataSourceConnectionFactory.getConnection(database);
+    protected static Connection getConnection(String database, String username, String password) throws Exception {
+        return DataSourceConnectionFactory.getConnection(database, username, password);
     }
     
     /**
@@ -91,7 +91,7 @@ public abstract class BaseJdbcDao {
      * in a default connection instance and setting <code>closeConn</code> to <code>true</code>.
      */
     protected static <T> List<T> executeQuery(String database, String sql, ResultSetRowHandler<T> handler, InParam... params) throws Exception {
-        Connection conn = getConnection(database);
+        Connection conn = DataSourceConnectionFactory.getConnection(database);
         boolean closeConn = true;
         
         return executeQuery(sql, handler, conn, closeConn, params);
@@ -153,7 +153,7 @@ public abstract class BaseJdbcDao {
      * in a default connection instance and setting <code>closeConn</code> to <code>true</code>.
      */
     protected static int executeUpdate(String database, String sql, InParam... params) throws Exception {
-        Connection conn = getConnection(database);
+        Connection conn = DataSourceConnectionFactory.getConnection(database);
         boolean closeConn = true;
         return executeUpdate(sql, conn, closeConn, params);
     }

@@ -60,17 +60,22 @@ public class DataSourceConnectionFactory {
      *                              <li>the data source is not found in cache, and is not found after the lookup process.</li>
      *                              </ul>
      */
-    public static Connection getConnection(String database) throws Exception{
+    public static Connection getConnection(String database, String username, String password) throws Exception{
     	Connection conn = null;
     	try{
     		Class.forName(CONN_DRIVER).newInstance ();
-            conn = DriverManager.getConnection(CONN_URL + database, CONN_UNAME, CONN_PWORD);
+            conn = DriverManager.getConnection(CONN_URL + database, username, password);
             System.out.println("Database connection established");
     	}catch (Exception e){
             System.err.println(String.format("Cannot connect to server:%s", CONN_URL));
             throw e;
         }
         return conn;
+    }
+    
+    public static Connection getConnection(String database) throws Exception{
+    	
+        return getConnection(database, CONN_UNAME, CONN_PWORD);
     }
   
 }

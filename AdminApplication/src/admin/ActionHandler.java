@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -241,6 +243,16 @@ public class ActionHandler extends JPanel {
         printItem = new JMenuItem(printAction);
         exitItem = new JMenuItem(exitAction);
         fileMenu.add(printItem);
+        //View Open-Responses
+        final JMenuItem openResponse = new JMenuItem("View Open-Responses");
+    	ActionListener openResponseListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				boolean visible = AdminApplication.parent.questionDisplayFrame.isVisible();
+				AdminApplication.parent.questionDisplayFrame.setVisible(!visible);
+			}
+		};
+		openResponse.addActionListener(openResponseListener);
+		fileMenu.add(openResponse);
         //Data Import
         final JMenuItem dataImport = new JMenuItem("Import Data");
     	final JDialog dataImporter = getDataImporter();
@@ -344,9 +356,20 @@ public class ActionHandler extends JPanel {
     	}
     	menuBar.add(fileMenu);
     	menuBar.add(showColumnsMenu);
-    	//a group of JMenuItems
+    	
+    	//View Shortest-Path Table
+        JMenuItem shortestPath = new JMenuItem("View Shortest-Path");
+    	ActionListener shortestPathListener = new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
+				AdminApplication.parent.shortestPathTableFrame.setVisible(!AdminApplication.parent.shortestPathTableFrame.isVisible());
+			}
+		};
+		shortestPath.addActionListener(shortestPathListener);
+		//Export Table Into CSV
     	exportItem = new JMenuItem(exportAction);
+    	//Exit Application
     	exitItem = new JMenuItem(exitAction);
+    	fileMenu.add(shortestPath);
     	fileMenu.add(exportItem);
     	fileMenu.add(exitItem);
 
@@ -423,18 +446,18 @@ public class ActionHandler extends JPanel {
         colorEditor.add(groupPanel, BorderLayout.CENTER);
         colorEditor.add(tcc, BorderLayout.PAGE_END);
         colorDialog.getContentPane().add(colorEditor);
+        colorDialog.setLocationRelativeTo(AdminApplication.treeView);
         return colorDialog;
     }
     
     public JDialog getDataImporter(){
     	final JDialog importDialog = new JDialog(parent, "Import Data", true);
-    	importDialog.setSize(525, 425);
+    	importDialog.setSize(525, 525);
     	//URL Import
     	JPanel urlImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
     	final JPanel errorPanel = new JPanel();
-        errorPanel.setSize(375, 200);
+    	errorPanel.setSize(475, 200);
     	final JLabel errorLabel  = new JLabel();
-    	errorLabel.setSize(475, 200);
     	errorLabel.setBorder(BorderFactory.createTitledBorder("Error"));
     	errorPanel.add(errorLabel);
     	errorPanel.setVisible(false);
@@ -452,16 +475,16 @@ public class ActionHandler extends JPanel {
     		public void actionPerformed(ActionEvent e) {
     			String urlText = urlField.getText();
     			URL url;
+    			char[] pass = passwordField.getPassword();
     			try{
     				url = new URL(urlText);
     				errorPanel.setVisible(false);
     			}catch(Exception ex){
     				passwordField.setText("");
-    				errorLabel.setText(ex.toString());
+    				errorLabel.setText(Common.wrapText(errorLabel, 475, new String[]{ex.toString()}));
     				errorPanel.setVisible(true);
     				return;
     			}
-    			char[] pass = passwordField.getPassword();
     			if (!Common.isPasswordCorrect(pass)) {
     				passwordField.setText("");
     				errorLabel.setText("Invalid Password");
@@ -470,7 +493,7 @@ public class ActionHandler extends JPanel {
     			}
     			String error = AdminApplication.loadStudentsFromURL(url, String.valueOf(pass));
     			if(error != null){
-    				errorLabel.setText(error);
+    				errorLabel.setText(Common.wrapText(errorLabel, 475, new String[]{error}));
     				errorPanel.setVisible(true);
     			}else{
     				errorPanel.setVisible(false);
@@ -486,17 +509,37 @@ public class ActionHandler extends JPanel {
         
         //Student File Import
         JPanel fileImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        final JFileChooser folderChooser = new JFileChooser();
-    	folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    	folderChooser.setBorder(BorderFactory.createTitledBorder("Select Folder"));
-    	folderChooser.setControlButtonsAreShown(false);
+        final JComboBox fileTypeSelection = new JComboBox();
+        fileTypeSelection.setSize(100, 40);
+        fileTypeSelection.addItem("HTML View source");
+        fileTypeSelection.addItem("Deployable Applet Directory");
+        fileTypeSelection.addItem("Test Trees");
+        fileTypeSelection.setSelectedIndex(0);
+    	JPanel selectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectionPanel.add(fileTypeSelection);
+        selectionPanel.setBorder(BorderFactory.createTitledBorder("Select Group"));
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    	fileChooser.setBorder(BorderFactory.createTitledBorder("Select Folder"));
+    	fileChooser.setControlButtonsAreShown(false);
     	final JButton importFileButton = new JButton("Import Files From Folder");
     	importFileButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			
-    			String error = AdminApplication.loadStudentsFromFiles(folderChooser.getSelectedFile());
+    			String error = null;
+    			int selectedFileType = fileTypeSelection.getSelectedIndex();
+    			switch(selectedFileType){
+	    			case 0:
+	    				error = AdminApplication.loadTreesFromHTMLSource(fileChooser.getSelectedFile().getPath());
+	    				break;
+	    			case 1:
+	    				error = AdminApplication.loadStudentsFromDeployableFolder(fileChooser.getSelectedFile());
+	    				break;
+	    			case 2:
+	    				error = AdminApplication.loadTestTrees(fileChooser.getSelectedFile().getPath());
+	    				break;
+    			}
     			if(error != null){
-    				errorLabel.setText(error);
+    				errorLabel.setText(Common.wrapText(errorLabel, 475, new String[]{error}));
     				errorPanel.setVisible(true);
     			}else{
     				errorPanel.setVisible(false);
@@ -505,26 +548,71 @@ public class ActionHandler extends JPanel {
     			}
     		}
     	});
-        fileImport.add(folderChooser);
+    	fileTypeSelection.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			int selectedFileType = fileTypeSelection.getSelectedIndex();
+    			switch(selectedFileType){
+    			case 0:
+    				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    				break;
+    			case 1:
+    				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    				break;
+    			case 2:
+    				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    				break;
+			}
+    			
+    		}
+    	});
+    	fileImport.add(fileTypeSelection);
+        fileImport.add(fileChooser);
         fileImport.add(importFileButton);
         
         //DB Import
         JPanel dbImport = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel unamePanel = new JPanel();
+        unamePanel.setSize(475, 40);
+    	final JTextField unameField = new JTextField(30);
+    	unamePanel.add(unameField);
+    	unamePanel.setBorder(BorderFactory.createTitledBorder("Username"));
+    	JPanel pwordPanel = new JPanel();
+    	pwordPanel.setSize(475, 40);
+    	final JPasswordField pwordField = new JPasswordField(20);
+    	pwordPanel.add(pwordField);
+    	pwordPanel.setBorder(BorderFactory.createTitledBorder("Password"));
         final JButton importDBButton = new JButton("Import");
     	importDBButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
-    			
-    			String error = AdminApplication.loadStudentsFromFiles(folderChooser.getSelectedFile());
+    			String user = unameField.getText();
+    			char[] pass = pwordField.getPassword();
+    			String pw = new String(pass);
+    			if(Common.isStringEmpty(user)){
+    				errorLabel.setText("Username is required");
+    				errorPanel.setVisible(true);
+    				pwordField.setText("");
+    				return;
+    			}
+    			if(Common.isStringEmpty(pw)){
+    				errorLabel.setText("Password is required");
+    				errorPanel.setVisible(true);
+    				return;
+    			}
+    			String error = AdminApplication.loadTreesFromDB(user, pw);
     			if(error != null){
-    				errorLabel.setText(error);
+    				errorLabel.setText(Common.wrapText(errorLabel, 475, new String[]{error}));
     				errorPanel.setVisible(true);
     			}else{
     				errorPanel.setVisible(false);
     				parent.setCurrentGraph(0);
     				importDialog.setVisible(false);
     			}
+    			pwordField.setText("");
+    			unameField.setText("");
     		}
     	});
+    	dbImport.add(unamePanel);
+    	dbImport.add(pwordPanel);
     	dbImport.add(importDBButton);
         
         JTabbedPane importTabs = new JTabbedPane();
@@ -543,6 +631,13 @@ public class ActionHandler extends JPanel {
         masterPanel.add(errorPanel);
         masterPanel.add(importTabs);
         importDialog.getContentPane().add(masterPanel);
+        importDialog.setLocationRelativeTo(AdminApplication.treeView);
+        importDialog.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				errorLabel.setText("");
+				errorPanel.setVisible(false);
+			}
+		});
         return importDialog;
     }
     
@@ -561,4 +656,6 @@ public class ActionHandler extends JPanel {
     		}
     	}
     }
+    
+    
 }
