@@ -5,6 +5,7 @@
 
 Displays the free-response questions and a text entry box for the student's answer. 
 
+Inherits from [Prompt Prompt]
 
 = Details =
 
