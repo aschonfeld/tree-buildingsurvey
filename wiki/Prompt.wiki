@@ -107,3 +107,53 @@ FILL IN here
  keyTyped(KeyEvent e) 
 
 Prompts capture these Events, handling instructions go here.
+
+calculateValues(int lineCount, int extraHeight, boolean hasBottomButtons)
+Calculates values for some constants used in rendering and handling prompts, including:
+promptSize, centerX, centerY, anchorPoint, stringY, and locations for bottomButtons and closeButton (if either are rendered in this Prompt).
+
+drawBox()
+Draws the outline of the Prompt
+
+drawString(String s, int x, int y)
+convenience method for drawing an unselected String to the Prompt. Calls next method with "false" as final parameter.
+
+drawString (String s, int x, int y, Boolean isSelected)
+Convenience method for drawing a string, with option of selected or not. This in turn calls the "drawCenteredString" method from [TBSGraphics], qv. 
+
+drawText(List<String> lines)
+Convenience method for putting multiple lines of text into a Prompt, unselected. Calls next method, with isSelected = false. 
+
+drawText(List<String> lines, boolean isSelected)
+Convenience method for putting multiple lines of text into a Prompt, selected or unselected. This method relies on drawString(), above. 
+
+drawHeader(String s)
+Draws a header.
+
+drawButtons(Object[] buttons)
+drawButtons(Object[] buttons, String selected)
+drawButtons(Rectangle buttonArea, Object[] buttons, String selected)
+drawUtilityButton(Rectangle utilityButton, int utilityType)
+
+Used for drawing various types of buttons.
+
+
+drawCloseButtonGraphic(Rectangle rect)
+draws the "X" on the close button
+
+drawMinimizeButtonGraphic(Rectangle rect)
+fills in the graphic on a Minimize button
+
+startMinimization()
+startMaximization()
+drawResizedBox()
+drawMinimized()
+Names are pretty clear: they do what they say they do.
+
+
+
+getSelectedButtonIndex(int mouseX, int buttonCount)
+Returns the index of the selected button (bottom row).
+
+getSelectedButtonIndex(int mouseX, int buttonCount, Rectangle buttonArea)
+Returns the index of the selected button (elsewhere).
