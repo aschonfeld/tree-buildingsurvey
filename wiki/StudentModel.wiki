@@ -25,14 +25,14 @@ RemoveActionFromHistory()
 
 
 **Prompts/user help and interaction**
-"Prompts" are objects used for displaying messages and getting input from the user. These are a home-brewed analog to the collection of J classes offered by the Swing package. They are used primarily due to odd failures of the Swing classses on various platforms, primarily MacOS. In addition, they are better suited to the TBS purposes and contribute nicely to the look and feel of the applet.
+[Prompt "Prompts"] are objects used for displaying messages and getting input from the user. These are a home-brewed analog to the collection of J classes offered by the Swing package. They are used primarily due to odd failures of the Swing classses on various platforms, primarily MacOS. In addition, they are better suited to the TBS purposes and contribute nicely to the look and feel of the applet.
 
 viewPrompt(OpenQuestionButtonType currentQuestion)
   (details here)
 viewPrompt(TBSButtonType button)
   (details here)
 helpUser()
-  (set up help prompt - details here)
+  (set up help prompt - details [HelpPrompt here])
 
 
 
@@ -58,4 +58,3 @@ surveyStatus()
 getStudentControllerTest()
 setStudentControllerTest()
   These relate to the auto-testing mechanism partly implemented to exercise the GUI. This was an interesting venture which has not been developed sufficiently to return usable results.
-
