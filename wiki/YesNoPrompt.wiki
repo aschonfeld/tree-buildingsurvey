@@ -1,0 +1,8 @@
+#summary Developer's Guide: YesNoPrompt (Incomplete)
+= Introduction =
+
+Displays a confirmation box, hard-coded for confirming an Undo. 
+
+= Details =
+
+Uses YesNoButtonType (qv)
