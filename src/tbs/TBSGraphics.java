@@ -22,12 +22,11 @@ import tbs.model.ModelElement;
 import tbs.view.dropdown.SubDropDownType;
 
 /**
- * This class encapsulates the constants used in graphics handling for
- * the TBS applet, and contains some grunt-work methods for setting up
- * objects in the Node hierarchy.
- * This class has only static methods and perhaps should be declared
- * static. In any case, there is no constructor as it is not intended to
- * be instantiated.
+ * This class encapsulates the constants used in graphics handling for the TBS
+ * applet, and contains some grunt-work methods for setting up objects in the
+ * Node hierarchy. This class has only static methods and perhaps should be
+ * declared static. In any case, there is no constructor as it is not intended
+ * to be instantiated.
  */
 
 public class TBSGraphics {
@@ -40,7 +39,7 @@ public class TBSGraphics {
 
 	/**
 	 * Applet width: Set by TBSApplet to size of browser window.
-	 */	
+	 */
 	public static int appletWidth;
 
 	/**
@@ -48,96 +47,90 @@ public class TBSGraphics {
 	 */
 	public static int appletHeight;
 
-	/** 
-	 * The LINE_OF_DEATH is the vertical line separating the active
-	 * elements of the model from the inactive; when a @ModelElement is
-	 * moved across it, it is either placed in the tree or removed,
-	 * depending on whether it lands in the active or the inactive
-	 * portion. 
+	/**
+	 * The LINE_OF_DEATH is the vertical line separating the active elements of
+	 * the model from the inactive; when a @ModelElement is moved across it, it
+	 * is either placed in the tree or removed, depending on whether it lands in
+	 * the active or the inactive portion.
 	 */
 	public static int LINE_OF_DEATH = 180;
-  
-  /**
-   * Universal x & y padding dimensions for applet, used for:
-   *  -Minimum number of pixels around the right and left of an organism's name
-   *  -Vertical spacing of buttons
-   *  -Horizontal spacing of buttons
-   *  -Prompt padding
-   */
-  public static Dimension padding = new Dimension(10,5);
 
-  	public static Color backgroundColor = Color.BLACK;
 	/**
-	 * Total number of Organisms contained in the applet, this will
-	 * be used in the future to more efficiently search the list of
-	 * ModelElement objects in the Model.
+	 * Universal x & y padding dimensions for applet, used for: -Minimum number
+	 * of pixels around the right and left of an organism's name -Vertical
+	 * spacing of buttons -Horizontal spacing of buttons -Prompt padding
+	 */
+	public static Dimension padding = new Dimension(10, 5);
+
+	public static Color backgroundColor = Color.BLACK;
+	/**
+	 * Total number of Organisms contained in the applet, this will be used in
+	 * the future to more efficiently search the list of ModelElement objects in
+	 * the Model.
 	 */
 	public static int numOfOrganisms;
 
 	/**
-	 * The fixed width of all OrganismNodes. Value is calculated in
-	 * StudentView
-	 */ 
+	 * The fixed width of all OrganismNodes. Value is calculated in StudentView
+	 */
 	public static int organismNodeWidth = 0;
 
 	/**
-	 * The fixed height of all OrganismNodes. Value is calculated in
-	 * StudentView
-	 */ 
+	 * The fixed height of all OrganismNodes. Value is calculated in StudentView
+	 */
 	public static int organismNodeHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNode label strings. Value is calculated in
 	 * StudentView
-	 */ 
+	 */
 	public static int maxOrganismStringWidth = 0;
 
 	/**
-	 * The fixed height of all OrganismNode label strings. Value is calculated in
-	 * TBSApplet.loadOrganisms()
-	 */ 
+	 * The fixed height of all OrganismNode label strings. Value is calculated
+	 * in TBSApplet.loadOrganisms()
+	 */
 	public static int maxOrganismStringHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNode images. Value is calculated in
 	 * TBSApplet.loadOrganisms()
-	 */ 
+	 */
 	public static int maxOrganismImageWidth = 0;
 
 	/**
 	 * The fixed height of all OrganismNode images. Value is calculated in
 	 * TBSApplet.loadOrganisms()
-	 */ 
+	 */
 	public static int maxOrganismImageHeight = 0;
 
 	/**
 	 * The fixed width of all OrganismNodes. Value is calculated in
 	 * TBSApplet.loadOrganisms()
-	 */ 
+	 */
 	public static int maxStudentNameWidth = 150;
 	public static int checkWidth = 0;
 	public static int arrowWidth = 0;
 	public static int groupCtWidth = 0;
 
-
 	/**
 	 * The fixed height of all studentNodes. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
-	 */ 
+	 */
 	public static int studentNodeHeight = 0;
-	
+
 	public static Color selectedStudentColor = Color.GREEN;
 
 	/**
 	 * The fixed width of all student:Node label strings. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
-	 */ 
+	 */
 	public static int maxStudentStringWidth = 0;
 
 	/**
-	 * The fixed height of all OrganismNode label strings. Value is calculated in
-	 * TBSModel.createModelElements (CHECK THIS)
-	 */ 
+	 * The fixed height of all OrganismNode label strings. Value is calculated
+	 * in TBSModel.createModelElements (CHECK THIS)
+	 */
 	public static int maxStudentStringHeight = 0;
 
 	/**
@@ -146,13 +139,14 @@ public class TBSGraphics {
 	public static String emptyNodeLabel = "#%d";
 
 	public static int maxNameLength = 30;
-	
+
 	/*
-	 * Regex patten checking for non-alphanumeric characters being 
-	 * entered when labeling an empty node
+	 * Regex patten checking for non-alphanumeric characters being entered when
+	 * labeling an empty node
 	 */
 	public static Pattern emptyNodePattern = Pattern.compile("[0-9a-zA-Z' ']");
-	public static Pattern writtenResponseIllegalCharacters = Pattern.compile("[+=\"]");
+	public static Pattern writtenResponseIllegalCharacters = Pattern
+			.compile("[+=\"]");
 
 	public static int maxLinesOfWrittenText = 8;
 
@@ -161,44 +155,42 @@ public class TBSGraphics {
 	 */
 	public static String immortalNodeLabel = "Branch Point";
 
-
 	/**
 	 * Width of immortal empty node label
 	 */
 	public static int immortalNodeLabelWidth = 0;
 
 	/**
-	 * The fixed width of all EmptyNodes. 
-	 */ 
+	 * The fixed width of all EmptyNodes.
+	 */
 	public static int emptyNodeWidth = 20;
 
 	/**
-	 * The fixed height of all EmptyNodes. 
-	 */ 
+	 * The fixed height of all EmptyNodes.
+	 */
 	public static int emptyNodeHeight = 20;
-
 
 	/**
 	 * The initial x-coordinate of all EmptyNodes. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
-	 */ 
+	 */
 	public static int emptyNodeLeftX;
 
 	/**
 	 * The initial y-coordinate of all EmptyNodes. Value is calculated in
 	 * TBSModel.createModelElements (CHECK THIS)
-	 */ 
+	 */
 	public static int emptyNodeUpperY;
 	public static int emptyNodeYLabelOffset = 5;
 	public static int emptyNodePadding = 4;
 
 	/**
 	 * The initial length of all arrowheads.
-	 */ 
+	 */
 	public static double arrowLength = 0.1;
 
 	/**
-	 * Space between bottom and top of images [in the left-hand column] 
+	 * Space between bottom and top of images [in the left-hand column]
 	 */
 	public static int ySpacing = 1;
 
@@ -208,8 +200,7 @@ public class TBSGraphics {
 	public static Color tooltipColor = Color.CYAN;
 
 	/**
-	 * Color of text strings labeling OrganismNodes. Currently set to
-	 * black.
+	 * Color of text strings labeling OrganismNodes. Currently set to black.
 	 */
 	public static Color organismStringColor = Color.BLACK;
 
@@ -229,50 +220,50 @@ public class TBSGraphics {
 	public static Color selectedNodeBorderColor = Color.GREEN;
 
 	/**
-	 * Height of buttons. Set in  [TBSModel.???]
+	 * Height of buttons. Set in [TBSModel.???]
 	 */
 	public static int buttonsHeight = 0;
 
 	/**
-	 * Width of hull buttons. Set in  [AdminView.renderSubDropDown]
+	 * Width of hull buttons. Set in [AdminView.renderSubDropDown]
 	 */
 	public static int hullButtonWidth = 0;
-	
+
 	/**
 	 * Width of collision buttons. Set in [AdminView.renderSubDropDown]
-	 */ 
+	 */
 	public static int collisionButtonWidth = 0;
-	
+
 	/**
 	 * Width of optimal buttons. Set in [AdminView.renderSubDropDown]
-	 */ 
+	 */
 	public static int optimalButtonWidth = 0;
-	
-	public static void setSubDropDownWidth(SubDropDownType type, int width){
-		switch(type){
-			case HULL:
-				hullButtonWidth = width;
-				break;
-			case COLLISION:
-				collisionButtonWidth = width;
-				break;
-			case OPTIMAL_HULL:
-				optimalButtonWidth = width;
-				break;
+
+	public static void setSubDropDownWidth(SubDropDownType type, int width) {
+		switch (type) {
+		case HULL:
+			hullButtonWidth = width;
+			break;
+		case COLLISION:
+			collisionButtonWidth = width;
+			break;
+		case OPTIMAL_HULL:
+			optimalButtonWidth = width;
+			break;
 		}
 	}
-	
-	public static Color[] defualtGroupColors = new Color[]{Color.MAGENTA,
-		Color.ORANGE, Color.PINK, new Color(0,100,0),
-		Color.BLUE, Color.CYAN, Color.GREEN, Color.LIGHT_GRAY,
-		Color.YELLOW, Color.WHITE};
+
+	public static Color[] defualtGroupColors = new Color[] { Color.MAGENTA,
+			Color.ORANGE, Color.PINK, new Color(0, 100, 0), Color.BLUE,
+			Color.CYAN, Color.GREEN, Color.LIGHT_GRAY, Color.YELLOW,
+			Color.WHITE };
 	public static Pattern colorChooserPattern = Pattern.compile("[0-9]");
-	
+
 	public static int RGBEntryBoxWidth = 0;
-	
+
 	/**
 	 * Width of buttons. Set in [TBSModel.???]
-	 */ 
+	 */
 	public static int buttonsWidth = 0;
 
 	/**
@@ -281,32 +272,32 @@ public class TBSGraphics {
 	public static Color buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
 	public static Color buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 	public static Color buttonEnd = new Color(1.0f, 1.0f, 1.0f);
-	public static Color buttonInactiveBgColor = new Color(205,188,181);
-	public static Color buttonInactiveFntColor = new Color(139,125,123);
+	public static Color buttonInactiveBgColor = new Color(205, 188, 181);
+	public static Color buttonInactiveFntColor = new Color(139, 125, 123);
 
 	/**
 	 * Space between buttons and question buttons.
-	 */ 
+	 */
 	public static int spaceBeforeQuestionButtons = 60;
 
 	/**
 	 * Width of question buttons. Set in [TBSView]
-	 */ 
+	 */
 	public static int questionButtonsWidth = 0;
-	
+
 	/**
 	 * Width of names buttons. Set in [TBSView]
-	 */ 
+	 */
 	public static int namesButtonWidth = 0;
-	
+
 	/**
 	 * Width of groups buttons. Set in [TBSView]
-	 */ 
+	 */
 	public static int groupsButtonWidth = 0;
 
 	/**
 	 * Starting x-coordinate of question buttons. Set in [TBSModel.???]
-	 */ 
+	 */
 	public static int questionButtonsStart = 0;
 
 	public static Stroke closeButtonStroke = null;
@@ -314,7 +305,7 @@ public class TBSGraphics {
 	public static int textHeight = 0;
 
 	public static Comparator<ModelElement> elementIdComparator = new Comparator<ModelElement>() {
-		public int compare( ModelElement o1, ModelElement o2 ) {
+		public int compare(ModelElement o1, ModelElement o2) {
 			return o1.getId().compareTo(o2.getId());
 		}
 	};
@@ -323,57 +314,56 @@ public class TBSGraphics {
 	 * Returns the @Rectangle2D surrounding a piece of text
 	 */
 	public static Dimension getStringBounds(Graphics2D g2, String s) {
-		if(TBSUtils.isStringEmpty(s))
+		if (TBSUtils.isStringEmpty(s))
 			return new Dimension();
-		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
+		TextLayout layout = new TextLayout(s, g2.getFont(), g2
+				.getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
 		return new Dimension((int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 
-	public static Dimension get2DStringBounds(Graphics2D g2, Collection<?> strings) 
-	{
-		Point max = new Point(0,0);
-		for(Object s: strings) 
-		{
+	public static Dimension get2DStringBounds(Graphics2D g2,
+			Collection<?> strings) {
+		Point max = new Point(0, 0);
+		for (Object s : strings) {
 			Dimension bounds = getStringBounds(g2, s.toString());
-			if(bounds.width > max.x) 
+			if (bounds.width > max.x)
 				max.x = (int) bounds.getWidth();
-			if(bounds.height > max.y) 
+			if (bounds.height > max.y)
 				max.y = (int) bounds.getHeight();
 		}
 		return new Dimension(max.x, max.y);
 	}
 
-	public static void drawCenteredString(Graphics2D g2, String s, 
-			int leftX, int upperY, int width, int height) { 
+	public static void drawCenteredString(Graphics2D g2, String s, int leftX,
+			int upperY, int width, int height) {
 		drawCenteredString(g2, s, leftX, upperY, width, height, Color.black);
 	}
 
-
 	/**
 	 * Paints a string centered in the rectangle defined.
-	 */	
-	public static void drawCenteredString(Graphics2D g2, String s, 
-			int leftX, int upperY, int width, int height, Color c){
+	 */
+	public static void drawCenteredString(Graphics2D g2, String s, int leftX,
+			int upperY, int width, int height, Color c) {
 		drawCenteredString(g2, s, leftX, upperY, width, height, c, font);
 	}
 
-	public static void drawCenteredString(Graphics2D g2, String s, 
-			int leftX, int upperY, int width, int height, Color c, Font f) 
-	{
-		if(TBSUtils.isStringEmpty(s))
+	public static void drawCenteredString(Graphics2D g2, String s, int leftX,
+			int upperY, int width, int height, Color c, Font f) {
+		if (TBSUtils.isStringEmpty(s))
 			return;
 		g2.setColor(c);
-		TextLayout layout = new TextLayout(s, g2.getFont(), g2.getFontRenderContext());
+		TextLayout layout = new TextLayout(s, g2.getFont(), g2
+				.getFontRenderContext());
 		Rectangle2D bounds = layout.getBounds();
 		int stringHeight = (int) bounds.getHeight();
 		int stringWidth = (int) bounds.getWidth();
-		float x,y;
-		if(width == 0)
+		float x, y;
+		if (width == 0)
 			x = leftX;
 		else
 			x = leftX + (width - stringWidth) / 2;
-		if(height == 0)
+		if (height == 0)
 			y = upperY;
 		else
 			y = upperY + height - (height - stringHeight) / 2;
@@ -381,14 +371,16 @@ public class TBSGraphics {
 		layout.draw(g2, x, y);
 	}
 
-	public static void renderButtonBackground(Graphics2D g2, Rectangle button, boolean selected) {
-		Color start = selected ? TBSGraphics.buttonSelected : TBSGraphics.buttonNotSelected;
+	public static void renderButtonBackground(Graphics2D g2, Rectangle button,
+			boolean selected) {
+		Color start = selected ? TBSGraphics.buttonSelected
+				: TBSGraphics.buttonNotSelected;
 		Color end = TBSGraphics.buttonEnd;
 
 		float redDiff = end.getRed() - start.getRed();
 		float greenDiff = end.getGreen() - start.getGreen();
 		float blueDiff = end.getBlue() - start.getBlue();
-		for(int y = button.y; y <= button.y + button.height / 3; y++) {
+		for (int y = button.y; y <= button.y + button.height / 3; y++) {
 			float fy = (float) (y - button.y);
 			float fh = (float) button.height / 3;
 			float fdiff = 0.6f + 0.4f * fy / fh;
@@ -399,9 +391,9 @@ public class TBSGraphics {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
+			g2.drawLine(button.x, y, button.x + button.width, y);
 		}
-		for(int y = button.y + button.height / 3; y < button.y + button.height; y++) {
+		for (int y = button.y + button.height / 3; y < button.y + button.height; y++) {
 			float fy = (float) y - (button.height / 3) - button.y;
 			float fh = (float) 2.0f * (button.height / 3);
 			float fdiff = fy / fh;
@@ -412,35 +404,36 @@ public class TBSGraphics {
 			green /= 255.0f;
 			blue /= 255.0f;
 			g2.setColor(new Color(red, green, blue));
-			g2.drawLine(button.x, y , button.x + button.width, y);
+			g2.drawLine(button.x, y, button.x + button.width, y);
 		}
 	}
 
-	public static List<String> breakStringByLineWidth(Graphics2D g2, String s, int width){
+	public static List<String> breakStringByLineWidth(Graphics2D g2, String s,
+			int width) {
 		String currentLine = "";
 		List<String> widthBrokenString = new LinkedList<String>();
-		if(TBSUtils.isStringEmpty(s)){
+		if (TBSUtils.isStringEmpty(s)) {
 			widthBrokenString.add("");
 			return widthBrokenString;
 		}
-		for(String token : s.split(" ")){
-			if(TBSGraphics.getStringBounds(g2, currentLine + token).width > width){
+		for (String token : s.split(" ")) {
+			if (TBSGraphics.getStringBounds(g2, currentLine + token).width > width) {
 				widthBrokenString.add(currentLine);
 				currentLine = token + " ";
-			}else{
+			} else {
 				currentLine += token + " ";
 			}
 		}
-		if(currentLine.length() > 0)
+		if (currentLine.length() > 0)
 			widthBrokenString.add(currentLine);
 		return widthBrokenString;
 	}
 
-	public static void updateBrowserSpecs(String browser){
+	public static void updateBrowserSpecs(String browser) {
 		Font tempFont = new Font("default", Font.BOLD, 16);
 		Stroke stroke = new BasicStroke(3);
-		if(browser != null && browser.length() > 0){
-			if((browser.toLowerCase()).contains("mac")){
+		if (browser != null && browser.length() > 0) {
+			if ((browser.toLowerCase()).contains("mac")) {
 				tempFont = new Font("default", Font.PLAIN, 16);
 				stroke = new BasicStroke();
 			}
@@ -448,8 +441,8 @@ public class TBSGraphics {
 		font = tempFont;
 		closeButtonStroke = stroke;
 	}
-	
-	public static void setColorsForPrinting(){
+
+	public static void setColorsForPrinting() {
 		backgroundColor = Color.WHITE;
 		selectedStudentColor = Color.BLACK;
 		tooltipColor = Color.BLACK;
@@ -463,8 +456,8 @@ public class TBSGraphics {
 		buttonInactiveBgColor = Color.WHITE;
 		buttonInactiveFntColor = Color.BLACK;
 	}
-	
-	public static void setColorsForDisplay(){
+
+	public static void setColorsForDisplay() {
 		backgroundColor = Color.BLACK;
 		selectedStudentColor = Color.GREEN;
 		tooltipColor = Color.CYAN;
@@ -475,7 +468,7 @@ public class TBSGraphics {
 		buttonNotSelected = new Color(0.45f, 0.55f, 0.65f);
 		buttonSelected = new Color(0.2f, 0.8f, 0.2f);
 		buttonEnd = new Color(1.0f, 1.0f, 1.0f);
-		buttonInactiveBgColor = new Color(205,188,181);
-		buttonInactiveFntColor = new Color(139,125,123);
+		buttonInactiveBgColor = new Color(205, 188, 181);
+		buttonInactiveFntColor = new Color(139, 125, 123);
 	}
 }

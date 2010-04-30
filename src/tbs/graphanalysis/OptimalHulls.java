@@ -5,9 +5,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.Timer;
 
 import tbs.TBSGraphics;
 import tbs.TBSUtils;
@@ -17,138 +23,193 @@ import tbs.view.dropdown.SubDropDown;
 
 public class OptimalHulls extends SubDropDown {
 
-	private String hull1;
-	private String hull2;
+	private List<ConvexHull> hulls;
+	private Point originalCentroid;
 	private int level;
+	private String commaSepGroups;
 	private String text;
-	
-	private List<Point> optimalHull1Points;
-	private List<OrganismNode> removedHull1Nodes;
-	private List<Point> optimalHull2Points;
-	private List<OrganismNode> removedHull2Nodes;
-	
-	public OptimalHulls(HullCollision collision){
-		removedHull1Nodes = new LinkedList<OrganismNode>();
-		removedHull2Nodes = new LinkedList<OrganismNode>();
-		ConvexHull h1 = collision.getHull1();
-		ConvexHull h2 = collision.getHull2();
+
+	private Map<String, List<Point>> optimalHullPoints;
+	private Map<String, List<OrganismNode>> removedHullNodes;
+	private Map<String, List<OrganismNode>> remainingHullNodes;
+	private Map<String, ConvexHull> inProgressHulls;
+	private Point centroidInProgress;
+
+	private Timer iterationWait;
+	private ActionListener iterate = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			iterationWait.stop();
+			iterateOptimization();
+			if (collisionExists)
+				iterationWait.start();
+		}
+	};
+
+	private List<Point> collision;
+	private boolean collisionExists;
+
+	public OptimalHulls(HullCollision collision) {
 		level = collision.getLevel();
-		hull1 = h1.getHullName();
-		hull2 = h2.getHullName();
-		List<Point> hull1Points = new LinkedList<Point>();
-		hull1Points.addAll(h1.getHull());
-		List<Point> hull2Points = new LinkedList<Point>();
-		hull2Points.addAll(h2.getHull());
-		List<OrganismNode> hull1Nodes = new LinkedList<OrganismNode>();
-		hull1Nodes.addAll(h1.getNodes());
-		List<OrganismNode> hull2Nodes = new LinkedList<OrganismNode>();
-		hull2Nodes.addAll(h2.getNodes());
-		ConvexHull tempHull1 = new ConvexHull(hull1Nodes, "");
-		ConvexHull tempHull2 = new ConvexHull(hull2Nodes, "");
-		Point collisionCentroid = collision.getCentroid();
-		boolean collisionExists = true;
-		while(collisionExists){
-			int closest=0;
-			boolean isH1 = true;
-			double smallestDist = collisionCentroid.distance(hull1Points.get(0));
-			for(int i=1;i<hull1Points.size();i++){
-				double temp = collisionCentroid.distance(hull1Points.get(i));
-				if(temp < smallestDist){
+		hulls = collision.getHulls();
+		commaSepGroups = TBSUtils.commaSeparatedString(hulls);
+		removedHullNodes = new HashMap<String, List<OrganismNode>>();
+		remainingHullNodes = new HashMap<String, List<OrganismNode>>();
+		optimalHullPoints = new HashMap<String, List<Point>>();
+		inProgressHulls = new HashMap<String, ConvexHull>();
+		originalCentroid = collision.getCentroid();
+		iterationWait = new Timer(1000, iterate);
+		fullOptimization();
+	}
+
+	public void fullOptimization() {
+		if (iterationWait.isRunning())
+			iterationWait.stop();
+		initOptimization();
+		while (collisionExists)
+			iterateOptimization();
+		createText();
+	}
+
+	private void initOptimization() {
+		String key;
+		List<OrganismNode> remaining;
+		List<Point> optimal;
+		for (ConvexHull hull : hulls) {
+			key = hull.getHullName();
+			removedHullNodes.put(key, new LinkedList<OrganismNode>());
+			remaining = new LinkedList<OrganismNode>();
+			remaining.addAll(hull.getNodes());
+			remainingHullNodes.put(key, remaining);
+			optimal = new LinkedList<Point>();
+			optimal.addAll(hull.getHull());
+			optimalHullPoints.put(key, optimal);
+			inProgressHulls.put(key, new ConvexHull(remaining, ""));
+		}
+		centroidInProgress = originalCentroid;
+		collision = new LinkedList<Point>();
+		collisionExists = true;
+	}
+
+	private void iterateOptimization() {
+		int closest = 0;
+		String closestKey = "";
+		List<Point> points;
+		Double smallestDist = null;
+		for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
+				.entrySet()) {
+			points = optimal.getValue();
+			for (int i = 0; i < points.size(); i++) {
+				Double temp = centroidInProgress.distance(points.get(i));
+				if (smallestDist == null || temp < smallestDist) {
 					smallestDist = temp;
 					closest = i;
+					closestKey = optimal.getKey();
 				}
-			}
-			for(int i=0;i<hull2Points.size();i++){
-				double temp = collisionCentroid.distance(hull2Points.get(i));
-				if(temp < smallestDist){
-					smallestDist = temp;
-					closest = i;
-					isH1 = false;
-				}
-			}
-			if(isH1){
-				Point p = hull1Points.remove(closest);
-				for(OrganismNode o : hull1Nodes){
-					if(o.getRectangle().contains(p)){
-						removedHull1Nodes.add(o);
-						break;
-					}
-				}
-				hull1Nodes.remove(removedHull1Nodes.get(removedHull1Nodes.size()-1));
-				tempHull1 = new ConvexHull(hull1Nodes, "");
-				hull1Points = tempHull1.getHull();
-			}else{
-				Point p = hull2Points.remove(closest);
-				for(OrganismNode o : hull2Nodes){
-					if(o.getRectangle().contains(p)){
-						removedHull2Nodes.add(o);
-						break;
-					}
-				}
-				hull2Nodes.remove(removedHull2Nodes.get(removedHull2Nodes.size()-1));
-				tempHull2 = new ConvexHull(hull2Nodes, "");
-				hull2Points = tempHull2.getHull();
-			}
-			collisionExists = TBSUtils.collide(tempHull1.getHullShape(), tempHull2.getHullShape());
-			if(collisionExists){
-				HullCollision tempHC = new HullCollision(0, tempHull1, tempHull2);
-				collisionCentroid = tempHC.getCentroid();
 			}
 		}
-		optimalHull1Points = hull1Points;
-		optimalHull2Points = hull2Points;
-		StringBuffer textBuff = new StringBuffer("\"Optimal Groups\" is optimization of the current student's arrangement of organisms so that groupings no longer collide.");
-		textBuff.append(" This particular optimization required the removal of ");
-		textBuff.append(removedHull1Nodes.size()).append(" ").append(hull1);
-		if(removedHull1Nodes.size() > 1)
-			textBuff.append("s");
-		textBuff.append(" and ");
-		textBuff.append(removedHull2Nodes.size()).append(" ").append(hull2);
-		if(removedHull2Nodes.size() > 1)
-			textBuff.append("s");
+		Point p = optimalHullPoints.get(closestKey).remove(closest);
+		for (OrganismNode o : remainingHullNodes.get(closestKey)) {
+			if (o.getRectangle().contains(p)) {
+				removedHullNodes.get(closestKey).add(o);
+				break;
+			}
+		}
+		remainingHullNodes.get(closestKey).remove(
+				removedHullNodes.get(closestKey).get(
+						removedHullNodes.get(closestKey).size() - 1));
+		inProgressHulls.put(closestKey, new ConvexHull(remainingHullNodes
+				.get(closestKey), ""));
+		optimalHullPoints.put(closestKey, inProgressHulls.get(closestKey)
+				.getHull());
+
+		List<ConvexHull> temp = new LinkedList<ConvexHull>();
+		temp.addAll(inProgressHulls.values());
+		collisionExists = TBSUtils.collide(temp);
+		if (collisionExists) {
+			HullCollision tempHC = new HullCollision(0, temp);
+			centroidInProgress = tempHC.getCentroid();
+			collision = tempHC.getCollisionPoints();
+		}
+	}
+
+	private void createText() {
+		StringBuffer textBuff = new StringBuffer(
+				"\"Optimal Groups\" is optimization of the current student's arrangement of organisms so that groupings no longer collide.");
+		textBuff
+				.append(" This particular optimization required the removal of ");
+		String sep = "";
+		for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
+				.entrySet()) {
+			textBuff.append(sep).append(removed.getValue().size()).append(" ")
+					.append(removed.getKey());
+			if (removed.getValue().size() > 1)
+				textBuff.append("s");
+			sep = ", ";
+		}
 		textBuff.append(" in order to eliminate group collisions.");
 		text = textBuff.toString();
 	}
-	
-	
-	
-	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model){
-		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon();
 
-		for(Point p : optimalHull1Points)
-			hull1Shape.addPoint(p.x - xOffset, p.y - yOffset);
-
-		for(Point p : optimalHull2Points)
-			hull2Shape.addPoint(p.x - xOffset, p.y - yOffset);
-
+	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
+		if (collisionExists) {
+			Polygon collisionShape = new Polygon();
+			for (Point p : collision)
+				collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
+			g2.setColor(new Color(255, 36, 0, 160));
+			g2.fill(collisionShape);
+		}
+		Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
+		for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
+				.entrySet()) {
+			Polygon shape = new Polygon();
+			for (Point p : optimal.getValue())
+				shape.addPoint(p.x - xOffset, p.y - yOffset);
+			hullShapes.put(optimal.getKey(), shape);
+		}
 		g2.setStroke(new BasicStroke(3));
-		g2.setColor(model.getGroupColor(hull1));
-		g2.draw(hull1Shape);
-		g2.setColor(model.getGroupColor(hull2));
-		g2.draw(hull2Shape);
+		for (Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()) {
+			g2.setColor(model.getGroupColor(hullShape.getKey()));
+			g2.draw(hullShape.getValue());
+		}
+		g2.setStroke(new BasicStroke());
 		boolean showNames = model.getView().getDisplayAllTooltips();
-		renderRemoved(g2, removedHull1Nodes, xOffset, yOffset, showNames);
-		renderRemoved(g2, removedHull2Nodes, xOffset, yOffset, showNames);
+		for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
+				.entrySet())
+			renderRemoved(g2, removed.getValue(), xOffset, yOffset, showNames);
 	}
-	
-	public void renderRemoved(Graphics2D g2, List<OrganismNode> nodes, int xOffset, int yOffset, boolean showNames){
-		for(OrganismNode o : nodes){
+
+	public void renderRemoved(Graphics2D g2, List<OrganismNode> nodes,
+			int xOffset, int yOffset, boolean showNames) {
+		for (OrganismNode o : nodes) {
 			g2.setStroke(new BasicStroke(3));
 			g2.setColor(Color.RED);
-			g2.draw(new Rectangle2D.Double(o.getX()-(1.5+xOffset), o.getY()-(1.5+yOffset), o.getWidth() + 3, o.getHeight() + 3));
+			g2.draw(new Rectangle2D.Double(o.getX() - (1.5 + xOffset), o.getY()
+					- (1.5 + yOffset), o.getWidth() + 3, o.getHeight() + 3));
 			g2.setStroke(new BasicStroke());
-			if(!showNames){
-				int xVal = (o.getX() + (o.getWidth()/2)) - xOffset;
-				int yVal = (o.getY()-o.getHeight()) - yOffset;
+			if (!showNames) {
+				int xVal = (o.getX() + (o.getWidth() / 2)) - xOffset;
+				int yVal = (o.getY() - o.getHeight()) - yOffset;
 				g2.setFont(TBSGraphics.tooltipFont);
-				xVal -= TBSGraphics.getStringBounds(g2, o.getTypes().get(level)).width/2;
-				TBSGraphics.drawCenteredString(g2, o.getTypes().get(level), xVal, yVal, 0,
-						TBSGraphics.buttonsHeight, TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
+				xVal -= TBSGraphics
+						.getStringBounds(g2, o.getTypes().get(level)).width / 2;
+				TBSGraphics.drawCenteredString(g2, o.getTypes().get(level),
+						xVal, yVal, 0, TBSGraphics.buttonsHeight,
+						TBSGraphics.tooltipColor, TBSGraphics.tooltipFont);
 				g2.setFont(TBSGraphics.font);
 			}
 		}
 	}
-	
-	public String toString(){return hull1 + " - " + hull2 + (getDisplay() ? " \u2713" : "");}
-	public String getText(){return text;}	
+
+	public String toString() {
+		return commaSepGroups + (getDisplay() ? " \u2713" : "");
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void startOptimization() {
+		initOptimization();
+		iterationWait.start();
+	}
 }

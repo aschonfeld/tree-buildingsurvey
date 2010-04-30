@@ -11,30 +11,31 @@ import java.awt.geom.PathIterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.view.dropdown.SubDropDown;
 
-public class HullCollision extends SubDropDown{
+public class HullCollision extends SubDropDown {
 
 	private int level;
-	private ConvexHull hull1;
-	private ConvexHull hull2;
+	private List<ConvexHull> hulls;
 	private List<Point> collisionPoints;
 	private Point centroid;
+	private String commaSepGroups;
 	private String analysisText;
 	private OptimalHulls optimalHulls;
-	
-	public HullCollision(int level, ConvexHull hull1, ConvexHull hull2){
+
+	public HullCollision(int level, List<ConvexHull> hulls) {
 		this.level = level;
-		this.hull1 = hull1;
-		this.hull2 = hull2;
-		analysisText = new StringBuffer(" \u2022 ").append(hull1)
-		.append(" group collides with the ")
-		.append(hull2).append(" group.").toString();
-		
-		Area intersect = new Area(hull1.getHullShape()); 
-		intersect.intersect(new Area(hull2.getHullShape()));
-		
+		this.hulls = hulls;
+		commaSepGroups = TBSUtils.commaSeparatedString(hulls);
+		analysisText = new StringBuffer(" \u2022 Groups ").append(
+				commaSepGroups).append(" have a collision.").toString();
+
+		Area intersect = new Area(hulls.get(0).getHullShape());
+		for (int i = 1; i < hulls.size(); i++)
+			intersect.intersect(new Area(hulls.get(i).getHullShape()));
+
 		AffineTransform at = new AffineTransform();
 		PathIterator pi = intersect.getPathIterator(at);
 		collisionPoints = new LinkedList<Point>();
@@ -43,50 +44,65 @@ public class HullCollision extends SubDropDown{
 		while (pi.isDone() == false) {
 			float[] coords = new float[6];
 			segType = pi.currentSegment(coords);
-			if(segType == PathIterator.SEG_LINETO || segType == PathIterator.SEG_MOVETO){
-				Point p = new Point((int)coords[0], (int)coords[1]);
+			if (segType == PathIterator.SEG_LINETO
+					|| segType == PathIterator.SEG_MOVETO) {
+				Point p = new Point((int) coords[0], (int) coords[1]);
 				collisionPoints.add(p);
 				centroidX += p.x;
 				centroidY += p.y;
 			}
 			pi.next();
 		}
-		centroidX = (centroidX/collisionPoints.size());
-		centroidY = (centroidY/collisionPoints.size());
+		centroidX = (centroidX / collisionPoints.size());
+		centroidY = (centroidY / collisionPoints.size());
 		centroid = new Point(centroidX, centroidY);
-		optimalHulls = new OptimalHulls(this);
 	}
-	
-	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model){
-		Polygon hull1Shape = new Polygon(), hull2Shape = new Polygon(),
-			collisionShape = new Polygon();
-		
-		for(Point p : hull1.getHull())
-			hull1Shape.addPoint(p.x - xOffset, p.y - yOffset);
-		
-		for(Point p : hull2.getHull())
-			hull2Shape.addPoint(p.x - xOffset, p.y - yOffset);
-		
-		for(Point p : collisionPoints)
+
+	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
+		Polygon collisionShape = new Polygon();
+
+		for (Point p : collisionPoints)
 			collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
-		
-		g2.setColor(new Color(255,36,0,160));
+
+		g2.setColor(new Color(255, 36, 0, 160));
 		g2.fill(collisionShape);
-		
+
 		g2.setStroke(new BasicStroke(3));
-		g2.setColor(model.getGroupColor(hull1.getHullName()));
-		g2.draw(hull1Shape);
-		g2.setColor(model.getGroupColor(hull2.getHullName()));
-		g2.draw(hull2Shape);
+		for (ConvexHull hull : hulls) {
+			g2.setColor(model.getGroupColor(hull.getHullName()));
+			hull.render(g2, xOffset, yOffset, model);
+		}
 		g2.setStroke(new BasicStroke());
 	}
-	
-	public String getAnalysisText(){return analysisText;}	
-	public Point getCentroid() {return centroid;}
-	public ConvexHull getHull1(){return hull1;}
-	public ConvexHull getHull2(){return hull2;}
-	public int getLevel(){return level;}
-	public OptimalHulls getOptimalHulls(){return optimalHulls;}
-	public String toString(){return hull1.getHullName() + " - " + hull2.getHullName() + (getDisplay() ? " \u2713" : "");}
-	
+
+	public String getAnalysisText() {
+		return analysisText;
+	}
+
+	public Point getCentroid() {
+		return centroid;
+	}
+
+	public List<ConvexHull> getHulls() {
+		return hulls;
+	}
+
+	public List<Point> getCollisionPoints() {
+		return collisionPoints;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public OptimalHulls getOptimalHulls() {
+		if (optimalHulls == null)
+			optimalHulls = new OptimalHulls(this);
+		return optimalHulls;
+	}
+
+	public String toString() {
+		return commaSepGroups + (getDisplay() ? " \u2713" : "");
+	}
+
 }

@@ -20,22 +20,24 @@ public class Student {
 	private List<String> nodeName;
 	private String lastUpdate;
 	private Date lastUpdateTimestamp;
-	private SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private SimpleDateFormat displayFormat = new SimpleDateFormat("EEE, d MMMM yyyy h:mm a");
+	private SimpleDateFormat parseFormat = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss");
+	private SimpleDateFormat displayFormat = new SimpleDateFormat(
+			"EEE, d MMMM yyyy h:mm a");
 	private String tree;
 	private Map<OpenQuestionButtonType, Response> openResponses;
 	private String section;
 	private Boolean arrows;
 	private Point anchorPoint;
 
-	public Student(String studentDataString, int index){
+	public Student(String studentDataString, int index) {
 		openResponses = new HashMap<OpenQuestionButtonType, Response>();
-		if(TBSUtils.isStringEmpty(studentDataString)){
+		if (TBSUtils.isStringEmpty(studentDataString)) {
 			createNewStudent();
 			return;
 		}
 		String[] studentData = studentDataString.split("\\+");
-		if(studentData == null || studentData.length == 0){
+		if (studentData == null || studentData.length == 0) {
 			createNewStudent();
 			return;
 		}
@@ -43,29 +45,33 @@ public class Student {
 		setLastUpdate(studentData[1].substring(1).trim());
 		setTree(studentData[2].substring(1).trim());
 		int splitIndex = 3;
-		for(OpenQuestionButtonType response : OpenQuestionButtonType.values()){
-			if(response.isRadio())
-				openResponses.put(response, new RadioResponse(studentData[splitIndex].substring(1).trim(),response.getRadioQuestionCount()));
+		for (OpenQuestionButtonType response : OpenQuestionButtonType.values()) {
+			if (response.isRadio())
+				openResponses.put(response, new RadioResponse(
+						studentData[splitIndex].substring(1).trim(), response
+								.getRadioQuestionCount()));
 			else
-				openResponses.put(response, new WrittenResponse(studentData[splitIndex].substring(1).trim()));
+				openResponses.put(response, new WrittenResponse(
+						studentData[splitIndex].substring(1).trim()));
 			splitIndex++;
 		}
 		section = studentData[6].substring(1).trim();
-		if(TBSUtils.isStringEmpty(section))
+		if (TBSUtils.isStringEmpty(section))
 			arrows = true;
-		else{
+		else {
 			String[] sectionSplit = section.split(" ");
-			if(sectionSplit.length < 2)
+			if (sectionSplit.length < 2)
 				arrows = true;
-			else{
-				try{
+			else {
+				try {
 					int sectionNum = Integer.parseInt(sectionSplit[1]);
-					if(sectionNum%2 == 0)
+					if (sectionNum % 2 == 0)
 						arrows = true;
 					else
 						arrows = false;
-				}catch(NumberFormatException e){
-					System.out.println("Error parsing section number (" + section + ") defaulting arrows to true");
+				} catch (NumberFormatException e) {
+					System.out.println("Error parsing section number ("
+							+ section + ") defaulting arrows to true");
 					arrows = true;
 				}
 			}
@@ -74,18 +80,18 @@ public class Student {
 		nodeName = new LinkedList<String>();
 	}
 
-	public String toString(){
+	public String toString() {
 		return name;
 	}
 
-	public void setName(String nameInput){
-		if(nameInput != null && nameInput.length() > 0){
+	public void setName(String nameInput) {
+		if (nameInput != null && nameInput.length() > 0) {
 			String[] splitName = nameInput.split(",");
 			StringBuffer nameBuffer = new StringBuffer();
-			for(int i=(splitName.length-1);i>=0;i--)
+			for (int i = (splitName.length - 1); i >= 0; i--)
 				nameBuffer.append(splitName[i]).append(" ");
 			name = nameBuffer.toString().trim();
-		}else
+		} else
 			name = "";
 	}
 
@@ -94,18 +100,20 @@ public class Student {
 	}
 
 	public String getLastUpdate() {
-		if(!TBSUtils.isStringEmpty(lastUpdate) && lastUpdateTimestamp != null)
+		if (!TBSUtils.isStringEmpty(lastUpdate) && lastUpdateTimestamp != null)
 			return displayFormat.format(lastUpdateTimestamp);
 		return lastUpdate;
 	}
 
 	public void setLastUpdate(String lastUpdate) {
 		this.lastUpdate = lastUpdate;
-		if(lastUpdate != null && lastUpdate.length() > 0){
+		if (lastUpdate != null && lastUpdate.length() > 0) {
 			try {
 				lastUpdateTimestamp = parseFormat.parse(lastUpdate);
 			} catch (ParseException e) {
-				System.out.println("Student:setLastUpdate:Error parsing date string(" + lastUpdate +")");
+				System.out
+						.println("Student:setLastUpdate:Error parsing date string("
+								+ lastUpdate + ")");
 				lastUpdateTimestamp = null;
 			}
 		}
@@ -115,16 +123,17 @@ public class Student {
 		return tree;
 	}
 
-	public void setTree(String treeInput){
-		if(TBSUtils.isStringEmpty(treeInput)){
+	public void setTree(String treeInput) {
+		if (TBSUtils.isStringEmpty(treeInput)) {
 			tree = "";
 			return;
 		}
-		//This code eliminates duplicate records caused from previous problematic code
+		// This code eliminates duplicate records caused from previous
+		// problematic code
 		List<String> parsedElements = new LinkedList<String>();
 		StringBuffer adjTreeString = new StringBuffer();
-		for(String element : treeInput.split("#")){
-			if(!parsedElements.contains(element)){
+		for (String element : treeInput.split("#")) {
+			if (!parsedElements.contains(element)) {
 				parsedElements.add(element);
 				adjTreeString.append(element).append("#");
 			}
@@ -136,7 +145,7 @@ public class Student {
 		return openResponses.get(responseType);
 	}
 
-	public Map<OpenQuestionButtonType, Response> getResponses(){
+	public Map<OpenQuestionButtonType, Response> getResponses() {
 		return openResponses;
 	}
 
@@ -149,19 +158,21 @@ public class Student {
 	}
 
 	public Point getAnchorPoint() {
-		if(anchorPoint == null)
-			anchorPoint = new Point(0,index * (TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing));
+		if (anchorPoint == null)
+			anchorPoint = new Point(0, index
+					* (TBSGraphics.studentNodeHeight + TBSGraphics.ySpacing));
 		return anchorPoint;
 	}
 
-	private void createNewStudent(){
+	private void createNewStudent() {
 		lastUpdate = "";
 		tree = "";
 		arrows = true;
 		name = "";
-		for(OpenQuestionButtonType button : OpenQuestionButtonType.values()){
-			if(button.isRadio())
-				openResponses.put(button, new RadioResponse("", button.getRadioQuestionCount()));
+		for (OpenQuestionButtonType button : OpenQuestionButtonType.values()) {
+			if (button.isRadio())
+				openResponses.put(button, new RadioResponse("", button
+						.getRadioQuestionCount()));
 			else
 				openResponses.put(button, new WrittenResponse(""));
 		}
@@ -170,8 +181,8 @@ public class Student {
 	public List<String> getNodeName() {
 		return nodeName;
 	}
-	
-	public void setNodeName(List<String> nodeName){
+
+	public void setNodeName(List<String> nodeName) {
 		this.nodeName = nodeName;
 	}
 

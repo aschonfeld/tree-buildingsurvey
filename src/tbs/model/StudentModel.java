@@ -25,8 +25,7 @@ import tbs.view.prompt.student.TextEntryBox;
 import tbs.view.prompt.student.WrittenQuestionPrompt;
 import tbs.view.prompt.student.YesNoPrompt;
 
-public class StudentModel extends TBSModel
-{
+public class StudentModel extends TBSModel {
 	private Stack<Command> history;
 	private WrittenQuestionPrompt writtenQuestionPrompt;
 	private RadioQuestionPrompt radioQuestionPrompt;
@@ -38,36 +37,36 @@ public class StudentModel extends TBSModel
 	public StudentModel(TBSApplet applet, List<OrganismNode> organisms,
 			String studentString) {
 		super(applet, organisms);
-		addElement(new EmptyNode(getSerial()));//Immortal Empty Node
+		addElement(new EmptyNode(getSerial()));// Immortal Empty Node
 		buttonStates = new HashMap<TBSButtonType, Boolean>();
-		for(TBSButtonType b : TBSButtonType.getButtons(false))
+		for (TBSButtonType b : TBSButtonType.getButtons(false))
 			buttonStates.put(b, b.isActiveWhenCreated());
 		Student student = new Student(studentString, 1);
 		setStudent(student);
 		String tree = student.getTree();
-		if(!TBSUtils.isStringEmpty(tree)){
+		if (!TBSUtils.isStringEmpty(tree)) {
 			loadTree(tree);
 			int inTreeElementCount = inTreeElements().size();
-			if(inTreeElementCount > 0){
+			if (inTreeElementCount > 0) {
 				buttonStates.put(TBSButtonType.DELETE, true);
 				buttonStates.put(TBSButtonType.CLEAR, true);
-				if(inTreeElementCount > 1){
+				if (inTreeElementCount > 1) {
 					buttonStates.put(TBSButtonType.LINK, true);
-					if(hasEmptyNodes())
+					if (hasEmptyNodes())
 						buttonStates.put(TBSButtonType.LABEL, true);
-					if(hasConnections())
+					if (hasConnections())
 						buttonStates.put(TBSButtonType.UNLINK, true);
 				}
 			}
 		}
 		helpPrompt = new HelpPrompt(this);
 		writtenQuestionPrompt = new WrittenQuestionPrompt(this);
-    	textEntryBox = new TextEntryBox(this);
+		textEntryBox = new TextEntryBox(this);
 		history = new Stack<Command>();
 		/*
 		 * Until Professor White says otherwise we will be eliminating the radio
-		 * portion of the open-response
-		 * radioQuestionPrompt = new RadioQuestionPrompt(this);
+		 * portion of the open-response radioQuestionPrompt = new
+		 * RadioQuestionPrompt(this);
 		 */
 		sct = null;
 	}
@@ -80,58 +79,58 @@ public class StudentModel extends TBSModel
 		this.history = history;
 	}
 
-	public void addActionToHistory(Command c){
-		if(history.isEmpty())
+	public void addActionToHistory(Command c) {
+		if (history.isEmpty())
 			buttonStates.put(TBSButtonType.UNDO, true);
 		history.push(c);
-		System.out.println(new StringBuffer("Added action(").append(c.toString())
-				.append(") to history.").toString());
+		System.out.println(new StringBuffer("Added action(").append(
+				c.toString()).append(") to history.").toString());
 	}
 
-	public Command removeActionFromHistory(){
+	public Command removeActionFromHistory() {
 		Command c = history.pop();
-		if(c instanceof Unlink)
+		if (c instanceof Unlink)
 			buttonStates.put(TBSButtonType.UNLINK, true);
-		if(history.isEmpty() || history.size() == 0)
+		if (history.isEmpty() || history.size() == 0)
 			buttonStates.put(TBSButtonType.UNDO, false);
 		return c;
 	}
 
-	public void updateButtonStatesAfterRemove(){
-		if(!hasConnections())
+	public void updateButtonStatesAfterRemove() {
+		if (!hasConnections())
 			buttonStates.put(TBSButtonType.UNLINK, false);
 		List<ModelElement> inTree = inTreeElements();
-		if(inTree.isEmpty()){
+		if (inTree.isEmpty()) {
 			buttonStates.put(TBSButtonType.LINK, false);
 			buttonStates.put(TBSButtonType.DELETE, false);
 			buttonStates.put(TBSButtonType.LABEL, false);
 			buttonStates.put(TBSButtonType.CLEAR, false);
-		}else{
-			if(inTree.size() < 2)
+		} else {
+			if (inTree.size() < 2)
 				buttonStates.put(TBSButtonType.LINK, false);
-			if(!hasEmptyNodes())
+			if (!hasEmptyNodes())
 				buttonStates.put(TBSButtonType.LABEL, false);
 		}
 	}
 
 	public void viewPrompt(OpenQuestionButtonType currentQuestion) {
-		if(currentQuestion.isRadio()){
+		if (currentQuestion.isRadio()) {
 			radioQuestionPrompt.setCurrentQuestion(currentQuestion);
 			setPrompt(radioQuestionPrompt);
-		}else{
+		} else {
 			writtenQuestionPrompt.setCurrentQuestion(currentQuestion);
 			setPrompt(writtenQuestionPrompt);
 		}
 	}
 
 	public void viewPrompt(TBSButtonType button) {
-    	Prompt p;
-    	if(TBSButtonType.LABEL.equals(button)){
-      		textEntryBox.initLabeling();
-      		textEntryBox.setFinished(false);
-      		p = textEntryBox;
-    	}else
-      		p = new YesNoPrompt(this, TBSButtonType.CLEAR);
+		Prompt p;
+		if (TBSButtonType.LABEL.equals(button)) {
+			textEntryBox.initLabeling();
+			textEntryBox.setFinished(false);
+			p = textEntryBox;
+		} else
+			p = new YesNoPrompt(this, TBSButtonType.CLEAR);
 		setPrompt(p);
 	}
 
@@ -143,10 +142,10 @@ public class StudentModel extends TBSModel
 		return buttonStates;
 	}
 
-	public Boolean isButtonActive(TBSButtonType button){
+	public Boolean isButtonActive(TBSButtonType button) {
 		return buttonStates.get(button);
 	}
-  
+
 	public StudentControllerTest getStudentControllerTest() {
 		return sct;
 	}
@@ -155,44 +154,47 @@ public class StudentModel extends TBSModel
 		this.sct = sct;
 	}
 
-	public List<String> incompletedItems(){
+	public List<String> incompletedItems() {
 		List<String> incompletedItems = new LinkedList<String>();
-		if(inTreeElements().isEmpty())
+		if (inTreeElements().isEmpty())
 			incompletedItems.add("the tree");
-		for(OpenQuestionButtonType q : OpenQuestionButtonType.values()){
-			if(!getStudent().getResponse(q).isCompleted())
+		for (OpenQuestionButtonType q : OpenQuestionButtonType.values()) {
+			if (!getStudent().getResponse(q).isCompleted())
 				incompletedItems.add(q.getAdminText());
 		}
 		return incompletedItems;
 	}
 
-	public String unusedOrganisms(){
+	public String unusedOrganisms() {
 		StringBuffer unusedString = new StringBuffer();
 		StringBuffer unusedStartString = new StringBuffer();
-		for(int i=0;i<TBSGraphics.numOfOrganisms;i++){
+		for (int i = 0; i < TBSGraphics.numOfOrganisms; i++) {
 			OrganismNode o = (OrganismNode) getElement(i);
-			if(!o.isInTree())
+			if (!o.isInTree())
 				unusedString.append("\t").append(o.getName()).append("\n");
 		}
-		if(unusedString.length() > 0)
-			return unusedStartString.append(unusedString).append("\n").toString();
+		if (unusedString.length() > 0)
+			return unusedStartString.append(unusedString).append("\n")
+					.toString();
 		return "";
 	}
 
-	public String surveyStatus(){
+	public String surveyStatus() {
 		StringBuffer statusString = new StringBuffer("");
 		List<String> incompletedItems = incompletedItems();
-		if(incompletedItems.isEmpty()){
+		if (incompletedItems.isEmpty()) {
 			return "";
-		}else{
-			if(incompletedItems.size() == 1){
+		} else {
+			if (incompletedItems.size() == 1) {
 				statusString.append("Currently you still need to complete ");
 				statusString.append(incompletedItems.remove(0)).append(". ");
-			}else if(incompletedItems.size() <= OpenQuestionButtonType.values().length+1){
+			} else if (incompletedItems.size() <= OpenQuestionButtonType
+					.values().length + 1) {
 				statusString.append("Currently you still need to complete ");
 				statusString.append(incompletedItems.remove(0));
-				String statusEnd = incompletedItems.remove(incompletedItems.size()-1);
-				for(String s : incompletedItems)
+				String statusEnd = incompletedItems.remove(incompletedItems
+						.size() - 1);
+				for (String s : incompletedItems)
 					statusString.append(", ").append(s);
 				statusString.append(" & " + statusEnd + ". ");
 			}
