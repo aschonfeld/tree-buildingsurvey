@@ -7,7 +7,7 @@ Strings are read from properties files, and can be changed without touching the 
 "Introduction" is read from "instructions.properties", property name "instrIntro" "Instructions" tab is read from "instructions.properties", properties "InstrDir", "InstrDir2", and "InstrDir3". "Button Info" is read from "help.properties". "Survey Status" is generated based on the current state of the Model. (model.surveyStatus)
 (*this is not strictly true, there are still a few strings which are hard-coded)
 
-Inherits from Prompt
+Inherits from [Prompt Prompt]
 
 = Details =
 
