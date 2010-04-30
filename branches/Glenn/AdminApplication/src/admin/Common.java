@@ -2,17 +2,23 @@ package admin;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.font.TextLayout;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.BreakIterator;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 
 public class Common {
@@ -171,26 +177,27 @@ public class Common {
        }
        
        public static List<HullCollision> hullCollisions(List<ConvexHull> hulls){
-   		List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
-   		ConvexHull ch1, ch2;
-   		if(hulls.size() > 1){
-   			for(int i1=0;i1<hulls.size();i1++){
-   				for(int i2=hulls.size()-1;i2>i1;i2--){
-   					ch1 = hulls.get(i1);
-   					ch2 = hulls.get(i2);
-   					if (collide(ch1.getHullShape(), ch2.getHullShape()))
-   						hullCollisions.add(new HullCollision(1, ch1, ch2));
-   				}
-   			}
-   		}
+    	   List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
+    	   Map<Integer, List<ConvexHull>> hullsByLevel = new HashMap<Integer, List<ConvexHull>>();
+    	   for(ConvexHull hull : hulls){
+    		   if(!hullsByLevel.containsKey(hull.getLevel())){
+    			   LinkedList<ConvexHull> levelHulls = new LinkedList<ConvexHull>();
+    			   levelHulls.add(hull);
+    			   hullsByLevel.put(hull.getLevel(), levelHulls);
+    		   }else
+    			   hullsByLevel.get(hull.getLevel()).add(hull);
+    	   }
+    	   for(Map.Entry<Integer, List<ConvexHull>> e : hullsByLevel.entrySet()){
+    		   if(e.getValue().size() > 1 && collide(e.getValue()))
+    			   hullCollisions.add(new HullCollision(e.getKey(), e.getValue()));
+    	   }
    		return hullCollisions;
    	}
    	
-   	public static boolean collide(Polygon p1, Polygon p2){
-   		if(p1 == null || p2 == null)
-   			return false;
-   		Area intersect = new Area(p1); 
-   		intersect.intersect(new Area(p2)); 
+   	public static boolean collide(List<ConvexHull> hulls){
+   		Area intersect = new Area(hulls.get(0).getHullShape());
+   		for(int i=1;i<hulls.size();i++)
+   			intersect.intersect(new Area(hulls.get(i).getHullShape())); 
    		return !intersect.isEmpty();
    	}
    	
@@ -220,6 +227,47 @@ public class Common {
 	    } 
 	    return buff.toString(); 
 	}
+   	
+   	public static String wrapText(JLabel label, int width, String[] text){
+   		// measure the length of font in pixel  
+   		FontMetrics fm = label.getFontMetrics(label.getFont());  
+
+   		// to find the word separation  
+   		BreakIterator boundary = BreakIterator.getWordInstance();  
+   		// main string to be added  
+   		StringBuffer m = new StringBuffer("<html>");  
+   		// loop each index of array  
+   		for(String str : text) {  
+   			boundary.setText(str);  
+   			// save each line  
+   			StringBuffer line = new StringBuffer();  
+   			// save each paragraph  
+   			StringBuffer par = new StringBuffer();  
+   			int start = boundary.first();  
+   			// wrap loop  
+   			for(int end=boundary.next(); end!=BreakIterator.DONE; start=end, end=boundary.next()) {  
+   				String word = str.substring(start,end);  
+   				line.append(word);  
+   				// compare width with font metrics  
+   				int trialWidth = SwingUtilities.computeStringWidth(fm, line.toString());  
+   				// if bigger, add new line  
+   				if(trialWidth > width) {  
+   					line = new StringBuffer(word);  
+   					par.append("<br />");  
+   				}  
+   				// add new word to paragraphs  
+   				par.append(word);  
+   			}  
+   			// add new line each paragraph  
+   			par.append("<br />");  
+   			// add paragraph into main string  
+   			m.append(par);  
+   		}
+   		// closed tag  
+   		m.append("</html>"); 
+
+   		return m.toString();
+   	}
        
        public static void setColorsForPrinting(){
     	   backgroundColor = Color.WHITE;

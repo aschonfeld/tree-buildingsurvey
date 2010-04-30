@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -56,23 +57,13 @@ public class AdminApplication extends JFrame {
 		studentNameToTree = new TreeMap<String, Graph>();
 		graphs = new ArrayList<Graph>();
 		initCommonVertices();
-		clearStudentData();
-		loadTreesFromDirectory();
-		try{
-			loadTreesFromDB();
-		}catch(Exception e){
-			System.out.println("Error loading students from database: " + e);
-			System.out.println("Database Connection could not be made.  Loading Student tree from local file.");
-			String filePath = new String("trees/studentTrees");
-			try{
-				BufferedReader reader = new BufferedReader(new 
-						InputStreamReader(new FileInputStream(filePath)));
-				loadTreesFromParamTags(reader);
-			}catch(FileNotFoundException fnfe){
-				System.out.println("Could not find file: " + filePath);
-			}
+		List<String> errors = new LinkedList<String>();
+		errors.add(loadTestTrees("trees/testTrees"));
+		errors.add(loadTreesFromHTMLSource("trees/studentTrees"));
+		for(String s : errors){
+			if(!Common.isStringEmpty(s))
+				System.out.println(s);
 		}
-		treeMapToArrayList();
 		add(new JScrollPane(treeView));
 		addMouseListener(treeController);
 		setPreferredSize(new Dimension(928, 762));
@@ -94,12 +85,14 @@ public class AdminApplication extends JFrame {
     	parent.studentDataTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	parent.studentDataTableFrame.pack();
     	parent.studentDataTableFrame.setVisible(true);
-    	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	parent.questionDisplayFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     	parent.questionDisplayFrame.pack();
-    	parent.questionDisplayFrame.setVisible(true);
-    	//parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	//parent.shortestPathTableFrame.pack();
-    	//parent.shortestPathTableFrame.setVisible(true);
+    	parent.questionDisplayFrame.setVisible(false);
+    	parent.questionDisplayFrame.setLocationRelativeTo(treeView);
+    	parent.shortestPathTableFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    	parent.shortestPathTableFrame.pack();
+    	parent.shortestPathTableFrame.setVisible(false);
+    	parent.shortestPathTableFrame.setLocationRelativeTo(parent.studentDataTableFrame);
     }
 
     public static void main(String[] args) {
@@ -285,11 +278,10 @@ public class AdminApplication extends JFrame {
         return organismNameToImage;
     }
     
-	public static void loadTreesFromDirectory() {
+	public static String loadTestTrees(String filePath) {
 		try {
-			String filePath = new String("trees/testTrees");
-			BufferedReader reader = new BufferedReader(new 
-					InputStreamReader(new FileInputStream(filePath)));
+			clearStudentTree();
+			BufferedReader reader = getFileReader(filePath);
     		String linein = reader.readLine();
         	while(linein != null) {
         		String studentName = linein;
@@ -302,26 +294,54 @@ public class AdminApplication extends JFrame {
         		linein = reader.readLine();
         	}
         	reader.close();
+        	treeMapToArrayList();
         } catch (Exception e) {
-        	e.printStackTrace();
+        	return e.toString();
         }
+        return null;
     }
 	
-	public static void loadTreesFromDB() throws Exception {
-		AdminJdbcDao dao = new AdminJdbcDao();
-		List<String[]> studentSurveys = dao.loadSurveys();
-		List<String[]> students = dao.loadStudents();
-		for(String[] studentSurvey : studentSurveys)
-			loadStudent(studentSurvey);
-		
-		//Update directionality information
-		for(String[] student : students){
-			String name = student[0];
-			String section = student[1].substring(8,10);
-			int iSection = Integer.parseInt(section);
-			if(studentNameToTree.containsKey(name))
-				studentNameToTree.get(name).setDirectional(iSection % 2 == 0);
+	public static String loadTreesFromHTMLSource(String filePath) {
+		try {
+			clearStudentTree();
+			BufferedReader reader = getFileReader(filePath);
+			loadTreesFromParamTags(reader);
+			treeMapToArrayList();
+        	reader.close();
+        } catch (Exception e) {
+        	return e.toString();
+        } 
+        return null;
+    }
+	
+	private static BufferedReader getFileReader(String filePath) throws FileNotFoundException{
+		BufferedReader reader = new BufferedReader(new 
+				InputStreamReader(new FileInputStream(filePath)));
+		return reader;
+	}
+	
+	public static String loadTreesFromDB(String username, String password){
+		try{
+			clearStudentTree();
+			AdminJdbcDao dao = new AdminJdbcDao();
+			List<String[]> studentSurveys = dao.loadSurveys(username, password);
+			List<String[]> students = dao.loadStudents(username, password);
+			for(String[] studentSurvey : studentSurveys)
+				loadStudent(studentSurvey);
+
+			//Update directionality information
+			for(String[] student : students){
+				String name = student[0];
+				String section = student[1].substring(8,10);
+				int iSection = Integer.parseInt(section);
+				if(studentNameToTree.containsKey(name))
+					studentNameToTree.get(name).setDirectional(iSection % 2 == 0);
+			}
+			treeMapToArrayList();
+		}catch(Exception e){
+			return e.toString();
 		}
+		return null;
 	}
 	
 	public static String loadStudentsFromURL(URL url, String password){
@@ -351,36 +371,65 @@ public class AdminApplication extends JFrame {
 		return null;
 	}
 	
-	public static String loadStudentsFromFiles(File folder){
+	public static String loadStudentsFromDeployableFolder(File folder){
+		BufferedReader reader = null;
 		try{
 			if(folder.isDirectory()){
 				clearStudentTree();
+				Map<String, File> otherFiles = new HashMap<String, File>();
+				File students = null;
+				List<String> filenames = new LinkedList<String>();
 				for(File f : folder.listFiles()){
-					BufferedReader reader = new BufferedReader(new 
-							InputStreamReader(new FileInputStream(f.getPath())));
-					String linein = reader.readLine();
-					String[] studentInfo = linein.split(",");
-					Graph graph = new Graph(studentInfo[0]);
-					int iSection = Integer.parseInt(studentInfo[1]);
-					boolean directional = iSection % 2 == 0;
-					graph.setDirectional(directional);
+					if("students".equalsIgnoreCase(f.getName()))
+						students = f;
+					else
+						otherFiles.put(f.getName(), f);
+				}
+				String linein;
+				if(students != null){
+					reader = new BufferedReader(new 
+							InputStreamReader(new FileInputStream(students.getPath())));
 					linein = reader.readLine();
-					String lastUpdate = linein;
-					linein = reader.readLine();
-					ArrayList<String> answers = new ArrayList<String>();
-					answers.add(linein);
-					linein = reader.readLine();
-					answers.add(linein);
-					graph.setAnswers(answers);
-					linein = reader.readLine();
-					studentNameToTree.put(studentInfo[0], updateGraphTree(linein, graph));
-					reader.close();
+					while(linein != null){
+						String[] studentInfo = linein.split(",");
+						filenames.add(studentInfo[0].replace(" ", "_"));
+						linein = reader.readLine();
+					}
+				}
+				for(String filename : filenames){
+					File f = otherFiles.get(filename);
+					if(f != null){
+						reader = new BufferedReader(new 
+								InputStreamReader(new FileInputStream(f.getPath())));
+						linein = reader.readLine();
+						String[] studentInfo = linein.split(",");
+						Graph graph = new Graph(studentInfo[0]);
+						int iSection = Integer.parseInt(studentInfo[1]);
+						boolean directional = iSection % 2 == 0;
+						graph.setDirectional(directional);
+						linein = reader.readLine();
+						String lastUpdate = linein;
+						linein = reader.readLine();
+						ArrayList<String> answers = new ArrayList<String>();
+						answers.add(linein);
+						linein = reader.readLine();
+						answers.add(linein);
+						graph.setAnswers(answers);
+						linein = reader.readLine();
+						studentNameToTree.put(studentInfo[0], updateGraphTree(linein, graph));	
+					}
 				}
 				treeMapToArrayList();
 			}
 			return null;
 		}catch(Exception e){
 			return e.toString();
+		}finally{
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
