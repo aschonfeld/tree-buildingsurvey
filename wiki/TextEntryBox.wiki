@@ -6,6 +6,8 @@
 Displays a text entry box. This one has some tricky stuff for text handling. 
 Not clear where called
 
+Inherits from [Prompt Prompt]
+
 = Details =
 
 keyPressed(KeyEvent e)
