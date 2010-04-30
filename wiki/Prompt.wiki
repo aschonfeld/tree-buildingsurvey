@@ -1,4 +1,4 @@
-#summary Developer's Guide: Prompt (INCOMPLETE)
+#summary Developer's Guide: Prompt (NEED REVIEW)
 = Introduction =
 Prompt is the overall class of objects used for communication with the student. 
 Prompt stands in for a number of Swing objects (JLabel, JOptionPane, and so forth). Swing components are avoided throughout the TBSApplet due to observed incompatibilies with Java configurations on certain operating systems, most notably OS X. Prompt provides a way to display and elicit information using lower-level (and therefore more broadly compatible) methods. Being custom-built, they interact nicely with the rest of TBS and suit the look and feel of the applet. 
