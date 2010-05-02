@@ -1,6 +1,5 @@
 #summary Developer's Guide Introduction/Table of Contents
-#sidebar TableOfContents
-  * test
+<wiki:toc max_depth="1" />
 
 = Introduction =
 
