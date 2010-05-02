@@ -17,7 +17,7 @@ Constructor:
 
 **History/Undo**
 getHistory()
-setHistory(Stack<Command> history)
+setHistory(Stack`<Command>` history)
 addActionToHistory(Command c)
  "History" is the stack of Command objects representing the actions taken by the student since the start of the current session. This is the central object manipulated by the Undo command. See Command and related classes for details. 
 RemoveActionFromHistory()
