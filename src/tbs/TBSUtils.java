@@ -4,19 +4,17 @@
 package tbs;
 
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import tbs.graphanalysis.ConvexHull;
 import tbs.graphanalysis.HullCollision;
+import tbs.graphanalysis.SubGroupGenerator;
 import tbs.model.AdminModel;
 import tbs.model.Node;
 
@@ -132,31 +130,27 @@ public class TBSUtils {
 		return (s == null || s.length() == 0);
 	}
 
-	public static List<HullCollision> hullCollisions(List<ConvexHull> hulls) {
-		List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
-		Map<Integer, List<ConvexHull>> hullsByLevel = new HashMap<Integer, List<ConvexHull>>();
-		for (ConvexHull hull : hulls) {
-			if (!hullsByLevel.containsKey(hull.getLevel())) {
-				LinkedList<ConvexHull> levelHulls = new LinkedList<ConvexHull>();
-				levelHulls.add(hull);
-				hullsByLevel.put(hull.getLevel(), levelHulls);
-			} else
-				hullsByLevel.get(hull.getLevel()).add(hull);
-		}
-		for (Map.Entry<Integer, List<ConvexHull>> e : hullsByLevel.entrySet()) {
-			if (e.getValue().size() > 1 && collide(e.getValue()))
-				hullCollisions.add(new HullCollision(e.getKey(), e.getValue()));
-		}
-		return hullCollisions;
+	public static List<HullCollision> hullCollisions(int level, List<ConvexHull> hulls) {
+		List<HullCollision> collisions = new LinkedList<HullCollision>();
+		if(hulls.size() > 1 && collide(hulls))
+			collisions.add(new HullCollision(level, hulls));
+		return collisions;
 	}
 
 	public static boolean collide(List<ConvexHull> hulls) {
-		Area intersect = new Area(hulls.get(0).getHullShape());
-		for (int i = 1; i < hulls.size(); i++)
-			intersect.intersect(new Area(hulls.get(i).getHullShape()));
-		return !intersect.isEmpty();
+		Set<Set<Integer>> indexSubGroups = SubGroupGenerator.getIndexSubGroups(hulls.size());
+		for(Set<Integer> subGroup : indexSubGroups){
+			List<Integer> indexes = new LinkedList<Integer>();
+			indexes.addAll(subGroup);
+			Area intersect = new Area(hulls.get(indexes.get(0)).getHullShape());
+			for (int i = 1; i < hulls.size(); i++)
+				intersect.intersect(new Area(hulls.get(i).getHullShape()));
+			if(!intersect.isEmpty())
+				return true;
+		}
+		return false;
 	}
-
+	
 	public static List<String> collisonText(AdminModel model) {
 		List<String> collisionText = new LinkedList<String>();
 		collisionText.addAll(collisionText(model.getHullCollisions(false)));

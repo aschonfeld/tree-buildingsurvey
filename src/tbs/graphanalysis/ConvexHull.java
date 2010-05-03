@@ -86,7 +86,7 @@ public class ConvexHull extends SubDropDown {
 					.entrySet())
 				children.add(new ConvexHull(e.getValue(), e.getKey(), this));
 		}
-		childCollisions = TBSUtils.hullCollisions(children);
+		childCollisions = TBSUtils.hullCollisions(level, children);
 
 	}
 
