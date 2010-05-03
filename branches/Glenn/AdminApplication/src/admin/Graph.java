@@ -276,7 +276,7 @@ public class Graph implements Renderable {
 			if (e.getValue().size() > 2)
 				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
 		}
-		hullCollisions = Common.hullCollisions(hulls);
+		hullCollisions = Common.hullCollisions(1, hulls);
 		if (hullCollisions.size() > 0)
 			hasHullCollisions = true;
 	}

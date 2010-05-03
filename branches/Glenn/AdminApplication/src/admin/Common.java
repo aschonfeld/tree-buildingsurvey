@@ -13,10 +13,9 @@ import java.awt.image.BufferedImage;
 import java.text.BreakIterator;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -174,31 +173,27 @@ public class Common {
 		return widthBrokenString;
 	}
 
-	public static List<HullCollision> hullCollisions(List<ConvexHull> hulls) {
-		List<HullCollision> hullCollisions = new LinkedList<HullCollision>();
-		Map<Integer, List<ConvexHull>> hullsByLevel = new HashMap<Integer, List<ConvexHull>>();
-		for (ConvexHull hull : hulls) {
-			if (!hullsByLevel.containsKey(hull.getLevel())) {
-				LinkedList<ConvexHull> levelHulls = new LinkedList<ConvexHull>();
-				levelHulls.add(hull);
-				hullsByLevel.put(hull.getLevel(), levelHulls);
-			} else
-				hullsByLevel.get(hull.getLevel()).add(hull);
-		}
-		for (Map.Entry<Integer, List<ConvexHull>> e : hullsByLevel.entrySet()) {
-			if (e.getValue().size() > 1 && collide(e.getValue()))
-				hullCollisions.add(new HullCollision(e.getKey(), e.getValue()));
-		}
-		return hullCollisions;
+	public static List<HullCollision> hullCollisions(int level, List<ConvexHull> hulls) {
+		List<HullCollision> collisions = new LinkedList<HullCollision>();
+		if(hulls.size() > 1 && collide(hulls))
+			collisions.add(new HullCollision(level, hulls));
+		return collisions;
 	}
 
 	public static boolean collide(List<ConvexHull> hulls) {
-		Area intersect = new Area(hulls.get(0).getHullShape());
-		for (int i = 1; i < hulls.size(); i++)
-			intersect.intersect(new Area(hulls.get(i).getHullShape()));
-		return !intersect.isEmpty();
+		Set<Set<Integer>> indexSubGroups = SubGroupGenerator.getIndexSubGroups(hulls.size());
+		for(Set<Integer> subGroup : indexSubGroups){
+			List<Integer> indexes = new LinkedList<Integer>();
+			indexes.addAll(subGroup);
+			Area intersect = new Area(hulls.get(indexes.get(0)).getHullShape());
+			for (int i = 1; i < hulls.size(); i++)
+				intersect.intersect(new Area(hulls.get(i).getHullShape()));
+			if(!intersect.isEmpty())
+				return true;
+		}
+		return false;
 	}
-
+	
 	public static boolean isPasswordCorrect(char[] input) {
 		boolean isCorrect = true;
 		char[] correctPassword = { 'l', 'a', 'b', '0', '9', 'a', 'c', 'c', 'e',
