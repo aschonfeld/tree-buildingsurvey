@@ -11,9 +11,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Timer;
 
@@ -41,8 +43,10 @@ public class OptimalHulls extends Displayable implements Renderable {
 		}
 	};
 
-	private List<Point> collision;
+	private Set<List<Point>> collisions;
 	private boolean collisionExists;
+	private boolean optimizationComplete;
+
 
 	public OptimalHulls(HullCollision collision) {
 		level = collision.getLevel();
@@ -52,7 +56,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 		remainingHullNodes = new HashMap<String, List<Vertex>>();
 		optimalHullPoints = new HashMap<String, List<Point>>();
 		inProgressHulls = new HashMap<String, ConvexHull>();
-		originalCentroid = collision.getCentroid();
+		originalCentroid = collision.getCentroids().get(0);
 		iterationWait = new Timer(1000, iterate);
 		initOptimization();
 
@@ -64,6 +68,8 @@ public class OptimalHulls extends Displayable implements Renderable {
 		initOptimization();
 		while (collisionExists)
 			iterateOptimization();
+		completeOptimizations();
+		optimizationComplete = true;
 		createText();
 	}
 
@@ -83,8 +89,9 @@ public class OptimalHulls extends Displayable implements Renderable {
 			inProgressHulls.put(key, new ConvexHull(remaining, ""));
 		}
 		centroidInProgress = originalCentroid;
-		collision = new LinkedList<Point>();
+		collisions = new HashSet<List<Point>>();
 		collisionExists = true;
+		optimizationComplete = false;
 	}
 
 	private void iterateOptimization() {
@@ -124,8 +131,68 @@ public class OptimalHulls extends Displayable implements Renderable {
 		collisionExists = Common.collide(temp);
 		if (collisionExists) {
 			HullCollision tempHC = new HullCollision(0, temp);
-			centroidInProgress = tempHC.getCentroid();
-			collision = tempHC.getCollisionPoints();
+			centroidInProgress = tempHC.getCentroids().get(0);
+			collisions = tempHC.getCollisionPoints();
+		}
+	}
+	
+	private void completeOptimizations(){
+		Map<String, List<Point>> smallHulls = new HashMap<String, List<Point>>();
+		List<Polygon> largeHulls = new LinkedList<Polygon>();
+		for(Map.Entry<String, List<Point>> e : optimalHullPoints.entrySet()){
+			if(e.getValue().size() < 3)
+				smallHulls.put(e.getKey(), e.getValue());
+			else{
+				Polygon lhPoly = new Polygon();
+				for(Point lhP : e.getValue())
+					lhPoly.addPoint(lhP.x, lhP.y);
+				largeHulls.add(lhPoly);
+			}
+		}
+		Map<String, List<Integer>> pointsToRemove = new HashMap<String, List<Integer>>();
+		int currentIndex = 0;
+		for(Map.Entry<String, List<Point>> e : smallHulls.entrySet()){
+			boolean remove;
+			currentIndex = 0;
+			for(Point shP : e.getValue()){
+				remove = false;
+				for(Polygon largeHull : largeHulls){
+					if(largeHull.contains(shP)){
+						remove = true;
+						break;
+					}
+				}
+				if(remove){
+					if(pointsToRemove.containsKey(e.getKey()))
+						pointsToRemove.get(e.getKey()).add(currentIndex);
+					else{
+						List<Integer> tempPTR = new LinkedList<Integer>();
+						tempPTR.add(currentIndex);
+						pointsToRemove.put(e.getKey(), tempPTR);
+					}
+					continue;
+				}
+				currentIndex++;
+			}
+		}
+		Point p;
+		for(Map.Entry<String, List<Integer>> e : pointsToRemove.entrySet()){
+			for(Integer pointToRemove : e.getValue()){
+				p = optimalHullPoints.get(e.getKey()).remove((int) pointToRemove);
+				for (Vertex v : remainingHullNodes.get(e.getKey())) {
+					if (v.getRectangle().contains(p)) {
+						removedHullNodes.get(e.getKey()).add(v);
+						break;
+					}
+				}
+				remainingHullNodes.get(e.getKey()).remove(
+						removedHullNodes.get(e.getKey()).get(
+								removedHullNodes.get(e.getKey()).size() - 1));
+				inProgressHulls.put(e.getKey(), new ConvexHull(remainingHullNodes
+						.get(e.getKey()), ""));
+				optimalHullPoints.put(e.getKey(), inProgressHulls.get(e.getKey())
+						.getHull());
+			}
 		}
 	}
 
@@ -150,11 +217,19 @@ public class OptimalHulls extends Displayable implements Renderable {
 	public void render(Graphics g, Point offset) {
 		Graphics2D g2 = (Graphics2D) g;
 		if (collisionExists) {
-			Polygon collisionShape = new Polygon();
-			for (Point p : collision)
-				collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
+			Polygon collisionShape;
 			g2.setColor(new Color(255, 36, 0, 160));
-			g2.fill(collisionShape);
+			for(List<Point> collision : collisions){
+				collisionShape = new Polygon();
+				for (Point p : collision)
+					collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
+				g2.fill(collisionShape);
+			}
+		}else{
+			if(!optimizationComplete){
+					completeOptimizations();
+					optimizationComplete = true;
+			}
 		}
 		Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
 		for (Map.Entry<String, List<Point>> optimal : optimalHullPoints

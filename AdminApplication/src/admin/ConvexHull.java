@@ -83,7 +83,7 @@ public class ConvexHull extends Displayable implements Renderable {
 			for (Map.Entry<String, List<Vertex>> e : childrenGroups.entrySet())
 				children.add(new ConvexHull(e.getValue(), e.getKey(), this));
 		}
-		childCollisions = Common.hullCollisions(children);
+		childCollisions = Common.hullCollisions(level, children);
 
 	}
 
