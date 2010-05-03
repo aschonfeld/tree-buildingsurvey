@@ -145,7 +145,7 @@ public class AdminModel extends TBSModel {
 		}
 		if (hulls.size() > 0)
 			dropDownButtonCount = 5;
-		hullCollisions = TBSUtils.hullCollisions(hulls);
+		hullCollisions = TBSUtils.hullCollisions(1, hulls);
 		if (hullCollisions.size() > 0)
 			dropDownButtonCount = 7;
 	}
