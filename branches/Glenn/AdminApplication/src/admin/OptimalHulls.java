@@ -43,7 +43,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 		}
 	};
 
-	private Set<List<Point>> collisions;
+	private List<Point> collision;
 	private boolean collisionExists;
 	private boolean optimizationComplete;
 
@@ -89,7 +89,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 			inProgressHulls.put(key, new ConvexHull(remaining, ""));
 		}
 		centroidInProgress = originalCentroid;
-		collisions = new HashSet<List<Point>>();
+		collision = new LinkedList<Point>();
 		collisionExists = true;
 		optimizationComplete = false;
 	}
@@ -132,7 +132,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 		if (collisionExists) {
 			HullCollision tempHC = new HullCollision(0, temp);
 			centroidInProgress = tempHC.getCentroids().get(0);
-			collisions = tempHC.getCollisionPoints();
+			collision = tempHC.getUnion();
 		}
 	}
 	
@@ -217,14 +217,11 @@ public class OptimalHulls extends Displayable implements Renderable {
 	public void render(Graphics g, Point offset) {
 		Graphics2D g2 = (Graphics2D) g;
 		if (collisionExists) {
-			Polygon collisionShape;
 			g2.setColor(new Color(255, 36, 0, 160));
-			for(List<Point> collision : collisions){
-				collisionShape = new Polygon();
-				for (Point p : collision)
-					collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
-				g2.fill(collisionShape);
-			}
+			Polygon collisionShape = new Polygon();
+			for (Point p : collision)
+				collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
+			g2.fill(collisionShape);
 		}else{
 			if(!optimizationComplete){
 					completeOptimizations();
