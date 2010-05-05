@@ -4,8 +4,10 @@
 package tbs;
 
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -175,5 +177,23 @@ public class TBSUtils {
 			sep = ", ";
 		}
 		return buff.toString();
+	}
+	
+	public static List<Point> convertAreaToPoints(Area a){
+		AffineTransform at = new AffineTransform();
+		PathIterator pi = a.getPathIterator(at);
+		LinkedList<Point> points = new LinkedList<Point>();
+		int segType;
+		while (pi.isDone() == false) {
+			float[] coords = new float[6];
+			segType = pi.currentSegment(coords);
+			if (segType == PathIterator.SEG_LINETO
+					|| segType == PathIterator.SEG_MOVETO) {
+				Point p = new Point((int) coords[0], (int) coords[1]);
+				points.add(p);
+			}
+			pi.next();
+		}
+		return points;
 	}
 }

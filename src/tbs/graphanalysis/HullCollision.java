@@ -22,6 +22,7 @@ public class HullCollision extends SubDropDown {
 	private int level;
 	private List<ConvexHull> hulls;
 	private Set<List<Point>> collisionPoints;
+	private List<Point> unionPoints;
 	private List<Point> centroids;
 	private String commaSepGroups;
 	private String analysisText;
@@ -35,51 +36,40 @@ public class HullCollision extends SubDropDown {
 				commaSepGroups).append(" have a collision.").toString();
 		
 		centroids = new LinkedList<Point>();
+		unionPoints = new LinkedList<Point>();
 		collisionPoints = new HashSet<List<Point>>();
 		Set<Set<Integer>> subGroups = SubGroupGenerator.getIndexSubGroups(hulls.size());
 		
+		Area union = new Area();
 		for(Set<Integer> subGroup : subGroups){
 			Integer[] indexes = subGroup.toArray(new Integer[0]);
 			Area intersect = new Area(hulls.get(indexes[0]).getHullShape());
 			for(int i=1;i<indexes.length;i++)
 				intersect.intersect(new Area(hulls.get(indexes[i]).getHullShape()));
 			if(!intersect.isEmpty()){
-				AffineTransform at = new AffineTransform();
-				PathIterator pi = intersect.getPathIterator(at);
-				LinkedList<Point> points = new LinkedList<Point>();
-				Polygon temp = new Polygon();
-				int segType;
-				int centroidX = 0, centroidY = 0;
-				while (pi.isDone() == false) {
-					float[] coords = new float[6];
-					segType = pi.currentSegment(coords);
-					if (segType == PathIterator.SEG_LINETO
-							|| segType == PathIterator.SEG_MOVETO) {
-						Point p = new Point((int) coords[0], (int) coords[1]);
-						temp.addPoint(p.x, p.y);
-						points.add(p);
-						centroidX += p.x;
-						centroidY += p.y;
-					}
-					pi.next();
+				List<Point> points = TBSUtils.convertAreaToPoints(intersect);
+				int centroidX = 0, centroidY= 0;
+				for(Point p : points){
+					centroidX += p.x;
+					centroidY += p.y;
 				}
+				union.add(intersect);
 				centroidX = (centroidX / points.size());
 				centroidY = (centroidY / points.size());
 				centroids.add(new Point(centroidX, centroidY));
 				collisionPoints.add(points);
 			}
 		}
+		unionPoints.addAll(TBSUtils.convertAreaToPoints(union));
 	}
 
 	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
 		Polygon collisionShape;
 		g2.setColor(new Color(255, 36, 0, 160));
-		for(List<Point> collision : collisionPoints){
-			collisionShape = new Polygon();
-			for (Point p : collision)
-				collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
-			g2.fill(collisionShape);
-		}
+		collisionShape = new Polygon();
+		for (Point p : unionPoints)
+			collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
+		g2.fill(collisionShape);
 		
 		g2.setStroke(new BasicStroke(3));
 		for (ConvexHull hull : hulls) {
@@ -95,6 +85,10 @@ public class HullCollision extends SubDropDown {
 
 	public List<Point> getCentroids() {
 		return centroids;
+	}
+	
+	public List<Point> getUnion(){
+		return unionPoints;
 	}
 
 	public List<ConvexHull> getHulls() {
