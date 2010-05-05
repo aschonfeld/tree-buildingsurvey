@@ -7,7 +7,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.BreakIterator;
@@ -192,6 +194,24 @@ public class Common {
 				return true;
 		}
 		return false;
+	}
+	
+	public static List<Point> convertAreaToPoints(Area a){
+		AffineTransform at = new AffineTransform();
+		PathIterator pi = a.getPathIterator(at);
+		LinkedList<Point> points = new LinkedList<Point>();
+		int segType;
+		while (pi.isDone() == false) {
+			float[] coords = new float[6];
+			segType = pi.currentSegment(coords);
+			if (segType == PathIterator.SEG_LINETO
+					|| segType == PathIterator.SEG_MOVETO) {
+				Point p = new Point((int) coords[0], (int) coords[1]);
+				points.add(p);
+			}
+			pi.next();
+		}
+		return points;
 	}
 	
 	public static boolean isPasswordCorrect(char[] input) {
