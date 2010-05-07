@@ -139,14 +139,12 @@ public class AdminModel extends TBSModel {
 		}
 		hulls = new LinkedList<ConvexHull>();
 		for (Map.Entry<String, List<OrganismNode>> e : organismGroups
-				.entrySet()) {
-			if (e.getValue().size() > 2)
-				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
-		}
-		if (hulls.size() > 0)
+				.entrySet())
+			hulls.add(new ConvexHull(e.getValue(), e.getKey()));
+		if (!hulls.isEmpty())
 			dropDownButtonCount = 5;
 		hullCollisions = TBSUtils.hullCollisions(1, hulls);
-		if (hullCollisions.size() > 0)
+		if (!hullCollisions.isEmpty())
 			dropDownButtonCount = 7;
 	}
 
