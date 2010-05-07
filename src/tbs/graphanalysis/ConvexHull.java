@@ -1,9 +1,12 @@
 package tbs.graphanalysis;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -138,10 +141,20 @@ public class ConvexHull extends SubDropDown {
 	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(model.getGroupColor(hullName));
-		Polygon temp = new Polygon();
-		for (Point p : hull)
-			temp.addPoint(p.x - xOffset, p.y - yOffset);
-		g2.draw(temp);
+		if(hull.size() > 2){
+			Polygon temp = new Polygon();
+			for (Point p : hull)
+				temp.addPoint(p.x - xOffset, p.y - yOffset);
+			g2.draw(temp);
+		}else{
+			if(hull.size() == 2){
+				Line2D line = new Line2D.Double(hull.get(0), hull.get(1));
+				g2.draw(line);
+			}
+			for(OrganismNode o : nodes)
+				g2.draw(new Rectangle2D.Double(o.getX() - (1.5 + xOffset), o.getY()
+						- (1.5 + yOffset), o.getWidth() + 3, o.getHeight() + 3));
+		}
 		g2.setStroke(new BasicStroke());
 	}
 

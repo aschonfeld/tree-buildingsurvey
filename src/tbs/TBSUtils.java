@@ -4,14 +4,17 @@
 package tbs;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import tbs.graphanalysis.ConvexHull;
@@ -19,6 +22,7 @@ import tbs.graphanalysis.HullCollision;
 import tbs.graphanalysis.SubGroupGenerator;
 import tbs.model.AdminModel;
 import tbs.model.Node;
+import tbs.model.OrganismNode;
 
 public class TBSUtils {
 
@@ -134,7 +138,7 @@ public class TBSUtils {
 
 	public static List<HullCollision> hullCollisions(int level, List<ConvexHull> hulls) {
 		List<HullCollision> collisions = new LinkedList<HullCollision>();
-		if(hulls.size() > 1 && collide(hulls))
+		if(hulls.size() > 1 && (collide(hulls) || !smallCollision(hulls).isEmpty()))
 			collisions.add(new HullCollision(level, hulls));
 		return collisions;
 	}
@@ -142,15 +146,69 @@ public class TBSUtils {
 	public static boolean collide(List<ConvexHull> hulls) {
 		Set<Set<Integer>> indexSubGroups = SubGroupGenerator.getIndexSubGroups(hulls.size());
 		for(Set<Integer> subGroup : indexSubGroups){
-			List<Integer> indexes = new LinkedList<Integer>();
-			indexes.addAll(subGroup);
-			Area intersect = new Area(hulls.get(indexes.get(0)).getHullShape());
-			for (int i = 1; i < hulls.size(); i++)
-				intersect.intersect(new Area(hulls.get(i).getHullShape()));
+			Integer[] indexes = subGroup.toArray(new Integer[0]);
+			Area intersect = new Area(hulls.get(indexes[0]).getHullShape());
+			for (int i = 1; i < indexes.length; i++)
+				intersect.intersect(new Area(hulls.get(indexes[i]).getHullShape()));
 			if(!intersect.isEmpty())
 				return true;
 		}
 		return false;
+	}
+	
+	public static List<OrganismNode> smallCollision(List<ConvexHull> hulls){
+		List<OrganismNode> smallCollisions = new LinkedList<OrganismNode>();
+		Map<String, ConvexHull> smallHulls = new HashMap<String, ConvexHull>();
+		List<Polygon> largeHulls = new LinkedList<Polygon>();
+		for(ConvexHull ch : hulls){
+			if(ch.getHull().size() < 3)
+				smallHulls.put(ch.getHullName(), ch);
+			else{
+				Polygon lhPoly = new Polygon();
+				for(Point lhP : ch.getHull())
+					lhPoly.addPoint(lhP.x, lhP.y);
+				largeHulls.add(lhPoly);
+			}
+		}
+		Map<String, List<Integer>> pointsToRemove = new HashMap<String, List<Integer>>();
+		int currentIndex = 0;
+		for(Map.Entry<String, ConvexHull> e : smallHulls.entrySet()){
+			boolean remove;
+			currentIndex = 0;
+			for(Point shP : e.getValue().getHull()){
+				remove = false;
+				for(Polygon largeHull : largeHulls){
+					if(largeHull.contains(shP)){
+						remove = true;
+						break;
+					}
+				}
+				if(remove){
+					if(pointsToRemove.containsKey(e.getKey()))
+						pointsToRemove.get(e.getKey()).add(currentIndex);
+					else{
+						List<Integer> tempPTR = new LinkedList<Integer>();
+						tempPTR.add(currentIndex);
+						pointsToRemove.put(e.getKey(), tempPTR);
+					}
+					continue;
+				}
+				currentIndex++;
+			}
+		}
+		Point p;
+		for(Map.Entry<String, List<Integer>> e : pointsToRemove.entrySet()){
+			for(Integer pointToRemove : e.getValue()){
+				p = smallHulls.get(e.getKey()).getHull().get((int) pointToRemove);
+				for (OrganismNode o : smallHulls.get(e.getKey()).getNodes()) {
+					if (o.getRectangle().contains(p)) {
+						smallCollisions.add(o);
+						break;
+					}
+				}
+			}
+		}
+		return smallCollisions;
 	}
 	
 	public static List<String> collisonText(AdminModel model) {

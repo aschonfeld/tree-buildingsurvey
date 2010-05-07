@@ -5,16 +5,17 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
+import tbs.model.OrganismNode;
 import tbs.view.dropdown.SubDropDown;
 
 public class HullCollision extends SubDropDown {
@@ -22,6 +23,7 @@ public class HullCollision extends SubDropDown {
 	private int level;
 	private List<ConvexHull> hulls;
 	private Set<List<Point>> collisionPoints;
+	private List<OrganismNode> singleNodeCollisions;
 	private List<Point> unionPoints;
 	private List<Point> centroids;
 	private String commaSepGroups;
@@ -61,6 +63,7 @@ public class HullCollision extends SubDropDown {
 			}
 		}
 		unionPoints.addAll(TBSUtils.convertAreaToPoints(union));
+		singleNodeCollisions = TBSUtils.smallCollision(hulls);
 	}
 
 	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
@@ -76,7 +79,20 @@ public class HullCollision extends SubDropDown {
 			g2.setColor(model.getGroupColor(hull.getHullName()));
 			hull.render(g2, xOffset, yOffset, model);
 		}
+		renderSingleNodes(g2, singleNodeCollisions, xOffset, yOffset, model.getView().getDisplayAllTooltips());
+		
 		g2.setStroke(new BasicStroke());
+	}
+	
+	public void renderSingleNodes(Graphics2D g2, List<OrganismNode> nodes,
+			int xOffset, int yOffset, boolean showNames) {
+		for (OrganismNode o : nodes) {
+			g2.setStroke(new BasicStroke(3));
+			g2.setColor(Color.RED);
+			g2.draw(new Rectangle2D.Double(o.getX() - (1.5 + xOffset), o.getY()
+					- (1.5 + yOffset), o.getWidth() + 3, o.getHeight() + 3));
+			g2.setStroke(new BasicStroke());
+		}
 	}
 
 	public String getAnalysisText() {
