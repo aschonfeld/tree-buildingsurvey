@@ -272,13 +272,11 @@ public class Graph implements Renderable {
 			}
 		}
 		hulls = new LinkedList<ConvexHull>();
-		for (Map.Entry<String, List<Vertex>> e : organismGroups.entrySet()) {
-			if (e.getValue().size() > 2)
-				hulls.add(new ConvexHull(e.getValue(), e.getKey()));
-		}
+		for (Map.Entry<String, List<Vertex>> e : organismGroups.entrySet())
+			hulls.add(new ConvexHull(e.getValue(), e.getKey()));
+		
 		hullCollisions = Common.hullCollisions(1, hulls);
-		if (hullCollisions.size() > 0)
-			hasHullCollisions = true;
+		hasHullCollisions = !hullCollisions.isEmpty();
 	}
 
 	public List<ConvexHull> getHulls(Boolean all) {

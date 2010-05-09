@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -136,10 +139,24 @@ public class ConvexHull extends Displayable implements Renderable {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(3));
 		g2.setColor(AdminApplication.getGroupColor(hullName));
-		Polygon temp = new Polygon();
-		for (Point p : hull)
-			temp.addPoint(p.x - offset.x, p.y - offset.y);
-		g2.draw(temp);
+		if(hull.size() > 2){
+			Polygon temp = new Polygon();
+			for (Point p : hull)
+				temp.addPoint(p.x - offset.x, p.y - offset.y);
+			g2.draw(temp);
+		}else{
+			if(hull.size() == 2){
+				Line2D line = new Line2D.Double(hull.get(0), hull.get(1));
+				g2.draw(line);
+			}
+			Rectangle bounds;
+			for(Vertex v : nodes){
+				bounds = v.getRectangle();
+				g2.draw(new Rectangle2D.Double(bounds.x - (1.5 + offset.x),
+						bounds.y - (1.5 + offset.y), bounds.width + 3,
+						bounds.height + 3));
+			}
+		}
 		g2.setStroke(new BasicStroke());
 	}
 

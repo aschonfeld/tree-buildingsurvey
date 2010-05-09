@@ -6,7 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class HullCollision extends Displayable implements Renderable {
 	private int level;
 	private List<ConvexHull> hulls;
 	private Set<List<Point>> collisionPoints;
+	private List<Vertex> singleNodeCollisions;
 	private List<Point> unionPoints;
 	private List<Point> centroids;
 	private String commaSepGroups;
@@ -56,6 +59,7 @@ public class HullCollision extends Displayable implements Renderable {
 			}
 		}
 		unionPoints.addAll(Common.convertAreaToPoints(union));
+		singleNodeCollisions = Common.smallCollision(hulls);
 	}
 
 	public void render(Graphics g, Point offset) {
@@ -66,7 +70,15 @@ public class HullCollision extends Displayable implements Renderable {
 		for (Point p : unionPoints)
 			collisionShape.addPoint(p.x - offset.x, p.y - offset.y);
 		g2.fill(collisionShape);
-
+		//Displaying Single Node Collisions
+		Rectangle bounds;
+		for (Vertex v : singleNodeCollisions){
+			bounds = v.getRectangle();
+			g2.fill(new Rectangle2D.Double(bounds.x - (1.5 + offset.x),
+					bounds.y - (1.5 + offset.y), bounds.width + 3,
+					bounds.height + 3));
+		}
+		
 		g2.setStroke(new BasicStroke(3));
 		for (ConvexHull hull : hulls) {
 			g2.setColor(AdminApplication.getGroupColor(hull.getHullName()));
