@@ -89,6 +89,7 @@ public class OptimalHulls extends SubDropDown {
 			optimalHullPoints.put(key, optimal);
 			inProgressHulls.put(key, new ConvexHull(remaining, ""));
 		}
+		collisionExists = false;
 		if(originalCentroid != null){
 			centroidInProgress = originalCentroid;
 			collision = new LinkedList<Point>();
@@ -283,6 +284,7 @@ public class OptimalHulls extends SubDropDown {
 
 	public void startOptimization() {
 		initOptimization();
-		iterationWait.start();
+		if(collisionExists)
+			iterationWait.start();
 	}
 }
