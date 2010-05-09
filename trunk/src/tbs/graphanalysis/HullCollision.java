@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.model.OrganismNode;
@@ -73,26 +72,17 @@ public class HullCollision extends SubDropDown {
 		for (Point p : unionPoints)
 			collisionShape.addPoint(p.x - xOffset, p.y - yOffset);
 		g2.fill(collisionShape);
-		
+		//Displaying Single Node Collisions
+		for (OrganismNode o : singleNodeCollisions)
+			g2.fill(new Rectangle2D.Double(o.getX() - (1.5 + xOffset), o.getY()
+					- (1.5 + yOffset), o.getWidth() + 3, o.getHeight() + 3));
 		g2.setStroke(new BasicStroke(3));
 		for (ConvexHull hull : hulls) {
 			g2.setColor(model.getGroupColor(hull.getHullName()));
 			hull.render(g2, xOffset, yOffset, model);
 		}
-		renderSingleNodes(g2, singleNodeCollisions, xOffset, yOffset, model.getView().getDisplayAllTooltips());
 		
 		g2.setStroke(new BasicStroke());
-	}
-	
-	public void renderSingleNodes(Graphics2D g2, List<OrganismNode> nodes,
-			int xOffset, int yOffset, boolean showNames) {
-		for (OrganismNode o : nodes) {
-			g2.setStroke(new BasicStroke(3));
-			g2.setColor(Color.RED);
-			g2.draw(new Rectangle2D.Double(o.getX() - (1.5 + xOffset), o.getY()
-					- (1.5 + yOffset), o.getWidth() + 3, o.getHeight() + 3));
-			g2.setStroke(new BasicStroke());
-		}
 	}
 
 	public String getAnalysisText() {
