@@ -11,18 +11,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.Timer;
 
 public class OptimalHulls extends Displayable implements Renderable {
 
 	private List<ConvexHull> hulls;
-	private Point originalCentroid;
+	private Point originalCentroid = null;
 	private int level;
 	private String commaSepGroups;
 	private String text;
@@ -56,7 +54,8 @@ public class OptimalHulls extends Displayable implements Renderable {
 		remainingHullNodes = new HashMap<String, List<Vertex>>();
 		optimalHullPoints = new HashMap<String, List<Point>>();
 		inProgressHulls = new HashMap<String, ConvexHull>();
-		originalCentroid = collision.getCentroids().get(0);
+		if(!collision.getCentroids().isEmpty())
+			originalCentroid = collision.getCentroids().get(0);
 		iterationWait = new Timer(1000, iterate);
 		initOptimization();
 
@@ -88,9 +87,12 @@ public class OptimalHulls extends Displayable implements Renderable {
 			optimalHullPoints.put(key, optimal);
 			inProgressHulls.put(key, new ConvexHull(remaining, ""));
 		}
-		centroidInProgress = originalCentroid;
-		collision = new LinkedList<Point>();
-		collisionExists = true;
+		collisionExists = false;
+		if(originalCentroid != null){
+			centroidInProgress = originalCentroid;
+			collision = new LinkedList<Point>();
+			collisionExists = true;
+		}
 		optimizationComplete = false;
 	}
 
@@ -283,6 +285,7 @@ public class OptimalHulls extends Displayable implements Renderable {
 
 	public void startOptimization() {
 		initOptimization();
-		iterationWait.start();
+		if(collisionExists)
+			iterationWait.start();
 	}
 }

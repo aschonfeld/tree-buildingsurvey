@@ -113,6 +113,7 @@ public class AdminApplication extends JFrame {
 	}
 
 	public void setCurrentGraph(int index) {
+		getCurrentGraph().deselectAllItems();
 		currentGraphIndex = index;
 		if (!graphs.isEmpty())
 			currentGraphIndex %= graphs.size();

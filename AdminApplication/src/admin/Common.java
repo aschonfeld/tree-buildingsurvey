@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -15,8 +16,10 @@ import java.awt.image.BufferedImage;
 import java.text.BreakIterator;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JLabel;
@@ -177,7 +180,7 @@ public class Common {
 
 	public static List<HullCollision> hullCollisions(int level, List<ConvexHull> hulls) {
 		List<HullCollision> collisions = new LinkedList<HullCollision>();
-		if(hulls.size() > 1 && collide(hulls))
+		if(hulls.size() > 1 && (collide(hulls) || !smallCollision(hulls).isEmpty()))
 			collisions.add(new HullCollision(level, hulls));
 		return collisions;
 	}
@@ -185,15 +188,69 @@ public class Common {
 	public static boolean collide(List<ConvexHull> hulls) {
 		Set<Set<Integer>> indexSubGroups = SubGroupGenerator.getIndexSubGroups(hulls.size());
 		for(Set<Integer> subGroup : indexSubGroups){
-			List<Integer> indexes = new LinkedList<Integer>();
-			indexes.addAll(subGroup);
-			Area intersect = new Area(hulls.get(indexes.get(0)).getHullShape());
-			for (int i = 1; i < hulls.size(); i++)
-				intersect.intersect(new Area(hulls.get(i).getHullShape()));
+			Integer[] indexes = subGroup.toArray(new Integer[0]);
+			Area intersect = new Area(hulls.get(indexes[0]).getHullShape());
+			for (int i = 1; i < indexes.length; i++)
+				intersect.intersect(new Area(hulls.get(indexes[i]).getHullShape()));
 			if(!intersect.isEmpty())
 				return true;
 		}
 		return false;
+	}
+	
+	public static List<Vertex> smallCollision(List<ConvexHull> hulls){
+		List<Vertex> smallCollisions = new LinkedList<Vertex>();
+		Map<String, ConvexHull> smallHulls = new HashMap<String, ConvexHull>();
+		List<Polygon> largeHulls = new LinkedList<Polygon>();
+		for(ConvexHull ch : hulls){
+			if(ch.getHull().size() < 3)
+				smallHulls.put(ch.getHullName(), ch);
+			else{
+				Polygon lhPoly = new Polygon();
+				for(Point lhP : ch.getHull())
+					lhPoly.addPoint(lhP.x, lhP.y);
+				largeHulls.add(lhPoly);
+			}
+		}
+		Map<String, List<Integer>> pointsToRemove = new HashMap<String, List<Integer>>();
+		int currentIndex = 0;
+		for(Map.Entry<String, ConvexHull> e : smallHulls.entrySet()){
+			boolean remove;
+			currentIndex = 0;
+			for(Point shP : e.getValue().getHull()){
+				remove = false;
+				for(Polygon largeHull : largeHulls){
+					if(largeHull.contains(shP)){
+						remove = true;
+						break;
+					}
+				}
+				if(remove){
+					if(pointsToRemove.containsKey(e.getKey()))
+						pointsToRemove.get(e.getKey()).add(currentIndex);
+					else{
+						List<Integer> tempPTR = new LinkedList<Integer>();
+						tempPTR.add(currentIndex);
+						pointsToRemove.put(e.getKey(), tempPTR);
+					}
+					continue;
+				}
+				currentIndex++;
+			}
+		}
+		Point p;
+		for(Map.Entry<String, List<Integer>> e : pointsToRemove.entrySet()){
+			for(Integer pointToRemove : e.getValue()){
+				p = smallHulls.get(e.getKey()).getHull().get((int) pointToRemove);
+				for (Vertex v : smallHulls.get(e.getKey()).getNodes()) {
+					if (v.getRectangle().contains(p)) {
+						smallCollisions.add(v);
+						break;
+					}
+				}
+			}
+		}
+		return smallCollisions;
 	}
 	
 	public static List<Point> convertAreaToPoints(Area a){
