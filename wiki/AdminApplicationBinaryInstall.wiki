@@ -14,4 +14,4 @@ _If you do not have Java, or have an older version, you can get the latest versi
 
 To select what student tree to view, click on the row in the table that contains the data for that tree.
 
-We did not have time to write up a user manual for this application, but you can learn how it works by exploring the menu items.  However, avoid using "Import Data", since there is currently no data to import, and this has not been thoroughly tested.  Also, "Reset Data" will simply make all the student trees unviewable.  Restarting the application will fix this problem.
+We did not have time to write up a user manual for this application, but you can learn how it works by exploring the menu items.  However, avoid using "Import Data", since there is currently no data to import, and this has not been thoroughly tested.  Also, "Reset Data" will make all the student trees unviewable.  Restarting the application will fix this problem.
