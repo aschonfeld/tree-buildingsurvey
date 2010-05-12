@@ -2,6 +2,7 @@
   * [VisionStatement Vision Statement]
   * [ProfessorsComments Professor Bolker's Comments]
   * Setup Information
+    * [OneStepBuild One Step Build]
     * [Subclipse_Setup Subclipse Setup]
     * [ApacheEclipseSetup Apache Eclipse Setup]
     * [EclipsePerlCGIDeployment Eclipse Perl CGI Deployment]
@@ -12,7 +13,6 @@
     * [SpringFeatureProgress Spring Deliverable Progress]
     * [AppletLogging Logging Feasibility Report]
     * [RefactoringAnalysis Rafactoring Analysis]
-    * [OneStepBuild One Step Build]
     * [TestServerDeployment Deploying to Professor White's Test Server]
     * [TBSExperiment Scoring Parameters]
     * [TBSApplet Developer's Guide - in progress]
