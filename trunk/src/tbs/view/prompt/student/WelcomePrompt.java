@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Properties;
 
@@ -67,7 +68,7 @@ public class WelcomePrompt extends Prompt {
 		List<String> incompletedItems = model.incompletedItems();
 		String introString = "";
 		if (incompletedItems.size() == OpenQuestionButtonType.values().length + 1)
-			introString = String.format(instrProps.getProperty("instrIntro"),
+			introString = MessageFormat.format(instrProps.getProperty("instrIntro"),
 					welcomeMessage(incompletedItems));
 		else
 			introString = welcomeMessage(incompletedItems);
@@ -97,33 +98,35 @@ public class WelcomePrompt extends Prompt {
 		Student student = model.getStudent();
 		String name = student.getName();
 		String lastUpdate = student.getLastUpdate();
-		StringBuffer welcome = new StringBuffer("Welcome");
+		MessageFormat welcome = new MessageFormat(instrProps.getProperty("instrIntroStart"));
+		Object[] args = new Object[]{"",""};
+		StringBuffer params = new StringBuffer();
 		if (incompletedItems.size() < OpenQuestionButtonType.values().length + 1)
-			welcome.append(" back");
+			params.append(" back");
 		if (!TBSUtils.isStringEmpty(name))
-			welcome.append(", ").append(name).append(", ");
-		welcome.append(" to the Diversity Of Life Survey! ");
+			params.append(", ").append(name).append(",");
+		args[0] = params.toString();
 		if (!TBSUtils.isStringEmpty(lastUpdate)) {
 			if (incompletedItems.isEmpty())
-				welcome
-						.append("You have completed the survey and recieved 15 points. ");
+				args[1] = instrProps.getProperty("instrCompleted");
 			else {
-				if (incompletedItems.size() == 1) {
-					welcome.append("You still need to complete ");
-					welcome.append(incompletedItems.remove(0)).append(". ");
-				} else if (incompletedItems.size() <= OpenQuestionButtonType
+				params = new StringBuffer();
+				if (incompletedItems.size() == 1)
+					params.append(incompletedItems.remove(0));
+				else if (incompletedItems.size() <= OpenQuestionButtonType
 						.values().length + 1) {
-					welcome.append("You still need to complete ");
-					welcome.append(incompletedItems.remove(0));
+					params.append(incompletedItems.remove(0));
 					String statusEnd = incompletedItems.remove(incompletedItems
 							.size() - 1);
 					for (String s : incompletedItems)
-						welcome.append(", ").append(s);
-					welcome.append(" & ").append(statusEnd).append(". ");
+						params.append(", ").append(s);
+					params.append(" & ").append(statusEnd);
 				}
+				params.append(" ");
+				args[1] = MessageFormat.format(instrProps.getProperty("instrNeededToComplete"), params.toString());
 			}
 		}
-		return welcome.toString();
+		return welcome.format(args);
 	}
 
 }

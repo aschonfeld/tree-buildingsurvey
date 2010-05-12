@@ -1,5 +1,6 @@
 package tbs.properties;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -9,7 +10,7 @@ public class PropertyLoader {
 
 	public static Class<?> loaderLocation;
 	private static Map<String, Properties> propertiesMap;
-	private static String propertyLocation = "/tbs/properties/%s.properties";
+	private static String propertyLocation = "/tbs/properties/{0}.properties";
 
 	public PropertyLoader() {
 		propertiesMap = new TreeMap<String, Properties>();
@@ -31,7 +32,7 @@ public class PropertyLoader {
 		Properties props = new Properties();
 		try {
 			props.load(loaderLocation.getResource(
-					String.format(propertyLocation, filename)).openStream());
+					MessageFormat.format(propertyLocation, filename)).openStream());
 			return props;
 		} catch (Exception e) {
 			System.out.println(new StringBuffer("Unable to load ").append(

@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -424,16 +425,15 @@ public class AdminView extends TBSView {
 					buttonClicked = TBSButtonType.TREE;
 
 				Properties adminProps = PropertyLoader.getProperties("admin");
-				StringBuffer screenStringBuff = new StringBuffer(String.format(
-						adminProps.getProperty(buttonClicked.name()), model
-								.getStudent().getName()));
+				MessageFormat str = new MessageFormat(adminProps.getProperty(buttonClicked.name()));
+				Object[] args = new Object[]{"",""};
+				args[0] = model.getStudent().getName()+"'s";
 				if (TBSButtonType.TREE.equals(buttonClicked)) {
 					String lastUpdate = model.getStudent().getLastUpdate();
 					if (lastUpdate != null && lastUpdate.length() > 0)
-						screenStringBuff.append("(Last Update: ").append(
-								lastUpdate).append(")");
+						args[1] = MessageFormat.format(adminProps.getProperty("lastUpdate"), lastUpdate);
 				}
-				screenString = screenStringBuff.toString();
+				screenString = str.format(args);
 			}
 
 			int yStep = TBSGraphics.buttonsHeight;
@@ -467,16 +467,17 @@ public class AdminView extends TBSView {
 		TBSButtonType buttonClicked = model.getController().getButtonClicked();
 		if (buttonClicked == null || model.getPrompt() == null)
 			buttonClicked = TBSButtonType.TREE;
+		
 		Properties adminProps = PropertyLoader.getProperties("admin");
-		StringBuffer screenString = new StringBuffer(String.format(adminProps
-				.getProperty(buttonClicked.name()), model.getStudent()
-				.getName()));
+		MessageFormat str = new MessageFormat(adminProps.getProperty(buttonClicked.name()));
+		Object[] args = new Object[]{"",""};
+		args[0] = model.getStudent().getName()+"'s";
 		if (TBSButtonType.TREE.equals(buttonClicked)) {
 			String lastUpdate = model.getStudent().getLastUpdate();
 			if (lastUpdate != null && lastUpdate.length() > 0)
-				screenString.append("(Last Update: ").append(lastUpdate)
-						.append(")");
+				args[1] = MessageFormat.format(adminProps.getProperty("lastUpdate"), lastUpdate);
 		}
+		StringBuffer screenString = new StringBuffer(str.format(args));
 		List<String> lines = TBSGraphics.breakStringByLineWidth(g2,
 				screenString.toString(), width);
 		int yVal = TBSGraphics.padding.height;
