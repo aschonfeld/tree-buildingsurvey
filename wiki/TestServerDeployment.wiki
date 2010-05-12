@@ -1,5 +1,9 @@
 #summary Steps for Deploying Code to Test Server
 
+= Important: cluster.bio.whe.umb.edu is no longer operational =
+
+*Replace any references to cluster.bio.whe.umb.edu with a working URL*
+
   Before doing anything make sure that the follwing lines of code have been updated in the perl script that you will be deploying or else errors will occur.
   # {{{$script_url = "http://cluster.bio.whe.umb.edu/cgi-bin/Test/TreeSurvey.pl"}}}
   # {{{print "archive=\"http://cluster.bio.whe.umb.edu/Test/phylogenySurvey.jar\" \n";}}}
