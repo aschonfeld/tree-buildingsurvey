@@ -1,9 +1,6 @@
   * [BuildInstructions Instructions For Builder]
-  * [AppletLogging Logging Feasibility Report]
-  * [RefactoringAnalysis Rafactoring Analysis]
   * [VisionStatement Vision Statement]
   * [TBSApplet Developer's Guide - in progress]
-  * [TBSExperiment Scoring Parameters]
   * [ProfessorsComments Professor Bolker's Comments]
   * Setup Information
     * [Subclipse_Setup Subclipse Setup]
@@ -16,7 +13,10 @@
   * Project History
     * [Schedule Project Schedule]
     * [SpringFeatureProgress Spring Deliverable Progress]
+    * [AppletLogging Logging Feasibility Report]
+    * [RefactoringAnalysis Rafactoring Analysis]
     * [OneStepBuild One Step Build]
+    * [TBSExperiment Scoring Parameters]
     * [MeetingMinutes Meeting Minutes]
         * [MeetingTenMinutes 1/20/2010]
         * [MeetingNineMinutes 1/6/2010]
