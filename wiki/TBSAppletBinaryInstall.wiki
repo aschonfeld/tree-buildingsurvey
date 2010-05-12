@@ -1,0 +1,15 @@
+#summary How to install and run the binary-only TBSApplet
+
+==How to install and run the binary-only TBSApplet==
+
+*Step 1*: Click [http://tree-buildingsurvey.googlecode.com/files/TBSAppletBinary.zip here] to download the binary-only TBSApplet<br>
+
+*Step 2*: Double click on `TBSAppletBinary.zip` and extract the `TBSAppletBinary` folder to the location of your choosing.
+
+_If you cannot open ".zip" files, `7-Zip` is a good Windows file compression utility and is available for free from_ [http://download.cnet.com cnet downloads]
+
+*Step 3*: Open the `TBSAppletBinary` folder.
+  * To run the student applet, double click `run_student.bat`
+  * To run the admin applet, double click `run_admin.bat`
+
+_If you do not have Java, or have an older version, you can get the latest version from_ [http://www.java.com/en/download/manual.jsp here]
