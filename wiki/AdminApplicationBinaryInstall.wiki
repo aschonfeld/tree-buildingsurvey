@@ -1,0 +1,19 @@
+#summary How to install and run the binary-only !AdminApplication (with student trees)
+
+==How to install and run the binary-only !AdminApplication (with student trees)==
+
+Step 1: Click [http://code.google.com/p/tree-buildingsurvey/downloads/detail?name=AdminApplicationBinary.zip&can=2&q= here] to download the stand-alone administrator application<br>
+
+Step 2: Double click on !AdminApplicationBinary.zip and extract the files to the directory of your choosing.
+  * _If you do not have a .zip file utility, check out_ [http://download.cnet.com cnet downloads]
+  * *7-Zip* _is a good Windows file compression utility and is free._
+
+Step 3: Double click on "!AdminApplication.jar"
+  * _If you do not have Java, or have an older version, you can get the latest version from_ [http://www.java.com/en/download/manual.jsp here]
+
+How to select what student tree to view:
+  * Student trees can be selected by clicking on the a row in the table
+
+We did not have time to write up a user manual for this application, but you can learn how it works by exploring the menu items.
+
+However, avoid using "Import Data", since there is currently no data to import, and this has not been tested.  Also "Reset Data" will simply make all the student trees unviewable.  Restarting the application will fix this problem.
