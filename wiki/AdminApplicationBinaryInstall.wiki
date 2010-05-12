@@ -2,7 +2,7 @@
 
 ==How to install and run the binary-only !AdminApplication (with student trees)==
 
-Step 1: Click [http://code.google.com/p/tree-buildingsurvey/downloads/detail?name=AdminApplicationBinary.zip here] to download the stand-alone administrator application<br>
+Step 1: Click [http://tree-buildingsurvey.googlecode.com/files/AdminApplicationBinary.zip here] to download the stand-alone administrator application<br>
 
 Step 2: Double click on !AdminApplicationBinary.zip and extract the files to the directory of your choosing.
   * _If you do not have a .zip file utility, check out_ [http://download.cnet.com cnet downloads]
