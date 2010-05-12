@@ -1,5 +1,6 @@
   * [BuildInstructions Instructions For Builder]
   * [VisionStatement Vision Statement]
+  * [TBSApplet Developer's Guide - in progress]
   * [ProfessorsComments Professor Bolker's Comments]
   * Setup Information
     * [OneStepBuild One Step Build]
@@ -15,7 +16,6 @@
     * [RefactoringAnalysis Rafactoring Analysis]
     * [TestServerDeployment Deploying to Professor White's Test Server]
     * [TBSExperiment Scoring Parameters]
-    * [TBSApplet Developer's Guide - in progress]
     * [Resources Resources]
     * [MeetingMinutes Meeting Minutes]
         * [MeetingTenMinutes 1/20/2010]
