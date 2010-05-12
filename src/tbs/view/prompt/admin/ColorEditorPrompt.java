@@ -193,7 +193,7 @@ public class ColorEditorPrompt extends Prompt {
 			List<String> text;
 			if (headerText.isEmpty()) {
 				text = TBSGraphics.breakStringByLineWidth(g2, chooserProps
-						.getProperty("header"), getUnpaddedWidth());
+						.getProperty("headerMsg"), getUnpaddedWidth());
 				headerText = text;
 			} else
 				text = headerText;
@@ -201,7 +201,7 @@ public class ColorEditorPrompt extends Prompt {
 			calculateValues(headerText.size() + 12, true);
 			drawBox();
 			drawButtons(new String[] { "Exit" });
-			drawHeader("Edit Group Color Associations");
+			drawHeader(chooserProps.getProperty("header"));
 			incrementStringY();
 			drawText(text);
 			incrementStringY();
@@ -209,11 +209,13 @@ public class ColorEditorPrompt extends Prompt {
 			incrementStringY();
 			groupDD.setY(getStringY());
 			incrementStringYMulti(2);
-			TBSGraphics.drawCenteredString(g2, "Default Colors", getX(),
+			TBSGraphics.drawCenteredString(g2, chooserProps
+					.getProperty("default"), getX(),
 					getStringY(), getWidth() / 2, TBSGraphics.textHeight
 							+ TBSGraphics.padding.height,
 					TBSGraphics.selectedPromptTextColor);
-			TBSGraphics.drawCenteredString(g2, "Default Colors", getX()
+			TBSGraphics.drawCenteredString(g2, chooserProps
+					.getProperty("custom"), getX()
 					+ (getWidth() / 2), getStringY(), getWidth() / 2,
 					TBSGraphics.textHeight + TBSGraphics.padding.height,
 					TBSGraphics.selectedPromptTextColor);

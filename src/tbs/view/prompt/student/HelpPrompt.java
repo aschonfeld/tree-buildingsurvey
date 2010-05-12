@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -108,12 +109,7 @@ public class HelpPrompt extends Prompt {
 		if (HelpPromptButtonType.SURVEY_STATUS.equals(selectedOption)) {
 			StringBuffer status = new StringBuffer(model.surveyStatus());
 			if (status.length() == 0)
-				status
-						.append(
-								"Currently you have created a tree and entered ")
-						.append(
-								"responses to all the open-response questions. ")
-						.append("You are ready to submit your survey.");
+				status.append(helpProps.getProperty("help_Complete"));
 			text = TBSGraphics.breakStringByLineWidth(g2, status.toString(),
 					getWidth() - TBSGraphics.padding.width * 2);
 			totalLines += text.size() + 2;
@@ -140,7 +136,7 @@ public class HelpPrompt extends Prompt {
 		} else if (HelpPromptButtonType.INTRODUCTION.equals(selectedOption)) {
 			if (introduction.isEmpty()) {
 				introduction = TBSGraphics.breakStringByLineWidth(g2, String
-						.format(instrProps.getProperty("instrIntro"), ""),
+						.format(MessageFormat.format(instrProps.getProperty("instrIntro"),""), ""),
 						getWidth() - TBSGraphics.padding.width * 2);
 			}
 			text = introduction;
@@ -172,8 +168,7 @@ public class HelpPrompt extends Prompt {
 					+ TBSGraphics.padding.height, true);
 		drawBox();
 		drawButtons(options, selectedOption.toString());
-		drawHeader(new StringBuffer("Help - ").append(selectedOption.getText())
-				.toString());
+		drawHeader(MessageFormat.format(helpProps.getProperty("help_Header"), selectedOption.getText()));
 		incrementStringY();
 
 		if (HelpPromptButtonType.BUTTON_INFO.equals(selectedOption)) {

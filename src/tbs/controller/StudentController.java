@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Stack;
 
@@ -461,7 +462,7 @@ public class StudentController extends TBSController {
 			break;
 		case UNDO:
 			if (!model.getHistory().isEmpty()) {
-				view.setScreenString(String.format(
+				view.setScreenString(MessageFormat.format(
 						getStatus(TBSButtonType.UNDO), model.getHistory()
 								.peek().toString()));
 				model.removeActionFromHistory().undo(model);

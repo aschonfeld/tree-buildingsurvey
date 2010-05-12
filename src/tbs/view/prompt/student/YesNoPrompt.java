@@ -4,11 +4,14 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import tbs.TBSGraphics;
 import tbs.model.TBSModel;
+import tbs.properties.PropertyLoader;
 import tbs.view.TBSButtonType;
 import tbs.view.prompt.Prompt;
 import tbs.view.prompt.buttons.YesNoButtonType;
@@ -20,6 +23,7 @@ public class YesNoPrompt extends Prompt {
 	TBSButtonType promptType;
 	String question;
 	YesNoButtonType response;
+	Properties yesnoProps;
 
 	// Prompt sizing information
 	List<String> lineBrokenQuestion;
@@ -33,9 +37,8 @@ public class YesNoPrompt extends Prompt {
 		setRenderClose(false);
 		this.model = model;
 		this.promptType = promptType;
-		question = new StringBuffer("Are you sure you want to ").append(
-				promptType.getText()).append("? You will not be able to undo.")
-				.toString();
+		yesnoProps = PropertyLoader.getProperties("yesno");
+		question = MessageFormat.format(yesnoProps.getProperty("text"), promptType.getText());
 		buttons = YesNoButtonType.values();
 	}
 
