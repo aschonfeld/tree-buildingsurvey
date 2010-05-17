@@ -46,19 +46,40 @@ public class OptimalHulls extends Displayable implements Renderable {
 	private boolean optimizationComplete;
 
 
-	public OptimalHulls(HullCollision collision) {
-		level = collision.getLevel();
-		hulls = collision.getHulls();
-		commaSepGroups = Common.commaSeparatedString(hulls);
+	public OptimalHulls(){
 		removedHullNodes = new HashMap<String, List<Vertex>>();
 		remainingHullNodes = new HashMap<String, List<Vertex>>();
 		optimalHullPoints = new HashMap<String, List<Point>>();
 		inProgressHulls = new HashMap<String, ConvexHull>();
+		iterationWait = new Timer(1000, iterate);
+	}
+	
+	public OptimalHulls(HullCollision collision) {
+		this();
+		level = collision.getLevel();
+		hulls = collision.getHulls();
+		commaSepGroups = Common.commaSeparatedString(hulls);
 		if(!collision.getCentroids().isEmpty())
 			originalCentroid = collision.getCentroids().get(0);
-		iterationWait = new Timer(1000, iterate);
 		initOptimization();
-
+	}
+	
+	/**
+	 * This is the default constructor to be used when there are no collisions
+	 * between convex hulls in the graph, this will primarily display all hulls
+	 * to demonstrate to the user that there are no collisions and these are, in
+	 * actuality, "Optimal Hulls".
+	 * 
+	 * @param hulls, List of organism {@link ConvexHull} objects
+	 */
+	public OptimalHulls(List<ConvexHull> hulls) {
+		this();
+		level = 1;
+		this.hulls = hulls;
+		commaSepGroups = Common.commaSeparatedString(hulls);
+		collisionExists = false;
+		optimizationComplete = true;
+		createText();
 	}
 
 	public void fullOptimization() {
@@ -204,13 +225,20 @@ public class OptimalHulls extends Displayable implements Renderable {
 		textBuff
 				.append(" This particular optimization required the removal of ");
 		String sep = "";
-		for (Map.Entry<String, List<Vertex>> removed : removedHullNodes
-				.entrySet()) {
-			textBuff.append(sep).append(removed.getValue().size()).append(" ")
-					.append(removed.getKey());
-			if (removed.getValue().size() > 1)
-				textBuff.append("s");
-			sep = ", ";
+		if(!removedHullNodes.isEmpty()){
+			for (Map.Entry<String, List<Vertex>> removed : removedHullNodes
+					.entrySet()) {
+				textBuff.append(sep).append(removed.getValue().size()).append(" ")
+				.append(removed.getKey());
+				if (removed.getValue().size() > 1)
+					textBuff.append("s");
+				sep = ", ";
+			}
+		}else{
+			for(ConvexHull ch : hulls){
+				textBuff.append(sep).append("0 ").append(ch.getHullName()).append("s");
+				sep = ", ";
+			}
 		}
 		textBuff.append(" in order to eliminate group collisions.");
 		text = textBuff.toString();
@@ -230,24 +258,28 @@ public class OptimalHulls extends Displayable implements Renderable {
 					optimizationComplete = true;
 			}
 		}
-		Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
-		for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
-				.entrySet()) {
-			Polygon shape = new Polygon();
-			for (Point p : optimal.getValue())
-				shape.addPoint(p.x - offset.x, p.y - offset.y);
-			hullShapes.put(optimal.getKey(), shape);
+		if(optimizationComplete && removedHullNodes.isEmpty()){
+			for(ConvexHull ch : hulls)
+				ch.render(g2, offset);
+		}else{
+			Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
+			for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
+					.entrySet()) {
+				Polygon shape = new Polygon();
+				for (Point p : optimal.getValue())
+					shape.addPoint(p.x - offset.x, p.y - offset.y);
+				hullShapes.put(optimal.getKey(), shape);
+			}
+			g2.setStroke(new BasicStroke(3));
+			for (Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()) {
+				g2.setColor(AdminApplication.getGroupColor(hullShape.getKey()));
+				g2.draw(hullShape.getValue());
+			}
+			g2.setStroke(new BasicStroke());
+			for (Map.Entry<String, List<Vertex>> removed : removedHullNodes
+					.entrySet())
+				renderRemoved(g2, removed.getValue(), offset);
 		}
-		g2.setStroke(new BasicStroke(3));
-		for (Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()) {
-			g2.setColor(AdminApplication.getGroupColor(hullShape.getKey()));
-			g2.draw(hullShape.getValue());
-		}
-		g2.setStroke(new BasicStroke());
-		for (Map.Entry<String, List<Vertex>> removed : removedHullNodes
-				.entrySet())
-			renderRemoved(g2, removed.getValue(), offset);
-
 	}
 
 	public void renderRemoved(Graphics2D g2, List<Vertex> nodes, Point offset) {
