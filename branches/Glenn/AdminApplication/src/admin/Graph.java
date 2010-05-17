@@ -20,6 +20,7 @@ public class Graph implements Renderable {
 	private ArrayList<Edge> edges;
 	private List<ConvexHull> hulls;
 	private List<HullCollision> hullCollisions;
+	private OptimalHulls defaultOptimization;
 	private TreeMap<Integer, Vertex> idToVertex;
 	private boolean directional;
 	private boolean allOrgsInTree;
@@ -277,6 +278,9 @@ public class Graph implements Renderable {
 		
 		hullCollisions = Common.hullCollisions(1, hulls);
 		hasHullCollisions = !hullCollisions.isEmpty();
+		defaultOptimization = null;
+		if(!hasHullCollisions)
+			defaultOptimization = new OptimalHulls(hulls);
 	}
 
 	public List<ConvexHull> getHulls(Boolean all) {
@@ -302,14 +306,17 @@ public class Graph implements Renderable {
 
 	public List<OptimalHulls> getOptimalHulls(Boolean all) {
 		List<OptimalHulls> optimalHulls = new LinkedList<OptimalHulls>();
-		for (HullCollision hc : hullCollisions)
-			optimalHulls.add(hc.getOptimalHulls());
-		if (all) {
-			for (ConvexHull hull : hulls) {
-				for (HullCollision hc : hull.getChildCollisions())
-					optimalHulls.add(hc.getOptimalHulls());
+		if(!hullCollisions.isEmpty()){
+			for (HullCollision hc : hullCollisions)
+				optimalHulls.add(hc.getOptimalHulls());
+			if (all) {
+				for (ConvexHull hull : hulls) {
+					for (HullCollision hc : hull.getChildCollisions())
+						optimalHulls.add(hc.getOptimalHulls());
+				}
 			}
-		}
+		}else
+			optimalHulls.add(defaultOptimization);
 		return optimalHulls;
 	}
 

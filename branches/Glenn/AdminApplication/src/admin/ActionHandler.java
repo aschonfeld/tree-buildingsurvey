@@ -148,9 +148,9 @@ public class ActionHandler extends JPanel {
 
 		private static final long serialVersionUID = 3382645405034163126L;
 		private int optimalIndex;
-		private boolean quick;
+		private Boolean quick;
 
-		public OptimalAction(int optimalIndex, boolean quick) {
+		public OptimalAction(int optimalIndex, Boolean quick) {
 			super();
 			this.optimalIndex = optimalIndex;
 			this.quick = quick;
@@ -165,10 +165,12 @@ public class ActionHandler extends JPanel {
 						SubDropDownType.OPTIMAL_HULL, optimalIndex);
 				redrawBooleans();
 			}
-			if (quick)
-				oh.fullOptimization();
-			else
-				oh.startOptimization();
+			if(quick != null){
+				if (quick)
+					oh.fullOptimization();
+				else
+					oh.startOptimization();
+			}
 
 		}
 	}
@@ -307,16 +309,17 @@ public class ActionHandler extends JPanel {
 			}
 			fileMenu.add(groupMenu);
 			List<HullCollision> collisions = tempGraph.getHullCollisions(true);
+			JMenu optimalMenu = new JMenu("Optimal Groups");
+			final JMenu optimalSubMenu = new JMenu();
 			if (!collisions.isEmpty()) {
 				JMenu collisionMenu = new JMenu("Group Collisions");
-				JMenu optimalMenu = new JMenu("Optimal Groups");
 				for (int i = 0; i < collisions.size(); i++) {
 					HullCollision tempHC = collisions.get(i);
 					JMenuItem HCItem = new JMenuItem(tempHC.toString());
 					HCItem.addActionListener(new CollisionAction(i));
 					collisionMenu.add(HCItem);
 					collisionItems.add(HCItem);
-					final JMenu optimalSubMenu = new JMenu(tempHC.toString());
+					optimalSubMenu.setText(tempHC.toString());
 					JMenuItem quickItem = new JMenuItem("Show");
 					quickItem.addActionListener(new OptimalAction(i, true));
 					optimalSubMenu.add(quickItem);
@@ -324,12 +327,18 @@ public class ActionHandler extends JPanel {
 					iterativeItem
 							.addActionListener(new OptimalAction(i, false));
 					optimalSubMenu.add(iterativeItem);
-					optimalMenu.add(optimalSubMenu);
-					optimalItems.add(optimalSubMenu);
 				}
 				fileMenu.add(collisionMenu);
-				fileMenu.add(optimalMenu);
+			}else{
+				optimalSubMenu.setText(Common.commaSeparatedString(groups));
+				JMenuItem quickItem = new JMenuItem("Show");
+				quickItem.addActionListener(new OptimalAction(0, null));
+				optimalSubMenu.add(quickItem);
 			}
+			optimalMenu.add(optimalSubMenu);
+			optimalItems.add(optimalSubMenu);
+			fileMenu.add(optimalMenu);
+			
 			JMenuItem deselect = new JMenuItem("Clear Selections");
 			ActionListener deselectListener = new ActionListener() {
 				public void actionPerformed(ActionEvent actionEvent) {
