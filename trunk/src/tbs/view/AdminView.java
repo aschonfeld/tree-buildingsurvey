@@ -246,14 +246,14 @@ public class AdminView extends TBSView {
 			if (displayDropDownMenu) {
 				mainDropDown.setSize(TBSGraphics.groupsButtonWidth,
 						TBSGraphics.buttonsHeight
-								* model.getDropDownButtonCount());
+								* model.getCurrentDropDowns().size());
 
 				upperY = drawDropDownButton(g2, upperY, buttonRect, "Print");
 				upperY = drawDropDownButton(g2, upperY, buttonRect,
 						"Names & Groups"
 								+ (getDisplayAllTooltips() ? " \u2713" : ""));
 
-				if (model.getDropDownButtonCount() >= 5) {
+				if (model.getCurrentDropDowns().size() >= 6) {
 					upperY = drawDropDownButton(g2, upperY, buttonRect,
 							"Group Colors");
 					upperY = drawDropDownButton(g2, upperY, buttonRect,
@@ -262,16 +262,16 @@ public class AdminView extends TBSView {
 							"\u25C0 Groups (" + model.getHulls(true).size()
 									+ ")");
 
-					if (model.getDropDownButtonCount() == 7) {
+					if (model.getCurrentDropDowns().size() == 7) {
 						upperY = drawDropDownButton(g2, upperY, buttonRect,
 								"\u25C0 Collisions ("
 										+ model.getHullCollisions(true).size()
 										+ ")");
-						drawDropDownButton(g2, upperY, buttonRect,
-								"\u25C0 Optimal Groups ("
-										+ model.getOptimalHulls(true).size()
-										+ ")");
 					}
+					drawDropDownButton(g2, upperY, buttonRect,
+							"\u25C0 Optimal Groups ("
+									+ model.getOptimalHulls(true).size()
+									+ ")");
 				}
 			} else
 				mainDropDown.setSize(0, 0);
@@ -383,7 +383,7 @@ public class AdminView extends TBSView {
 						+ TBSGraphics.padding.width * 2;
 				TBSGraphics.setSubDropDownWidth(type, buttonWidth);
 				Rectangle subButton = new Rectangle(headerEnd - buttonWidth,
-						TBSGraphics.buttonsHeight * type.getDropDownIndex(),
+						TBSGraphics.buttonsHeight * (model.getCurrentDropDowns().indexOf(type)+1),
 						buttonWidth, TBSGraphics.buttonsHeight);
 				Rectangle subButtons = new Rectangle(subButton.x, subButton.y,
 						subButton.width, 0);
@@ -414,7 +414,7 @@ public class AdminView extends TBSView {
 			String screenString = null;
 			for (OptimalHulls oh : model.getOptimalHulls(true)) {
 				if (oh.getDisplay()) {
-					screenString = oh.getText();
+					screenString = MessageFormat.format(oh.getText(),model.getStudent().getName()+"'s");
 					break;
 				}
 			}
