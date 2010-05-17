@@ -8,10 +8,12 @@ import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.Timer;
 
@@ -19,6 +21,7 @@ import tbs.TBSGraphics;
 import tbs.TBSUtils;
 import tbs.model.AdminModel;
 import tbs.model.OrganismNode;
+import tbs.properties.PropertyLoader;
 import tbs.view.dropdown.SubDropDown;
 
 public class OptimalHulls extends SubDropDown {
@@ -48,19 +51,43 @@ public class OptimalHulls extends SubDropDown {
 	private List<Point> collision;
 	private boolean collisionExists;
 	private boolean optimizationComplete;
+	
+	private Properties adminProps;
 
-	public OptimalHulls(HullCollision collision) {
-		level = collision.getLevel();
-		hulls = collision.getHulls();
-		commaSepGroups = TBSUtils.commaSeparatedString(hulls);
+	public OptimalHulls(){
 		removedHullNodes = new HashMap<String, List<OrganismNode>>();
 		remainingHullNodes = new HashMap<String, List<OrganismNode>>();
 		optimalHullPoints = new HashMap<String, List<Point>>();
 		inProgressHulls = new HashMap<String, ConvexHull>();
+		iterationWait = new Timer(1000, iterate);
+		adminProps = PropertyLoader.getProperties("admin");
+	}
+	
+	public OptimalHulls(HullCollision collision) {
+		this();
+		level = collision.getLevel();
+		hulls = collision.getHulls();
+		commaSepGroups = TBSUtils.commaSeparatedString(hulls);
 		if(!collision.getCentroids().isEmpty())
 			originalCentroid = collision.getCentroids().get(0);
-		iterationWait = new Timer(1000, iterate);
 		fullOptimization();
+	}
+	/**
+	 * This is the default constructor to be used when there are no collisions
+	 * between convex hulls in the graph, this will primarily display all hulls
+	 * to demonstrate to the user that there are no collisions and these are, in
+	 * actuality, "Optimal Hulls".
+	 * 
+	 * @param hulls, List of organism {@link ConvexHull} objects
+	 */
+	public OptimalHulls(List<ConvexHull> hulls) {
+		this();
+		level = 1;
+		this.hulls = hulls;
+		commaSepGroups = TBSUtils.commaSeparatedString(hulls);
+		collisionExists = false;
+		optimizationComplete = true;
+		createText();
 	}
 
 	public void fullOptimization() {
@@ -202,21 +229,27 @@ public class OptimalHulls extends SubDropDown {
 	}
 
 	private void createText() {
-		StringBuffer textBuff = new StringBuffer(
-				"\"Optimal Groups\" is optimization of the current student's arrangement of organisms so that groupings no longer collide.");
-		textBuff
-				.append(" This particular optimization required the removal of ");
+		StringBuffer arg = new StringBuffer();
+		StringBuffer fullText = new StringBuffer();
 		String sep = "";
-		for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
-				.entrySet()) {
-			textBuff.append(sep).append(removed.getValue().size()).append(" ")
-					.append(removed.getKey());
-			if (removed.getValue().size() > 1)
-				textBuff.append("s");
-			sep = ", ";
+		if(!removedHullNodes.isEmpty()){
+			for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
+					.entrySet()) {
+				arg.append(sep).append(removed.getValue().size()).append(" ")
+				.append(removed.getKey());
+				if (removed.getValue().size() > 1)
+					arg.append("s");
+				sep = ", ";
+			}
+		}else{
+			for(ConvexHull ch : hulls){
+				arg.append(sep).append("0 ").append(ch.getHullName()).append("s");
+				sep = ", ";
+			}
 		}
-		textBuff.append(" in order to eliminate group collisions.");
-		text = textBuff.toString();
+		fullText.append(adminProps.getProperty("OPTIMAL_HULL1")).append("  ");
+		fullText.append(MessageFormat.format(adminProps.getProperty("OPTIMAL_HULL2"), arg.toString()));
+		text = fullText.toString();
 	}
 
 	public void render(Graphics2D g2, int xOffset, int yOffset, AdminModel model) {
@@ -232,24 +265,29 @@ public class OptimalHulls extends SubDropDown {
 					optimizationComplete = true;
 			}
 		}
-		Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
-		for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
-				.entrySet()) {
-			Polygon shape = new Polygon();
-			for (Point p : optimal.getValue())
-				shape.addPoint(p.x - xOffset, p.y - yOffset);
-			hullShapes.put(optimal.getKey(), shape);
+		if(optimizationComplete && removedHullNodes.isEmpty()){
+			for(ConvexHull ch : hulls)
+				ch.render(g2, xOffset, yOffset, model);
+		}else{
+			Map<String, Polygon> hullShapes = new HashMap<String, Polygon>();
+			for (Map.Entry<String, List<Point>> optimal : optimalHullPoints
+					.entrySet()) {
+				Polygon shape = new Polygon();
+				for (Point p : optimal.getValue())
+					shape.addPoint(p.x - xOffset, p.y - yOffset);
+				hullShapes.put(optimal.getKey(), shape);
+			}
+			g2.setStroke(new BasicStroke(3));
+			for (Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()) {
+				g2.setColor(model.getGroupColor(hullShape.getKey()));
+				g2.draw(hullShape.getValue());
+			}
+			g2.setStroke(new BasicStroke());
+			boolean showNames = model.getView().getDisplayAllTooltips();
+			for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
+					.entrySet())
+				renderRemoved(g2, removed.getValue(), xOffset, yOffset, showNames);
 		}
-		g2.setStroke(new BasicStroke(3));
-		for (Map.Entry<String, Polygon> hullShape : hullShapes.entrySet()) {
-			g2.setColor(model.getGroupColor(hullShape.getKey()));
-			g2.draw(hullShape.getValue());
-		}
-		g2.setStroke(new BasicStroke());
-		boolean showNames = model.getView().getDisplayAllTooltips();
-		for (Map.Entry<String, List<OrganismNode>> removed : removedHullNodes
-				.entrySet())
-			renderRemoved(g2, removed.getValue(), xOffset, yOffset, showNames);
 	}
 
 	public void renderRemoved(Graphics2D g2, List<OrganismNode> nodes,

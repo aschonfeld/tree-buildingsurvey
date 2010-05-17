@@ -141,22 +141,8 @@ public class AdminController extends TBSController {
 			c = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 			int ddButtonIndex = (y - TBSGraphics.buttonsHeight)
 					/ TBSGraphics.buttonsHeight;
-			if (ddButtonIndex <= (model.getDropDownButtonCount() - 1)) {
-				switch (ddButtonIndex) {
-				case 4:
-					view.displaySubDropDown(SubDropDownType.HULL);
-					break;
-				case 5:
-					view.displaySubDropDown(SubDropDownType.COLLISION);
-					break;
-				case 6:
-					view.displaySubDropDown(SubDropDownType.OPTIMAL_HULL);
-					break;
-				default:
-					view.displaySubDropDown(null);
-					break;
-				}
-			}
+			if (ddButtonIndex <= (model.getCurrentDropDowns().size() - 1))
+				view.displaySubDropDown(model.getCurrentDropDowns().get(ddButtonIndex));
 			view.setDisplayDropDownMenu(true);
 		} else {
 			for (SubDropDownType subDropDown : SubDropDownType.values()) {
@@ -230,7 +216,7 @@ public class AdminController extends TBSController {
 		if (view.getMainDropDown().contains(x, y)) {
 			int ddButtonIndex = (y - TBSGraphics.buttonsHeight)
 					/ TBSGraphics.buttonsHeight;
-			if (ddButtonIndex <= (model.getDropDownButtonCount() - 1)) {
+			if (ddButtonIndex <= (model.getCurrentDropDowns().size() - 1)) {
 				switch (ddButtonIndex) {
 				case 0:
 					PrinterJob printJob = PrinterJob.getPrinterJob();
@@ -252,23 +238,16 @@ public class AdminController extends TBSController {
 				case 3:
 					model.deselectAllItems();
 					break;
-				case 4:
-					view.setDisplayHullMenu(true);
-					break;
-				case 5:
-					view.setDisplayCollisionMenu(true);
-					break;
-				case 6:
-					view.setDisplayOptimalMenu(true);
-					break;
+				default:
+					view.displaySubDropDown(model.getCurrentDropDowns().get(ddButtonIndex));
 				}
 				view.closeDropDowns();
 			}
 		} else {
 			for (SubDropDownType subDropDown : SubDropDownType.values()) {
 				if (view.getSubDropDown(subDropDown).contains(x, y)) {
-					int index = (y - (TBSGraphics.buttonsHeight * subDropDown
-							.getDropDownIndex()))
+					int index = (y - (TBSGraphics.buttonsHeight *
+							(model.getCurrentDropDowns().indexOf(subDropDown)+1)))
 							/ TBSGraphics.buttonsHeight;
 					model.displaySubDropDownItem(subDropDown, index);
 					view.closeDropDowns();

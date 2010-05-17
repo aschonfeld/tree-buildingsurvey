@@ -35,18 +35,21 @@ public class AdminModel extends TBSModel {
 	private List<Student> students;
 	private List<ConvexHull> hulls;
 	private List<HullCollision> hullCollisions;
+	private OptimalHulls defaultOptimization;
 	private Graph graph;
 	private Map<String, Color> groupColorAssoc;
 	private ColorEditorPrompt colorEditor;
-	private int dropDownButtonCount;
-
+	private List<SubDropDownType> currentDropDowns;
+	
 	public AdminModel(TBSApplet applet, List<OrganismNode> organisms,
 			List<Student> students) {
 		super(applet, organisms);
 		this.students = students;
 		Student student = this.students.get(0);
 		setStudent(student);
-		dropDownButtonCount = 2;
+		currentDropDowns = new LinkedList<SubDropDownType>();
+		currentDropDowns.add(null);
+		currentDropDowns.add(null);
 		String tree = student.getTree();
 		if (!TBSUtils.isStringEmpty(tree)) {
 			loadTree(tree);
@@ -83,7 +86,6 @@ public class AdminModel extends TBSModel {
 			setStudent(student);
 			String tree = student.getTree();
 			resetModel();
-			dropDownButtonCount = 2;
 			if (!TBSUtils.isStringEmpty(tree)) {
 				loadTree(tree);
 				calculateHullCollisions();
@@ -138,14 +140,24 @@ public class AdminModel extends TBSModel {
 			}
 		}
 		hulls = new LinkedList<ConvexHull>();
+		defaultOptimization = null;
+		int maxDropDownIndex = currentDropDowns.size()-1;
+		for(int i=maxDropDownIndex;i>=2;i--)
+			currentDropDowns.remove(i);
 		for (Map.Entry<String, List<OrganismNode>> e : organismGroups
 				.entrySet())
 			hulls.add(new ConvexHull(e.getValue(), e.getKey()));
-		if (!hulls.isEmpty())
-			dropDownButtonCount = 5;
-		hullCollisions = TBSUtils.hullCollisions(1, hulls);
-		if (!hullCollisions.isEmpty())
-			dropDownButtonCount = 7;
+		if (!hulls.isEmpty()){
+			currentDropDowns.add(null);
+			currentDropDowns.add(null);
+			currentDropDowns.add(SubDropDownType.HULL);
+			hullCollisions = TBSUtils.hullCollisions(1, hulls);
+			if (!hullCollisions.isEmpty())
+				currentDropDowns.add(SubDropDownType.COLLISION);
+			else
+				defaultOptimization = new OptimalHulls(hulls);
+			currentDropDowns.add(SubDropDownType.OPTIMAL_HULL);
+		}
 	}
 
 	public List<ConvexHull> getHulls(Boolean all) {
@@ -171,14 +183,17 @@ public class AdminModel extends TBSModel {
 
 	public List<OptimalHulls> getOptimalHulls(Boolean all) {
 		List<OptimalHulls> optimalHulls = new LinkedList<OptimalHulls>();
-		for (HullCollision hc : hullCollisions)
-			optimalHulls.add(hc.getOptimalHulls());
-		if (all) {
-			for (ConvexHull hull : hulls) {
-				for (HullCollision hc : hull.getChildCollisions())
-					optimalHulls.add(hc.getOptimalHulls());
+		if(!hullCollisions.isEmpty()){
+			for (HullCollision hc : hullCollisions)
+				optimalHulls.add(hc.getOptimalHulls());
+			if (all) {
+				for (ConvexHull hull : hulls) {
+					for (HullCollision hc : hull.getChildCollisions())
+						optimalHulls.add(hc.getOptimalHulls());
+				}
 			}
-		}
+		}else
+			optimalHulls.add(defaultOptimization);
 		return optimalHulls;
 	}
 
@@ -229,8 +244,8 @@ public class AdminModel extends TBSModel {
 			deselectItems(sdd);
 	}
 
-	public int getDropDownButtonCount() {
-		return dropDownButtonCount;
+	public List<SubDropDownType> getCurrentDropDowns() {
+		return currentDropDowns;
 	}
 
 	public Map<String, Color> getColorChooser() {
