@@ -15,6 +15,6 @@ public class AdminMultiWindow extends WindowAdapter {
 		studentDataTableFrame = new StudentDataTable(adminApplicationFrame);
 		studentDataTableFrame.setLocation(100, 100);
 		questionDisplayFrame = new QuestionDisplay(adminApplicationFrame);
-		shortestPathTableFrame = new ShortestPathTable();
+		shortestPathTableFrame = new ShortestPathTable(adminApplicationFrame);
 	}
 }

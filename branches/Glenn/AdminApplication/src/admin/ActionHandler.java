@@ -49,6 +49,7 @@ public class ActionHandler extends JPanel {
 	public Action exitAction;
 	public Action printAction;
 	public Action exportAction;
+	public Action exportSPTAction;
 	public AdminApplication parent;
 	private List<JMenuItem> hullItems;
 	private List<JMenuItem> collisionItems;
@@ -211,7 +212,33 @@ public class ActionHandler extends JPanel {
 			int returnVal = fc.showSaveDialog(parent);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
-				parent.createExportFile(file.getPath());
+				parent.createExportFile(file.getPath(), 
+					parent.parent.studentDataTableFrame.table.getModel());
+				System.out.println("Exporting data to: " + file.getPath());
+			} else
+				System.out.println("Export Command cancelled by user.");
+		}
+	}
+	
+	public class ExportSPTAction extends AbstractAction {
+
+		private static final long serialVersionUID = -5425238186912620684L;
+
+		private JFileChooser fc;
+
+		public ExportSPTAction() {
+			super("Export Data");
+			fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
+
+		// @0verride
+		public void actionPerformed(ActionEvent arg0) {
+			int returnVal = fc.showSaveDialog(parent);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				parent.createExportFile(file.getPath(), 
+						parent.parent.shortestPathTableFrame.table.getModel());
 				System.out.println("Exporting data to: " + file.getPath());
 			} else
 				System.out.println("Export Command cancelled by user.");
@@ -222,6 +249,7 @@ public class ActionHandler extends JPanel {
 		exitAction = new ExitAction();
 		printAction = new PrintAction();
 		exportAction = new ExportAction();
+		exportSPTAction = new ExportSPTAction();
 		hullItems = new LinkedList<JMenuItem>();
 		collisionItems = new LinkedList<JMenuItem>();
 		optimalItems = new LinkedList<JMenu>();
@@ -393,6 +421,20 @@ public class ActionHandler extends JPanel {
 		fileMenu.add(exportItem);
 		fileMenu.add(exitItem);
 
+		return menuBar;
+	}
+	
+	public JMenuBar getSPTMenuBar() {
+		JMenuBar menuBar;
+		JMenu fileMenu;
+		JMenuItem exportSPTItem;
+
+		// Create the menu bar.
+		menuBar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		exportSPTItem = new JMenuItem(exportSPTAction);
+		fileMenu.add(exportSPTItem);
 		return menuBar;
 	}
 

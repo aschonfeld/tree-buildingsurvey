@@ -13,6 +13,7 @@ public class StudentDataColumns {
 		columnDataHandlers.add(new Student_Name());
 		columnDataHandlers.add(new Graph_Type());
 		columnDataHandlers.add(new Has_Branches());
+		columnDataHandlers.add(new Has_Loop());
 		columnDataHandlers.add(new Groups_Are_Labelled());
 		columnDataHandlers.add(new All_Organisms_Terminal());
 		columnDataHandlers.add(new Includes_All_Organisms());
@@ -81,6 +82,12 @@ public class StudentDataColumns {
 	class Has_Branches extends ColumnDataHandler {
 		public Object getData(Graph graph) {
 			return graph.hasBranches();
+		}
+	}
+	
+	class Has_Loop extends ColumnDataHandler {
+		public Object getData(Graph graph) {
+			return graph.hasLoop();
 		}
 	}
 

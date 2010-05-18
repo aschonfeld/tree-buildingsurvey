@@ -21,13 +21,14 @@ public class ShortestPathTable extends JFrame {
 	public ArrayList<String> columnNames = null;
 	JScrollPane tablePane = null;
 
-	public ShortestPathTable() {
-		super("ShortestPathTable");
+	public ShortestPathTable(AdminApplication parent) {
+		super("Shortest Path Table");
 		loadTable();
 		table = new JTable(tableModel);
 		tablePane = new JScrollPane(table);
 		tablePane.setPreferredSize(new Dimension(420, 130));
 		add(tablePane);
+		setJMenuBar(parent.actionHandler.getSPTMenuBar());
 	}
 
 	public void refreshTable() {
@@ -45,7 +46,8 @@ public class ShortestPathTable extends JFrame {
 			while (tableModel.getRowCount() > 0)
 				tableModel.removeRow(0);
 		Graph g = AdminApplication.getCurrentGraph();
-		double[][] path = g.getUniformShortestPaths();
+		this.setTitle("Shortest Path Table for " + g.getStudentName());
+		int[][] path = g.getUniformShortestPaths();
 		// String[] vertexNames = g.getPathIndexNames();
 		String[] vertexNames = AdminApplication.getCommonVertexNames();
 		int rows = vertexNames.length;
