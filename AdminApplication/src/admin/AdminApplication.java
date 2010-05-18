@@ -131,7 +131,8 @@ public class AdminApplication extends JFrame {
 		parent.studentDataTableFrame.refreshTable();
 		parent.studentDataTableFrame.validate();
 		parent.studentDataTableFrame.restoreTableState();
-
+		parent.shortestPathTableFrame.refreshTable();
+		parent.shortestPathTableFrame.validate();
 		treeView.paintComponent();
 	}
 
@@ -566,14 +567,14 @@ public class AdminApplication extends JFrame {
 		}
 	}
 
-	public void createExportFile(String filename) {
+	public void createExportFile(String filename, TableModel model) {
 		FileWriter ryt;
 		BufferedWriter out;
 		StringBuffer line;
 		try {
 			ryt = new FileWriter(filename + ".csv");
 			out = new BufferedWriter(ryt);
-			TableModel model = parent.studentDataTableFrame.table.getModel();
+			//TableModel model = parent.studentDataTableFrame.table.getModel();
 			int colCount = model.getColumnCount();
 			int rowCount = model.getRowCount();
 			line = new StringBuffer();

@@ -25,14 +25,18 @@ public class Graph implements Renderable {
 	private boolean directional;
 	private boolean allOrgsInTree;
 	private boolean hasBranches;
+	private Boolean hasLoopResult = null;
 	private boolean hasHullCollisions;
 	private String studentName;
 	private ArrayList<String> answers;
 	private boolean labelled;
 	private int graphDirection = 0;
-	private int path[][] = null; // length of shortest path from x->y =
-									// path[x][y]
-	private double uniformPath[][] = null; // standard input to neural network
+	// length of shortest path from x->y = path[x][y]
+	// includes empty nodes, does not contain unused organisms
+	private int path[][] = null;
+	// standard matrix for all graphs with the same common organisms
+	// does not include empty nodes, contains unused organisms
+	private int uniformPath[][] = null;
 	private String[] pathIndexNames = null;
 	private int unconnected = 9999;
 	private int maxPathLength = 0;
@@ -183,14 +187,25 @@ public class Graph implements Renderable {
 
 	/******************
 	 * Cycle detection *
+	 * There is a bug affecting a small number of graphs *
 	 ******************/
+	
+	public boolean hasLoop() {
+		if(hasLoopResult == null) hasLoopResult = new Boolean(containsCycle());
+		return hasLoopResult;
+	}
+	
 	public boolean containsCycle() {
 		for (Vertex v : vertices)
 			v.setMark(Vertex.Mark.WHITE);
-		for (Vertex v : vertices)
-			if (v.getMark() == Vertex.Mark.WHITE)
-				if (visit(v))
+		for (Vertex v : vertices) {
+			if (v.getMark() == Vertex.Mark.WHITE) {
+				if (visit(v)) {
+					//v.setError(true);
 					return true;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -200,8 +215,10 @@ public class Graph implements Renderable {
 			if (v2.getMark() == Vertex.Mark.GREY) {
 				return true;
 			} else if (v2.getMark() == Vertex.Mark.WHITE) {
-				if (visit(v2))
+				if (visit(v2)) {
+					//v.setError(true);
 					return true;
+				}
 			}
 		}
 		v.setMark(Vertex.Mark.BLACK);
@@ -438,10 +455,10 @@ public class Graph implements Renderable {
 
 	private void calculateUniformPathArray() {
 		ArrayList<Vertex> commonVertices = AdminApplication.getCommonVertices();
-		uniformPath = new double[commonVertices.size()][commonVertices.size()];
+		uniformPath = new int[commonVertices.size()][commonVertices.size()];
 		for (int i = 0; i < commonVertices.size(); i++) {
 			for (int j = 0; j < commonVertices.size(); j++) {
-				uniformPath[i][j] = (double) maxPathLength;
+				uniformPath[i][j] = maxPathLength;
 			}
 		}
 		for (int row = 0; row < pathIndexNames.length; row++) {
@@ -454,7 +471,7 @@ public class Graph implements Renderable {
 					continue;
 				int uniformCol = AdminApplication
 						.getVertexIndexByName(pathIndexNames[col]);
-				uniformPath[uniformRow][uniformCol] = (double) path[row][col];
+				uniformPath[uniformRow][uniformCol] = path[row][col];
 			}
 		}
 	}
@@ -695,7 +712,7 @@ public class Graph implements Renderable {
 		return path;
 	}
 
-	public double[][] getUniformShortestPaths() {
+	public int[][] getUniformShortestPaths() {
 		if (uniformPath == null) {
 			runFloydWarshall();
 		}
