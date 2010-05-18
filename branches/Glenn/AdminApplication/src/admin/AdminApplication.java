@@ -134,6 +134,7 @@ public class AdminApplication extends JFrame {
 		parent.shortestPathTableFrame.refreshTable();
 		parent.shortestPathTableFrame.validate();
 		treeView.paintComponent();
+		//graphs.get(currentGraphIndex).hasLoop(true);
 	}
 
 	public void printGraphInfo() {

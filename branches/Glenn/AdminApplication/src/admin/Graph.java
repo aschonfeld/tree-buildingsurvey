@@ -191,37 +191,55 @@ public class Graph implements Renderable {
 	 ******************/
 	
 	public boolean hasLoop() {
-		if(hasLoopResult == null) hasLoopResult = new Boolean(containsCycle());
+		if(hasLoopResult == null) hasLoopResult = new Boolean(containsCycle(false));
 		return hasLoopResult;
 	}
 	
-	public boolean containsCycle() {
-		for (Vertex v : vertices)
-			v.setMark(Vertex.Mark.WHITE);
+	public boolean hasLoop(boolean debug) {
+		hasLoopResult = new Boolean(containsCycle(debug));
+		return hasLoopResult;
+	}
+	
+	HashMap<Vertex, ArrayList<Vertex>> visitedEdges = null;
+	
+	public void printHashMap() {
+		for(Vertex from: visitedEdges.keySet()) {
+			for(int indent = 0; indent < visitedEdges.keySet().size(); indent++) {
+				System.out.print(" ");
+			}
+			System.out.print(from.getName() + " : ");
+			for(Vertex to: visitedEdges.get(from)) {
+				System.out.print(to.getName() + " , ");
+			}
+			System.out.println("END");
+		}
+	}
+	
+	public boolean containsCycle(boolean debug) {
 		for (Vertex v : vertices) {
-			if (v.getMark() == Vertex.Mark.WHITE) {
-				if (visit(v)) {
-					//v.setError(true);
-					return true;
-				}
+			visitedEdges = new HashMap<Vertex, ArrayList<Vertex>>();
+			if (visit(v, debug)) {
+				return true;
 			}
 		}
 		return false;
 	}
-
-	private boolean visit(Vertex v) {
-		v.setMark(Vertex.Mark.GREY);
+	
+	private boolean visit(Vertex v, boolean debug) {
+		if(debug) printHashMap();
+		if(visitedEdges.keySet().contains(v)) {
+			return true;
+		}
+		visitedEdges.put(v, new ArrayList<Vertex>());
 		for (Vertex v2 : v.getAdjVertices()) {
-			if (v2.getMark() == Vertex.Mark.GREY) {
-				return true;
-			} else if (v2.getMark() == Vertex.Mark.WHITE) {
-				if (visit(v2)) {
-					//v.setError(true);
-					return true;
+			if(!directional) {
+				if(visitedEdges.keySet().contains(v2)) {
+					if(visitedEdges.get(v2).contains(v)) continue;
 				}
 			}
+			visitedEdges.get(v).add(v2);
+			if (visit(v2, debug)) return true;
 		}
-		v.setMark(Vertex.Mark.BLACK);
 		return false;
 	}
 
