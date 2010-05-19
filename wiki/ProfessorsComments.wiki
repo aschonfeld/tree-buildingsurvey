@@ -2,6 +2,10 @@
 
 = Comments and questions from the professor = 
 
+=== May 19 ===
+
+Congratulations on following good SE practice to build a good product.
+
 === March 11 ===
 
 Just checking in to say that I like the results and the process from the first sprint and look forward to the second.
