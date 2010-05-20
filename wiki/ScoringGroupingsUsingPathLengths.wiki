@@ -4,7 +4,7 @@
 
 *Step 1*: Given N organisms, assign a unique index from the range (0 to N - 1) to each organism 
 
-*Step 2*: Create a 2D matrix `path[][]` of dimension N by N and initialize all data to _UNCONNECTED_, which can be finite or infinite.  In our implementation _UNCONNECTED_ = 9999. For finite values, this value should be less than half the maximum value that can be stored in it's data type.  This is to avoid overflow.
+*Step 2*: Create a 2D matrix `path[][]` of dimension N by N and initialize all data to _UNCONNECTED_, which can be finite or infinite.  In our implementation _UNCONNECTED_ = 9999. For finite values, this value should be less than half the maximum value that can be stored in its data type.  This is to avoid overflow.
 
 *Step 3*: Set each `path[n][n]` = 0
 
