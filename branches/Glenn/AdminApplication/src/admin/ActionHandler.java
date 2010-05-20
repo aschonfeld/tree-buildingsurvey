@@ -338,7 +338,6 @@ public class ActionHandler extends JPanel {
 			fileMenu.add(groupMenu);
 			List<HullCollision> collisions = tempGraph.getHullCollisions(true);
 			JMenu optimalMenu = new JMenu("Optimal Groups");
-			final JMenu optimalSubMenu = new JMenu();
 			if (!collisions.isEmpty()) {
 				JMenu collisionMenu = new JMenu("Group Collisions");
 				for (int i = 0; i < collisions.size(); i++) {
@@ -347,7 +346,7 @@ public class ActionHandler extends JPanel {
 					HCItem.addActionListener(new CollisionAction(i));
 					collisionMenu.add(HCItem);
 					collisionItems.add(HCItem);
-					optimalSubMenu.setText(tempHC.toString());
+					final JMenu optimalSubMenu = new JMenu(tempHC.toString());
 					JMenuItem quickItem = new JMenuItem("Show");
 					quickItem.addActionListener(new OptimalAction(i, true));
 					optimalSubMenu.add(quickItem);
@@ -355,16 +354,18 @@ public class ActionHandler extends JPanel {
 					iterativeItem
 							.addActionListener(new OptimalAction(i, false));
 					optimalSubMenu.add(iterativeItem);
+					optimalMenu.add(optimalSubMenu);
+					optimalItems.add(optimalSubMenu);
 				}
 				fileMenu.add(collisionMenu);
 			}else{
-				optimalSubMenu.setText(Common.commaSeparatedString(groups));
+				final JMenu optimalSubMenu = new JMenu(Common.commaSeparatedString(groups));
 				JMenuItem quickItem = new JMenuItem("Show");
 				quickItem.addActionListener(new OptimalAction(0, null));
 				optimalSubMenu.add(quickItem);
+				optimalMenu.add(optimalSubMenu);
+				optimalItems.add(optimalSubMenu);
 			}
-			optimalMenu.add(optimalSubMenu);
-			optimalItems.add(optimalSubMenu);
 			fileMenu.add(optimalMenu);
 			
 			JMenuItem deselect = new JMenuItem("Clear Selections");
@@ -733,11 +734,10 @@ public class ActionHandler extends JPanel {
 						.getCurrentGraph().getHullCollisions(true);
 				for (int i = 0; i < collisions.size(); i++)
 					collisionItems.get(i).setText(collisions.get(i).toString());
-				List<OptimalHulls> optimals = AdminApplication
-						.getCurrentGraph().getOptimalHulls(true);
-				for (int i = 0; i < optimals.size(); i++)
-					optimalItems.get(i).setText(optimals.get(i).toString());
 			}
+			List<OptimalHulls> optimals = AdminApplication.getCurrentGraph().getOptimalHulls(true);
+			for (int i = 0; i < optimals.size(); i++)
+				optimalItems.get(i).setText(optimals.get(i).toString());
 		}
 	}
 
