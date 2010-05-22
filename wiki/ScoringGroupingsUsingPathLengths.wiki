@@ -1,34 +1,48 @@
-#summary Scoring Groupings Based on Ratios of Average Shortest Paths
+#summary Scoring Groupings Based on Ratios of Average Shortest Path Lengths
 
-= Scoring Groupings Based on Ratios of Average Shortest Paths =
+= Scoring Groupings Based on Ratios of Average Shortest Path Lengths =
 
-*Step 1*: Given N organisms, assign a unique index from the range (0 to N - 1) to each organism 
+*Step 1*: Given N organisms, assign a unique index from the range `[0 to N - 1]` to each organism.<br>  Given M user-created nodes (i.e. empty nodes), assign a unique index from `[N to N + M – 1]` to each user created node.
 
-*Step 2*: Create a 2D matrix `path[][]` of dimension N by N and initialize all data to _UNCONNECTED_, which can be finite or infinite.  In our implementation _UNCONNECTED_ = 9999. For finite values, this value should be less than half the maximum value that can be stored in its data type.  This is to avoid overflow.
+The total number of nodes is T = N + M.
 
-*Step 3*: Set each `path[n][n]` = 0
+*Step 2*: Create a 2D matrix `path[][]` of dimension T by T and initialize all data to _UNCONNECTED_, which can be finite or infinite.  In our implementation _UNCONNECTED_ = 9999. For finite values, this value should be less than half the maximum value that can be stored in its data type.  This is to avoid overflow. It should also be much larger than any reasonable path length.
+
+*Step 3*: Set each `path[n][n]` = 0 _(this is because the shortest path from a node to itself is 0)_
 
 *Step 4*: For all nodes with index n1 with an adjacent node with index n2: set `path[n1][n2]` = 1
 
-*Step 5*: Finally, run the following algorithm (Floyd-Warshall):
+*Step 5*: Run the following algorithm (Floyd-Warshall):
 
 {{{
-for(int k = 0; k < numVertices; k++) {
-   for(int i = 0; i < numVertices; i++) {
-      for(int j = 0; j < numVertices; j++) {
+for(int k = 0; k < T; k++) {
+   for(int i = 0; i < T; i++) {
+      for(int j = 0; j < T; j++) {
 	path[i][j] = Math.min(path[i][j], path[i][k] + path[k][j];
       }
    }
 }
 }}}
 
-Note that running time is N cubed.  Since no student graph has more than 40 nodes (about 64000 loops) this is not prohibitive. Even with 10000 student trees, the number of loops required is less than one billion, and there are only slightly over two operations per loop. This should be no more than a few seconds work for a modern CPU.
+Note that running time is N cubed.  Since no student graph has more than 40 nodes (about 64000 loops) this is not prohibitive. Even with 10000 student trees, the number of loops required is less than one billion, and there are only slightly over two operations per loop (on average). This should be no more than a few seconds work for a modern CPU.
 
 Since this algorithm was designed to score grouping independent of graph structure, directionality is ignored, so `path[i][j] = path[j][i]`
 
-The resulting matrix `path[][]` will contain the shortest path between each combination of pairs of organisms
+After running the Floyd-Warshall algorithm `path[][]` will contain the shortest path between each combination of pairs of organisms
+
+At this point, any rows and columns with index >= number of organisms (N) can be discarded.
 
 *Step 6*: Find the _maximum shortest path length_ between two connected organisms. (In the event that no organisms are connected, the maximum shortest path is 0, the distance between a node and itself)
+
+{{{
+int max = 0;
+for(int i = 0; i < N; i++) {
+   for(int j = 0; j < N; j++) {
+        if (path[i][j] == UNCONNECTED) continue;
+        if (path[i][j] > max) max = path[i][j];
+   }
+}
+}}}
 
 *Step 7*: For any pairs of organisms that are unconnected _(`path[i][j]` = UNCONNECTED)_, set the shortest path length between them _(`path[i][j]`)_ to: _maximum shortest path length_ + 1
 
@@ -46,9 +60,10 @@ For all members of a group (ex. Mammals) take the sum of all `path[i][j]` such t
 
 Average path length between group members and non-members _(result of Step 9)_ _*divided by*_ Average path between group members _(result of Step 8)_
 
-This gives the result of this algorithm
+This gives the result of this algorithm _(see comments below for discussion of using `1-(in-group/out-group`))_
 
 Since the path lengths between group members should be less than the path lengths between group members and non-group members, larger scores are better.<br>
+
 Randomly grouped graphs would score around a 1.0<br>
 Lower than 1.0 is worse than random<br>
 Greater than 1.0 is better than random<br>
@@ -58,6 +73,8 @@ Based on current available student data the grouping scores are classified as fo
 scores <= 1.0 are bad (red)<br>
 1.0 < scores < 1.25 are poor to OK (yellow)<br>
 scores >= 1.25 are good (green)
+
+(The colors refer to the background colors corresponding to these scores in the  !AdminApplication data table)
 
 While this score is a relatively good indicator of grouping, the score is a bit arbitrary.
 
