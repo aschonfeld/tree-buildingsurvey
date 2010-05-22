@@ -13,5 +13,3 @@ _If you cannot open ".zip" files, `7-Zip` is a good Windows file compression uti
 _If you do not have Java, or have an older version, you can get the latest version from_ [http://www.java.com/en/download/manual.jsp here]
 
 To select what student tree to view, click on the row in the table that contains the data for that tree.
-
-We did not have time to write up a user manual for this application, but you can learn how it works by exploring the menu items.  However, avoid using "Import Data", since there is currently no data to import, and this has not been thoroughly tested.  Also, "Reset Data" will make all the student trees unviewable.  Restarting the application will fix this problem.
