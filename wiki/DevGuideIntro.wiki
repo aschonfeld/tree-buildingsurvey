@@ -15,7 +15,7 @@ If you are approaching this code for the first time, you will find that it is he
 
 While there is javadoc documentation for much (if not all) of the applet's code, javadoc is of limited use to the maintainer/developer, as it only documents public classes and fields. This is proper, since javadoc is meant to provide documentation for a user of an API, while you are presumably going to be maintaining and developing (or building off of) the private-access methods as well as the public. 
 This guide is meant to supplement the javadoc with a more narrative treatment of the classes. The goal is to document intention over implemtation, on the assumption that if you know what the class is meant to do, you can probably work out how it does it. We will also try to highlight potential pitfalls, but in code this complicated, there are many complicated interactions. Make small steps and check your work.
-The structure of this guide mirrors that of the code: there is a page for each file in the source, in addition to some overview pages. The pages are linked to those documenting dependent and parent classes, so it should be possible to trace the entire code tree via hyperlinks from the entry point, TBSApplet. There is also a [DevGuideTOC table of contents] for direct access to particular pages.
+The structure of this guide mirrors that of the code: there is a page for each file in the source, in addition to some overview pages. The pages are linked to those documenting dependent and parent classes, so it should be possible to trace the entire code tree via hyperlinks from the entry point, [TBSApplet]. There is also a [DevGuideTOC table of contents] for direct access to particular pages.
 
 
 = Unit Tests = 
