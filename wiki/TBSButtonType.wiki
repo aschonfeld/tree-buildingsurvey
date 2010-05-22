@@ -2,7 +2,7 @@
 
 = Introduction =
 
-TBSButtonType is an enum defining the main row of buttons in the TBS Applet. 
+TBSButtonType is an enum defining the main row of buttons in the [TBSApplet TBS Applet]. 
 
 
 
