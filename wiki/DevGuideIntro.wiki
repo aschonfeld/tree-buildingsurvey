@@ -1,5 +1,7 @@
-#summary Developer's Guide Introduction/Table of Contents
-<wiki:toc max_depth="1" />
+#summary Developer's Guide Introduction
+
+
+[DevGuideTOC Table Of Contents/Index]
 
 = Introduction =
 
