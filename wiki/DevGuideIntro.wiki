@@ -2,7 +2,7 @@
 
 
 [DevGuideTOC Table Of Contents/Index]
-
+<wiki:toc max_depth="1" />
 = Introduction =
 
 The TBS (tree-based survey) applet was developed for Professor Brian White of UMass Boston by Andrew Schonfeld, Glenn Thelen, and Jon Kiparsky as a project for Ethan Bolker's Software Engineering course. The concept was developed by White as a tool to investigate student preconceptions of evolutionary relations. The participating student is asked to show the relationships among twenty organisms
