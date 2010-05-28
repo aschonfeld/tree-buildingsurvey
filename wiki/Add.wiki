@@ -1,0 +1,7 @@
+#summary Developer's Guide: Add (in progress)
+
+Extends: Command
+
+= Introduction =
+Add is the Command object associated with adding a branch point (EmptyNode) to the model. It is triggered either by clicking within the model space while the applet is in "Add" state, or by dragging the "Immortal Empty Node" or an [OrganismNode organism] into the model space. 
+Add's execute method simply calls the model.addNode method to register the presence of the node in the model. To undo, Add calls ModelUtils.removeElement()
