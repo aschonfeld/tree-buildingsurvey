@@ -1,6 +1,6 @@
   * [BuildInstructions Instructions For Builder]
   * [VisionStatement Vision Statement]
-  * [TBSApplet Developer's Guide - in progress]
+  * [DevGuideIntro Developer's Guide - in progress]
   * [ProfessorsComments Professor Bolker's Comments]
   * Setup Information
     * [OneStepBuild One Step Build]
