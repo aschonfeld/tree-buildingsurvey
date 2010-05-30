@@ -1,4 +1,5 @@
-#summary Developer's Guide: AdminView (INCOMPLETE)
+#summary Developer's Guide: AdminView (PLACEHOLDER)
+Extends: [TBSView]
 
 = Introduction =
 
