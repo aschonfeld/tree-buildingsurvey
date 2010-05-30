@@ -1,0 +1,7 @@
+#summary Developer's Guide: TBSController (PLACEHOLDER)
+Extends: [TBSController]
+
+
+= Introduction =
+
+AdminController handles control when the applet is in Admin mode. 
