@@ -1,0 +1,35 @@
+#summary Developer's Guide: TBS Utilities (INCOMPLETE)
+
+= Introduction =
+TBSUtils contains a collection of static utility methods used throughout the [TBSApplet]
+
+
+= Methods =
+public static Line2D getConnectionBounds(Node n1, Node n2) 
+Returns a line connecting two node objects. The line is calculated from the Nodes' center points, but drawn from the edge of each Node, using getIntersectionPoint()
+
+
+private static List<Line2D> nodeSides(Node n)
+Returns the list of lines marking a Node's sides
+
+public static Point2D getIntersectionPoint(Line2D line1, Line2D line2)
+Returns the intersection point of two lines
+
+public static Line2D getArrowHead(Line2D conn, double angle)
+Draws the arrowhead at the end of a connection
+
+public static boolean isStringEmpty(String s)
+Returns true if a String is null or ""
+
+public static boolean collide(List<ConvexHull> hulls)
+Returns true if two convex hulls collide. 
+
+public statuc boolean smallCollision(List<ConvexHull> hulls)
+
+public static List<String> collisonText(AdminModel model)
+
+private static List<String> collisionText(List<HullCollision> collisions)
+
+public static String commaSeparatedString(Collection<?> strings)
+
+public static List<Point> convertAreaToPoints(Area a)
