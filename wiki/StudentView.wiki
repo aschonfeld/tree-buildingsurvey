@@ -1,0 +1,7 @@
+#summary Developer's Guide: StudentView (INCOMPLETE)
+
+Extends: [TBSView]
+
+= Introduction =
+
+StudentView is the TBSView object responsible for display when the applet is in student mode. 
