@@ -2,7 +2,7 @@
 
 = Introduction =
 
-[TBSApplet.java] is the entry point for the Java code. It is accessed through the perl-generated [TBSFrame frame page], which uses Javascript to load the applet and pass in user data. 
+TBSApplet.java is the entry point for the Java code. It is accessed through the perl-generated [TBSFrame frame page], which uses Javascript to load the applet and pass in user data. 
 
 See Javadoc documentation for further information.
 
