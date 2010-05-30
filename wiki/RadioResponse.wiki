@@ -1,0 +1,6 @@
+#summary Developer's guide: RadioResponse (PLACEHOLDER)
+
+Extends: [Response]
+
+= Introduction =
+RadioResponse defines the class of radio-button response stuff
