@@ -1,0 +1,7 @@
+#summary Developer's Guide: WrittenResponse(PLACEHOLDER)
+
+Extends: [Response]
+
+= Introduction =
+
+WrittenResponse deals with the free-response questions. 
