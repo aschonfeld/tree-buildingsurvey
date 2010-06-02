@@ -30,16 +30,23 @@
     </target>
 
 	<target name="jarfile" depends="compile" description="Makes jar file">
-	    <exec dir="${basedir}" executable="perl">
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+		        <include name="${images.dir}"/>
+		        <include name="${properties.dir}"/>
+			</fileset>
+		</copy>
+		
+		<!-- This calls a perl script that will add revno to the 
+		perl script that get deployed to the test server, still very buggy-->
+	    <!--<exec dir="${basedir}" executable="perl">
             <arg line="${basedir}/documents/Perl_Scripts/get_revno.pl"/>
-        </exec>
+        </exec>-->
+		
 	    <jar destfile="${jarfile}" basedir="${build.dir}">
 	        <manifest>
 	        	    <attribute name="Main-Class" value="${main.class}"/>
 	        </manifest>
-	    	<fileset dir="${src.dir}" includes="${images.dir}" />
-	    	<fileset dir="${src.dir}" includes="${properties.dir}" />
-	    	<fileset dir="${lib.dir}"/>
 	    </jar>
     </target>
 	
