@@ -41,7 +41,7 @@ placeholder
   * [Unlink] 
 
 == Drop-down Menu Classes ==
-  * [DropDownMenu.java] (INCOMPLETE)
+  * [DropDownMenu] (INCOMPLETE)
   * [DropDownRowRenderer](INCOMPLETE)
   * [SubDropDown](INCOMPLETE)
   * [SubDropDownType](INCOMPLETE)
