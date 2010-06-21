@@ -13,9 +13,36 @@ setGraphDirection: An attempt to determine whether student constructed a graph w
 
 
 == Analysis ==
+== Branches ==
+checkForBranches(): if there is a vertex with more than one connection, the tree has at least one branch
 
+
+== Cycle Detection ==
+containsCycle(): Marks all Vertices as unvisited, then visits() each in sequence
+visit(): Recursive cycle check. If An adjacent node has been visited on this pass, we have discovered a cycle, return true. If not, visit() all adjacent [Vertex verticies]. If no cycle found, mark this vertex as complete. 
+
+== Constructing ancestor/descendant lists ==
+
+initRelations(): one-stop shopping, runs relationship methods
+buildDescendantList(Vertex v): recursively constructs a list of descendants for all vertices in the graph, starting with v
+buildAncestorList(Vertex v): recursively constructs a list of ancestors for all vertices in the graph, starting with v
+Each of these methods has a convenience caller that calls the method on the first Vertex in the list.
 
 == Shortest Path calculations ==
+Shortest path analysis uses a private class PathPair. This private class *needs further explication* See overview of analysis for the higher-level description of the use of shortest-path in tree analysis.
+
+runFloydWarshall(): calculates shortest and average path lengths using the Floyd-Warshall algorithm. This algorithm is well-described in the literature(citations here)
+
+calculateOrganismPathLengths()
+doAnalysis()
+getPathPairs(): 
+testPair()
+
+minOrgPathLength()
+averageOrgPathLength()
+maxOrgPathLength()
+calcAverage()
+
 
 
 == rendering ==
@@ -32,16 +59,8 @@ getUpperLeft(): returns the upper left point of the graph. This point is not nec
 
 get LowerRight(): returns the lower right corner of the graph. Same caveat as for UpperLeft. 
 
-getShortestPathes(): calls the runFloydWarshall() method and returns the result. *This looke like it returns a class-level variable, which would be odd, unless it's being called from outside the class.*
+getShortestPaths(): calls the runFloydWarshall() method and returns the result. *This looke like it returns a class-level variable, which would be odd, unless it's being called from outside the class.*
 
 
 getPathIndexNames(): returns the pathIndexNames. If the FloydWarshall algorithm has not been run, run it. 
 
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
