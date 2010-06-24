@@ -1,8 +1,8 @@
 #summary Developer's Guide: VertexInfo (PlaceHolder)
 
 = Introduction =
+VertexInfo contains the information about a [Vertex] object. 
 
-Add your content here.
 
 
 = Details =
