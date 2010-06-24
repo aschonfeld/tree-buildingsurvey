@@ -1,0 +1,26 @@
+#summary Developer's Guide: Optimal Hulls (INCOMPLETE)
+
+= Introduction =
+
+
+Extends [SubDropDown]
+
+
+= Details =
+
+
+= Methods = 
+== Optimization ==
+fulloptimization()
+initOptimization()
+iterateOptimization()
+completeOptimization()
+startOptimization()
+
+createText()
+
+== Housekeeping ==
+render()
+renderRemoved()
+toString()
+getText()
