@@ -1,0 +1,67 @@
+#summary Developer's Guide: Vertex (INCOMPLETE)
+
+= Introduction =
+Represents a vertex in the analysis phase. 
+
+
+
+= Details =
+=Methods = 
+constructor:
+
+
+== Parent/Child Relationships == 
+Immediate, directed relationships
+addFrom(), addTo(): add a node to the vertex's "From" or "To" connections list
+getFrom, getTo(): return the "From" or "To" connections list
+getToVertices(), getFromVertices(): duplicates above. Why?
+
+==Ancestor/Descendant Relationships==
+Tracking directed relationships in the graph. Distinct from parent/child in that parent/child is immediate, these include any Vertex above or below this one. Limited application, so far.
+
+ancestorOf(): returns true if this is an anscestor of that
+descendantOf(): returns true if this is a descendant of that
+addAncestors(): adds the list to the ancestors list
+addDescendants(): adds the list to the descendants list
+getAncestors(), getDescnedants(): return the list of ancestors/descendants
+
+getAdjVertices(): return all vertices directly connected to this
+direction(): part of the attempt to determine graph's "direction" - returns positive value if it is connected From, negative if it is connected To
+
+== Cycle Detection ==
+enum Mark: Mark has values WHITE, GREY, BLACK. These indicate respectively that the vertex is unvisited, that it has being examined for cycles, or that it is clear of cycles. See [Graph].cycles
+
+setMark(): set the mark for this vertex
+getMark(): return the mark
+isTerminal(): return true if this node is terminal
+
+== Error Handling ==
+If this vertex has an error, it is highlighted in red. These methods handle that functionality. 
+
+setError() : sets error (a boolean flag)
+hasError() : returns the value of error
+renderError() : Draw a red box around the vertex if error is set. 
+
+==Rendering==
+render(): selects either renderVertex() or renderVertexWithImage(), depending on whether the Vertex's getImage returns an image or a null. Calls renderError().
+renderVertex(): draws a simple box suitable to an imageless node.
+renderVertexWithImage(): draws a simple box with an image in it
+
+===Rendering Utility Methods===
+getVertexBounds()
+getUpperLeft()
+getLowerRight()
+getVertexBounds()
+
+
+== Housekeeping ==
+toString() String consists of name, whether there is an image, location coordinates
+
+getName()
+hasName()
+getType()
+getInfo()
+setIndex()
+getIndex()
+getChildren()
+getParents()
