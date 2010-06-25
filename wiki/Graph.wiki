@@ -1,7 +1,7 @@
 #summary Developer's Guide: Graph (INCOMPLETE)
 
 = Introduction =
-Graph represents the student's completed tree. Includes graph construction and analysis methods.
+Graph represents the student's completed tree. It is basically a set of [Vertex vertices] with methods for analyzing itself. Graph is the center of the Analysis classes. 
 
 
 
@@ -63,4 +63,3 @@ getShortestPaths(): calls the runFloydWarshall() method and returns the result. 
 
 
 getPathIndexNames(): returns the pathIndexNames. If the FloydWarshall algorithm has not been run, run it. 
-
