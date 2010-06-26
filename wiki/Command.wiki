@@ -1,4 +1,6 @@
-#summary [DevGuideTOC Developer's Guide]: Command
+#summary Developer's Guide: Command
+
+[DevGuideTOC Developer's Guide]: Command
 
 = Introduction =
 
