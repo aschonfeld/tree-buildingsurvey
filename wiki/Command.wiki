@@ -1,6 +1,7 @@
 #summary Developer's Guide: Command
 
-[DevGuideTOC Developer's Guide]: Command
+[DevGuideTOC Table of Contents]
+
 
 = Introduction =
 
