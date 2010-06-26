@@ -32,8 +32,8 @@ placeholder
   * [Connection]
 
 == History Classes ==
+  * *[Command]* Overview of History, summary of "Command" objects
   * [Add]
-  * [Command]
   * [Delete]
   * [Drag]
   * [Label]
