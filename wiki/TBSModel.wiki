@@ -1,12 +1,57 @@
 #summary PLACEHOLDER Developer's Guide: TBSModel.java
 
 = Introduction =
-[TBSModel.java] is the superclass for the two Model objects representing the data under inspection. The two Models - [StudentModel] and [AdminModel] - have somewhat different ways of handling data due to the differing needs of the two classes of users. 
+TBSModel is the superclass for the two Model objects representing the data under inspection. The two Models - [StudentModel] and [AdminModel] - have somewhat different ways of handling data due to the differing needs of the two classes of users. 
+
+== Methods ==
+
+findIndexByID()
 
 
-= Details =
+getElementBySN()
+Returns the ModelElement with the given serial number. This method relies on the fact that objects are added in serial# order, and remain sorted, although they may be deleted. If this assumption ceases to be true, this method will fail.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+hasConnections()
+returns true if there are any connections in the tree. Used to determine whether "unlink" buttons should be active.
+
+hasEmptyNodes()
+returns true if the current tree has any empty nodes in it. Used to determine whether the Label button should be active. 
+
+inTreeElements
+Returns the list of active elements. Note that this includes all elements in the Model, not only those connected to the tree. 
+
+outOfTreeElements()
+Return the list of elements not in the tree, that is, the elements still in the left-hand column. This list will include the "immortal empty node", or at least it should, MUST CHECK THIS
+
+===housekeeping===
+public boolean isElementsInTree() 
+
+setElementsInTree(boolean elementsInTree)
+
+isEmptyNodesInTree() 
+
+setEmptyNodesInTree(boolean emptyNodesInTree) 
+
+
+
+isConnectionsInTree() 
+setConnectionsInTree(boolean connectionsInTree) 
+
+
+===load===
+
+loadTree()
+loadOrganismNode()
+loadEmptyNode()
+loadConnection()
+
+
+printConnections()
+Prints out a list of all connections for each element in the model. Not currently used, but retained for testing purposes. 
+
+exportTree() 
+Creates and returns a String representing the tree, by iterating the elements of the model and calling the [ModelElement dump()] method of each. The list of elements is obtained by calling inTreeElements in this class. 
+
+checkElementIntegrity()
+Reviews the list of elements and returns a warning if any ID number is duplicated or if any element is connected to an element which doesn't exist. 
+Useful for testing, but sucks cycles. Don't call in production!
